@@ -1,0 +1,66 @@
+/* Split-flap cell: two stacked halves, top flips down and reveals new char */
+.flip-cell {
+  --flip-duration: 150ms;
+  --flip-settle: 300ms;
+}
+
+.flip-cell-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 200px;
+}
+
+.flip-cell-half {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  backface-visibility: hidden;
+  background: var(--flipfeed-tile);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.flip-cell-half-top {
+  top: 0;
+  align-items: flex-end;
+  padding-bottom: 2px;
+  transform-origin: bottom;
+}
+
+.flip-cell-half-bottom {
+  bottom: 0;
+  align-items: flex-start;
+  padding-top: 2px;
+  transform-origin: top;
+}
+
+.flip-cell.flipping .flip-cell-half-top {
+  animation: flip-top var(--flip-duration) ease-in forwards;
+}
+
+.flip-cell.flipping .flip-cell-half-bottom {
+  animation: flip-bottom var(--flip-duration) ease-out var(--flip-duration) forwards;
+}
+
+@keyframes flip-top {
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes flip-bottom {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}

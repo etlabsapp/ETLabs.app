@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Env and secrets (never commit these)
+.env
+.env.local
+.env.*.local
+
+# Next.js
+.next/
+out/
+
+# Build / cache
+.vercel
+dist/
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo

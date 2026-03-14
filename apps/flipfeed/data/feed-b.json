@@ -1,0 +1,12 @@
+[
+  { "rank": "01", "name": "TIKTOK", "country": "USA", "category": "SOCIAL" },
+  { "rank": "02", "name": "CHATGPT", "country": "USA", "category": "PRODUCTIVITY" },
+  { "rank": "03", "name": "INSTAGRAM", "country": "USA", "category": "SOCIAL" },
+  { "rank": "04", "name": "SPOTIFY", "country": "UK", "category": "MUSIC" },
+  { "rank": "05", "name": "YOUTUBE", "country": "USA", "category": "ENTERTAINMENT" },
+  { "rank": "06", "name": "NOTION", "country": "USA", "category": "PRODUCTIVITY" },
+  { "rank": "07", "name": "NETFLIX", "country": "USA", "category": "ENTERTAINMENT" },
+  { "rank": "08", "name": "WHATSAPP", "country": "USA", "category": "COMMUNICATION" },
+  { "rank": "09", "name": "CANVA", "country": "AUS", "category": "CREATIVE" },
+  { "rank": "10", "name": "ZOOM", "country": "USA", "category": "PRODUCTIVITY" }
+]
