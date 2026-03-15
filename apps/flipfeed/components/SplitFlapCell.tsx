@@ -13,7 +13,7 @@ type Props = {
 
 export function SplitFlapCell({ char, className = "" }: Props) {
   const [displayChar, setDisplayChar] = useState(char);
-  const [flipFromChar, setFlipFromChar] = useState<char | null>(null);
+  const [flipFromChar, setFlipFromChar] = useState<string | null>(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const prevCharRef = useRef(char);
 

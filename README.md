@@ -40,10 +40,40 @@ Independent software studio site and product landing pages. Static HTML/CSS/JS.
 
 4. **Netlify Forms**: If you use Netlify for the main site instead, enable Netlify Forms so the SleepTight waitlist form and `/thank-you.html` redirect work.
 
-### Option B – Other hosts
+### Option B – Cloudflare Pages (you already use Cloudflare)
 
-- Deploy the **root** as a static site (Netlify, Cloudflare Pages, etc.) for etlabs.app.
-- Deploy **FlipFeed** and **Dashboard** as separate Next.js apps on a Node host (Vercel, Railway, etc.) and use subdomains (e.g. flipfeed.etlabs.app, dashboard.etlabs.app). Update (or rewrite) links on the main site to those URLs.
+Create **three Pages projects** from the same GitHub repo, then attach your domain and subdomains in Cloudflare.
+
+1. **Main site (etlabs.app)**  
+   - Dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git** → select **etlabsapp/ETLabs.app**.  
+   - **Project name:** e.g. `etlabs-app`.  
+   - **Production branch:** `main`.  
+   - **Root directory:** leave as `/` (repo root).  
+   - **Framework preset:** None.  
+   - **Build command:** leave empty, or `echo 'static'`.  
+   - **Build output directory:** `.` (so the root HTML/CSS/JS are published).  
+   - After deploy, go to **Custom domains** and add `etlabs.app` and `www.etlabs.app`.
+
+2. **FlipFeed (flipfeed.etlabs.app)**  
+   - **Create** → **Pages** → **Connect to Git** → same repo.  
+   - **Root directory:** `apps/flipfeed`.  
+   - **Framework preset:** Next.js (Cloudflare will detect it; use their Next.js support / adapter if prompted).  
+   - Add **Environment variables** (Production): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and optionally `OPENWEATHER_API_KEY`.  
+   - **Custom domains:** add `flipfeed.etlabs.app`.
+
+3. **Dashboard (dashboard.etlabs.app)**  
+   - Same as FlipFeed: **Connect to Git**, **Root directory:** `apps/dashboard`, **Framework:** Next.js, add Supabase env vars and `ALLOWED_EMAILS` if needed.  
+   - **Custom domains:** add `dashboard.etlabs.app`.
+
+4. **Links on the main site**  
+   Update the static site so “FlipFeed” points to `https://flipfeed.etlabs.app` (and add a Dashboard link to `https://dashboard.etlabs.app` if you want). Right now the site uses `apps/flipfeed/`, which only works if everything is served from one origin; with separate projects, use the full subdomain URLs.
+
+If the **main site** build fails (e.g. “no output”), add a no-op build: at repo root create a `package.json` with `"scripts": { "build": "echo 'static'" }` and set **Build command** to `npm run build`, **Build output directory** to `.`. Or use **Direct Upload** (Wrangler) to upload the root folder instead of Git for the main site.
+
+### Option C – Other hosts
+
+- Deploy the **root** as a static site (Netlify, etc.) for etlabs.app.
+- Deploy **FlipFeed** and **Dashboard** as separate Next.js apps (Vercel, Railway, etc.) and use subdomains. Update links on the main site to those URLs.
 
 ## Assets
 

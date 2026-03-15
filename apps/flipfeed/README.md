@@ -72,6 +72,15 @@ Everything in this setup can stay **free** at low/moderate use:
 
 ## Deploy (free)
 
-1. Push the repo to GitHub and connect to **Vercel** or **Cloudflare Pages**.
-2. Set env vars in the dashboard: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Optionally `OPENWEATHER_API_KEY`.
-3. Deploy. The free tier is enough for FlipFeed at low cost.
+### Vercel
+Push the repo to GitHub and connect to Vercel. Set root directory to `apps/flipfeed`, env vars, deploy.
+
+### Vercel (recommended for FlipFeed — works with Next.js 14)
+1. Go to [vercel.com](https://vercel.com) → **Add New** → **Project** → Import **etlabsapp/ETLabs.app**.
+2. **Root Directory:** click **Edit** → set to `apps/flipfeed` → **Save**.
+3. **Environment Variables:** add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (and optionally `OPENWEATHER_API_KEY`). Use **Production** (and Preview if you want).
+4. **Deploy.** Vercel will build with `next build` and host the app.
+5. **Custom domain:** In the project → **Settings** → **Domains** → add `flipfeed.etlabs.app`. Vercel will show the DNS record (CNAME to cname.vercel-dns.com or similar). In your DNS (e.g. Cloudflare for etlabs.app), add that CNAME for `flipfeed` so flipfeed.etlabs.app points to Vercel.
+
+### Cloudflare Workers & Pages (requires Next.js 15+)
+The OpenNext Cloudflare adapter currently only supports Next.js 15+. To use Cloudflare you’d need to upgrade FlipFeed to Next 15. Until then, use **Vercel** (above) for FlipFeed.
