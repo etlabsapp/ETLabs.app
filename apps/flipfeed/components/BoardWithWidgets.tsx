@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import type { UserConfig, WeatherConfig, CustomFeedConfig, EtlabsAppConfig } from "@/lib/types";
 import { SplitFlapBoard } from "./SplitFlapBoard";
 import { EtlabsAppRow } from "./EtlabsAppRow";
@@ -111,30 +112,19 @@ export function BoardWithWidgets({ config, fullscreen = false }: Props) {
             style={{
               display: "flex",
               justifyContent: "flex-end",
+              gap: 10,
               marginBottom: 12,
             }}
           >
+            {!fullscreen && (
+              <Link href="/?fullscreen=1" className="btn-physical">
+                Fullscreen
+              </Link>
+            )}
             <button
               type="button"
+              className="btn-physical"
               onClick={() => setTriggerFlip(Date.now())}
-              style={{
-                padding: "6px 14px",
-                fontSize: "0.8125rem",
-                fontFamily: "var(--font-board), monospace",
-                color: "var(--flipfeed-muted)",
-                background: "var(--flipfeed-tile)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 6,
-                cursor: "pointer",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.color = "var(--flipfeed-text)";
-                e.currentTarget.style.background = "#2a2a30";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.color = "var(--flipfeed-muted)";
-                e.currentTarget.style.background = "var(--flipfeed-tile)";
-              }}
             >
               Update
             </button>
@@ -143,7 +133,12 @@ export function BoardWithWidgets({ config, fullscreen = false }: Props) {
         {etlabsAppWidgets.length > 0 && (
           <div style={{ marginBottom: 16 }}>
             {etlabsAppWidgets.map((w, i) => (
-              <EtlabsAppRow key={i} appName={w.appName} triggerFlip={triggerFlip} />
+              <EtlabsAppRow
+                key={i}
+                appName={w.appName}
+                triggerFlip={triggerFlip}
+                rowIndex={i}
+              />
             ))}
           </div>
         )}
@@ -155,7 +150,13 @@ export function BoardWithWidgets({ config, fullscreen = false }: Props) {
           </div>
         )}
         {hasFeed ? (
-          <SplitFlapBoard fullscreen={false} baseUrl="" feedUrl={feedUrl || null} triggerFlip={triggerFlip} />
+          <SplitFlapBoard
+            fullscreen={false}
+            baseUrl=""
+            feedUrl={feedUrl || null}
+            triggerFlip={triggerFlip}
+            startRowIndex={etlabsAppWidgets.length}
+          />
         ) : widgets.length === 0 ? (
           <div
             style={{

@@ -13,9 +13,9 @@ function formatDownloadRow(appName: string, downloadCount: number): string {
   return row.padEnd(DOWNLOAD_ROW_LENGTH, " ").slice(0, DOWNLOAD_ROW_LENGTH).split("").map((c) => (isValidChar(c) ? c : " ")).join("");
 }
 
-type Props = { appName: string; cellSize?: "sm" | "md" | "lg"; triggerFlip?: number };
+type Props = { appName: string; cellSize?: "sm" | "md" | "lg"; triggerFlip?: number; rowIndex?: number };
 
-export function EtlabsAppRow({ appName, cellSize = "md", triggerFlip }: Props) {
+export function EtlabsAppRow({ appName, cellSize = "md", triggerFlip, rowIndex }: Props) {
   const [displayString, setDisplayString] = useState(formatDownloadRow(appName, 0));
 
   useEffect(() => {
@@ -36,5 +36,12 @@ export function EtlabsAppRow({ appName, cellSize = "md", triggerFlip }: Props) {
     return () => { cancelled = true; clearInterval(interval); };
   }, [appName]);
 
-  return <SplitFlapRow displayString={displayString} cellSize={cellSize} triggerFlip={triggerFlip} />;
+  return (
+    <SplitFlapRow
+      displayString={displayString}
+      cellSize={cellSize}
+      triggerFlip={triggerFlip}
+      rowIndex={rowIndex}
+    />
+  );
 }

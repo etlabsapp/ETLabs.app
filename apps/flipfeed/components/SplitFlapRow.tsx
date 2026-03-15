@@ -10,9 +10,11 @@ type Props = {
   cellSize?: "sm" | "md" | "lg";
   /** When this value changes, every cell in the row does one flip animation (and sound) */
   triggerFlip?: number;
+  /** For staggered full rotation: row index (0-based) */
+  rowIndex?: number;
 };
 
-export function SplitFlapRow({ displayString, cellSize = "md", triggerFlip }: Props) {
+export function SplitFlapRow({ displayString, cellSize = "md", triggerFlip, rowIndex }: Props) {
   const chars = useMemo(() => {
     const padded = displayString.padEnd(TOTAL_ROW_LENGTH, " ").slice(0, TOTAL_ROW_LENGTH);
     return padded.split("").map((c) => (isValidChar(c) ? c : " "));
@@ -28,7 +30,14 @@ export function SplitFlapRow({ displayString, cellSize = "md", triggerFlip }: Pr
   return (
     <div className="flex gap-[var(--flipfeed-gap)] items-stretch">
       {chars.map((char, i) => (
-        <SplitFlapCell key={i} char={char} className={sizeClass} triggerFlip={triggerFlip} />
+        <SplitFlapCell
+          key={i}
+          char={char}
+          className={sizeClass}
+          triggerFlip={triggerFlip}
+          rowIndex={rowIndex}
+          cellIndex={i}
+        />
       ))}
     </div>
   );

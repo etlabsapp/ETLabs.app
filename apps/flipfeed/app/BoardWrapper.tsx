@@ -48,34 +48,36 @@ export default function BoardWrapper() {
         <BoardWithWidgets config={config} fullscreen={fullscreen} />
       </div>
       {fullscreen ? (
-        <Link
-          href="/"
+        <div
           style={{
             position: "fixed",
             bottom: 24,
+            left: 24,
             right: 24,
-            padding: "8px 16px",
-            borderRadius: 8,
-            background: "#222228",
-            color: "#9c9892",
-            fontSize: "0.875rem",
-            textDecoration: "none",
-            border: "1px solid rgba(255,255,255,0.1)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             zIndex: 50,
+            pointerEvents: "none",
           }}
         >
-          Exit fullscreen
-        </Link>
+          <div style={{ pointerEvents: "auto", display: "flex", gap: 10 }}>
+            <Link href="/settings" className="btn-physical">
+              Settings
+            </Link>
+          </div>
+          <Link href="/" className="btn-physical" style={{ pointerEvents: "auto" }}>
+            Exit fullscreen
+          </Link>
+        </div>
       ) : (
         <Link
           href="/settings"
+          className="btn-physical"
           style={{
             position: "fixed",
             top: 24,
             right: 24,
-            fontSize: "0.875rem",
-            color: "#9c9892",
-            textDecoration: "none",
             zIndex: 50,
           }}
         >

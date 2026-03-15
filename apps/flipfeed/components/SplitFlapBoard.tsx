@@ -14,9 +14,17 @@ type Props = {
   feedUrl?: string | null;
   /** When this value changes, every row does one flip animation (and sound) on all cells */
   triggerFlip?: number;
+  /** First row index for staggered rotation (e.g. number of etlabs rows above) */
+  startRowIndex?: number;
 };
 
-export function SplitFlapBoard({ fullscreen = false, baseUrl = "", feedUrl = null, triggerFlip }: Props) {
+export function SplitFlapBoard({
+  fullscreen = false,
+  baseUrl = "",
+  feedUrl = null,
+  triggerFlip,
+  startRowIndex = 0,
+}: Props) {
   const [rows, setRows] = useState<FeedRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +89,7 @@ export function SplitFlapBoard({ fullscreen = false, baseUrl = "", feedUrl = nul
               displayString={rowToDisplayString(row)}
               cellSize={cellSize}
               triggerFlip={triggerFlip}
+              rowIndex={startRowIndex + i}
             />
           ))}
         </div>
