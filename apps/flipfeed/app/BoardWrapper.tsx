@@ -37,7 +37,14 @@ export default function BoardWrapper() {
 
   return (
     <>
-      <div style={{ paddingTop: fullscreen ? 0 : 48, paddingBottom: 24 }}>
+      <div
+        style={{
+          paddingTop: fullscreen ? 0 : 48,
+          paddingBottom: 24,
+          minHeight: fullscreen ? "100vh" : undefined,
+          boxSizing: "border-box",
+        }}
+      >
         <BoardWithWidgets config={config} fullscreen={fullscreen} />
       </div>
       {fullscreen ? (

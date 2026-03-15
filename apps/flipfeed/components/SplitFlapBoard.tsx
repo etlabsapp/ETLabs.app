@@ -12,9 +12,11 @@ type Props = {
   baseUrl?: string;
   /** Custom feed/API URL from settings. When set, board fetches from this URL instead of /api/feed */
   feedUrl?: string | null;
+  /** When this value changes, every row does one flip animation (and sound) on all cells */
+  triggerFlip?: number;
 };
 
-export function SplitFlapBoard({ fullscreen = false, baseUrl = "", feedUrl = null }: Props) {
+export function SplitFlapBoard({ fullscreen = false, baseUrl = "", feedUrl = null, triggerFlip }: Props) {
   const [rows, setRows] = useState<FeedRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -78,6 +80,7 @@ export function SplitFlapBoard({ fullscreen = false, baseUrl = "", feedUrl = nul
               key={i}
               displayString={rowToDisplayString(row)}
               cellSize={cellSize}
+              triggerFlip={triggerFlip}
             />
           ))}
         </div>
