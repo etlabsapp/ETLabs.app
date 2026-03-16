@@ -187,17 +187,25 @@ main,
 }
 
 .brand-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 16px;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 800;
     letter-spacing: -0.03em;
-    color: #ffffff;
-    background: linear-gradient(135deg, rgba(158,195,255,0.24), rgba(213,179,255,0.18));
-    border: 1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 10px 26px rgba(158,195,255,0.10);
+    /* Remove the old pill box styling so the SVG looks like clean text */
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.brand-icon img {
+    display: block;
+    height: 44px; /* bigger logo */
+    width: auto;
 }
 
 .brand-copy {
