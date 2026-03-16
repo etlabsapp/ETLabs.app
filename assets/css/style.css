@@ -109,11 +109,27 @@ main,
 
 .hero.section {
     padding-top: 52px;
-    padding-bottom: 72px;
+    padding-bottom: 55px;
 }
 
 .philosophy-section.section {
-    padding-top: 40px; /* pull Philosophy up closer to the hero */
+    padding-top: 30px; /* pull Philosophy up closer to the hero */
+    padding-bottom: 50px;
+}
+
+#about-studio {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#studio {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+#products {
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
 
 .card {
@@ -126,7 +142,7 @@ main,
 
 .eyebrow {
     margin: 0 0 14px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -726,7 +742,7 @@ main,
 }
 
 .site-footer {
-    padding: 36px 0 56px;
+    padding: 1px 0 20px;
 }
 
 .footer-shell {
@@ -734,7 +750,7 @@ main,
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    padding-top: 28px;
+    padding-top: 1px;
     border-top: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -747,6 +763,8 @@ main,
     margin: 6px 0 0;
     color: var(--soft);
     font-size: .95rem;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .mobile-toggle {
