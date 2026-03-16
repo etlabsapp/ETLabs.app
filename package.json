@@ -2,6 +2,11 @@
   "name": "etlabs-site",
   "private": true,
   "scripts": {
-    "build": "exit 0"
+    "build": "exit 0",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.74.0"
   }
 }

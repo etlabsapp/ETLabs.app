@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "etlabsapp",
+  "compatibility_date": "2025-09-27",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    // Serve static site files from the repo root,
+    // but do NOT include node_modules (too large for Workers).
+    "directory": ".",
+    "exclude": [
+      "node_modules/**"
+    ]
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
+
