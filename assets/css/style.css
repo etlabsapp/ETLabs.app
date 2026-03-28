@@ -112,6 +112,171 @@ main,
     padding-bottom: 55px;
 }
 
+.hero-text-studio {
+    margin-top: 14px;
+    max-width: 640px;
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.75;
+}
+
+.hero-sleeptight-visual {
+    position: relative;
+    padding: 28px 24px 22px;
+    text-align: center;
+    background: radial-gradient(circle at 50% 20%, rgba(181, 192, 255, 0.35), rgba(255, 255, 255, 0.92));
+    border: 1px solid rgba(75, 89, 201, 0.12);
+    overflow: hidden;
+}
+
+@keyframes hero-visual-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.hero-sleeptight-glow {
+    position: absolute;
+    width: 70%;
+    height: 55%;
+    left: 50%;
+    top: 18%;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(75, 89, 201, 0.18), transparent 70%);
+    pointer-events: none;
+    filter: blur(24px);
+}
+
+.hero-sleeptight-device {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    will-change: transform;
+    animation: hero-visual-float 8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-sleeptight-device {
+        animation: none;
+    }
+}
+
+.hero-sleeptight-phone {
+    width: min(280px, 78vw);
+    height: auto;
+    border-radius: 28px;
+    box-shadow: 0 24px 56px rgba(15, 23, 42, 0.14);
+}
+
+.hero-sleeptight-caption {
+    position: relative;
+    z-index: 1;
+    margin: 18px 0 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.products-showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.product-sleeptight-featured {
+    margin-top: 0;
+    padding: 0;
+    border: 1px solid rgba(75, 89, 201, 0.2);
+    box-shadow: var(--shadow), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+.product-sleeptight-featured::before {
+    background: radial-gradient(circle at 0% 0%, rgba(75, 89, 201, 0.16), transparent 55%);
+}
+
+.product-featured-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 0;
+    align-items: stretch;
+    min-height: 0;
+}
+
+.product-featured-media {
+    position: relative;
+    padding: 28px 20px 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(165deg, rgba(181, 192, 255, 0.22), rgba(244, 244, 247, 0.5));
+}
+
+.product-featured-media img {
+    width: min(260px, 42vw);
+    max-height: 420px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 22px;
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
+}
+
+.product-featured-copy {
+    position: relative;
+    z-index: 1;
+    padding: 36px 36px 36px 28px;
+    display: flex;
+    flex-direction: column;
+}
+
+.featured-tag {
+    display: inline-block;
+    align-self: flex-start;
+    margin: 0 0 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.product-sleeptight-featured .featured-chips {
+    margin: 18px 0 20px;
+}
+
+.product-sleeptight-featured .split-actions {
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.products-secondary-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.products-secondary-row-single {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 560px;
+}
+
+.product-card-secondary {
+    margin-top: 0;
+    padding: 26px 28px;
+}
+
+.product-card-secondary .featured-title {
+    font-size: 1.65rem;
+}
+
+.product-card-secondary .section-text {
+    font-size: 0.98rem;
+}
+
 .philosophy-section.section {
     padding-top: 30px; /* pull Philosophy up closer to the hero */
     padding-bottom: 50px;
@@ -812,8 +977,25 @@ main,
     .contact-shell,
     .three-up-grid,
     .manifesto-grid,
-    .products-three-grid {
+    .products-three-grid,
+    .products-secondary-row {
         grid-template-columns: 1fr;
+    }
+
+    .product-featured-split {
+        grid-template-columns: 1fr;
+    }
+
+    .product-featured-media {
+        padding: 24px 20px 8px;
+    }
+
+    .product-featured-copy {
+        padding: 8px 24px 32px;
+    }
+
+    .product-featured-media img {
+        width: min(240px, 72vw);
     }
 
     .section {

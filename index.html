@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ET Labs | Software Should Support Life, Not Consume It</title>
-    <meta name="description" content="ET Labs is a software studio building calm, thoughtful applications designed to help people accomplish meaningful things and then return to their lives.">
+    <meta name="description" content="ET Labs builds calm, thoughtful software—including SleepTight: DreamWrite for sleep and nap guidance—designed to help people accomplish something meaningful, then return to their lives.">
     <meta name="theme-color" content="#0a0f1c">
     <meta property="og:type" content="website">
     <meta property="og:title" content="ET Labs | Software Should Support Life, Not Consume It">
-    <meta property="og:description" content="A software studio creating finishable experiences, calm interfaces, and products that respect human attention.">
-    <meta property="og:image" content="images/hero-phone.webp">
+    <meta property="og:description" content="Intentional software from a small studio. SleepTight: DreamWrite is submitted to the App Store; FlipFeed is a side experiment.">
+    <meta property="og:image" content="apps/sleeptight/images/hero-phone.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,12 +41,12 @@
                     <div class="nav-dropdown">
                         <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="products-dropdown" id="products-dropdown-trigger">Products</button>
                         <div class="nav-dropdown-menu" id="products-dropdown" role="menu">
-                            <a href="apps/sleeptight/index.html" role="menuitem">SleepTight</a>
-                            <a href="https://etlabsflipfeed.vercel.app/" role="menuitem">FlipFeed <em>(Coming soon)</em></a>
-                            <span class="nav-dropdown-item coming-soon" role="menuitem">DreamWrite <em>Coming Soon</em></span>
+                            <a href="apps/sleeptight/index.html" role="menuitem">SleepTight: DreamWrite</a>
+                            <a href="https://etlabsflipfeed.vercel.app/" role="menuitem">FlipFeed <em>(Side experiment)</em></a>
                         </div>
                     </div>
                     <a href="studio.html">Studio</a>
+                    <a href="apps/sleeptight/support.html">Support</a>
                     <a href="contact.html">Contact</a>
                 </nav>
             </div>
@@ -134,57 +134,56 @@
                     </p>
                 </div>
 
-                <div class="products-three-grid">
-                    <article class="featured-card card reveal product-card-home">
-                        <div class="featured-header">
-                            <p class="card-label">Available now</p>
-                            <h3 class="featured-title">SleepTight</h3>
-                            <p class="section-text">
-                                Sleep and nap guidance designed to help people rest better. Healthier routines without another screen that keeps you awake.
-                            </p>
-                        </div>
-                        <div class="featured-chips">
-                            <span class="featured-chip">Calm interface</span>
-                            <span class="featured-chip">Finishable flow</span>
-                            <span class="featured-chip">Privacy-first</span>
-                        </div>
-                        <div class="split-actions">
-                            <a href="apps/sleeptight/index.html" class="primary-button">Explore SleepTight</a>
+                <div class="products-showcase">
+                    <article class="featured-card card reveal product-card-home product-sleeptight-featured">
+                        <div class="product-featured-split">
+                            <div class="product-featured-media">
+                                <img
+                                    src="apps/sleeptight/images/screenshot-01-home.webp"
+                                    alt="SleepTight sleep planner"
+                                    width="600"
+                                    height="1200"
+                                    loading="lazy"
+                                >
+                            </div>
+                            <div class="product-featured-copy">
+                                <p class="featured-tag">Featured</p>
+                                <p class="card-label">Submitted to the App Store</p>
+                                <h3 class="featured-title">SleepTight: DreamWrite</h3>
+                                <p class="section-text">
+                                    Sleep timing intelligence, real alarms, naps, guided bedtime rituals, and private dream and reflection journaling. Voice memos stay free; SleepTight+ adds DreamWrite—on-device transcription, full archive beyond the free typed window, and transcript-backed search—plus Morning Score, Sleep Debt, Ideal Bedtime Tonight, and Weekly Sleep Report.
+                                </p>
+                                <div class="featured-chips">
+                                    <span class="featured-chip">Local-first</span>
+                                    <span class="featured-chip">Finishable flow</span>
+                                    <span class="featured-chip">SleepTight+ optional</span>
+                                </div>
+                                <div class="split-actions">
+                                    <a href="apps/sleeptight/index.html" class="primary-button">Product details</a>
+                                </div>
+                            </div>
                         </div>
                     </article>
 
-                    <article class="featured-card card reveal reveal-delay product-card-home product-card-coming-soon">
-                        <div class="featured-header">
-                            <p class="card-label">Coming soon</p>
-                            <h3 class="featured-title">DreamWrite</h3>
-                            <p class="section-text">
-                                A focused writing tool built for clarity and completion. Write with intention, then step away.
-                            </p>
-                        </div>
-                        <div class="featured-chips">
-                            <span class="featured-chip">Finishable sessions</span>
-                            <span class="featured-chip">Calm by design</span>
-                        </div>
-                        <p class="coming-soon-label">Coming soon</p>
-                    </article>
-
-                    <article class="featured-card card reveal reveal-delay-2 product-card-home product-card-coming-soon">
-                        <div class="featured-header">
-                            <p class="card-label">Coming soon</p>
-                            <h3 class="featured-title">FlipFeed</h3>
-                            <p class="section-text">
-                                Live split-flap board showing ranked items that update in real time. Perfect for TVs, lobbies, and stream setups.
-                            </p>
-                        </div>
-                        <div class="featured-chips">
-                            <span class="featured-chip">Split-flap animation</span>
-                            <span class="featured-chip">Fullscreen mode</span>
-                            <span class="featured-chip">JSON or mock feed</span>
-                        </div>
-                        <div class="split-actions">
-                            <a href="https://etlabsflipfeed.vercel.app/" class="primary-button">Explore FlipFeed</a>
-                        </div>
-                    </article>
+                    <div class="products-secondary-row products-secondary-row-single">
+                        <article class="featured-card card reveal reveal-delay product-card-home product-card-coming-soon product-card-secondary">
+                            <div class="featured-header">
+                                <p class="card-label">Side experiment</p>
+                                <h3 class="featured-title">FlipFeed</h3>
+                                <p class="section-text">
+                                    A live split-flap board for displays and streams—separate from SleepTight, useful for post-launch download experiments and fun demos.
+                                </p>
+                            </div>
+                            <div class="featured-chips">
+                                <span class="featured-chip">Split-flap animation</span>
+                                <span class="featured-chip">Fullscreen mode</span>
+                                <span class="featured-chip">JSON or mock feed</span>
+                            </div>
+                            <div class="split-actions">
+                                <a href="https://etlabsflipfeed.vercel.app/" class="secondary-button">Open FlipFeed</a>
+                            </div>
+                        </article>
+                    </div>
                 </div>
 
                 <div class="split-actions products-cta reveal">
@@ -200,7 +199,7 @@
                     <p class="eyebrow">Studio</p>
                     <h2 class="section-title">ET Labs is building a portfolio of intentional software.</h2>
                     <p class="section-text">
-                        SleepTight is the first expression of the studio’s philosophy. Future products will follow the same principle: help people do something meaningful, then step aside.
+                        <strong>SleepTight: DreamWrite</strong> is the studio’s flagship—sleep timing, rituals, and private journaling in one iPhone app. Smaller experiments like FlipFeed may follow, but the main focus is tools that finish cleanly.
                     </p>
                     <div class="split-actions">
                         <a href="#products" class="secondary-button">See what ET Labs is building</a>

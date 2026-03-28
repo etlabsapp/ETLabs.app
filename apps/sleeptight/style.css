@@ -552,6 +552,16 @@ main,
     grid-template-columns:repeat(3, minmax(0, 1fr));
 }
 
+.steps-grid.four-up{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 900px){
+    .steps-grid.four-up{
+        grid-template-columns:1fr;
+    }
+}
+
 .step-card{
     padding:22px;
 }
@@ -868,4 +878,18 @@ main,
     .showcase-visual img{
         max-width:300px;
     }
+}
+
+/* Free vs + feature lists */
+.clean-list{
+    list-style:disc;
+    margin:0;
+    padding-left:1.25rem;
+    color:#c5c8dc;
+    line-height:1.65;
+    font-size:15px;
+}
+
+.clean-list li{
+    margin-bottom:10px;
 }
