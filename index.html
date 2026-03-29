@@ -14,6 +14,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Hide main chrome until logo intro finishes (first visit this session only); see assets/js/logo-intro.js -->
+    <script>
+    (function () {
+      try {
+        var SK = 'etlabs_logo_intro_v1';
+        var params = new URLSearchParams(location.search || '');
+        if (params.get('replayIntro') === '1' || params.get('logoIntro') === '1') {
+          try { sessionStorage.removeItem(SK); } catch (e) {}
+          document.documentElement.classList.remove('intro-complete');
+        }
+        var path = (location.pathname || '').replace(/\/$/, '') || '/';
+        var isHome = path === '/' || path === '/index.html' || /\/index\.html$/i.test(location.pathname);
+        if (!isHome || sessionStorage.getItem(SK)) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.documentElement.classList.add('intro-pending');
+      } catch (e) {}
+    })();
+    </script>
 </head>
 <body>
     <div class="bg-orb bg-orb-1"></div>
@@ -277,6 +295,17 @@
         </div>
     </footer>
 
+    <!-- Logo intro: Three r134 + GSAP 3.12.5 (see assets/js/logo-intro.js) -->
+    <div id="logo-intro-overlay" class="logo-intro-overlay" aria-hidden="true">
+        <button type="button" id="logo-intro-skip" class="logo-intro-skip" aria-label="Skip intro">Skip Intro</button>
+        <canvas id="logo-canvas"></canvas>
+        <div id="logo-intro-labs" class="logo-intro-labs" aria-hidden="true">
+            <span class="logo-intro-labs-char">L</span><span class="logo-intro-labs-char">a</span><span class="logo-intro-labs-char">b</span><span class="logo-intro-labs-char">s</span>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="assets/js/logo-intro.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
 </html>

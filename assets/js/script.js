@@ -34,25 +34,37 @@ if (productsTrigger && productsDropdown) {
   productsDropdown.addEventListener('click', (e) => e.stopPropagation());
 }
 
-const reveals = document.querySelectorAll('.reveal');
+/**
+ * Scroll reveals: wait for logo intro on index (html.intro-pending) so observers
+ * do not fire while the main site is invisible.
+ */
+function setupRevealAnimations() {
+  const reveals = document.querySelectorAll('.reveal');
 
-if ('IntersectionObserver' in window && reveals.length) {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.14,
-      rootMargin: '0px 0px -40px 0px'
-    }
-  );
+  if ('IntersectionObserver' in window && reveals.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.14,
+        rootMargin: '0px 0px -40px 0px',
+      }
+    );
 
-  reveals.forEach((item) => observer.observe(item));
+    reveals.forEach((item) => observer.observe(item));
+  } else {
+    reveals.forEach((item) => item.classList.add('is-visible'));
+  }
+}
+
+if (document.documentElement.classList.contains('intro-pending')) {
+  window.addEventListener('logo-intro-complete', setupRevealAnimations, { once: true });
 } else {
-  reveals.forEach((item) => item.classList.add('is-visible'));
+  setupRevealAnimations();
 }
