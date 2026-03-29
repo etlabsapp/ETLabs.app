@@ -1,0 +1,5 @@
+/* Loading shell before client bundle (matches intro backdrop). */
+.introChecking {
+  min-height: 100vh;
+  background: radial-gradient(ellipse 120% 80% at 50% 45%, #0c1224 0%, #030308 55%, #010105 100%);
+}

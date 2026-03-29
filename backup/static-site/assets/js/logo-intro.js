@@ -76,11 +76,13 @@
     labsDuration: 0.45,
     zoomOutDuration: 1.1,
     settleFade: 0.55,
-    tubeRadius: 0.055,
+    tubeRadius: 0.068,
     tubeRadialSegments: 10,
     tubeMaxSegments: 180,
     tubeMaxSegmentsMobile: 96,
     skipFade: 0.25,
+    /** Digital countdown: seconds between 03 → 00 ticks (broadcast-style beats). */
+    countdownStep: 0.38,
   };
 
   /**
@@ -162,6 +164,66 @@
     m2.dispose();
     m1.dispose();
     return rt.texture;
+  }
+
+  /**
+   * Hard-cut broadcast beats: split panels + digital ticks + white flashes (runs in parallel with WebGL ribbon).
+   */
+  function attachBroadcastBeats(tl, ctx) {
+    const { digitsEl, countRoot, flash, leftPanel, rightPanel } = ctx;
+    if (!digitsEl || !countRoot || !flash || !leftPanel || !rightPanel) return;
+
+    const step = CONFIG.countdownStep;
+    const seq = [
+      { label: '03', leanLeft: true, flash: 0.12 },
+      { label: '02', leanLeft: false, flash: 0.16 },
+      { label: '01', leanLeft: true, flash: 0.18 },
+      { label: '00', leanLeft: false, flash: 0.42, holdFlash: true },
+    ];
+
+    tl.set(countRoot, { visibility: 'visible', opacity: 1 }, 0);
+    tl.set(flash, { opacity: 0 }, 0);
+    tl.set([leftPanel, rightPanel], { opacity: 0 }, 0);
+
+    seq.forEach((beat, i) => {
+      const t = i * step;
+      tl.call(
+        () => {
+          digitsEl.textContent = beat.label;
+        },
+        [],
+        t
+      );
+      tl.fromTo(
+        digitsEl,
+        { scale: 1.4, opacity: 0.2 },
+        { scale: 1, opacity: 1, duration: 0.085, ease: 'power4.out' },
+        t
+      );
+      const L = beat.leanLeft;
+      tl.fromTo(
+        leftPanel,
+        { opacity: 0, xPercent: L ? -14 : 0 },
+        { opacity: L ? 0.72 : 0.14, xPercent: 0, duration: 0.05, ease: 'none' },
+        t
+      );
+      tl.fromTo(
+        rightPanel,
+        { opacity: 0, xPercent: L ? 0 : 14 },
+        { opacity: L ? 0.14 : 0.68, xPercent: 0, duration: 0.05, ease: 'none' },
+        t
+      );
+      tl.to([leftPanel, rightPanel], { opacity: 0, duration: 0.22, ease: 'power1.in' }, t + 0.07);
+      tl.fromTo(flash, { opacity: 0 }, { opacity: beat.flash, duration: 0.028, ease: 'none' }, t);
+      tl.to(flash, { opacity: 0, duration: 0.14, ease: 'power2.in' }, t + 0.03);
+      if (beat.holdFlash) {
+        tl.to(flash, { opacity: 0.62, duration: 0.045, ease: 'none' }, t + 0.06);
+        tl.to(flash, { opacity: 0, duration: 0.28, ease: 'power3.inOut' }, t + 0.11);
+      }
+    });
+
+    const hideT = seq.length * step + 0.1;
+    tl.to(countRoot, { autoAlpha: 0, duration: 0.055, ease: 'none' }, hideT);
   }
 
   function disposeObject3D(obj) {
@@ -274,6 +336,11 @@
     const skipBtn = document.getElementById('logo-intro-skip');
     const labsRoot = document.getElementById('logo-intro-labs');
     const labsLetters = labsRoot ? Array.from(labsRoot.querySelectorAll('.logo-intro-labs-char')) : [];
+    const digitsEl = document.getElementById('logo-intro-countdown-digits');
+    const countRoot = document.getElementById('logo-intro-countdown');
+    const flashEl = overlay.querySelector('.logo-intro-hardflash');
+    const leftPanel = overlay.querySelector('.logo-intro-split-panel--left');
+    const rightPanel = overlay.querySelector('.logo-intro-split-panel--right');
 
     if (!overlay || !canvas) {
       console.warn('[logo-intro] Missing overlay or canvas — aborting.');
@@ -283,6 +350,14 @@
       window.dispatchEvent(new CustomEvent('logo-intro-complete', { detail: { skipped: true } }));
       return;
     }
+
+    /* Overlay is `display:none` in CSS until here — otherwise clientWidth/Height stay 0 and WebGL draws nothing. */
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+    overlay.setAttribute('aria-hidden', 'false');
+    const broadcastRoot = document.getElementById('logo-intro-broadcast');
+    if (broadcastRoot) broadcastRoot.setAttribute('aria-hidden', 'false');
+    void overlay.offsetHeight;
 
     const isMobile = window.innerWidth < 768;
     const maxTubeSeg = isMobile ? CONFIG.tubeMaxSegmentsMobile : CONFIG.tubeMaxSegments;
@@ -315,10 +390,16 @@
     }
 
     function setSize() {
-      const w = overlay.clientWidth;
-      const h = overlay.clientHeight;
+      let w = overlay.clientWidth;
+      let h = overlay.clientHeight;
+      if (w < 2 || h < 2) {
+        w = window.innerWidth || 1;
+        h = window.innerHeight || 1;
+      }
       const scale = isMobile ? 0.92 : 1;
-      renderer.setSize(Math.floor(w * scale), Math.floor(h * scale), false);
+      const bw = Math.max(2, Math.floor(w * scale));
+      const bh = Math.max(2, Math.floor(h * scale));
+      renderer.setSize(bw, bh, false);
       canvas.style.width = '100%';
       canvas.style.height = '100%';
       camera.aspect = w / h;
@@ -346,27 +427,17 @@
     const ribbonGroup = new THREE.Group();
     scene.add(ribbonGroup);
 
-    // Glass / liquid metal: transmission + clearcoat + emissive warm core
-    const ribbonMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      metalness: 0.15,
-      roughness: 0.12,
-      transmission: 0.92,
-      thickness: 0.65,
-      ior: 1.52,
-      clearcoat: 1,
-      clearcoatRoughness: 0.08,
-      emissive: new THREE.Color(0xff5a1a),
-      emissiveIntensity: 0.35,
-      envMapIntensity: 1.25,
-      transparent: true,
-      opacity: 1,
+    // Glowing metallic ribbon (standard material — reliable on all WebGL; transmission/glass often reads invisible).
+    const ribbonMat = new THREE.MeshStandardMaterial({
+      color: 0xffdcc4,
+      metalness: 0.72,
+      roughness: 0.2,
+      emissive: new THREE.Color(0xff3d00),
+      emissiveIntensity: 0.95,
+      envMapIntensity: scene.environment ? 1.2 : 0,
       side: THREE.DoubleSide,
     });
-    if (scene.environment) {
-      ribbonMat.envMap = scene.environment;
-      ribbonMat.needsUpdate = true;
-    }
+    if (scene.environment) ribbonMat.envMap = scene.environment;
 
     let tubeMesh = null;
 
@@ -429,6 +500,14 @@
     });
     state.mainTimeline = tl;
 
+    attachBroadcastBeats(tl, {
+      digitsEl,
+      countRoot,
+      flash: flashEl,
+      leftPanel,
+      rightPanel,
+    });
+
     // Phase A — grow tube segments + slight twist of group (liquid flow)
     const tubeState = { seg: 8 };
     tl.to(
@@ -450,17 +529,6 @@
         ribbonGroup.rotation,
         { z: 0, y: 0, duration: CONFIG.etRibbonDuration * 0.45, ease: 'power2.inOut' },
         CONFIG.etRibbonDuration * 0.45
-      )
-      .to(
-        ribbonMat,
-        {
-          emissiveIntensity: 0.85,
-          duration: CONFIG.etRibbonDuration * 0.5,
-          yoyo: true,
-          repeat: 1,
-          ease: 'sine.inOut',
-        },
-        0
       );
 
     // Phase B — “Labs” assembly (DOM)
@@ -513,7 +581,9 @@
       state.rafId = requestAnimationFrame(tick);
       const t = clock.getElapsedTime();
       // Subtle iridescent-ish shimmer via emissive pulse (r134 has no built-in iridescence on MeshPhysicalMaterial)
-      ribbonMat.emissiveIntensity = 0.35 + Math.sin(t * 3.2) * 0.12 + Math.sin(t * 5.1) * 0.06;
+      const base = 0.95;
+      ribbonMat.emissiveIntensity =
+        base + Math.sin(t * 3.2) * 0.2 + Math.sin(t * 5.1) * 0.1 + Math.sin(t * 1.7) * 0.06;
       renderer.render(scene, camera);
     }
     tick();
@@ -523,6 +593,22 @@
       tl.kill();
       gsap.killTweensOf(overlay);
       if (labsLetters.length) gsap.killTweensOf(labsLetters);
+      const broadcastEls = [flashEl, leftPanel, rightPanel, countRoot, digitsEl].filter(Boolean);
+      if (broadcastEls.length) gsap.killTweensOf(broadcastEls);
+      if (countRoot) {
+        countRoot.style.visibility = 'hidden';
+        countRoot.style.opacity = '0';
+      }
+      if (flashEl) flashEl.style.opacity = '0';
+      if (leftPanel) {
+        leftPanel.style.opacity = '0';
+        gsap.set(leftPanel, { clearProps: 'transform' });
+      }
+      if (rightPanel) {
+        rightPanel.style.opacity = '0';
+        gsap.set(rightPanel, { clearProps: 'transform' });
+      }
+      if (digitsEl) gsap.set(digitsEl, { clearProps: 'transform,opacity' });
       gsap.to(overlay, {
         opacity: 0,
         duration: CONFIG.skipFade,
@@ -540,9 +626,9 @@
       });
     }
 
-    overlay.style.display = 'flex';
-    overlay.style.opacity = '1';
-    overlay.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(() => {
+      if (!destroyed) setSize();
+    });
   }
 
   if (document.readyState === 'loading') {

@@ -1,29 +1,27 @@
 # Cloudflare: Main site (etlabs.app) build settings
 
-Use these settings in the **etlabsapp** project (Workers & Pages) so the static main site builds and deploys.
+The main site is the **Next.js app** in **`apps/marketing`**. Legacy static-root settings are obsolete; see `backup/static-site/` for the old layout.
 
-## In Cloudflare: etlabsapp → Settings → Builds & deployments (or Build configuration)
+## In Cloudflare: etlabsapp → Settings → Builds & deployments
 
 | Setting | Value |
 |--------|--------|
-| **Root directory** | Leave **empty** or `/` (repo root) |
-| **Framework preset** | **None** |
-| **Build command** | `exit 0` or `npm run build` |
-| **Build output directory** | Leave **empty** or `.` |
+| **Root directory** | `apps/marketing` |
+| **Framework preset** | **Next.js** (or leave auto-detect) |
+| **Build command** | `npm run build` (default) |
+| **Build output directory** | `.next` (Cloudflare’s Next preset usually sets this) |
+| **Node version** | 18.x or 20.x (match local) |
 
-## Why
+## Environment
 
-- The main site is static HTML/CSS/JS at the repo root; no real build step is needed.
-- `exit 0` (or `npm run build`, which runs `exit 0`) makes the build succeed so Cloudflare publishes the root folder.
-- Empty output directory (or `.`) means “use the root as the output.”
+- **`NEXT_PUBLIC_SITE_URL`** — e.g. `https://etlabs.app` (for `metadataBase` / absolute OG URLs).
 
 ## After changing
 
-1. Save the settings.
-2. Go to **Deployments** → **Create deployment** or **Redeploy** the latest commit.
-3. Wait for the build to finish (should show success).
-4. Then **etlabs.app/apps/flipfeed/** will serve the redirect to the FlipFeed app.
+1. Save settings and redeploy.
+2. Custom domains: `etlabs.app`, `www.etlabs.app` on this project.
+3. Static SleepTight HTML is served from **`/apps/sleeptight/*`** via `public/apps/sleeptight/`.
 
-## If the build still fails
+## If the build fails
 
-Open the **failed** deployment → **Build log**, copy the **error** (last 20–30 lines), and use it to fix the config or the repo.
+Open the deployment **Build log**, copy the last 20–30 lines, and fix the reported error (deps, Node version, or framework preset).
