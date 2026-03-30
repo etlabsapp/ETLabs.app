@@ -1,39 +1,28 @@
 # ET Labs
 
-Independent software studio: main marketing site is **Next.js** in `apps/marketing`. Legacy static HTML/CSS/JS is archived under **`backup/static-site/`**.
+Independent software studio.
 
-## Structure
+## Main marketing site (plain HTML / CSS / JS)
 
-- **`apps/marketing/`** — ET Labs homepage (Next.js 14, App Router), philosophy/products/studio/contact stubs, WebGL logo intro, static SleepTight app under `public/apps/sleeptight/`
-- **`backup/static-site/`** — frozen copy of the old root `index.html`, sibling pages, `assets/`, and `sleeptight/` (see `NOTICE.txt` there)
-- **`apps/flipfeed/`** — FlipFeed: Next.js split-flap board (`npm run dev` from that directory)
-- **`apps/dashboard/`** — ET Labs Dashboard (port 3002 with `npm run dev`)
+The live site files are at the **repository root**: `index.html`, `assets/`, `philosophy.html`, `contact.html`, etc., plus **`apps/sleeptight/`** for SleepTight. No intro animation, no React.
 
-## Main site: local dev
-
-From the **repository root**:
+**Local dev** (from repo root):
 
 ```bash
-npm run install:marketing
 npm run dev
 ```
 
-Opens the marketing app (default port **3003**).
+Serves the repo root at **http://localhost:3000** (homepage is **`index.html`**).
 
-## Deploy etlabs.app (main site)
+**Deploy etlabs.app:** Point your static host (e.g. Cloudflare Pages) at the **repo root** (empty root directory or `.`), build `exit 0` or empty, output `.`. See `docs/CLOUDFLARE-MAIN-SITE-BUILD.md`.
 
-Point your host at **`apps/marketing`** as the project root (not the repo root).
+## Also in this repo
 
-- **Vercel / Cloudflare Pages / Railway:** Framework **Next.js**, install command `npm install`, build `npm run build`, output `.next` (platform default).
-- Set **`NEXT_PUBLIC_SITE_URL`** to your canonical origin (e.g. `https://etlabs.app`) for absolute Open Graph URLs.
-
-FlipFeed and Dashboard stay separate projects (`apps/flipfeed`, `apps/dashboard`) with their own env vars.
-
-## Assets
-
-- **Marketing / OG:** Images live under `apps/marketing/public/` (e.g. `/apps/sleeptight/images/hero-phone.webp`).
-- **SleepTight static pages:** Edit files in `apps/marketing/public/apps/sleeptight/` (or restore from `backup/static-site/sleeptight/` and copy over).
+- **`apps/marketing/`** — Next.js + logo intro (optional; `npm run dev:marketing`)
+- **`backup/static-site/`** — older snapshot
+- **`apps/flipfeed/`** — FlipFeed (`npm run dev` from that directory)
+- **`apps/dashboard/`** — ET Labs Dashboard (port 3002)
 
 ## Scripts
 
-- **`scripts/build_social_banner.py`** — utility for social images (unchanged).
+- **`scripts/build_social_banner.py`** — utility for social images

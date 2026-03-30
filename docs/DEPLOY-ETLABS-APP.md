@@ -8,41 +8,42 @@ Checklist for production at **etlabs.app**.
 
 | Part | What it is | Where it lives |
 |------|------------|----------------|
-| **`apps/marketing/`** | Next.js main site + logo intro | Deploy as **etlabs.app** (project root = `apps/marketing`) |
-| **`apps/marketing/public/apps/sleeptight/`** | SleepTight static HTML | Served at **`/apps/sleeptight/*`** on the same deployment |
-| **`backup/static-site/`** | Archived pre-Next static site | Not deployed; reference only |
+| **Repo root** | **Main marketing site** — `index.html`, HTML pages, `assets/`, JS (no intro, no React) | Deploy **repo root** for **etlabs.app** |
+| **`apps/sleeptight/`** | SleepTight static HTML | **`/apps/sleeptight/*`** on the same deployment |
+| **`apps/marketing/`** | Optional Next.js + logo intro | Not required for the static main site |
+| **`backup/static-site/`** | Older snapshot | Reference only |
 | **`apps/flipfeed/`** | Next.js FlipFeed | **flipfeed.etlabs.app** (or separate host) |
 | **`apps/dashboard/`** | Next.js Dashboard | **dashboard.etlabs.app** (or separate host) |
 
 ---
 
-## Ready to move
+## Main site (static) — recommended
 
-- **Main site + SleepTight paths** — One Next.js build from **`apps/marketing`**. Configure **`NEXT_PUBLIC_SITE_URL`** for metadata.
+1. In **Cloudflare Pages** (or similar), set:
+   - **Root directory:** empty (repo root) or `.`
+   - **Build command:** `exit 0` or leave empty
+   - **Build output:** `.` (current directory)
+
+2. Point **etlabs.app** DNS at that project.
+
+3. No env vars required for the static pages.
+
+---
+
+## Optional: Next.js marketing app
+
+If you still use **`apps/marketing`**, configure **`NEXT_PUBLIC_SITE_URL`** and deploy that project separately. It is **not** the same as the static files at repo root.
+
+---
+
+## FlipFeed & Dashboard
+
 - **FlipFeed** — Next.js; env: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`; optional `OPENWEATHER_API_KEY`.
 - **Dashboard** — Next.js; same Supabase env vars.
 - **Supabase** — One project can serve FlipFeed and Dashboard. Run migrations as needed.
 
 ---
 
-## Before you go live
+## Links
 
-1. **Domain** — Point **etlabs.app** (and www) at the **`apps/marketing`** deployment.
-
-2. **Thank-you / forms** — Waitlist thank-you is at **`/thank-you`** (React). Point form actions to your form provider or a server action; legacy **`thank-you.html`** is in **`backup/static-site/`**.
-
-3. **FlipFeed** — Deploy `apps/flipfeed` separately; prefer **flipfeed.etlabs.app**.
-
-4. **Dashboard** — Deploy `apps/dashboard` separately; prefer **dashboard.etlabs.app**.
-
-5. **Links** — Marketing app links to FlipFeed’s public URL and `/apps/sleeptight/`. Update if you use different domains.
-
-6. **Supabase** — Add production redirect URLs for each deployed origin.
-
----
-
-## Yes / you still need to
-
-- Deploy **apps/marketing** for the main domain.
-- Deploy FlipFeed and Dashboard if you use them.
-- Set env vars and DNS. Legacy static files are only in **`backup/static-site/`** for reference.
+Root HTML files link to FlipFeed’s public URL and **`/apps/sleeptight/`** — edit those files if your domains change.

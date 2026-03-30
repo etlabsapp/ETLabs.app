@@ -2,10 +2,12 @@
   "name": "etlabs-site",
   "private": true,
   "scripts": {
+    "dev": "npx --yes serve@14 . -l 3000",
+    "build": "exit 0",
+    "lint": "echo \"No linter for static HTML\"",
     "install:marketing": "npm install --prefix apps/marketing",
-    "dev": "npm run dev --prefix apps/marketing",
-    "build": "npm run build --prefix apps/marketing",
-    "start": "npm run start --prefix apps/marketing",
-    "lint": "npm run lint --prefix apps/marketing"
+    "dev:marketing": "npm run dev --prefix apps/marketing",
+    "build:marketing": "npm run build --prefix apps/marketing",
+    "start:marketing": "npm run start --prefix apps/marketing"
   }
 }

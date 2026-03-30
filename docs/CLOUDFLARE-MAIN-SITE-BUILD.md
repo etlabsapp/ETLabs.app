@@ -1,27 +1,25 @@
 # Cloudflare: Main site (etlabs.app) build settings
 
-The main site is the **Next.js app** in **`apps/marketing`**. Legacy static-root settings are obsolete; see `backup/static-site/` for the old layout.
+The main site is **plain static HTML/CSS/JS** at the **repository root** (`index.html`, `assets/`, `apps/sleeptight/`, etc.). No Next.js build.
 
-## In Cloudflare: etlabsapp → Settings → Builds & deployments
+## In Cloudflare Pages: project for etlabs.app → Settings → Builds & deployments
 
 | Setting | Value |
 |--------|--------|
-| **Root directory** | `apps/marketing` |
-| **Framework preset** | **Next.js** (or leave auto-detect) |
-| **Build command** | `npm run build` (default) |
-| **Build output directory** | `.next` (Cloudflare’s Next preset usually sets this) |
-| **Node version** | 18.x or 20.x (match local) |
+| **Root directory** | Leave **empty** or `/` (repo root) |
+| **Framework preset** | **None** |
+| **Build command** | `exit 0` or leave empty |
+| **Build output directory** | Leave **empty** or `.` (current directory) |
 
-## Environment
-
-- **`NEXT_PUBLIC_SITE_URL`** — e.g. `https://etlabs.app` (for `metadataBase` / absolute OG URLs).
+No environment variables are required for the static pages.
 
 ## After changing
 
 1. Save settings and redeploy.
-2. Custom domains: `etlabs.app`, `www.etlabs.app` on this project.
-3. Static SleepTight HTML is served from **`/apps/sleeptight/*`** via `public/apps/sleeptight/`.
+2. Attach custom domains: `etlabs.app`, `www.etlabs.app`.
 
-## If the build fails
+SleepTight pages live at **`/apps/sleeptight/*`**.
 
-Open the deployment **Build log**, copy the last 20–30 lines, and fix the reported error (deps, Node version, or framework preset).
+## Optional Next.js app
+
+The older marketing app is in **`apps/marketing/`** if you need it; it is **not** used for this static main-site deploy.
