@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products | ET Labs</title>
     <meta name="description" content="Explore ET Labs products, starting with SleepTight—a calm, finishable sleep and nap guidance app.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -16,10 +19,11 @@
         <div class="container">
             <div class="nav-shell">
                 <a href="index.html" class="brand-mark" aria-label="ET Labs home">
-                    <div class="brand-icon">ET</div>
-                    <div class="brand-copy">
-                        <span class="brand-title">ET Labs</span>
-                    </div>
+                    <img
+                        src="assets/images/etlabs-logo.svg"
+                        alt="ET Labs logo"
+                        style="height: 72px; width: auto; display: block;"
+                    >
                 </a>
 
                 <button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
@@ -33,7 +37,8 @@
                         <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="products-dropdown" id="products-dropdown-trigger">Products</button>
                         <div class="nav-dropdown-menu" id="products-dropdown" role="menu">
                             <a href="apps/sleeptight/index.html" role="menuitem">SleepTight: DreamWrite</a>
-                            <a href="https://etlabsflipfeed.vercel.app/" role="menuitem">FlipFeed <em>(Side experiment)</em></a>
+                            <a href="apps/lattice3/index.html" role="menuitem">Lattice³ <em>(Coming soon)</em></a>
+                            <a href="https://etlabsflipfeed.vercel.app/" role="menuitem">FlipFeed <em>(Labs)</em></a>
                         </div>
                     </div>
                     <a href="studio.html">Studio</a>
@@ -60,7 +65,7 @@
                             <img src="apps/sleeptight/images/hero-phone.webp" alt="SleepTight app preview on iPhone">
                         </div>
                         <div class="product-block-content">
-                            <p class="card-label">Submitted to the App Store</p>
+                            <p class="card-label">On the App Store</p>
                             <h2 class="section-title">SleepTight: DreamWrite</h2>
                             <p class="section-text">
                                 iPhone app for bedtime planning, real alarms, naps, guided rituals (prayer, affirmations, gratitude, or reflection), morning and nap check-ins, and private journaling. Voice memos are free; SleepTight+ adds DreamWrite transcription, full dream archive beyond the free typed window, transcript-backed search, and sleep intelligence on the clock.
@@ -80,7 +85,7 @@
 
                     <article class="product-block card product-block-coming-soon">
                         <div class="product-block-content">
-                            <p class="card-label">Side experiment</p>
+                            <p class="card-label">Labs</p>
                             <h2 class="section-title">FlipFeed</h2>
                             <p class="section-text">
                                 Live split-flap board showing ranked items that update on a timer. Per-character flip animation, fullscreen mode, and optional JSON feed. Built for displays, TVs, and stream setups.
@@ -96,6 +101,26 @@
                             </div>
                         </div>
                     </article>
+
+                    <article class="product-block card product-block-coming-soon">
+                        <div class="product-block-content">
+                            <p class="card-label">Coming soon</p>
+                            <h2 class="section-title">Lattice³</h2>
+                            <p class="section-text">
+                                A true 3D crossword lattice you rotate and solve through space. Fill words along X, Y, and Z—then use slice view and focus mode to stay oriented.
+                            </p>
+                            <ul class="clean-list">
+                                <li>Handcrafted 4×4×4 puzzles for the MVP</li>
+                                <li>Clues grouped by axis (X / Y / Z)</li>
+                                <li>Slice view + auto-orient to reduce confusion</li>
+                                <li>Relaxed and Assist validation modes</li>
+                            </ul>
+                            <div class="split-actions">
+                                <a href="apps/lattice3/index.html" class="primary-button">View product</a>
+                                <a href="contact.html" class="secondary-button">Get notified</a>
+                            </div>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
@@ -104,7 +129,9 @@
     <footer class="site-footer">
         <div class="container footer-shell">
             <div>
-                <div class="footer-brand">ET Labs</div>
+                <div class="footer-brand">
+                    <img src="assets/images/etlabs-logo.svg" alt="ET Labs logo" style="height: 70px; width: auto; display: block;">
+                </div>
                 <p class="footer-copy">Software should support life, not consume it.</p>
             </div>
             <div class="footer-links">
@@ -112,6 +139,7 @@
                 <a href="products.html">Products</a>
                 <a href="studio.html">Studio</a>
                 <a href="apps/sleeptight/index.html">SleepTight</a>
+                <a href="apps/lattice3/index.html">Lattice³</a>
                 <a href="https://etlabsflipfeed.vercel.app/">FlipFeed</a>
                 <a href="contact.html">Contact</a>
             </div>

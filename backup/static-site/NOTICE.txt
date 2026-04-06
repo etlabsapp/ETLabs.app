@@ -1,9 +1,0 @@
-Archive of the pre-Next.js marketing site (moved when etlabs.app migrated to apps/marketing).
-
-Contents:
-- Root HTML pages (index, philosophy, products, studio, contact, thank-you)
-- assets/ (CSS, JS, images used by those pages)
-- sleeptight/ (static SleepTight landing; live copy is served from apps/marketing/public/apps/sleeptight)
-- _orphan-next-src-root/ (optional) old unused App Router placeholders at repo root
-
-To restore locally for reference: open index.html via a static server from this folder (paths assume this directory layout).

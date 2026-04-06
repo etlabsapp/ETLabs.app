@@ -19,7 +19,6 @@ Serves the repo root at **http://localhost:3000** (homepage is **`index.html`**)
 ## Also in this repo
 
 - **`apps/marketing/`** — Next.js + logo intro (optional; `npm run dev:marketing`)
-- **`backup/static-site/`** — older snapshot
 - **`apps/flipfeed/`** — FlipFeed (`npm run dev` from that directory)
 - **`apps/dashboard/`** — ET Labs Dashboard (port 3002)
 

@@ -62,7 +62,7 @@ export default function HomeMain() {
           <div className="hero-product-strip-copy reveal">
             <p className="eyebrow">Flagship app</p>
             <h2 className="hero-product-strip-title">SleepTight: DreamWrite</h2>
-            <p className="hero-product-strip-status">Submitted to the Apple App Store · listing live soon</p>
+            <p className="hero-product-strip-status">Available on the App Store</p>
             <p className="section-text hero-product-strip-lead">
               Sleep and nap guidance designed to help people rest better—healthier routines without another screen
               that keeps you awake. Calm interface, finishable flow, privacy-first.
@@ -76,9 +76,14 @@ export default function HomeMain() {
               <Link href="/apps/sleeptight/index.html" className="primary-button">
                 Product details
               </Link>
-              <Link href="/apps/sleeptight/index.html#app-store" className="secondary-button">
-                App Store status
-              </Link>
+              <a
+                href="https://apps.apple.com/app/sleeptight-dreamwrite/id6760793422"
+                className="secondary-button"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Get on the App Store
+              </a>
             </div>
           </div>
         </div>
@@ -145,7 +150,7 @@ export default function HomeMain() {
                 </div>
                 <div className="product-featured-copy">
                   <p className="featured-tag">Featured</p>
-                  <p className="card-label">Submitted to the App Store</p>
+                  <p className="card-label">On the App Store</p>
                   <h3 className="featured-title">SleepTight: DreamWrite</h3>
                   <p className="section-text">
                     Sleep timing intelligence, real alarms, naps, guided bedtime rituals, and private dream and
@@ -162,9 +167,14 @@ export default function HomeMain() {
                     <Link href="/apps/sleeptight/index.html" className="primary-button">
                       Product details
                     </Link>
-                    <Link href="/apps/sleeptight/index.html#app-store" className="secondary-button">
-                      App Store status
-                    </Link>
+                    <a
+                      href="https://apps.apple.com/app/sleeptight-dreamwrite/id6760793422"
+                      className="secondary-button"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Get on the App Store
+                    </a>
                   </div>
                 </div>
               </div>

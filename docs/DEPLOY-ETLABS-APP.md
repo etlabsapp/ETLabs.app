@@ -11,7 +11,6 @@ Checklist for production at **etlabs.app**.
 | **Repo root** | **Main marketing site** — `index.html`, HTML pages, `assets/`, JS (no intro, no React) | Deploy **repo root** for **etlabs.app** |
 | **`apps/sleeptight/`** | SleepTight static HTML | **`/apps/sleeptight/*`** on the same deployment |
 | **`apps/marketing/`** | Optional Next.js + logo intro | Not required for the static main site |
-| **`backup/static-site/`** | Older snapshot | Reference only |
 | **`apps/flipfeed/`** | Next.js FlipFeed | **flipfeed.etlabs.app** (or separate host) |
 | **`apps/dashboard/`** | Next.js Dashboard | **dashboard.etlabs.app** (or separate host) |
 
