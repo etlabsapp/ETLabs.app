@@ -7,6 +7,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/|run|test).*)",
+    /*
+     * Skip static assets and API — fewer edge invocations, less chance of timeout.
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$|api/|run|test).*)",
   ],
 };
