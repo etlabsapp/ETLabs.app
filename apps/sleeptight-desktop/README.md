@@ -31,7 +31,7 @@ If `cd` says “no such file,” find the folder in Finder, drag it onto the Ter
    `~/Library/Application Support/sleeptight-desktop/`).
 3. Edit **`config.json`** using `config.example.json` in this folder as a reference:
    - `ascPrivateKeyPath` — full path to your App Store Connect **`.p8`** key file
-   - `ascKeyId`, `ascIssuerId`, `vendorNumber`, `appAppleId` — from App Store Connect (same as the FlipFeed `ASC_*` setup)
+   - `ascKeyId`, `ascIssuerId`, `vendorNumber`, `appAppleId` — from App Store Connect (same fields as server-side `ASC_*` env vars if you use them elsewhere)
 
 Save the file; the next refresh will pick it up.
 

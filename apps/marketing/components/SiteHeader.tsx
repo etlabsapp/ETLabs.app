@@ -68,9 +68,9 @@ export default function SiteHeader() {
                 <Link href="/apps/sleeptight/index.html" role="menuitem" onClick={closeProducts}>
                   SleepTight: DreamWrite
                 </Link>
-                <a href="https://etlabsflipfeed.vercel.app/" role="menuitem" onClick={closeProducts}>
-                  FlipFeed <em>(Side experiment)</em>
-                </a>
+                <Link href="/apps/lattice3/index.html" role="menuitem" onClick={closeProducts}>
+                  Lattice³ <em>(Coming soon)</em>
+                </Link>
               </div>
             </div>
             <Link href="/studio" onClick={() => setMenuOpen(false)}>

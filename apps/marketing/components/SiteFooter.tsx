@@ -19,7 +19,7 @@ export default function SiteFooter() {
           <Link href="/products">Products</Link>
           <Link href="/studio">Studio</Link>
           <Link href="/apps/sleeptight/index.html">SleepTight</Link>
-          <a href="https://etlabsflipfeed.vercel.app/">FlipFeed</a>
+          <Link href="/apps/lattice3/index.html">Lattice³</Link>
           <Link href="/contact">Contact</Link>
         </div>
       </div>

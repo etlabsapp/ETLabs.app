@@ -11,7 +11,7 @@ Checklist for production at **etlabs.app**.
 | **Repo root** | **Main marketing site** — `index.html`, HTML pages, `assets/`, JS (no intro, no React) | Deploy **repo root** for **etlabs.app** |
 | **`apps/sleeptight/`** | SleepTight static HTML | **`/apps/sleeptight/*`** on the same deployment |
 | **`apps/marketing/`** | Optional Next.js + logo intro | Not required for the static main site |
-| **`apps/flipfeed/`** | Next.js FlipFeed | **flipfeed.etlabs.app** (or separate host) |
+| **`apps/flipfeed/`** | Next.js (internal; not promoted on etlabs.app) | Separate deploy if needed |
 | **`apps/dashboard/`** | Next.js Dashboard | **dashboard.etlabs.app** (or separate host) |
 
 ---
@@ -35,14 +35,14 @@ If you still use **`apps/marketing`**, configure **`NEXT_PUBLIC_SITE_URL`** and 
 
 ---
 
-## FlipFeed & Dashboard
+## Optional apps (Dashboard / FlipFeed)
 
-- **FlipFeed** — Next.js; env: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`; optional `OPENWEATHER_API_KEY`.
-- **Dashboard** — Next.js; same Supabase env vars.
-- **Supabase** — One project can serve FlipFeed and Dashboard. Run migrations as needed.
+- **Dashboard** — Next.js; Supabase env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+- **FlipFeed** — Next.js in `apps/flipfeed/`; same Supabase pattern if you deploy it; optional `OPENWEATHER_API_KEY`.
+- **Supabase** — One project can serve multiple apps. Run migrations as needed.
 
 ---
 
 ## Links
 
-Root HTML files link to FlipFeed’s public URL and **`/apps/sleeptight/`** — edit those files if your domains change.
+Root HTML links to **`/apps/sleeptight/`** and other product pages — edit those paths if your domains or structure change.

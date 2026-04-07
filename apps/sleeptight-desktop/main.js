@@ -97,6 +97,9 @@ function createWindow() {
     backgroundColor: "#0d0d0f",
   });
 
+  mainWindow.webContents.once("did-finish-load", () => {
+    void fetchAndBroadcast();
+  });
   mainWindow.loadFile(path.join(__dirname, "renderer", "index.html"));
 
   mainWindow.on("closed", () => {
@@ -107,7 +110,6 @@ function createWindow() {
 app.whenReady().then(() => {
   ensureConfigExample();
   createWindow();
-  fetchAndBroadcast();
   pollTimer = setInterval(fetchAndBroadcast, POLL_MS);
 
   app.on("activate", () => {

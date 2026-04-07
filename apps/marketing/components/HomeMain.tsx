@@ -183,22 +183,22 @@ export default function HomeMain() {
             <div className="products-secondary-row products-secondary-row-single">
               <article className="featured-card card reveal reveal-delay product-card-home product-card-coming-soon product-card-secondary">
                 <div className="featured-header">
-                  <p className="card-label">Side experiment</p>
-                  <h3 className="featured-title">FlipFeed</h3>
+                  <p className="card-label">Coming soon</p>
+                  <h3 className="featured-title">Lattice³</h3>
                   <p className="section-text">
-                    A live split-flap board for displays and streams—separate from SleepTight, useful for post-launch
-                    download experiments and fun demos.
+                    A true 3D crossword lattice you can rotate and solve along the X, Y, and Z axes. Slice view and
+                    focus mode keep it satisfying—not confusing.
                   </p>
                 </div>
                 <div className="featured-chips">
-                  <span className="featured-chip">Split-flap animation</span>
-                  <span className="featured-chip">Fullscreen mode</span>
-                  <span className="featured-chip">JSON or mock feed</span>
+                  <span className="featured-chip">4×4×4 MVP</span>
+                  <span className="featured-chip">Slice view</span>
+                  <span className="featured-chip">Clues by axis</span>
                 </div>
                 <div className="split-actions">
-                  <a href="https://etlabsflipfeed.vercel.app/" className="secondary-button">
-                    Open FlipFeed
-                  </a>
+                  <Link href="/apps/lattice3/index.html" className="secondary-button">
+                    View product
+                  </Link>
                 </div>
               </article>
             </div>
@@ -222,8 +222,7 @@ export default function HomeMain() {
             <h2 className="section-title">ET Labs is building a portfolio of intentional software.</h2>
             <p className="section-text">
               <strong>SleepTight: DreamWrite</strong> is the studio’s flagship—sleep timing, rituals, and private
-              journaling in one iPhone app. Smaller experiments like FlipFeed may follow, but the main focus is tools
-              that finish cleanly.
+              journaling in one iPhone app on the App Store. What comes next stays small, calm, and finishable.
             </p>
             <div className="split-actions">
               <a href="#products" className="secondary-button">

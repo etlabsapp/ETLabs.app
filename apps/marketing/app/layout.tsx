@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     title: "ET Labs | Software Should Support Life, Not Consume It",
     description:
-      "Intentional software from a small studio. SleepTight: DreamWrite is on the App Store; FlipFeed is a side experiment.",
+      "Intentional software from a small studio. SleepTight: DreamWrite is on the App Store—with more calm, finishable tools to come.",
     images: ["/apps/sleeptight/images/hero-phone.webp"],
   },
 };
