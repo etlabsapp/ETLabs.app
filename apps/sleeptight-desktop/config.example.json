@@ -1,0 +1,7 @@
+{
+  "ascKeyId": "YOUR_APP_STORE_CONNECT_KEY_ID",
+  "ascIssuerId": "YOUR_ISSUER_UUID",
+  "ascPrivateKeyPath": "/absolute/path/to/AuthKey_XXXXX.p8",
+  "vendorNumber": "YOUR_VENDOR_NUMBER",
+  "appAppleId": "YOUR_APP_NUMERIC_APPLE_ID"
+}
