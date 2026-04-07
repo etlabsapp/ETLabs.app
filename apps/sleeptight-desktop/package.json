@@ -1,0 +1,28 @@
+{
+  "name": "sleeptight-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Desktop board for SleepTight App Store unit totals (official sales reports)",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac"
+  },
+  "dependencies": {
+    "jose": "^6.2.2"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "app.etlabs.sleeptight.board",
+    "productName": "SleepTight Board",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": ["dmg", "zip"]
+    },
+    "files": ["main.js", "preload.js", "apple-sales.js", "renderer/**/*"]
+  }
+}

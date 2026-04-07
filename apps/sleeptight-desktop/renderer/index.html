@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SleepTight Board</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="frame">
+    <header class="header">
+      <h1>SleepTight</h1>
+      <p class="sub">App Store units · official daily sales summary</p>
+    </header>
+
+    <section class="hero" aria-live="polite">
+      <div class="label">Last 14 days (sum)</div>
+      <div class="flip-row" id="sum-display">—</div>
+      <div class="meta" id="meta">Waiting for data…</div>
+    </section>
+
+    <p class="error" id="error" hidden></p>
+
+    <section class="grid" id="grid"></section>
+
+    <footer class="footer">
+      <button type="button" id="refresh">Refresh now</button>
+      <button type="button" id="config" class="secondary">Config folder</button>
+      <p class="hint">Auto-refresh every 5 min. Apple often lags a day. Edit <code>config.json</code> in the opened folder (path to your <code>.p8</code> file, keys, vendor #, app Apple ID).</p>
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

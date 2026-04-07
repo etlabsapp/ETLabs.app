@@ -1,0 +1,123 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  background: #0d0d0f;
+  color: #e8e6e3;
+  min-height: 100vh;
+}
+.frame {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 20px 32px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.sub {
+  margin: 6px 0 0;
+  color: #9c9892;
+  font-size: 0.9rem;
+}
+.hero {
+  margin-top: 28px;
+  padding: 24px 20px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #1a1a20 0%, #141418 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #9c9892;
+  margin-bottom: 12px;
+}
+.flip-row {
+  font-size: clamp(2.5rem, 10vw, 3.5rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  text-shadow: 0 2px 24px rgba(232, 230, 227, 0.15);
+}
+.meta {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: #9c9892;
+}
+.error {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+  font-size: 0.9rem;
+}
+.grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 6px 12px;
+  font-size: 0.85rem;
+  align-items: center;
+}
+.grid-head {
+  color: #9c9892;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.cell {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.cell-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.missing {
+  color: #6b6864;
+}
+.footer {
+  margin-top: 28px;
+}
+button {
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #e8e6e3;
+  color: #0d0d0f;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+button.secondary {
+  background: transparent;
+  color: #9c9892;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+button:hover {
+  filter: brightness(1.05);
+}
+.hint {
+  margin: 12px 0 0;
+  font-size: 0.78rem;
+  color: #6b6864;
+  line-height: 1.45;
+}
+code {
+  font-size: 0.9em;
+  color: #c4c0ba;
+}
