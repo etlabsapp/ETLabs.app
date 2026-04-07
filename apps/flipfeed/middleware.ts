@@ -10,6 +10,6 @@ export const config = {
     /*
      * Skip static assets and API — fewer edge invocations, less chance of timeout.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$|api/|run|test).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$|api/|run|test|my-downloads).*)",
   ],
 };

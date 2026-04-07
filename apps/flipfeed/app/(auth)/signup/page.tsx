@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { describeAuthFailure } from "@/lib/auth-error";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -16,16 +17,21 @@ export default function SignUpPage() {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signUp({ email, password });
-    setLoading(false);
-    if (error) {
-      setMessage({ type: "err", text: error.message });
-      return;
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        setMessage({ type: "err", text: describeAuthFailure(error) });
+        return;
+      }
+      setMessage({ type: "ok", text: "Check your email to confirm, or sign in below." });
+      router.refresh();
+      router.push("/settings");
+    } catch (err) {
+      setMessage({ type: "err", text: describeAuthFailure(err) });
+    } finally {
+      setLoading(false);
     }
-    setMessage({ type: "ok", text: "Check your email to confirm, or sign in below." });
-    router.refresh();
-    router.push("/settings");
   }
 
   return (

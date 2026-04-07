@@ -58,6 +58,7 @@ Everything in this setup can stay **free** at low/moderate use:
 - **/?fullscreen=1** — Board fullscreen; **Exit fullscreen** returns to /
 - **/signup** — Create account
 - **/signin** — Sign in (supports `?next=/settings`)
+- **`/my-downloads?token=…`** — Optional bookmark-only page: official App Store daily unit totals (no FlipFeed login). Set `PRIVATE_DOWNLOADS_TOKEN` + App Store Connect env vars in Vercel (see `.env.example`). Wrong/missing token → 404.
 - **/settings** — Add/remove widgets (SleepTight downloads, weather, custom feed), save to profile. **Sign out** here.
 - **GET /api/config** — Current user’s widget config (auth required)
 - **PUT /api/config** — Save widget config (auth required)
