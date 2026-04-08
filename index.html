@@ -118,13 +118,26 @@
                 <div class="hero-product-strip-visual card reveal">
                     <div class="hero-sleeptight-glow"></div>
                     <div class="hero-sleeptight-device">
+                        <video
+                            class="hero-sleeptight-phone hero-promo-video"
+                            poster="apps/sleeptight/images/hero-phone.webp"
+                            muted
+                            playsinline
+                            loop
+                            autoplay
+                            preload="metadata"
+                            aria-label="SleepTight: DreamWrite promo"
+                        >
+                            <source src="apps/sleeptight/videos/sleeptight-promo.mp4" type="video/mp4" />
+                        </video>
                         <img
                             src="apps/sleeptight/images/hero-phone.webp"
                             alt="SleepTight: DreamWrite on iPhone"
-                            class="hero-sleeptight-phone"
+                            class="hero-sleeptight-phone hero-promo-fallback"
                             width="520"
                             height="1040"
                             loading="lazy"
+                            decoding="async"
                         >
                     </div>
                     <p class="hero-sleeptight-caption">Nighttime-native, calm by design</p>

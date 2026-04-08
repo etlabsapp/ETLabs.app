@@ -89,7 +89,27 @@
                     <div class="hero-visual">
                         <div class="hero-device-shell">
                             <div class="hero-device-glow"></div>
-                            <img src="images/hero-phone.webp" alt="SleepTight app preview on iPhone" class="hero-phone">
+                            <video
+                                class="hero-phone hero-promo-video"
+                                poster="images/hero-phone.webp"
+                                muted
+                                playsinline
+                                loop
+                                autoplay
+                                preload="metadata"
+                                aria-label="SleepTight: DreamWrite promo"
+                            >
+                                <source src="videos/sleeptight-promo.mp4" type="video/mp4" />
+                            </video>
+                            <img
+                                src="images/hero-phone.webp"
+                                alt="SleepTight app preview on iPhone"
+                                class="hero-phone hero-promo-fallback"
+                                width="720"
+                                height="1560"
+                                loading="eager"
+                                decoding="async"
+                            />
                         </div>
                     </div>
                 </div>

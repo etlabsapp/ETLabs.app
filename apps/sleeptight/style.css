@@ -378,6 +378,27 @@ main,
     z-index:1;
 }
 
+.hero-promo-video{
+    display:block;
+    height:auto;
+    aspect-ratio:9/19.5;
+    object-fit:cover;
+    background:#0b0d12;
+}
+
+.hero-promo-fallback{
+    display:none;
+}
+
+@media (prefers-reduced-motion: reduce){
+    .hero-promo-video{
+        display:none;
+    }
+    .hero-promo-fallback{
+        display:block;
+    }
+}
+
 /* ======================================== */
 /* VALUE STRIP SECTION STYLES */
 /* ======================================== */

@@ -48,13 +48,26 @@ export default function HomeMain() {
           <div className="hero-product-strip-visual card reveal">
             <div className="hero-sleeptight-glow" />
             <div className="hero-sleeptight-device">
+              <video
+                className="hero-sleeptight-phone hero-promo-video"
+                poster="/apps/sleeptight/images/hero-phone.webp"
+                muted
+                playsInline
+                loop
+                autoPlay
+                preload="metadata"
+                aria-label="SleepTight: DreamWrite promo"
+              >
+                <source src="/apps/sleeptight/videos/sleeptight-promo.mp4" type="video/mp4" />
+              </video>
               <img
                 src="/apps/sleeptight/images/hero-phone.webp"
                 alt="SleepTight: DreamWrite on iPhone"
-                className="hero-sleeptight-phone"
+                className="hero-sleeptight-phone hero-promo-fallback"
                 width={520}
                 height={1040}
                 loading="lazy"
+                decoding="async"
               />
             </div>
             <p className="hero-sleeptight-caption">Nighttime-native, calm by design</p>
