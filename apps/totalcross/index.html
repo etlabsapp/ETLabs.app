@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Total Cross | ET Labs</title>
+  <meta name="description" content="A word puzzle where every answer must sum to its target. Daily puzzle, three difficulty levels. Free to play.">
+  <meta name="theme-color" content="#0a0f1c">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-grid"></div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container">
+      <div class="nav-shell">
+        <a href="../../index.html" class="brand-mark" aria-label="Back to ET Labs">
+          <span class="brand-name">Total Cross</span>
+          <span class="brand-sub">by ET Labs</span>
+        </a>
+        <nav class="site-nav">
+          <a href="../../index.html">ET Labs</a>
+          <button id="btn-how-to-play" class="nav-btn" type="button">How to play</button>
+          <button id="btn-stats" class="nav-btn" type="button">Stats</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- TUTORIAL OVERLAY -->
+    <div id="tutorial-overlay" hidden>
+      <div class="tutorial-backdrop"></div>
+      <div class="tutorial-shell">
+        <div class="tutorial-puzzle-area">
+          <div class="tutorial-themes">
+            <span class="theme-direction">Across</span>
+            <span class="tutorial-theme-val" id="tut-across-theme">US Presidents</span>
+            <span class="theme-sep">·</span>
+            <span class="theme-direction">Down</span>
+            <span class="tutorial-theme-val" id="tut-down-theme">Planets &amp; Space</span>
+          </div>
+          <div class="tutorial-grid-wrap" id="tut-grid-wrap">
+            <div class="grid" id="tut-grid"></div>
+          </div>
+        </div>
+        <div class="tutorial-card" id="tutorial-card">
+          <div class="tutorial-step-dots" id="tut-dots"></div>
+          <h3 class="tutorial-title" id="tut-title"></h3>
+          <p class="tutorial-body" id="tut-body"></p>
+          <div class="tutorial-actions">
+            <button class="tutorial-skip-btn" id="tut-skip" type="button">Skip</button>
+            <button class="primary-button tutorial-next-btn" id="tut-next" type="button">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY MODAL -->
+    <div id="modal-howto" class="modal" role="dialog" aria-modal="true" aria-labelledby="howto-title" hidden>
+      <div class="modal-backdrop"></div>
+      <div class="modal-box">
+        <button class="modal-close" aria-label="Close">&times;</button>
+        <h2 id="howto-title">How to play</h2>
+        <p class="modal-intro">Total Cross is a crossword where letters have values. Every word must add up to its target number.</p>
+        <ul class="howto-list">
+          <li><strong>A = 1, B = 2, C = 3 … Z = 26</strong></li>
+          <li>Two themes are shown — one for Across words, one for Down words.</li>
+          <li>The target sum appears at the end of each word in the grid.</li>
+          <li>Crossing letters must satisfy both their Across and Down word.</li>
+        </ul>
+        <div class="howto-example">
+          <p class="example-label">Example — Theme: Big Cats, Target: 51</p>
+          <div class="example-row">
+            <span class="ex-word">LION</span>
+            <span class="ex-math">12+9+15+14 = 50</span>
+            <span class="ex-result wrong">✗</span>
+          </div>
+          <div class="example-row">
+            <span class="ex-word highlight">PUMA</span>
+            <span class="ex-math">16+21+13+1 = 51</span>
+            <span class="ex-result correct">✓</span>
+          </div>
+          <div class="example-row">
+            <span class="ex-word">LYNX</span>
+            <span class="ex-math">12+25+14+24 = 75</span>
+            <span class="ex-result wrong">✗</span>
+          </div>
+        </div>
+        <button id="btn-take-tutorial" class="secondary-button" type="button" style="margin-bottom:16px">Take the tutorial →</button>
+        <div class="howto-difficulties">
+          <div class="diff-row"><span class="diff-badge easy">Easy</span> Intersection letters are pre-filled for you.</div>
+          <div class="diff-row"><span class="diff-badge medium">Medium</span> No hints. You have 3 letter reveals.</div>
+          <div class="diff-row"><span class="diff-badge hard">Hard</span> No hints. No reveals. Submit to find out.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS MODAL -->
+    <div id="modal-stats" class="modal" role="dialog" aria-modal="true" aria-labelledby="stats-title" hidden>
+      <div class="modal-backdrop"></div>
+      <div class="modal-box">
+        <button class="modal-close" aria-label="Close">&times;</button>
+        <h2 id="stats-title">Your stats</h2>
+        <div class="stats-grid">
+          <div class="stat-block"><span class="stat-num" id="stat-solved">0</span><span class="stat-label">Solved</span></div>
+          <div class="stat-block"><span class="stat-num" id="stat-streak">0</span><span class="stat-label">Streak</span></div>
+          <div class="stat-block"><span class="stat-num" id="stat-best-streak">0</span><span class="stat-label">Best streak</span></div>
+        </div>
+        <div class="best-times">
+          <h3>Best times</h3>
+          <div class="best-time-row"><span class="diff-badge easy">Easy</span><span id="best-easy">—</span></div>
+          <div class="best-time-row"><span class="diff-badge medium">Medium</span><span id="best-medium">—</span></div>
+          <div class="best-time-row"><span class="diff-badge hard">Hard</span><span id="best-hard">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLETION MODAL -->
+    <div id="modal-complete" class="modal" role="dialog" aria-modal="true" aria-labelledby="complete-title" hidden>
+      <div class="modal-backdrop"></div>
+      <div class="modal-box complete-box">
+        <h2 id="complete-title">Solved!</h2>
+        <p class="complete-time" id="complete-time-display"></p>
+        <p class="complete-meta" id="complete-meta"></p>
+
+        <!-- Username prompt (shown once if no username set) -->
+        <div class="username-prompt" id="username-prompt" hidden>
+          <p class="username-label">Add your name to the leaderboard</p>
+          <div class="username-row">
+            <input id="username-input" class="username-input" type="text" maxlength="20" placeholder="Display name" autocomplete="off" spellcheck="false">
+            <button id="btn-username-save" class="primary-button" type="button">Save</button>
+          </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard-wrap" id="leaderboard-wrap">
+          <h3 class="leaderboard-title">Today's leaderboard</h3>
+          <ol class="leaderboard-list" id="leaderboard-list">
+            <li class="lb-loading">Loading…</li>
+          </ol>
+        </div>
+
+        <div class="complete-actions">
+          <button id="btn-share" class="primary-button" type="button">Copy result</button>
+          <button id="btn-view-solution" class="secondary-button" type="button">View solution</button>
+        </div>
+        <p class="complete-streak" id="complete-streak"></p>
+      </div>
+    </div>
+
+    <!-- GAME SECTION -->
+    <section class="game-section">
+      <div class="container">
+
+        <!-- PUZZLE META -->
+        <div class="puzzle-meta" id="puzzle-meta">
+          <div class="puzzle-number" id="puzzle-number">Daily #<span id="puzzle-num">—</span></div>
+          <div class="puzzle-theme" id="puzzle-theme-display"></div>
+          <div class="timer-block" id="timer-block">
+            <span class="timer-display" id="timer-display">0:00</span>
+          </div>
+        </div>
+
+        <!-- DIFFICULTY PICKER -->
+        <div class="difficulty-picker" id="difficulty-picker">
+          <p class="picker-label">Choose difficulty</p>
+          <div class="picker-buttons">
+            <button class="diff-btn" data-diff="easy" type="button">
+              <span class="diff-btn-name">Easy</span>
+              <span class="diff-btn-desc">Intersections pre-filled</span>
+            </button>
+            <button class="diff-btn" data-diff="medium" type="button">
+              <span class="diff-btn-name">Medium</span>
+              <span class="diff-btn-desc">3 letter reveals</span>
+            </button>
+            <button class="diff-btn" data-diff="hard" type="button">
+              <span class="diff-btn-name">Hard</span>
+              <span class="diff-btn-desc">No hints, submit to check</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- GAME BOARD -->
+        <div class="game-board" id="game-board" hidden>
+
+          <!-- GRID -->
+          <div class="grid-wrapper" id="grid-wrapper">
+            <div class="grid" id="puzzle-grid" role="grid" aria-label="Puzzle grid"></div>
+          </div>
+
+          <!-- CLUE LIST -->
+          <div class="clue-panel" id="clue-panel">
+
+            <!-- Medium lifelines -->
+            <div class="lifelines" id="lifelines" hidden>
+              <span class="lifeline-label">Reveals left:</span>
+              <div class="lifeline-dots" id="lifeline-dots">
+                <span class="lifeline-dot" data-i="0"></span>
+                <span class="lifeline-dot" data-i="1"></span>
+                <span class="lifeline-dot" data-i="2"></span>
+              </div>
+              <button id="btn-reveal" class="reveal-btn" type="button">Reveal a letter</button>
+            </div>
+
+            <div class="clue-columns">
+              <div class="clue-col">
+                <div class="clue-theme-label">Across</div>
+                <div class="clue-theme-value" id="across-theme">—</div>
+                <ul class="clue-list" id="clues-across"></ul>
+              </div>
+              <div class="clue-col">
+                <div class="clue-theme-label">Down</div>
+                <div class="clue-theme-value" id="down-theme">—</div>
+                <ul class="clue-list" id="clues-down"></ul>
+              </div>
+            </div>
+
+            <!-- Letter reference -->
+            <div class="letter-ref" id="letter-ref" hidden></div>
+
+            <!-- Hard submit -->
+            <div class="hard-submit" id="hard-submit" hidden>
+              <button id="btn-submit-hard" class="primary-button" type="button">Submit puzzle</button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about-section section" id="about">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">How it works</p>
+          <h2 class="section-title">A crossword with a twist.</h2>
+          <p class="section-text">Every letter has a value — A is 1, B is 2, all the way to Z at 26. Two themes are shown: one for Across words, one for Down. The target sum at the end of each word is your only clue. Think of a word that fits the theme and hits the number.</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-card card">
+            <div class="feature-icon">∑</div>
+            <h3>Sum to win</h3>
+            <p>Every word must hit its exact target. The theme narrows the options — the math confirms the answer.</p>
+          </div>
+          <div class="feature-card card">
+            <div class="feature-icon">⊕</div>
+            <h3>Crossings count twice</h3>
+            <p>Shared letters must satisfy both their Across and Down word at once. That's where it gets interesting.</p>
+          </div>
+          <div class="feature-card card">
+            <div class="feature-icon">◑</div>
+            <h3>Three difficulties</h3>
+            <p>Easy pre-fills crossing letters. Medium gives you three reveals. Hard gives you nothing — just the grid and the numbers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Total Cross is a free daily puzzle by <a href="../../index.html">ET Labs</a>.</p>
+    </div>
+  </footer>
+
+  <script src="puzzles.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
