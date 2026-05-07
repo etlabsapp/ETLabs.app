@@ -4,40 +4,303 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lattice³ | ET Labs</title>
-    <meta name="description" content="Lattice³ is a true 3D crossword for iPhone and iPad: rotate a lattice, solve words along X/Y/Z, and use slice view to stay oriented. Coming soon from ET Labs.">
+    <meta name="description" content="Lattice³ — a 3D crossword played on a rotating cube. Solve words along X, Y, and Z axes.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/style.css">
+
+    <style>
+    /* ── Page shell ─────────────────────────────────────────────────────── */
+    body { overflow: hidden; }
+
+    /* ── Puzzle selector bar ─────────────────────────────────────────────── */
+    .puzzle-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-soft);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        position: relative;
+        z-index: 5;
+        flex-shrink: 0;
+    }
+    .puzzle-bar-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+    .puzzle-tabs { display: flex; gap: 6px; }
+    .puzzle-tab {
+        padding: 5px 14px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background var(--dur-1) var(--ease-out), color var(--dur-1), border-color var(--dur-1);
+    }
+    .puzzle-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .puzzle-tab em { font-style: normal; opacity: .55; font-weight: 400; font-size: 12px; }
+
+    /* ── Game layout ─────────────────────────────────────────────────────── */
+    .game-shell {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 77px); /* viewport minus site-header */
+        position: relative;
+        z-index: 1;
+    }
+    .game-body {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        grid-template-rows: 1fr;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    /* ── Canvas ──────────────────────────────────────────────────────────── */
+    .canvas-wrap {
+        position: relative;
+        overflow: hidden;
+        background: #faf9f6;
+    }
+    #game-canvas { display: block; width: 100%; height: 100%; }
+
+    /* ── Clue panel ──────────────────────────────────────────────────────── */
+    .clue-panel {
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--border);
+        background: var(--card);
+        overflow: hidden;
+    }
+    .clue-axis-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+    .clue-axis-tab {
+        flex: 1;
+        padding: 9px 4px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        color: var(--muted);
+        transition: color var(--dur-1), border-color var(--dur-1);
+    }
+    .clue-axis-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .clue-lists { flex: 1; overflow-y: auto; padding: 6px; }
+    .clue-list  { display: none; flex-direction: column; gap: 2px; }
+    .clue-list.active { display: flex; }
+
+    .clue-item {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        grid-template-rows: auto auto;
+        gap: 0 6px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+        width: 100%;
+        transition: background var(--dur-1);
+    }
+    .clue-item:hover    { background: rgba(75,89,201,.06); }
+    .clue-item.active   { background: rgba(75,89,201,.10); border-color: rgba(75,89,201,.22); }
+    .clue-item.completed { opacity: .4; }
+
+    .clue-num {
+        grid-row: 1 / 3;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent);
+        line-height: 1;
+        padding-top: 2px;
+        letter-spacing: .02em;
+    }
+    .clue-text    { font-size: 13px; color: var(--text); line-height: 1.35; }
+    .clue-letters { font-size: 11px; font-family: monospace; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; }
+
+    /* ── Active clue bar ─────────────────────────────────────────────────── */
+    .active-clue-bar {
+        padding: 9px 20px;
+        background: var(--card-strong);
+        border-top: 1px solid var(--border);
+        font-size: 13.5px;
+        min-height: 40px;
+        line-height: 1.4;
+        color: var(--text);
+        flex-shrink: 0;
+    }
+    .active-clue-bar strong { color: var(--accent); }
+
+    /* ── Toolbar ─────────────────────────────────────────────────────────── */
+    .game-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border-top: 1px solid var(--border);
+        background: var(--bg-soft);
+        flex-shrink: 0;
+        flex-wrap: wrap;
+    }
+    .tool-btn {
+        padding: 6px 13px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--text);
+        font-size: 12.5px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color var(--dur-1), color var(--dur-1);
+        white-space: nowrap;
+    }
+    .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .tool-btn.danger:hover { border-color: #d32f2f; color: #d32f2f; }
+    .toolbar-sep { width: 1px; height: 20px; background: var(--border); }
+    .toolbar-gap { flex: 1; }
+
+    /* ── On-screen keyboard ──────────────────────────────────────────────── */
+    .osk {
+        display: none;
+        padding: 6px 8px 10px;
+        background: #e8e8ed;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+    .osk-row { display: flex; justify-content: center; gap: 4px; margin-bottom: 4px; }
+    .osk-key {
+        flex: 1;
+        max-width: 36px;
+        padding: 12px 4px;
+        border-radius: 6px;
+        border: none;
+        background: white;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 1px 0 rgba(0,0,0,.25);
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+    .osk-key.wide { max-width: 52px; font-size: 12px; }
+    @media (hover: none) and (pointer: coarse) { .osk { display: block; } }
+
+    /* ── Modals ──────────────────────────────────────────────────────────── */
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(25,24,23,.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+    .modal-backdrop[hidden] { display: none !important; }
+    .modal-card {
+        background: #fff;
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        max-width: 340px;
+        width: calc(100% - 40px);
+        box-shadow: var(--shadow);
+    }
+    .modal-title    { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+    .modal-subtitle { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+
+    .axis-picker-btns { display: flex; flex-direction: column; gap: 8px; }
+    .axis-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: white;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition: background var(--dur-1), border-color var(--dur-1);
+    }
+    .axis-btn:hover { background: rgba(75,89,201,.07); border-color: var(--accent); }
+    .axis-label { font-size: 18px; font-weight: 800; color: var(--accent); min-width: 22px; }
+    .axis-clue-text { font-size: 14px; color: var(--text); }
+
+    .modal-cancel {
+        margin-top: 10px;
+        width: 100%;
+        padding: 9px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    /* completion */
+    .completion-card { text-align: center; }
+    .completion-icon { font-size: 52px; margin-bottom: 8px; }
+    .completion-title { font-size: 22px; font-weight: 700; margin: 0 0 6px; }
+    .completion-subtitle { font-size: 14px; color: var(--muted); margin: 0 0 22px; }
+    .completion-actions { display: flex; flex-direction: column; gap: 8px; }
+
+    /* ── Responsive ──────────────────────────────────────────────────────── */
+    @media (max-width: 680px) {
+        body { overflow: auto; }
+        .game-shell { height: auto; }
+        .game-body  { grid-template-columns: 1fr; grid-template-rows: 56vw auto; }
+        .canvas-wrap { height: 56vw; }
+        .clue-panel {
+            border-left: none;
+            border-top: 1px solid var(--border);
+            max-height: 220px;
+        }
+    }
+    </style>
 </head>
 <body>
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-grid"></div>
-
     <header class="site-header">
         <div class="container">
             <div class="nav-shell">
                 <a href="../../index.html" class="brand-mark" aria-label="ET Labs home">
-                    <img
-                        src="../../assets/images/etlabs-logo.svg"
-                        alt="ET Labs logo"
-                        style="height: 72px; width: auto; display: block;"
-                    >
+                    <img src="../../assets/images/etlabs-logo.svg" alt="ET Labs logo" style="height:72px;width:auto;display:block;">
                 </a>
-
                 <button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span>
                 </button>
-
                 <nav class="site-nav" id="site-menu">
                     <a href="../../philosophy.html">Philosophy</a>
                     <div class="nav-dropdown">
-                        <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="products-dropdown" id="products-dropdown-trigger">Products</button>
+                        <button type="button" class="nav-dropdown-trigger" aria-expanded="false"
+                            aria-haspopup="true" aria-controls="products-dropdown" id="products-dropdown-trigger">
+                            Products
+                        </button>
                         <div class="nav-dropdown-menu" id="products-dropdown" role="menu">
                             <a href="../sleeptight/index.html" role="menuitem">SleepTight: DreamWrite</a>
-                            <a href="index.html" role="menuitem">Lattice³ <em>(Coming soon)</em></a>
+                            <a href="index.html" role="menuitem">Lattice³</a>
                             <a href="../totalcross/index.html" role="menuitem">Total Cross</a>
                         </div>
                     </div>
@@ -48,98 +311,137 @@
         </div>
     </header>
 
-    <main>
-        <section class="section">
-            <div class="container">
-                <div class="section-header reveal">
-                    <p class="eyebrow">Coming soon</p>
-                    <h1 class="section-title">Lattice³</h1>
-                    <p class="section-text">
-                        A true 3D crossword lattice. Rotate a cube-like grid and solve words along the <strong>X</strong>, <strong>Y</strong>, and <strong>Z</strong> axes—without losing your place.
-                    </p>
-                    <div class="split-actions">
-                        <a href="../../contact.html" class="primary-button">Get notified</a>
-                        <a href="../../products.html" class="secondary-button">Back to products</a>
-                    </div>
-                </div>
+    <div class="game-shell">
 
-                <div class="products-page-grid">
-                    <article class="product-block card">
-                        <div class="product-block-content">
-                            <p class="card-label">MVP focus</p>
-                            <h2 class="section-title">Understandable in 30 seconds.</h2>
-                            <p class="section-text">
-                                The MVP proves three things: the puzzle is understandable, the interaction is smooth, and solving in 3D is satisfying—not frustrating.
-                            </p>
-                            <ul class="clean-list">
-                                <li><strong>One format:</strong> 4×4×4 lattice</li>
-                                <li><strong>Handcrafted pack:</strong> 10–25 puzzles</li>
-                                <li><strong>Two validation modes:</strong> Relaxed (default) + Assist</li>
-                                <li><strong>Local progress:</strong> auto-save puzzle state</li>
-                            </ul>
-                        </div>
-                    </article>
-
-                    <article class="product-block card">
-                        <div class="product-block-content">
-                            <p class="card-label">Readability helpers</p>
-                            <h2 class="section-title">Orientation, maintained.</h2>
-                            <p class="section-text">
-                                3D is only fun if you can keep track of where you are. Lattice³ is built around gentle helpers that reduce spatial friction.
-                            </p>
-                            <ul class="clean-list">
-                                <li><strong>Focus mode:</strong> highlight the active word, dim the rest</li>
-                                <li><strong>Slice view:</strong> isolate one layer at a time</li>
-                                <li><strong>Clues by axis:</strong> grouped as X / Y / Z</li>
-                                <li><strong>Auto-orient:</strong> tap a clue to rotate to a clear angle</li>
-                            </ul>
-                        </div>
-                    </article>
-
-                    <article class="product-block card">
-                        <div class="product-block-content">
-                            <p class="card-label">Input</p>
-                            <h2 class="section-title">Fast entry, calm UI.</h2>
-                            <p class="section-text">
-                                Tap a cell, choose an axis when needed, type. Letters advance through the active word; delete moves back. iPad hardware keyboards are supported.
-                            </p>
-                            <ul class="clean-list">
-                                <li><strong>Rotate:</strong> two-finger drag</li>
-                                <li><strong>Zoom:</strong> pinch</li>
-                                <li><strong>Select:</strong> tap</li>
-                                <li><strong>Hints:</strong> check/reveal letter or word</li>
-                            </ul>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="split-actions products-cta reveal">
-                    <a href="../../contact.html" class="secondary-button">Talk to ET Labs</a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="site-footer">
-        <div class="container footer-shell">
-            <div>
-                <div class="footer-brand">
-                    <img src="../../assets/images/etlabs-logo.svg" alt="ET Labs logo" style="height: 70px; width: auto; display: block;">
-                </div>
-                <p class="footer-copy">Software should support life, not consume it.</p>
-            </div>
-            <div class="footer-links">
-                <a href="../../philosophy.html">Philosophy</a>
-                <a href="../../products.html">Products</a>
-                <a href="../../studio.html">Studio</a>
-                <a href="../sleeptight/index.html">SleepTight</a>
-                <a href="index.html">Lattice³</a>
-                <a href="../../contact.html">Contact</a>
+        <!-- Puzzle selector -->
+        <div class="puzzle-bar">
+            <span class="puzzle-bar-label">Puzzle</span>
+            <div class="puzzle-tabs">
+                <button class="puzzle-tab active" data-puzzle="0">
+                    Starter Cube <em>· Easy</em>
+                </button>
+                <button class="puzzle-tab" data-puzzle="1">
+                    Word Forge <em>· Standard</em>
+                </button>
             </div>
         </div>
-    </footer>
+
+        <!-- Game body: canvas + clue sidebar -->
+        <div class="game-body">
+
+            <div class="canvas-wrap">
+                <canvas id="game-canvas"></canvas>
+            </div>
+
+            <aside class="clue-panel">
+                <div class="clue-axis-tabs">
+                    <button class="clue-axis-tab active" data-axis="x">X Across</button>
+                    <button class="clue-axis-tab"        data-axis="y">Y Down</button>
+                    <button class="clue-axis-tab"        data-axis="z">Z Deep</button>
+                </div>
+                <div class="clue-lists">
+                    <div class="clue-list active" id="clues-x"></div>
+                    <div class="clue-list"        id="clues-y"></div>
+                    <div class="clue-list"        id="clues-z"></div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- Active clue bar -->
+        <div class="active-clue-bar" id="active-clue-bar">
+            Drag to rotate &nbsp;·&nbsp; Tap a cell to solve
+        </div>
+
+        <!-- Toolbar -->
+        <div class="game-toolbar">
+            <button class="tool-btn" id="btn-check-letter">Check Letter</button>
+            <button class="tool-btn" id="btn-check-word">Check Word</button>
+            <div class="toolbar-sep"></div>
+            <button class="tool-btn" id="btn-reveal-letter">Reveal Letter</button>
+            <button class="tool-btn" id="btn-reveal-word">Reveal Word</button>
+            <div class="toolbar-gap"></div>
+            <button class="tool-btn danger" id="btn-reset">Reset</button>
+        </div>
+
+        <!-- On-screen keyboard (shown on touch devices) -->
+        <div class="osk" id="osk">
+            <div class="osk-row">
+                <button class="osk-key" data-key="Q">Q</button>
+                <button class="osk-key" data-key="W">W</button>
+                <button class="osk-key" data-key="E">E</button>
+                <button class="osk-key" data-key="R">R</button>
+                <button class="osk-key" data-key="T">T</button>
+                <button class="osk-key" data-key="Y">Y</button>
+                <button class="osk-key" data-key="U">U</button>
+                <button class="osk-key" data-key="I">I</button>
+                <button class="osk-key" data-key="O">O</button>
+                <button class="osk-key" data-key="P">P</button>
+            </div>
+            <div class="osk-row">
+                <button class="osk-key" data-key="A">A</button>
+                <button class="osk-key" data-key="S">S</button>
+                <button class="osk-key" data-key="D">D</button>
+                <button class="osk-key" data-key="F">F</button>
+                <button class="osk-key" data-key="G">G</button>
+                <button class="osk-key" data-key="H">H</button>
+                <button class="osk-key" data-key="J">J</button>
+                <button class="osk-key" data-key="K">K</button>
+                <button class="osk-key" data-key="L">L</button>
+            </div>
+            <div class="osk-row">
+                <button class="osk-key wide" data-key="Backspace">⌫</button>
+                <button class="osk-key" data-key="Z">Z</button>
+                <button class="osk-key" data-key="X">X</button>
+                <button class="osk-key" data-key="C">C</button>
+                <button class="osk-key" data-key="V">V</button>
+                <button class="osk-key" data-key="B">B</button>
+                <button class="osk-key" data-key="N">N</button>
+                <button class="osk-key" data-key="M">M</button>
+                <button class="osk-key wide" data-key="Tab">→</button>
+            </div>
+        </div>
+
+    </div><!-- /game-shell -->
+
+    <!-- Hidden keyboard capture input (desktop) -->
+    <input id="hidden-input" type="text" aria-hidden="true"
+        style="position:fixed;left:-9999px;opacity:0;pointer-events:none;"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+    <!-- Axis picker modal -->
+    <div id="axis-picker" class="modal-backdrop" hidden>
+        <div class="modal-card">
+            <p class="modal-title">Choose direction</p>
+            <p class="modal-subtitle">This cell belongs to multiple words.</p>
+            <div class="axis-picker-btns" id="axis-picker-buttons"></div>
+            <button class="modal-cancel" id="axis-picker-cancel">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Completion modal -->
+    <div id="completion-modal" class="modal-backdrop" hidden>
+        <div class="modal-card completion-card">
+            <div class="completion-icon">✓</div>
+            <p class="completion-title">Puzzle complete!</p>
+            <p class="completion-subtitle" id="completion-subtitle">You solved Lattice³.</p>
+            <div class="completion-actions">
+                <button class="primary-button" id="btn-next-puzzle">Next puzzle</button>
+                <button class="secondary-button" id="btn-play-again">Play again</button>
+            </div>
+        </div>
+    </div>
 
     <script src="../../assets/js/script.js"></script>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module" src="game.js"></script>
 </body>
 </html>
-
