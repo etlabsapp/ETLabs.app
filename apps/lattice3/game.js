@@ -10,26 +10,18 @@ const PUZZLES = [
     difficulty: 'Easy',
     dimensions: { x: 3, y: 3, z: 3 },
     cells: [
+      // front face (z=0) — crossed by all x and y words
       {coord:{x:0,y:0,z:0},s:'B'},{coord:{x:1,y:0,z:0},s:'O'},{coord:{x:2,y:0,z:0},s:'W'},
       {coord:{x:0,y:1,z:0},s:'A'},{coord:{x:1,y:1,z:0},s:'R'},{coord:{x:2,y:1,z:0},s:'E'},
       {coord:{x:0,y:2,z:0},s:'G'},{coord:{x:1,y:2,z:0},s:'E'},{coord:{x:2,y:2,z:0},s:'T'},
-      {coord:{x:0,y:0,z:1},s:'A'},{coord:{x:1,y:0,z:1},s:'I'},{coord:{x:2,y:0,z:1},s:'D'},
-      {coord:{x:0,y:1,z:1},s:'N'},{coord:{x:1,y:1,z:1},s:'I'},{coord:{x:2,y:1,z:1},s:'T'},
-      {coord:{x:0,y:2,z:1},s:'K'},{coord:{x:1,y:2,z:1},s:'E'},{coord:{x:2,y:2,z:1},s:'G'},
-      {coord:{x:0,y:0,z:2},s:'T'},{coord:{x:1,y:0,z:2},s:'E'},{coord:{x:2,y:0,z:2},s:'N'},
-      {coord:{x:0,y:1,z:2},s:'G'},{coord:{x:1,y:1,z:2},s:'I'},{coord:{x:2,y:1,z:2},s:'N'},
-      {coord:{x:0,y:2,z:2},s:'S'},{coord:{x:1,y:2,z:2},s:'E'},{coord:{x:2,y:2,z:2},s:'W'},
+      // z-axis cells for BAT (depth behind top-left corner)
+      {coord:{x:0,y:0,z:1},s:'A'},
+      {coord:{x:0,y:0,z:2},s:'T'},
     ],
     words: [
       {id:'x1',axis:'x',num:1,clue:'Ribbon tied in loops',coords:[{x:0,y:0,z:0},{x:1,y:0,z:0},{x:2,y:0,z:0}],answer:'BOW'},
       {id:'x2',axis:'x',num:2,clue:'Exist',coords:[{x:0,y:1,z:0},{x:1,y:1,z:0},{x:2,y:1,z:0}],answer:'ARE'},
       {id:'x3',axis:'x',num:3,clue:'Obtain',coords:[{x:0,y:2,z:0},{x:1,y:2,z:0},{x:2,y:2,z:0}],answer:'GET'},
-      {id:'x4',axis:'x',num:4,clue:'Help or assistance',coords:[{x:0,y:0,z:1},{x:1,y:0,z:1},{x:2,y:0,z:1}],answer:'AID'},
-      {id:'x5',axis:'x',num:5,clue:'Louse egg',coords:[{x:0,y:1,z:1},{x:1,y:1,z:1},{x:2,y:1,z:1}],answer:'NIT'},
-      {id:'x6',axis:'x',num:6,clue:'Small barrel',coords:[{x:0,y:2,z:1},{x:1,y:2,z:1},{x:2,y:2,z:1}],answer:'KEG'},
-      {id:'x7',axis:'x',num:7,clue:'Number after nine',coords:[{x:0,y:0,z:2},{x:1,y:0,z:2},{x:2,y:0,z:2}],answer:'TEN'},
-      {id:'x8',axis:'x',num:8,clue:'Juniper spirit',coords:[{x:0,y:1,z:2},{x:1,y:1,z:2},{x:2,y:1,z:2}],answer:'GIN'},
-      {id:'x9',axis:'x',num:9,clue:'Stitch with needle and thread',coords:[{x:0,y:2,z:2},{x:1,y:2,z:2},{x:2,y:2,z:2}],answer:'SEW'},
       {id:'y1',axis:'y',num:1,clue:'Carry-all container',coords:[{x:0,y:0,z:0},{x:0,y:1,z:0},{x:0,y:2,z:0}],answer:'BAG'},
       {id:'y2',axis:'y',num:2,clue:'Mineral deposit',coords:[{x:1,y:0,z:0},{x:1,y:1,z:0},{x:1,y:2,z:0}],answer:'ORE'},
       {id:'y3',axis:'y',num:3,clue:'Soaked through',coords:[{x:2,y:0,z:0},{x:2,y:1,z:0},{x:2,y:2,z:0}],answer:'WET'},
@@ -42,26 +34,20 @@ const PUZZLES = [
     difficulty: 'Standard',
     dimensions: { x: 3, y: 3, z: 3 },
     cells: [
+      // front face (z=0) — crossed by x1-x3, y1, y2, and z1
       {coord:{x:0,y:0,z:0},s:'C'},{coord:{x:1,y:0,z:0},s:'A'},{coord:{x:2,y:0,z:0},s:'T'},
       {coord:{x:0,y:1,z:0},s:'O'},{coord:{x:1,y:1,z:0},s:'N'},{coord:{x:2,y:1,z:0},s:'E'},
       {coord:{x:0,y:2,z:0},s:'P'},{coord:{x:1,y:2,z:0},s:'E'},{coord:{x:2,y:2,z:0},s:'A'},
-      {coord:{x:0,y:0,z:1},s:'H'},{coord:{x:1,y:0,z:1},s:'A'},{coord:{x:2,y:0,z:1},s:'M'},
-      {coord:{x:0,y:1,z:1},s:'O'},{coord:{x:1,y:1,z:1},s:'W'},{coord:{x:2,y:1,z:1},s:'L'},
-      {coord:{x:0,y:2,z:1},s:'S'},{coord:{x:1,y:2,z:1},s:'E'},{coord:{x:2,y:2,z:1},s:'T'},
-      {coord:{x:0,y:0,z:2},s:'P'},{coord:{x:1,y:0,z:2},s:'A'},{coord:{x:2,y:0,z:2},s:'N'},
-      {coord:{x:0,y:1,z:2},s:'I'},{coord:{x:1,y:1,z:2},s:'N'},{coord:{x:2,y:1,z:2},s:'K'},
-      {coord:{x:0,y:2,z:2},s:'Y'},{coord:{x:1,y:2,z:2},s:'E'},{coord:{x:2,y:2,z:2},s:'W'},
+      // AWE column (z=1, x=1) — y3 word
+      {coord:{x:1,y:0,z:1},s:'A'},{coord:{x:1,y:1,z:1},s:'W'},{coord:{x:1,y:2,z:1},s:'E'},
+      // ELK depth (x=2, y=1) — z1 word, z=0 already in front face
+      {coord:{x:2,y:1,z:1},s:'L'},
+      {coord:{x:2,y:1,z:2},s:'K'},
     ],
     words: [
       {id:'x1',axis:'x',num:1,clue:'Feline pet',coords:[{x:0,y:0,z:0},{x:1,y:0,z:0},{x:2,y:0,z:0}],answer:'CAT'},
       {id:'x2',axis:'x',num:2,clue:'Single unit',coords:[{x:0,y:1,z:0},{x:1,y:1,z:0},{x:2,y:1,z:0}],answer:'ONE'},
       {id:'x3',axis:'x',num:3,clue:'Green garden pod',coords:[{x:0,y:2,z:0},{x:1,y:2,z:0},{x:2,y:2,z:0}],answer:'PEA'},
-      {id:'x4',axis:'x',num:4,clue:'Cured pork',coords:[{x:0,y:0,z:1},{x:1,y:0,z:1},{x:2,y:0,z:1}],answer:'HAM'},
-      {id:'x5',axis:'x',num:5,clue:'Nocturnal bird',coords:[{x:0,y:1,z:1},{x:1,y:1,z:1},{x:2,y:1,z:1}],answer:'OWL'},
-      {id:'x6',axis:'x',num:6,clue:'Group of matched items',coords:[{x:0,y:2,z:1},{x:1,y:2,z:1},{x:2,y:2,z:1}],answer:'SET'},
-      {id:'x7',axis:'x',num:7,clue:'Cooking vessel',coords:[{x:0,y:0,z:2},{x:1,y:0,z:2},{x:2,y:0,z:2}],answer:'PAN'},
-      {id:'x8',axis:'x',num:8,clue:'Pen fluid',coords:[{x:0,y:1,z:2},{x:1,y:1,z:2},{x:2,y:1,z:2}],answer:'INK'},
-      {id:'x9',axis:'x',num:9,clue:'Evergreen tree',coords:[{x:0,y:2,z:2},{x:1,y:2,z:2},{x:2,y:2,z:2}],answer:'YEW'},
       {id:'y1',axis:'y',num:1,clue:'Police officer',coords:[{x:0,y:0,z:0},{x:0,y:1,z:0},{x:0,y:2,z:0}],answer:'COP'},
       {id:'y2',axis:'y',num:2,clue:'Hot brewed drink',coords:[{x:2,y:0,z:0},{x:2,y:1,z:0},{x:2,y:2,z:0}],answer:'TEA'},
       {id:'y3',axis:'y',num:3,clue:'Filled with wonder',coords:[{x:1,y:0,z:1},{x:1,y:1,z:1},{x:1,y:2,z:1}],answer:'AWE'},
@@ -343,6 +329,7 @@ class Lattice3Game {
     const oz = ((dz - 1) * SP) / 2;
 
     for (const cell of this.puzzle.cells) {
+      if (this.engine.wordsForCell(cell.coord).length === 0) continue;
       const c = cell.coord;
       const k = ck(c);
       const labels = this.engine.startsAt(c);
