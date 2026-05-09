@@ -141,12 +141,23 @@
     puzzle = getTodaysPuzzle();
     setupPuzzleMeta();
     setupModals();
-    startGame();
+
+    const savedSolve = JSON.parse(localStorage.getItem('tc_solved_' + puzzleNumber) || 'null');
+    if (savedSolve) {
+      timerSeconds = savedSolve.time;
+      hintsUsed    = savedSolve.hints;
+      gameComplete = true;
+      startGame();
+      stopTimer();
+      updateTimerDisplay();
+      showCompleteModal();
+    } else {
+      startGame();
+      const seen = localStorage.getItem('tc_tutorial_done');
+      if (!seen) startTutorial();
+    }
 
     loadSolveCount();
-
-    const seen = localStorage.getItem('tc_tutorial_done');
-    if (!seen) startTutorial();
   }
 
   function setupPuzzleMeta() {
@@ -323,7 +334,11 @@
 
   function setupModals() {
     document.getElementById('btn-how-to-play').addEventListener('click', () => openModal('modal-howto'));
-    document.getElementById('btn-stats').addEventListener('click', () => { populateStats(); openModal('modal-stats'); });
+    document.getElementById('btn-stats').addEventListener('click', () => {
+      populateStats();
+      loadLeaderboard(document.getElementById('stats-leaderboard-list'));
+      openModal('modal-stats');
+    });
     document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', closeAllModals));
     document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', closeAllModals));
     document.getElementById('btn-take-tutorial').addEventListener('click', () => {
@@ -903,6 +918,9 @@
     if (gameComplete) return;
     gameComplete = true;
     stopTimer();
+    localStorage.setItem('tc_solved_' + puzzleNumber, JSON.stringify({ time: timerSeconds, hints: hintsUsed }));
+    const hintBtn = document.getElementById('btn-hint');
+    if (hintBtn) hintBtn.disabled = true;
     saveStats();
     showCompleteModal();
   }
@@ -918,7 +936,7 @@
       `${puzzle.acrossTheme} · ${puzzle.downTheme}${hintNote}`;
 
     document.getElementById('complete-streak').textContent =
-      stats.streak > 1 ? `🔥 ${stats.streak} day streak` : 'First solve! Come back tomorrow to start your streak.';
+      stats.streak > 1 ? `${stats.streak} day streak` : 'First solve! Come back tomorrow to start your streak.';
 
     const username = localStorage.getItem(USERNAME_KEY);
     if (!username) {
@@ -928,8 +946,27 @@
       submitScore(username);
     }
 
-    loadLeaderboard();
+    loadLeaderboard(document.getElementById('leaderboard-list'));
+    startNextPuzzleCountdown();
     openModal('modal-complete');
+  }
+
+  let countdownInterval = null;
+  function startNextPuzzleCountdown() {
+    const el = document.getElementById('next-puzzle-countdown');
+    if (!el) return;
+    if (countdownInterval) clearInterval(countdownInterval);
+    function update() {
+      const now = new Date();
+      const midnight = new Date(); midnight.setHours(24, 0, 0, 0);
+      const diff = Math.max(0, Math.floor((midnight - now) / 1000));
+      const h = Math.floor(diff / 3600);
+      const m = Math.floor((diff % 3600) / 60);
+      const s = diff % 60;
+      el.textContent = `Next puzzle in ${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+    update();
+    countdownInterval = setInterval(update, 1000);
   }
 
   // ── SUPABASE — SCORE SUBMIT ──────────────────────────────
@@ -944,7 +981,7 @@
         hints_used:    hintsUsed,
         device_id:     getDeviceId(),
       });
-      loadLeaderboard();
+      loadLeaderboard(document.getElementById('leaderboard-list'));
       loadSolveCount();
     } catch { /* offline — silently skip */ }
   }
@@ -964,9 +1001,10 @@
 
   // ── SUPABASE — LEADERBOARD ──────────────────────────────
 
-  async function loadLeaderboard() {
-    const list = document.getElementById('leaderboard-list');
-    list.innerHTML = '<li class="lb-loading">Loading…</li>';
+  async function loadLeaderboard(listEl) {
+    listEl = listEl || document.getElementById('leaderboard-list');
+    if (!listEl) return;
+    listEl.innerHTML = '<li class="lb-loading">Loading…</li>';
     try {
       const { data, error } = await sb
         .from('scores')
@@ -976,20 +1014,19 @@
         .limit(10);
 
       if (error) throw error;
-      renderLeaderboard(data || []);
+      renderLeaderboard(data || [], listEl);
     } catch {
-      list.innerHTML = '<li class="lb-loading">Leaderboard unavailable offline.</li>';
+      listEl.innerHTML = '<li class="lb-loading">Leaderboard unavailable.</li>';
     }
   }
 
-  function renderLeaderboard(entries) {
-    const list = document.getElementById('leaderboard-list');
+  function renderLeaderboard(entries, listEl) {
     const username = localStorage.getItem(USERNAME_KEY) || '';
     if (!entries.length) {
-      list.innerHTML = '<li class="lb-loading">No scores yet — be the first!</li>';
+      listEl.innerHTML = '<li class="lb-loading">No scores yet — be the first!</li>';
       return;
     }
-    list.innerHTML = entries.map((e, i) => {
+    listEl.innerHTML = entries.map((e, i) => {
       const isMe = e.display_name.toLowerCase() === username.toLowerCase();
       const hintNote = e.hints_used > 0 ? ` <span class="lb-hints">(${e.hints_used}h)</span>` : '';
       return `<li class="lb-row${isMe ? ' lb-me' : ''}">

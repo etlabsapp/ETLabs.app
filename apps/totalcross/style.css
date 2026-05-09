@@ -158,6 +158,11 @@ body {
 }
 .complete-meta { font-size: .85rem; color: var(--muted); margin-bottom: 16px; }
 .complete-streak { font-size: .85rem; color: var(--muted); margin-top: 12px; }
+.next-puzzle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem; color: var(--muted);
+  margin-top: 6px; letter-spacing: .04em;
+}
 .complete-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .complete-actions .primary-button,
 .complete-actions .secondary-button { margin-bottom: 0; }
