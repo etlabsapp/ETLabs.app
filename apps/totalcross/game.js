@@ -143,6 +143,8 @@
     setupModals();
     startGame();
 
+    loadSolveCount();
+
     const seen = localStorage.getItem('tc_tutorial_done');
     if (!seen) startTutorial();
   }
@@ -763,6 +765,16 @@
 
       const chip = document.querySelector(`.sum-chip[data-id="${w.id}"]`);
       if (chip) chip.classList.toggle('matched', w.solved);
+
+      if (allFilled && !matched && !w.solved) {
+        w.cells.forEach(pos => {
+          const cellEl = grid[pos.row][pos.col].el;
+          if (cellEl && !cellEl.classList.contains('wrong-flash')) {
+            cellEl.classList.add('wrong-flash');
+            setTimeout(() => cellEl.classList.remove('wrong-flash'), 700);
+          }
+        });
+      }
     });
   }
 
@@ -933,7 +945,21 @@
         device_id:     getDeviceId(),
       });
       loadLeaderboard();
+      loadSolveCount();
     } catch { /* offline — silently skip */ }
+  }
+
+  async function loadSolveCount() {
+    try {
+      const { count } = await sb
+        .from('scores')
+        .select('*', { count: 'exact', head: true })
+        .eq('puzzle_date', todayISO());
+      const el = document.getElementById('bar-solved-count');
+      if (el && count !== null) {
+        el.textContent = count > 0 ? `${count} solved today` : '';
+      }
+    } catch { /* offline */ }
   }
 
   // ── SUPABASE — LEADERBOARD ──────────────────────────────

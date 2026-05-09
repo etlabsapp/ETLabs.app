@@ -620,6 +620,16 @@ body {
   .diff-btn:last-child { border-bottom: none; }
   .puzzle-stats-bar .container { grid-template-columns: 1fr 1fr; }
   .stats-bar-item.right { display: none; }
+  .puzzle-meta { flex-wrap: wrap; gap: 8px 16px; }
+}
+
+@media (max-width: 560px) {
+  .brand-sub { display: none; }
+  .site-nav a { display: none; } /* hide ET Labs link — redundant with brand mark */
+  .nav-btn { padding: 0 14px; font-size: .68rem; }
+  .nav-shell { height: 44px; }
+  .puzzle-stats-bar .container { grid-template-columns: auto 1fr; gap: 8px; }
+  .stats-bar-item.center { text-align: right; }
 }
 
 @media (max-width: 500px) {
