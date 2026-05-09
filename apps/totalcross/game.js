@@ -113,6 +113,14 @@
     document.getElementById('puzzle-num').textContent = dayOfYear;
     document.getElementById('across-theme').textContent = puzzle.acrossTheme;
     document.getElementById('down-theme').textContent = puzzle.downTheme;
+
+    const barNum = document.getElementById('bar-puzzle-num');
+    if (barNum) barNum.textContent = `# ${dayOfYear} / Daily Puzzle`;
+
+    const barDate = document.getElementById('bar-live-date');
+    if (barDate) {
+      barDate.textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    }
   }
 
   function setupDifficultyPicker() {

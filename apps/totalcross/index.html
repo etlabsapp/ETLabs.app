@@ -8,31 +8,34 @@
   <meta name="theme-color" content="#0a0f1c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,700;0,800;0,900;1,700;1,800;1,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="bg-orb bg-orb-1"></div>
-  <div class="bg-orb bg-orb-2"></div>
-  <div class="bg-grid"></div>
-
   <!-- HEADER -->
   <header class="site-header">
-    <div class="container">
-      <div class="nav-shell">
-        <a href="../../index.html" class="brand-mark" aria-label="Back to ET Labs">
-          <span class="brand-name">Total Cross</span>
-          <span class="brand-sub">by ET Labs</span>
-        </a>
-        <nav class="site-nav">
-          <a href="../../index.html">ET Labs</a>
-          <button id="btn-how-to-play" class="nav-btn" type="button">How to play</button>
-          <button id="btn-stats" class="nav-btn" type="button">Stats</button>
-        </nav>
-      </div>
+    <div class="nav-shell container">
+      <a href="../../index.html" class="brand-mark" aria-label="Back to ET Labs">
+        <span class="brand-name">Total Cross</span>
+        <span class="brand-sub">by ET Labs</span>
+      </a>
+      <nav class="site-nav">
+        <a href="../../index.html">ET Labs</a>
+        <button id="btn-how-to-play" class="nav-btn" type="button">How to Play</button>
+        <button id="btn-stats" class="nav-btn" type="button">Stats</button>
+      </nav>
     </div>
   </header>
+
+  <!-- STATS BAR -->
+  <div class="puzzle-stats-bar" id="stats-bar">
+    <div class="container">
+      <span class="stats-bar-item" id="bar-puzzle-num">Daily #—</span>
+      <span class="stats-bar-item center stats-bar-live" id="bar-live-date"></span>
+      <span class="stats-bar-item right" id="bar-solved-count"></span>
+    </div>
+  </div>
 
   <main>
 
@@ -172,19 +175,22 @@
 
         <!-- DIFFICULTY PICKER -->
         <div class="difficulty-picker" id="difficulty-picker">
-          <p class="picker-label">Choose difficulty</p>
+          <p class="picker-label">Step 01 — Choose your difficulty</p>
           <div class="picker-buttons">
             <button class="diff-btn" data-diff="easy" type="button">
+              <span class="diff-btn-num">01</span>
               <span class="diff-btn-name">Easy</span>
-              <span class="diff-btn-desc">Intersections pre-filled</span>
+              <span class="diff-btn-desc">Crossing letters are pre-filled. A friendly first run.</span>
             </button>
             <button class="diff-btn" data-diff="medium" type="button">
+              <span class="diff-btn-num">02</span>
               <span class="diff-btn-name">Medium</span>
-              <span class="diff-btn-desc">3 letter reveals</span>
+              <span class="diff-btn-desc">No hints. Three letter reveals if you get stuck.</span>
             </button>
             <button class="diff-btn" data-diff="hard" type="button">
+              <span class="diff-btn-num">03</span>
               <span class="diff-btn-name">Hard</span>
-              <span class="diff-btn-desc">No hints, submit to check</span>
+              <span class="diff-btn-desc">No hints. No reveals. Submit to find out.</span>
             </button>
           </div>
         </div>
@@ -240,26 +246,26 @@
     </section>
 
     <!-- ABOUT SECTION -->
-    <section class="about-section section" id="about">
+    <section class="about-section" id="about">
       <div class="container">
         <div class="section-header">
-          <p class="eyebrow">How it works</p>
-          <h2 class="section-title">A crossword with a twist.</h2>
-          <p class="section-text">Every letter has a value — A is 1, B is 2, all the way to Z at 26. Two themes are shown: one for Across words, one for Down. The target sum at the end of each word is your only clue. Think of a word that fits the theme and hits the number.</p>
+          <p class="eyebrow">The Mechanics</p>
+          <h2 class="section-title">A crossword<br>with a <em>twist.</em></h2>
+          <p class="section-text">Every letter has a value — A is 1, B is 2, all the way to Z at 26. Two themes are shown: one for Across, one for Down. The target sum at the end of each word is your only clue. Think of a word that fits the theme and hits the number.</p>
         </div>
         <div class="feature-grid">
           <div class="feature-card card">
-            <div class="feature-icon">∑</div>
+            <div class="feature-num">01</div>
             <h3>Sum to win</h3>
             <p>Every word must hit its exact target. The theme narrows the options — the math confirms the answer.</p>
           </div>
           <div class="feature-card card">
-            <div class="feature-icon">⊕</div>
+            <div class="feature-num">02</div>
             <h3>Crossings count twice</h3>
             <p>Shared letters must satisfy both their Across and Down word at once. That's where it gets interesting.</p>
           </div>
           <div class="feature-card card">
-            <div class="feature-icon">◑</div>
+            <div class="feature-num">03</div>
             <h3>Three difficulties</h3>
             <p>Easy pre-fills crossing letters. Medium gives you three reveals. Hard gives you nothing — just the grid and the numbers.</p>
           </div>
