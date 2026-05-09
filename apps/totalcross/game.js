@@ -150,6 +150,7 @@
       startGame();
       stopTimer();
       updateTimerDisplay();
+      restoreGridState();
       showCompleteModal();
     } else {
       startGame();
@@ -350,7 +351,7 @@
       document.getElementById('tutorial-overlay').removeAttribute('hidden');
     });
     document.getElementById('btn-share').addEventListener('click', shareResult);
-    document.getElementById('btn-view-solution').addEventListener('click', closeAllModals);
+    document.getElementById('btn-view-solution').addEventListener('click', () => { closeAllModals(); revealSolution(); });
     document.getElementById('btn-username-save').addEventListener('click', saveUsername);
     document.getElementById('username-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveUsername(); });
   }
@@ -898,6 +899,41 @@
     el.removeAttribute('hidden');
   }
 
+  // ── GRID STATE RESTORE / SOLUTION REVEAL ────────────────
+
+  function restoreGridState() {
+    const saved = JSON.parse(localStorage.getItem('tc_grid_' + puzzleNumber) || 'null');
+    if (saved) {
+      saved.forEach(({ row, col, letter, revealed }) => {
+        const cell = grid[row]?.[col];
+        if (!cell || !letter) return;
+        cell.letter   = letter;
+        cell.revealed = revealed;
+        if (cell.inputEl) { cell.inputEl.value = letter.toUpperCase(); if (revealed) cell.inputEl.readOnly = true; }
+        if (cell.el && revealed) cell.el.classList.add('prefill');
+      });
+    }
+    words.forEach(w => {
+      const correct = w.cells.every((pos, i) => (grid[pos.row][pos.col].letter || '').toUpperCase() === w.answer[i].toUpperCase());
+      if (correct) { w.solved = true; markWordSolved(w); }
+    });
+    const hintBtn = document.getElementById('btn-hint');
+    if (hintBtn) hintBtn.disabled = true;
+  }
+
+  function revealSolution() {
+    words.forEach(w => {
+      w.cells.forEach((pos, i) => {
+        const cell = grid[pos.row][pos.col];
+        if ((cell.letter || '').toUpperCase() === w.answer[i].toUpperCase()) return;
+        cell.letter = w.answer[i];
+        if (cell.inputEl) { cell.inputEl.value = w.answer[i]; cell.inputEl.readOnly = true; }
+        if (cell.el) cell.el.classList.add('prefill');
+      });
+      if (!w.solved) { w.solved = true; markWordSolved(w); }
+    });
+  }
+
   // ── TIMER ───────────────────────────────────────────────
 
   function startTimer() {
@@ -919,6 +955,11 @@
     gameComplete = true;
     stopTimer();
     localStorage.setItem('tc_solved_' + puzzleNumber, JSON.stringify({ time: timerSeconds, hints: hintsUsed }));
+    const gridState = [];
+    grid.forEach(row => row.forEach(cell => {
+      if (cell.active && cell.letter) gridState.push({ row: cell.row, col: cell.col, letter: cell.letter, revealed: cell.revealed });
+    }));
+    localStorage.setItem('tc_grid_' + puzzleNumber, JSON.stringify(gridState));
     const hintBtn = document.getElementById('btn-hint');
     if (hintBtn) hintBtn.disabled = true;
     saveStats();
