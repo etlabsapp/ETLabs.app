@@ -167,6 +167,39 @@ body {
 .complete-actions .primary-button,
 .complete-actions .secondary-button { margin-bottom: 0; }
 
+/* Reactions */
+.reaction-bar { margin-bottom: 16px; }
+.reaction-label {
+  font-size: .68rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--muted); margin-bottom: 8px;
+}
+.reaction-buttons { display: flex; gap: 6px; }
+.reaction-btn {
+  flex: 1; background: none; border: 1.5px solid var(--border-lt);
+  color: var(--muted); padding: 9px 4px;
+  font-size: .72rem; font-weight: 800; cursor: pointer;
+  font-family: inherit; text-transform: uppercase; letter-spacing: .08em;
+  transition: all .12s; border-radius: 0;
+}
+.reaction-btn:hover:not(:disabled) { border-color: var(--text); color: var(--text); }
+.reaction-btn.selected { border-color: var(--text); color: var(--bg); background: var(--text); }
+.reaction-btn.selected[data-reaction="easy"] { background: var(--correct); border-color: var(--correct); }
+.reaction-btn.selected[data-reaction="hard"] { background: var(--accent); border-color: var(--accent); }
+.reaction-btn:disabled { opacity: .45; cursor: default; }
+
+.reaction-tally {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  padding: 12px 0; border-top: 1px solid var(--border-lt);
+  margin-bottom: 12px;
+}
+.reaction-tally:empty { display: none; }
+.rt-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: .72rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+}
+.rt-count { font-family: 'JetBrains Mono', monospace; color: var(--text); }
+
 /* Username prompt */
 .username-prompt { margin-bottom: 16px; }
 .username-label { font-size: .8rem; color: var(--muted); margin-bottom: 8px; }

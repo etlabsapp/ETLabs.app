@@ -120,6 +120,7 @@
           <div class="best-time-row"><span class="best-time-label">Best time</span><span id="best-time">—</span></div>
           <div class="best-time-row"><span class="best-time-label">Fewest hints</span><span id="best-hints">—</span></div>
         </div>
+        <div class="reaction-tally" id="stats-reaction-tally"></div>
         <div class="leaderboard-wrap" id="stats-leaderboard-wrap">
           <h3 class="leaderboard-title">Today's leaderboard</h3>
           <ol class="leaderboard-list" id="stats-leaderboard-list">
@@ -136,6 +137,17 @@
         <h2 id="complete-title">Solved!</h2>
         <p class="complete-time" id="complete-time-display"></p>
         <p class="complete-meta" id="complete-meta"></p>
+
+        <!-- Reactions -->
+        <div class="reaction-bar" id="reaction-bar">
+          <p class="reaction-label">How was it?</p>
+          <div class="reaction-buttons">
+            <button class="reaction-btn" data-reaction="easy" type="button">Easy</button>
+            <button class="reaction-btn" data-reaction="tricky" type="button">Tricky</button>
+            <button class="reaction-btn" data-reaction="hard" type="button">Hard</button>
+            <button class="reaction-btn" data-reaction="fun" type="button">Fun</button>
+          </div>
+        </div>
 
         <!-- Username prompt (shown once if no username set) -->
         <div class="username-prompt" id="username-prompt" hidden>

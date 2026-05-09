@@ -338,6 +338,7 @@
     document.getElementById('btn-stats').addEventListener('click', () => {
       populateStats();
       loadLeaderboard(document.getElementById('stats-leaderboard-list'));
+      loadReactions(document.getElementById('stats-reaction-tally'));
       openModal('modal-stats');
     });
     document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', closeAllModals));
@@ -988,6 +989,7 @@
     }
 
     loadLeaderboard(document.getElementById('leaderboard-list'));
+    initReactions();
     startNextPuzzleCountdown();
     openModal('modal-complete');
   }
@@ -1078,6 +1080,59 @@
     }).join('');
   }
 
+  // ── REACTIONS ───────────────────────────────────────────
+
+  function initReactions() {
+    const saved = localStorage.getItem('tc_reaction_' + puzzleNumber);
+    renderReactionButtons(saved);
+    document.querySelectorAll('.reaction-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.dataset.reaction;
+        localStorage.setItem('tc_reaction_' + puzzleNumber, type);
+        renderReactionButtons(type);
+        submitReaction(type);
+      });
+    });
+  }
+
+  function renderReactionButtons(selected) {
+    document.querySelectorAll('.reaction-btn').forEach(btn => {
+      const isSelected = btn.dataset.reaction === selected;
+      btn.classList.toggle('selected', isSelected);
+      btn.disabled = !!selected;
+    });
+  }
+
+  async function submitReaction(type) {
+    try {
+      await sb.from('reactions').upsert({
+        puzzle_date: todayISO(),
+        reaction:    type,
+        device_id:   getDeviceId(),
+      }, { onConflict: 'puzzle_date,device_id' });
+      loadReactions();
+    } catch { /* offline */ }
+  }
+
+  async function loadReactions(tallyEl) {
+    tallyEl = tallyEl || document.getElementById('stats-reaction-tally');
+    if (!tallyEl) return;
+    try {
+      const { data } = await sb
+        .from('reactions')
+        .select('reaction')
+        .eq('puzzle_date', todayISO());
+      const counts = { easy: 0, tricky: 0, hard: 0, fun: 0 };
+      (data || []).forEach(r => { if (counts[r.reaction] !== undefined) counts[r.reaction]++; });
+      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+      if (!total) { tallyEl.innerHTML = ''; return; }
+      tallyEl.innerHTML = Object.entries(counts)
+        .filter(([, n]) => n > 0)
+        .map(([k, n]) => `<span class="rt-item"><span class="rt-count">${n}</span> ${k}</span>`)
+        .join('');
+    } catch { tallyEl.innerHTML = ''; }
+  }
+
   // ── SHARE ───────────────────────────────────────────────
 
   function shareResult() {
@@ -1090,7 +1145,9 @@
       `https://etlabs.app/apps/totalcross/`,
     ].join('\n');
 
-    if (navigator.clipboard) {
+    if (navigator.share) {
+      navigator.share({ title: `Total Cross #${puzzleNumber}`, text }).catch(() => {});
+    } else if (navigator.clipboard) {
       navigator.clipboard.writeText(text).then(() => {
         const btn = document.getElementById('btn-share');
         btn.textContent = 'Copied!';
