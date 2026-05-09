@@ -25981,8 +25981,9 @@ const PUZZLES = [
 
 function getTodaysPuzzle() {
   const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const day = Math.floor((now - start) / 86400000);
+  now.setHours(0, 0, 0, 0);
+  const launch = new Date('2026-05-08T00:00:00');
+  const day = Math.max(0, Math.floor((now - launch) / 86400000));
   return PUZZLES[day % PUZZLES.length];
 }
 
