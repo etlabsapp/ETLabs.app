@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#f5f0e8"/>
+  <rect x="1" y="1" width="30" height="30" fill="none" stroke="#0d0d0d" stroke-width="2"/>
+  <!-- crossword cells: 3x3 grid with two black cells and one red -->
+  <rect x="3"  y="3"  width="8" height="8" fill="#0d0d0d"/>
+  <rect x="12" y="3"  width="8" height="8" fill="none" stroke="#0d0d0d" stroke-width="1.5"/>
+  <rect x="21" y="3"  width="8" height="8" fill="#0d0d0d"/>
+  <rect x="3"  y="12" width="8" height="8" fill="none" stroke="#0d0d0d" stroke-width="1.5"/>
+  <rect x="12" y="12" width="8" height="8" fill="#e8192c"/>
+  <rect x="21" y="12" width="8" height="8" fill="none" stroke="#0d0d0d" stroke-width="1.5"/>
+  <rect x="3"  y="21" width="8" height="8" fill="#0d0d0d"/>
+  <rect x="12" y="21" width="8" height="8" fill="none" stroke="#0d0d0d" stroke-width="1.5"/>
+  <rect x="21" y="21" width="8" height="8" fill="#0d0d0d"/>
+</svg>

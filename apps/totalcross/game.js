@@ -1035,7 +1035,7 @@
         .eq('puzzle_date', todayISO());
       const el = document.getElementById('bar-solved-count');
       if (el && count !== null) {
-        el.textContent = count > 0 ? `${count} solved today` : '';
+        el.textContent = count > 0 ? `${count} solved today` : 'Be first to solve!';
       }
     } catch { /* offline */ }
   }
@@ -1087,7 +1087,7 @@
       `Across: ${puzzle.acrossTheme}`,
       `Down: ${puzzle.downTheme}`,
       `Time: ${formatTime(timerSeconds)}${hintLine}`,
-      `etlabs.app/apps/totalcross/`,
+      `https://etlabs.app/apps/totalcross/`,
     ].join('\n');
 
     if (navigator.clipboard) {
