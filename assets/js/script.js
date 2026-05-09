@@ -61,3 +61,36 @@ function setupRevealAnimations() {
 }
 
 setupRevealAnimations();
+
+// --- Logo battery-jitter: on-load, idle easter egg, hover ---
+(function () {
+    const logoImg = document.querySelector('.brand-mark .logo-etl');
+    if (!logoImg) return;
+
+    function playJitter() {
+        if (logoImg.classList.contains('logo-jitter')) return;
+        logoImg.classList.add('logo-jitter');
+        setTimeout(function () {
+            logoImg.classList.remove('logo-jitter');
+        }, 650); // 580ms animation + buffer
+    }
+
+    // 1. On load — fire once after page settles
+    window.addEventListener('load', function () {
+        setTimeout(playJitter, 1400);
+    });
+
+    // 2. Idle easter egg — fire after 45s of no user activity
+    let idleTimer;
+    function resetIdle() {
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(playJitter, 45000);
+    }
+    ['mousemove', 'keydown', 'scroll', 'click', 'touchstart'].forEach(function (evt) {
+        document.addEventListener(evt, resetIdle, { passive: true });
+    });
+    resetIdle();
+
+    // 3. Hover
+    logoImg.addEventListener('mouseenter', playJitter);
+})();

@@ -1097,6 +1097,33 @@ html.intro-complete body > .site-footer {
     pointer-events: auto;
 }
 
+/* ----- Split logo layout ----- */
+.brand-logo {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+}
+
+/* ----- Logo battery-jitter ----- */
+@keyframes logo-battery-jitter {
+    0%   { transform: translateX(0);    opacity: 1;    filter: brightness(1); }
+    6%   { transform: translateX(-1px); opacity: 0.35; filter: brightness(0.45); }
+    10%  { transform: translateX(1px);  opacity: 1;    filter: brightness(1); }
+    16%  { transform: translateX(0);    opacity: 0.55; filter: brightness(0.65); }
+    20%  { transform: translateX(-2px); opacity: 1;    filter: brightness(1); }
+    26%  { transform: translateX(0);    opacity: 0.2;  filter: brightness(0.3); }
+    30%  { transform: translateX(1px);  opacity: 0.9;  filter: brightness(1); }
+    36%  { transform: translateX(-1px); opacity: 0.5;  filter: brightness(0.6); }
+    40%  { transform: translateX(0);    opacity: 1;    filter: brightness(1); }
+    46%  { transform: translateX(0);    opacity: 0.75; filter: brightness(0.85); }
+    54%  { transform: translateX(0);    opacity: 1;    filter: brightness(1); }
+    100% { transform: translateX(0);    opacity: 1;    filter: brightness(1); }
+}
+
+.logo-jitter {
+    animation: logo-battery-jitter 580ms linear forwards;
+}
+
 /* ----- Logo intro (Three.js + GSAP) ----- */
 .logo-intro-overlay {
     position: fixed;
