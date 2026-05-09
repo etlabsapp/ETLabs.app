@@ -372,6 +372,52 @@ body {
   display: flex; flex-direction: column; gap: 16px;
 }
 
+.hint-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface); border: 1.5px solid var(--border);
+}
+.hint-btn {
+  background: none; border: 1.5px solid var(--text);
+  color: var(--text); padding: 6px 12px;
+  font-size: .72rem; font-weight: 800;
+  cursor: pointer; font-family: inherit; transition: all .12s;
+  text-transform: uppercase; letter-spacing: .08em;
+  display: flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+}
+.hint-btn:hover { background: var(--text); color: var(--bg); }
+.hint-cost {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem; color: var(--accent);
+  font-weight: 700;
+}
+.hint-btn:hover .hint-cost { color: var(--bg); }
+.hint-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem; color: var(--muted); font-weight: 500;
+  letter-spacing: .04em;
+}
+
+/* Timer penalty flash */
+@keyframes timerFlash {
+  0%,100% { color: var(--text); }
+  40%     { color: var(--accent); transform: scale(1.1); }
+}
+.timer-display.timer-penalty { animation: timerFlash .6s ease; }
+
+/* Leaderboard hints column */
+.lb-hints {
+  font-size: .72rem; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+}
+
+/* Stats modal best-time label */
+.best-time-label {
+  flex: 1; font-size: .85rem; color: var(--muted);
+}
+
 .lifelines {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   padding: 12px 14px;

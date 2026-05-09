@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Total Cross | ET Labs</title>
-  <meta name="description" content="A word puzzle where every answer must sum to its target. Daily puzzle, three difficulty levels. Free to play.">
-  <meta name="theme-color" content="#0a0f1c">
+  <meta name="description" content="A word puzzle where every answer must sum to its target. Daily puzzle. Free to play.">
+  <meta name="theme-color" content="#f5f0e8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,700;0,800;0,900;1,700;1,800;1,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -79,6 +79,7 @@
           <li>Two themes are shown — one for Across words, one for Down words.</li>
           <li>The target sum appears at the end of each word in the grid.</li>
           <li>Crossing letters must satisfy both their Across and Down word.</li>
+          <li>Stuck? Use a <strong>Hint</strong> to reveal a letter — each one adds 60 seconds to your time.</li>
         </ul>
         <div class="howto-example">
           <p class="example-label">Example — Theme: Big Cats, Target: 51</p>
@@ -99,11 +100,6 @@
           </div>
         </div>
         <button id="btn-take-tutorial" class="secondary-button" type="button" style="margin-bottom:16px">Take the tutorial →</button>
-        <div class="howto-difficulties">
-          <div class="diff-row"><span class="diff-badge easy">Easy</span> Intersection letters are pre-filled for you.</div>
-          <div class="diff-row"><span class="diff-badge medium">Medium</span> No hints. You have 3 letter reveals.</div>
-          <div class="diff-row"><span class="diff-badge hard">Hard</span> No hints. No reveals. Submit to find out.</div>
-        </div>
       </div>
     </div>
 
@@ -119,10 +115,9 @@
           <div class="stat-block"><span class="stat-num" id="stat-best-streak">0</span><span class="stat-label">Best streak</span></div>
         </div>
         <div class="best-times">
-          <h3>Best times</h3>
-          <div class="best-time-row"><span class="diff-badge easy">Easy</span><span id="best-easy">—</span></div>
-          <div class="best-time-row"><span class="diff-badge medium">Medium</span><span id="best-medium">—</span></div>
-          <div class="best-time-row"><span class="diff-badge hard">Hard</span><span id="best-hard">—</span></div>
+          <h3>Personal bests</h3>
+          <div class="best-time-row"><span class="best-time-label">Best time</span><span id="best-time">—</span></div>
+          <div class="best-time-row"><span class="best-time-label">Fewest hints</span><span id="best-hints">—</span></div>
         </div>
       </div>
     </div>
@@ -173,48 +168,23 @@
           </div>
         </div>
 
-        <!-- DIFFICULTY PICKER -->
-        <div class="difficulty-picker" id="difficulty-picker">
-          <p class="picker-label">Step 01 — Choose your difficulty</p>
-          <div class="picker-buttons">
-            <button class="diff-btn" data-diff="easy" type="button">
-              <span class="diff-btn-num">01</span>
-              <span class="diff-btn-name">Easy</span>
-              <span class="diff-btn-desc">Crossing letters are pre-filled. A friendly first run.</span>
-            </button>
-            <button class="diff-btn" data-diff="medium" type="button">
-              <span class="diff-btn-num">02</span>
-              <span class="diff-btn-name">Medium</span>
-              <span class="diff-btn-desc">No hints. Three letter reveals if you get stuck.</span>
-            </button>
-            <button class="diff-btn" data-diff="hard" type="button">
-              <span class="diff-btn-num">03</span>
-              <span class="diff-btn-name">Hard</span>
-              <span class="diff-btn-desc">No hints. No reveals. Submit to find out.</span>
-            </button>
-          </div>
-        </div>
-
         <!-- GAME BOARD -->
-        <div class="game-board" id="game-board" hidden>
+        <div class="game-board" id="game-board">
 
           <!-- GRID -->
           <div class="grid-wrapper" id="grid-wrapper">
             <div class="grid" id="puzzle-grid" role="grid" aria-label="Puzzle grid"></div>
           </div>
 
-          <!-- CLUE LIST -->
+          <!-- CLUE PANEL -->
           <div class="clue-panel" id="clue-panel">
 
-            <!-- Medium lifelines -->
-            <div class="lifelines" id="lifelines" hidden>
-              <span class="lifeline-label">Reveals left:</span>
-              <div class="lifeline-dots" id="lifeline-dots">
-                <span class="lifeline-dot" data-i="0"></span>
-                <span class="lifeline-dot" data-i="1"></span>
-                <span class="lifeline-dot" data-i="2"></span>
-              </div>
-              <button id="btn-reveal" class="reveal-btn" type="button">Reveal a letter</button>
+            <!-- Hint button -->
+            <div class="hint-bar" id="hint-bar">
+              <button id="btn-hint" class="hint-btn" type="button">
+                Hint <span class="hint-cost">+60s</span>
+              </button>
+              <span class="hint-count" id="hint-count"></span>
             </div>
 
             <div class="clue-columns">
@@ -232,11 +202,6 @@
 
             <!-- Letter reference -->
             <div class="letter-ref" id="letter-ref" hidden></div>
-
-            <!-- Hard submit -->
-            <div class="hard-submit" id="hard-submit" hidden>
-              <button id="btn-submit-hard" class="primary-button" type="button">Submit puzzle</button>
-            </div>
 
           </div>
 
@@ -266,8 +231,8 @@
           </div>
           <div class="feature-card card">
             <div class="feature-num">03</div>
-            <h3>Three difficulties</h3>
-            <p>Easy pre-fills crossing letters. Medium gives you three reveals. Hard gives you nothing — just the grid and the numbers.</p>
+            <h3>Hints cost time</h3>
+            <p>Reveal any letter for +60 seconds on your clock. Use as many as you need — your time tells the story.</p>
           </div>
         </div>
       </div>
@@ -281,6 +246,7 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="puzzles.js"></script>
   <script src="game.js"></script>
 </body>

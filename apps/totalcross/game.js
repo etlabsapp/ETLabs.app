@@ -3,17 +3,70 @@
 (function () {
   'use strict';
 
-  let puzzle = null;
-  let difficulty = null;
-  let grid = [];
-  let words = [];
+  // ── CONFIG ──────────────────────────────────────────────
+  const SUPABASE_URL = 'https://ygfnplpkztkcxmofkyci.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlnZm5wbHBrenRrY3htb2ZreWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTc0NzgsImV4cCI6MjA5Mzg3MzQ3OH0.8A1SUGb7hDxnUjE2RSG2KinJs-_NLZMYMNYfpHhRR-M';
+  const LAUNCH_DATE  = new Date('2026-05-08T00:00:00');
+  const HINT_PENALTY = 60; // seconds per hint
+  const USERNAME_KEY = 'tc_username';
+  const DEVICE_KEY   = 'tc_device_id';
+  const STATS_KEY    = 'totalcross_stats';
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ── STATE ───────────────────────────────────────────────
+  let puzzle       = null;
+  let grid         = [];
+  let words        = [];
   let selectedCell = null;
   let selectedWord = null;
   let timerInterval = null;
-  let timerSeconds = 0;
-  let lifelinesLeft = 3;
-  let gameComplete = false;
-  let gameStarted = false;
+  let timerSeconds  = 0;
+  let hintsUsed     = 0;
+  let gameComplete  = false;
+  let puzzleNumber  = 1;
+
+  // ── HELPERS ─────────────────────────────────────────────
+
+  function getPuzzleNumber() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const launch = new Date(LAUNCH_DATE);
+    launch.setHours(0, 0, 0, 0);
+    return Math.max(1, Math.floor((today - launch) / 86400000) + 1);
+  }
+
+  function getDeviceId() {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      id = typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return id;
+  }
+
+  function formatTime(secs) {
+    const m = Math.floor(secs / 60), s = secs % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  function letterValue(ch) {
+    return ch.toUpperCase().charCodeAt(0) - 64;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function todayISO() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
 
   // ── TUTORIAL DATA ───────────────────────────────────────
 
@@ -41,44 +94,37 @@
     {
       title: 'Welcome to Total Cross',
       body:  'A crossword where letters have values — A=1, B=2 … Z=26. Every word must add up to its target number. Let\'s try a mini-puzzle.',
-      highlight: null,
-      fill: null,
+      highlight: null, fill: null,
     },
     {
       title: 'Two themes',
       body:  '<strong>Across</strong> words are US Presidents. <strong>Down</strong> words are Planets &amp; Space. The target sum is your only clue.',
-      highlight: 'themes',
-      fill: null,
+      highlight: 'themes', fill: null,
     },
     {
       title: 'Find 1-Across',
       body:  '1&#8209;Across is a US President, 5 letters, target sum <strong>76</strong>.<br><br>N(14) + I(9) + X(24) + O(15) + N(14) = 76 → <strong>NIXON</strong>',
-      highlight: '1A',
-      fill: '1A',
+      highlight: '1A', fill: '1A',
     },
     {
       title: 'Intersections lock letters',
-      body:  'The N at the start and the N at the end of NIXON are shared with the Down words. Those letters are now fixed — they narrow down what the Down words can be.',
-      highlight: 'intersections',
-      fill: null,
+      body:  'The N at the start and the N at the end of NIXON are shared with the Down words. Those letters narrow down what the Down words can be.',
+      highlight: 'intersections', fill: null,
     },
     {
       title: 'Find 1-Down',
       body:  '1&#8209;Down is a Planet, 7 letters, starts with <strong>N</strong> (locked from NIXON), target sum <strong>95</strong>.<br><br>NEPTUNE = 95 ✓',
-      highlight: '1D',
-      fill: '1D',
+      highlight: '1D', fill: '1D',
     },
     {
       title: 'Chain reaction',
-      body:  'Filling NEPTUNE revealed <strong>T</strong> at the start of 2&#8209;Across and <strong>U</strong> in the middle. TRUMAN (sum 87) and NOVA (sum 52) drop right in.',
-      highlight: null,
-      fill: '2A+2D',
+      body:  'Filling NEPTUNE revealed <strong>T</strong> at the start of 2&#8209;Across and <strong>U</strong> in the middle. TRUMAN (87) and NOVA (52) drop right in.',
+      highlight: null, fill: '2A+2D',
     },
     {
       title: 'That\'s it!',
-      body:  'Theme + target sum = find the word. Crossings give you free letters. Now try today\'s puzzle.',
-      highlight: null,
-      fill: null,
+      body:  'Theme + target sum = find the word. Crossings give you free letters. Need help? Hints reveal a letter for +60 seconds on your clock.',
+      highlight: null, fill: null,
     },
   ];
 
@@ -86,21 +132,16 @@
   let tutGrid = [];
   let tutWords = [];
 
-  // ── API ─────────────────────────────────────────────────
-  // Point this at your deployed Worker URL once you run `wrangler deploy`
-  const API_BASE = 'https://totalcross-api.etlabs-app.workers.dev';
-
-  const USERNAME_KEY = 'tc_username';
-
   // ── INIT ────────────────────────────────────────────────
 
   document.addEventListener('DOMContentLoaded', init);
 
   function init() {
+    puzzleNumber = getPuzzleNumber();
     puzzle = getTodaysPuzzle();
     setupPuzzleMeta();
-    setupDifficultyPicker();
     setupModals();
+    startGame();
 
     const seen = localStorage.getItem('tc_tutorial_done');
     if (!seen) startTutorial();
@@ -108,28 +149,30 @@
 
   function setupPuzzleMeta() {
     const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const dayOfYear = Math.floor((now - start) / 86400000);
-    document.getElementById('puzzle-num').textContent = dayOfYear;
-    document.getElementById('across-theme').textContent = puzzle.acrossTheme;
-    document.getElementById('down-theme').textContent = puzzle.downTheme;
+    document.getElementById('puzzle-num').textContent = puzzleNumber;
 
     const barNum = document.getElementById('bar-puzzle-num');
-    if (barNum) barNum.textContent = `# ${dayOfYear} / Daily Puzzle`;
+    if (barNum) barNum.textContent = `# ${puzzleNumber} / Daily Puzzle`;
 
     const barDate = document.getElementById('bar-live-date');
     if (barDate) {
-      barDate.textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-    }
-  }
-
-  function setupDifficultyPicker() {
-    document.querySelectorAll('.diff-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        difficulty = btn.dataset.diff;
-        startGame();
+      barDate.textContent = now.toLocaleDateString('en-US', {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
       });
-    });
+    }
+
+    document.getElementById('across-theme').textContent = puzzle.acrossTheme;
+    document.getElementById('down-theme').textContent   = puzzle.downTheme;
+
+    const themeEl = document.getElementById('puzzle-theme-display');
+    if (themeEl) {
+      themeEl.innerHTML =
+        `<span class="theme-direction">Across</span>` +
+        `<span class="theme-value">${escapeHtml(puzzle.acrossTheme)}</span>` +
+        `<span class="theme-sep">·</span>` +
+        `<span class="theme-direction">Down</span>` +
+        `<span class="theme-value">${escapeHtml(puzzle.downTheme)}</span>`;
+    }
   }
 
   // ── TUTORIAL ────────────────────────────────────────────
@@ -140,7 +183,6 @@
     renderTutorialGrid();
     renderTutorialStep();
     document.getElementById('tutorial-overlay').removeAttribute('hidden');
-
     document.getElementById('tut-next').addEventListener('click', advanceTutorial);
     document.getElementById('tut-skip').addEventListener('click', endTutorial);
   }
@@ -153,7 +195,6 @@
     );
     tutWords.forEach(w => w.cells.forEach(pos => tutGrid[pos.row][pos.col].wordIds.push(w.id)));
 
-    // Number the start cells
     let num = 1;
     const numbered = {};
     [...tutWords].sort((a,b) => a.row !== b.row ? a.row - b.row : a.col - b.col).forEach(w => {
@@ -184,12 +225,10 @@
           if (word && tutGrid[r][c].wordIds[0] === word.id) {
             const numEl = document.createElement('span');
             numEl.className = 'cell-number';
-            // only show number if this is the start of a word
             const isStart = tutWords.some(w => w.row === r && w.col === c);
             if (isStart) numEl.textContent = word.displayNumber;
             el.appendChild(numEl);
           }
-
           const input = document.createElement('input');
           input.type = 'text'; input.maxLength = 1; input.className = 'cell-letter';
           input.readOnly = true;
@@ -200,7 +239,6 @@
       }
     }
 
-    // Sum chips for tutorial
     requestAnimationFrame(() => {
       const wrap = document.getElementById('tut-grid-wrap');
       wrap.querySelectorAll('.sum-chip').forEach(e => e.remove());
@@ -228,11 +266,8 @@
     const step = TUTORIAL_STEPS[tutStep];
     document.getElementById('tut-title').textContent = step.title;
     document.getElementById('tut-body').innerHTML = step.body;
+    document.getElementById('tut-next').textContent = tutStep === TUTORIAL_STEPS.length - 1 ? 'Start playing →' : 'Next →';
 
-    const nextBtn = document.getElementById('tut-next');
-    nextBtn.textContent = tutStep === TUTORIAL_STEPS.length - 1 ? 'Start playing →' : 'Next →';
-
-    // Step dots
     const dotsEl = document.getElementById('tut-dots');
     dotsEl.innerHTML = '';
     TUTORIAL_STEPS.forEach((_, i) => {
@@ -241,23 +276,20 @@
       dotsEl.appendChild(dot);
     });
 
-    // Clear highlights
     tutGrid.forEach(row => row.forEach(cell => {
       if (cell.el) cell.el.classList.remove('word-active', 'selected', 'tut-intersection');
     }));
 
-    // Apply highlight
-    if (step.highlight === '1A' || step.highlight === '1D' || step.highlight === '2A' || step.highlight === '2D') {
+    if (['1A','1D','2A','2D'].includes(step.highlight)) {
       const w = tutWords.find(w => w.id === step.highlight);
       if (w) w.cells.forEach(pos => tutGrid[pos.row][pos.col].el?.classList.add('word-active'));
     } else if (step.highlight === 'intersections') {
-      tutWords.forEach(w => w.cells.forEach((pos, i) => {
-        const cell = tutGrid[pos.row][pos.col];
-        if (cell.wordIds.length >= 2) cell.el?.classList.add('tut-intersection');
+      tutWords.forEach(w => w.cells.forEach(pos => {
+        if (tutGrid[pos.row][pos.col].wordIds.length >= 2)
+          tutGrid[pos.row][pos.col].el?.classList.add('tut-intersection');
       }));
     }
 
-    // Fill letters
     if (step.fill) {
       const toFill = step.fill === '2A+2D' ? ['2A','2D'] : [step.fill];
       toFill.forEach(id => {
@@ -275,10 +307,7 @@
   }
 
   function advanceTutorial() {
-    if (tutStep >= TUTORIAL_STEPS.length - 1) {
-      endTutorial();
-      return;
-    }
+    if (tutStep >= TUTORIAL_STEPS.length - 1) { endTutorial(); return; }
     tutStep++;
     renderTutorialStep();
   }
@@ -288,16 +317,23 @@
     document.getElementById('tutorial-overlay').setAttribute('hidden', '');
   }
 
+  // ── MODALS ──────────────────────────────────────────────
+
   function setupModals() {
     document.getElementById('btn-how-to-play').addEventListener('click', () => openModal('modal-howto'));
     document.getElementById('btn-stats').addEventListener('click', () => { populateStats(); openModal('modal-stats'); });
     document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', closeAllModals));
     document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', closeAllModals));
-    document.getElementById('btn-take-tutorial').addEventListener('click', () => { closeAllModals(); tutStep = 0; buildTutorialGrid(); renderTutorialGrid(); renderTutorialStep(); document.getElementById('tutorial-overlay').removeAttribute('hidden'); });
+    document.getElementById('btn-take-tutorial').addEventListener('click', () => {
+      closeAllModals();
+      tutStep = 0;
+      buildTutorialGrid();
+      renderTutorialGrid();
+      renderTutorialStep();
+      document.getElementById('tutorial-overlay').removeAttribute('hidden');
+    });
     document.getElementById('btn-share').addEventListener('click', shareResult);
     document.getElementById('btn-view-solution').addEventListener('click', closeAllModals);
-    document.getElementById('btn-submit-hard').addEventListener('click', submitHard);
-    document.getElementById('btn-reveal').addEventListener('click', revealLetter);
     document.getElementById('btn-username-save').addEventListener('click', saveUsername);
     document.getElementById('username-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveUsername(); });
   }
@@ -311,23 +347,15 @@
     if (gameComplete) submitScore(name);
   }
 
-  function openModal(id) { document.getElementById(id).removeAttribute('hidden'); }
+  function openModal(id)    { document.getElementById(id).removeAttribute('hidden'); }
   function closeAllModals() { document.querySelectorAll('.modal').forEach(m => m.setAttribute('hidden', '')); }
 
   // ── GAME START ──────────────────────────────────────────
 
   function startGame() {
-    document.getElementById('difficulty-picker').style.display = 'none';
-    document.getElementById('game-board').removeAttribute('hidden');
-
-    if (difficulty === 'medium') {
-      document.getElementById('lifelines').removeAttribute('hidden');
-      lifelinesLeft = 3;
-      updateLifelineDots();
-    }
-    if (difficulty === 'hard') {
-      document.getElementById('hard-submit').removeAttribute('hidden');
-    }
+    hintsUsed    = 0;
+    gameComplete = false;
+    timerSeconds = 0;
 
     buildWordObjects();
     buildGrid();
@@ -335,19 +363,18 @@
     renderClues();
     renderLetterRef();
     startTimer();
+    updateHintCount();
 
-    // Focus first cell of first across word
+    document.getElementById('btn-hint').addEventListener('click', revealLetter);
+
     const firstWord = words.find(w => w.direction === 'across') || words[0];
     if (firstWord) {
-      const pos = firstWord.cells.find(p => !grid[p.row][p.col].prefill) || firstWord.cells[0];
       selectedWord = firstWord;
-      selectedCell = pos;
-      const cell = grid[pos.row][pos.col];
+      selectedCell = firstWord.cells[0];
+      const cell = grid[selectedCell.row][selectedCell.col];
       if (cell.inputEl) setTimeout(() => cell.inputEl.focus(), 50);
       highlightWord();
     }
-
-    gameStarted = true;
   }
 
   // ── WORD OBJECTS ────────────────────────────────────────
@@ -370,10 +397,6 @@
     return cells;
   }
 
-  function letterValue(ch) {
-    return ch.toUpperCase().charCodeAt(0) - 64;
-  }
-
   // ── GRID BUILD ──────────────────────────────────────────
 
   function buildGrid() {
@@ -388,7 +411,7 @@
           row: r, col: c,
           active: puzzle.grid[r][c] === 1,
           letter: '',
-          prefill: false,
+          revealed: false,
           wordIds: [],
           number: null,
           el: null,
@@ -397,9 +420,8 @@
       }
     }
 
-    // Assign word numbers (reading order: top→bottom, left→right by start position)
-    const numbered = {};
     let num = 1;
+    const numbered = {};
     const sortedWords = [...words].sort((a, b) => a.row !== b.row ? a.row - b.row : a.col - b.col);
     sortedWords.forEach(w => {
       const key = `${w.row},${w.col}`;
@@ -407,29 +429,11 @@
       w.displayNumber = numbered[key];
     });
 
-    // Mark cells
     words.forEach(w => {
       const startCell = grid[w.row][w.col];
       if (startCell.number === null) startCell.number = w.displayNumber;
       w.cells.forEach(pos => grid[pos.row][pos.col].wordIds.push(w.id));
     });
-
-    // Easy: pre-fill intersection cells
-    if (difficulty === 'easy') {
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const cell = grid[r][c];
-          if (cell.active && cell.wordIds.length >= 2) {
-            cell.prefill = true;
-            const word = words.find(w => w.cells.some(p => p.row === r && p.col === c));
-            if (word) {
-              const idx = word.cells.findIndex(p => p.row === r && p.col === c);
-              cell.letter = word.answer[idx] || '';
-            }
-          }
-        }
-      }
-    }
   }
 
   // ── GRID RENDER ─────────────────────────────────────────
@@ -441,14 +445,13 @@
     const cols = puzzle.grid[0].length;
 
     gridEl.style.gridTemplateColumns = `repeat(${cols}, var(--cell-size))`;
-    gridEl.style.gridTemplateRows = `repeat(${rows}, var(--cell-size))`;
+    gridEl.style.gridTemplateRows    = `repeat(${rows}, var(--cell-size))`;
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const cell = grid[r][c];
         const el = document.createElement('div');
         el.className = 'cell ' + (cell.active ? 'active' : 'blocked');
-        if (cell.prefill) el.classList.add('prefill');
         el.dataset.row = r;
         el.dataset.col = c;
         cell.el = el;
@@ -472,11 +475,6 @@
           input.inputMode = 'text';
           input.setAttribute('aria-label', `Row ${r + 1}, Col ${c + 1}`);
 
-          if (cell.prefill) {
-            input.value = cell.letter.toUpperCase();
-            input.readOnly = true;
-          }
-
           input.addEventListener('focus', () => onCellFocus(r, c));
           input.addEventListener('keydown', e => onCellKeydown(e, r, c));
           input.addEventListener('input', e => onCellInput(e, r, c));
@@ -490,7 +488,6 @@
       }
     }
 
-    // Render sum chips after each word
     renderSumChips();
   }
 
@@ -498,13 +495,11 @@
     const wrapper = document.getElementById('grid-wrapper');
     wrapper.querySelectorAll('.sum-chip').forEach(el => el.remove());
 
-    // Position chips after layout settles
     requestAnimationFrame(() => {
       const cellEl = document.querySelector('.cell.active');
       if (!cellEl) return;
       const cellSize = cellEl.getBoundingClientRect().width;
       if (!cellSize) return;
-
       const wrapRect = wrapper.getBoundingClientRect();
 
       words.forEach(w => {
@@ -515,26 +510,26 @@
 
         let left, top;
         if (w.direction === 'across') {
-          const lastCellEl = document.querySelector(`[data-row="${w.row}"][data-col="${w.col + w.length - 1}"]`);
-          if (lastCellEl) {
-            const cr = lastCellEl.getBoundingClientRect();
+          const lastEl = document.querySelector(`[data-row="${w.row}"][data-col="${w.col + w.length - 1}"]`);
+          if (lastEl) {
+            const cr = lastEl.getBoundingClientRect();
             left = cr.right - wrapRect.left + 4;
-            top = cr.top - wrapRect.top + cellSize / 2;
+            top  = cr.top - wrapRect.top + cellSize / 2;
             chip.style.transform = 'translateY(-50%)';
           }
         } else {
-          const lastCellEl = document.querySelector(`[data-row="${w.row + w.length - 1}"][data-col="${w.col}"]`);
-          if (lastCellEl) {
-            const cr = lastCellEl.getBoundingClientRect();
+          const lastEl = document.querySelector(`[data-row="${w.row + w.length - 1}"][data-col="${w.col}"]`);
+          if (lastEl) {
+            const cr = lastEl.getBoundingClientRect();
             left = cr.left - wrapRect.left + cellSize / 2;
-            top = cr.bottom - wrapRect.top + 4;
+            top  = cr.bottom - wrapRect.top + 4;
             chip.style.transform = 'translateX(-50%)';
           }
         }
 
         if (left !== undefined) {
           chip.style.left = left + 'px';
-          chip.style.top = top + 'px';
+          chip.style.top  = top + 'px';
           wrapper.appendChild(chip);
         }
       });
@@ -591,24 +586,20 @@
         if (cell.el) cell.el.classList.remove('selected', 'word-active');
       }
     }
-    // Dim all sum chips
     document.querySelectorAll('.sum-chip').forEach(el => el.classList.remove('active'));
 
     if (!selectedWord || !selectedCell) return;
 
     selectedWord.cells.forEach(pos => {
-      const cell = grid[pos.row][pos.col];
-      if (cell.el) cell.el.classList.add('word-active');
+      if (grid[pos.row][pos.col].el) grid[pos.row][pos.col].el.classList.add('word-active');
     });
 
     const sc = grid[selectedCell.row][selectedCell.col];
     if (sc.el) sc.el.classList.add('selected');
 
-    // Highlight the sum chip for selected word
     const chip = document.querySelector(`.sum-chip[data-id="${selectedWord.id}"]`);
     if (chip) chip.classList.add('active');
 
-    // Highlight clue item
     document.querySelectorAll('.clue-item').forEach(li => li.classList.remove('active'));
     const clueEl = document.querySelector(`.clue-item[data-id="${selectedWord.id}"]`);
     if (clueEl) {
@@ -623,26 +614,26 @@
 
     if (e.key === 'Backspace') {
       e.preventDefault();
-      if (!cell.prefill && cell.letter) {
+      if (!cell.revealed && cell.letter) {
         cell.letter = '';
         cell.inputEl.value = '';
         updateClueSum(getWordsForCell(r, c));
-      } else if (!cell.prefill) {
+      } else if (!cell.revealed) {
         moveFocus(-1);
       }
       return;
     }
-    if (e.key === 'ArrowRight') { e.preventDefault(); moveInDirection('across', 1); return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); moveInDirection('across', 1);  return; }
     if (e.key === 'ArrowLeft')  { e.preventDefault(); moveInDirection('across', -1); return; }
-    if (e.key === 'ArrowDown')  { e.preventDefault(); moveInDirection('down', 1); return; }
-    if (e.key === 'ArrowUp')    { e.preventDefault(); moveInDirection('down', -1); return; }
-    if (e.key === 'Tab') { e.preventDefault(); moveToNextWord(e.shiftKey ? -1 : 1); return; }
+    if (e.key === 'ArrowDown')  { e.preventDefault(); moveInDirection('down', 1);    return; }
+    if (e.key === 'ArrowUp')    { e.preventDefault(); moveInDirection('down', -1);   return; }
+    if (e.key === 'Tab')        { e.preventDefault(); moveToNextWord(e.shiftKey ? -1 : 1); return; }
   }
 
   function onCellInput(e, r, c) {
     if (gameComplete) return;
     const cell = grid[r][c];
-    if (cell.prefill) return;
+    if (cell.revealed) return;
 
     const raw = e.target.value.replace(/[^a-zA-Z]/g, '').slice(-1).toUpperCase();
     cell.letter = raw;
@@ -650,7 +641,7 @@
 
     if (raw) {
       updateClueSum(getWordsForCell(r, c));
-      if (difficulty !== 'hard') checkWordsSolved(getWordsForCell(r, c));
+      checkWordsSolved(getWordsForCell(r, c));
       moveFocus(1);
     }
   }
@@ -663,7 +654,7 @@
     if (next >= 0 && next < cells.length) {
       const pos = cells[next];
       const cell = grid[pos.row][pos.col];
-      if (cell.inputEl && !cell.prefill) {
+      if (cell.inputEl && !cell.revealed) {
         selectedCell = pos;
         cell.inputEl.focus();
         highlightWord();
@@ -678,14 +669,12 @@
     else r += delta;
     if (r < 0 || r >= grid.length || c < 0 || c >= grid[0].length) return;
     const cell = grid[r][c];
-    if (!cell.active) return;
-    if (cell.inputEl) {
-      selectedCell = { row: r, col: c };
-      const w = words.find(w => w.direction === direction && w.cells.some(p => p.row === r && p.col === c));
-      if (w) selectedWord = w;
-      cell.inputEl.focus();
-      highlightWord();
-    }
+    if (!cell.active || !cell.inputEl) return;
+    selectedCell = { row: r, col: c };
+    const w = words.find(w => w.direction === direction && w.cells.some(p => p.row === r && p.col === c));
+    if (w) selectedWord = w;
+    cell.inputEl.focus();
+    highlightWord();
   }
 
   function moveToNextWord(delta) {
@@ -698,7 +687,7 @@
       tries++;
     }
     selectedWord = next;
-    const firstEmpty = next.cells.find(p => !grid[p.row][p.col].letter && !grid[p.row][p.col].prefill);
+    const firstEmpty = next.cells.find(p => !grid[p.row][p.col].letter && !grid[p.row][p.col].revealed);
     const target = firstEmpty || next.cells[0];
     selectedCell = target;
     const cell = grid[target.row][target.col];
@@ -710,7 +699,7 @@
     return words.filter(w => w.cells.some(p => p.row === r && p.col === c));
   }
 
-  // ── CLUE LIST ───────────────────────────────────────────
+  // ── CLUES ───────────────────────────────────────────────
 
   function renderClues() {
     const acrossEl = document.getElementById('clues-across');
@@ -744,7 +733,7 @@
 
       li.addEventListener('click', () => {
         selectedWord = w;
-        const pos = w.cells.find(p => !grid[p.row][p.col].prefill) || w.cells[0];
+        const pos = w.cells.find(p => !grid[p.row][p.col].revealed) || w.cells[0];
         selectedCell = pos;
         const cell = grid[pos.row][pos.col];
         if (cell.inputEl) cell.inputEl.focus();
@@ -763,8 +752,8 @@
         return s + (ch ? letterValue(ch) : 0);
       }, 0);
 
-      const allFilled = w.cells.every(pos => grid[pos.row][pos.col].letter || grid[pos.row][pos.col].prefill);
-      const matched = allFilled && currentSum === w.sum;
+      const allFilled = w.cells.every(pos => grid[pos.row][pos.col].letter || grid[pos.row][pos.col].revealed);
+      const matched   = allFilled && currentSum === w.sum;
 
       const currentEl = document.querySelector(`.clue-item[data-id="${w.id}"] .clue-current`);
       if (currentEl) {
@@ -772,7 +761,6 @@
         currentEl.classList.toggle('matched', matched);
       }
 
-      // Update sum chip colour
       const chip = document.querySelector(`.sum-chip[data-id="${w.id}"]`);
       if (chip) chip.classList.toggle('matched', w.solved);
     });
@@ -785,7 +773,7 @@
       if (w.solved) return;
       const correct = w.cells.every((pos, i) => {
         const cell = grid[pos.row][pos.col];
-        return (cell.prefill ? cell.letter : cell.letter).toUpperCase() === w.answer[i].toUpperCase();
+        return (cell.letter || '').toUpperCase() === w.answer[i].toUpperCase();
       });
       if (correct) {
         w.solved = true;
@@ -797,8 +785,7 @@
 
   function markWordSolved(w) {
     w.cells.forEach(pos => {
-      const cell = grid[pos.row][pos.col];
-      if (cell.el) cell.el.classList.add('correct');
+      if (grid[pos.row][pos.col].el) grid[pos.row][pos.col].el.classList.add('correct');
     });
     const clueEl = document.querySelector(`.clue-item[data-id="${w.id}"]`);
     if (clueEl) clueEl.classList.add('solved');
@@ -811,45 +798,17 @@
     if (words.every(w => w.solved)) completePuzzle();
   }
 
-  // ── HARD SUBMIT ─────────────────────────────────────────
-
-  function submitHard() {
-    const incorrect = words.filter(w =>
-      !w.cells.every((pos, i) =>
-        (grid[pos.row][pos.col].letter || '').toUpperCase() === w.answer[i].toUpperCase()
-      )
-    );
-
-    if (incorrect.length === 0) {
-      words.forEach(w => { w.solved = true; markWordSolved(w); });
-      completePuzzle();
-    } else {
-      incorrect.forEach(w => {
-        w.cells.forEach(pos => {
-          const cell = grid[pos.row][pos.col];
-          if (cell.el) {
-            cell.el.classList.add('wrong-flash');
-            setTimeout(() => cell.el.classList.remove('wrong-flash'), 600);
-          }
-        });
-      });
-      const btn = document.getElementById('btn-submit-hard');
-      btn.textContent = `${incorrect.length} word${incorrect.length > 1 ? 's' : ''} incorrect`;
-      setTimeout(() => { btn.textContent = 'Submit puzzle'; }, 3000);
-    }
-  }
-
-  // ── LIFELINES ───────────────────────────────────────────
+  // ── HINTS ───────────────────────────────────────────────
 
   function revealLetter() {
-    if (lifelinesLeft <= 0) return;
+    if (gameComplete) return;
 
     let targetPos = null, targetWord = null;
 
     if (selectedWord && !selectedWord.solved) {
       for (const pos of selectedWord.cells) {
         const cell = grid[pos.row][pos.col];
-        if (!cell.prefill && !cell.letter) { targetPos = pos; targetWord = selectedWord; break; }
+        if (!cell.revealed && !cell.letter) { targetPos = pos; targetWord = selectedWord; break; }
       }
     }
 
@@ -858,7 +817,7 @@
         if (w.solved) continue;
         for (const pos of w.cells) {
           const cell = grid[pos.row][pos.col];
-          if (!cell.prefill && !cell.letter) { targetPos = pos; targetWord = w; break; }
+          if (!cell.revealed && !cell.letter) { targetPos = pos; targetWord = w; break; }
         }
         if (targetPos) break;
       }
@@ -867,45 +826,49 @@
     if (!targetPos) return;
 
     const cell = grid[targetPos.row][targetPos.col];
-    const idx = targetWord.cells.findIndex(p => p.row === targetPos.row && p.col === targetPos.col);
-    cell.letter = targetWord.answer[idx];
+    const idx  = targetWord.cells.findIndex(p => p.row === targetPos.row && p.col === targetPos.col);
+    cell.letter   = targetWord.answer[idx];
+    cell.revealed = true;
     if (cell.inputEl) {
-      cell.inputEl.value = cell.letter.toUpperCase();
-      cell.el.classList.add('prefill');
+      cell.inputEl.value    = cell.letter.toUpperCase();
+      cell.inputEl.readOnly = true;
     }
+    if (cell.el) cell.el.classList.add('prefill');
 
-    lifelinesLeft--;
-    updateLifelineDots();
+    hintsUsed++;
+    timerSeconds += HINT_PENALTY;
+    updateTimerDisplay();
+    updateHintCount();
+
     updateClueSum(getWordsForCell(targetPos.row, targetPos.col));
     checkWordsSolved(getWordsForCell(targetPos.row, targetPos.col));
-    if (lifelinesLeft === 0) document.getElementById('btn-reveal').disabled = true;
+
+    // Flash the penalty on the timer
+    const timerEl = document.getElementById('timer-display');
+    timerEl.classList.add('timer-penalty');
+    setTimeout(() => timerEl.classList.remove('timer-penalty'), 800);
   }
+
+  function updateHintCount() {
+    const el = document.getElementById('hint-count');
+    if (!el) return;
+    el.textContent = hintsUsed > 0
+      ? `${hintsUsed} hint${hintsUsed > 1 ? 's' : ''} used (+${formatTime(hintsUsed * HINT_PENALTY)})`
+      : '';
+  }
+
+  // ── LETTER REFERENCE ────────────────────────────────────
 
   function renderLetterRef() {
     const el = document.getElementById('letter-ref');
-    if (difficulty === 'hard') return;
-
-    if (difficulty === 'medium') {
-      const vowels = [['A',1],['E',5],['I',9],['O',15],['U',21]];
-      el.innerHTML = '<div class="letter-ref-label">Vowel values</div>' +
-        '<div class="letter-ref-vowels">' +
-        vowels.map(([l,v]) => `<span class="lref-item"><span class="lref-l">${l}</span><span class="lref-v">${v}</span></span>`).join('') +
-        '</div>';
-    } else {
-      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-      el.innerHTML = '<div class="letter-ref-label">Letter values</div>' +
-        '<div class="letter-ref-grid">' +
-        letters.map((l,i) => `<span class="lref-item"><span class="lref-l">${l}</span><span class="lref-v">${i+1}</span></span>`).join('') +
-        '</div>';
-    }
-
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    el.innerHTML = '<div class="letter-ref-label">Letter values</div>' +
+      '<div class="letter-ref-grid">' +
+      letters.map((l, i) =>
+        `<span class="lref-item"><span class="lref-l">${l}</span><span class="lref-v">${i+1}</span></span>`
+      ).join('') +
+      '</div>';
     el.removeAttribute('hidden');
-  }
-
-  function updateLifelineDots() {
-    document.querySelectorAll('.lifeline-dot').forEach((dot, i) => {
-      dot.classList.toggle('used', i >= lifelinesLeft);
-    });
   }
 
   // ── TIMER ───────────────────────────────────────────────
@@ -919,13 +882,7 @@
   function stopTimer() { clearInterval(timerInterval); }
 
   function updateTimerDisplay() {
-    const m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
-    document.getElementById('timer-display').textContent = `${m}:${s.toString().padStart(2, '0')}`;
-  }
-
-  function formatTime(secs) {
-    const m = Math.floor(secs / 60), s = secs % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
+    document.getElementById('timer-display').textContent = formatTime(timerSeconds);
   }
 
   // ── COMPLETION ──────────────────────────────────────────
@@ -941,10 +898,15 @@
   function showCompleteModal() {
     const stats = loadStats();
     document.getElementById('complete-time-display').textContent = formatTime(timerSeconds);
+
+    const hintNote = hintsUsed > 0
+      ? ` · ${hintsUsed} hint${hintsUsed > 1 ? 's' : ''} (+${formatTime(hintsUsed * HINT_PENALTY)})`
+      : ' · No hints';
     document.getElementById('complete-meta').textContent =
-      `${puzzle.acrossTheme} · ${puzzle.downTheme} · ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
+      `${puzzle.acrossTheme} · ${puzzle.downTheme}${hintNote}`;
+
     document.getElementById('complete-streak').textContent =
-      stats.streak > 1 ? `🔥 ${stats.streak} day streak` : `First solve! Start your streak tomorrow.`;
+      stats.streak > 1 ? `🔥 ${stats.streak} day streak` : 'First solve! Come back tomorrow to start your streak.';
 
     const username = localStorage.getItem(USERNAME_KEY);
     if (!username) {
@@ -958,24 +920,37 @@
     openModal('modal-complete');
   }
 
-  async function submitScore(username) {
+  // ── SUPABASE — SCORE SUBMIT ──────────────────────────────
+
+  async function submitScore(displayName) {
     try {
-      await fetch(`${API_BASE}/api/score`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ puzzleId: puzzle.id, difficulty, timeSec: timerSeconds, username }),
+      await sb.from('scores').insert({
+        puzzle_number: puzzleNumber,
+        puzzle_date:   todayISO(),
+        display_name:  displayName,
+        time_seconds:  timerSeconds,
+        hints_used:    hintsUsed,
+        device_id:     getDeviceId(),
       });
       loadLeaderboard();
     } catch { /* offline — silently skip */ }
   }
 
+  // ── SUPABASE — LEADERBOARD ──────────────────────────────
+
   async function loadLeaderboard() {
     const list = document.getElementById('leaderboard-list');
     list.innerHTML = '<li class="lb-loading">Loading…</li>';
     try {
-      const res = await fetch(`${API_BASE}/api/leaderboard?puzzleId=${puzzle.id}&difficulty=${difficulty}`);
-      const data = await res.json();
-      renderLeaderboard(data.leaderboard ?? []);
+      const { data, error } = await sb
+        .from('scores')
+        .select('display_name, time_seconds, hints_used')
+        .eq('puzzle_date', todayISO())
+        .order('time_seconds', { ascending: true })
+        .limit(10);
+
+      if (error) throw error;
+      renderLeaderboard(data || []);
     } catch {
       list.innerHTML = '<li class="lb-loading">Leaderboard unavailable offline.</li>';
     }
@@ -989,33 +964,26 @@
       return;
     }
     list.innerHTML = entries.map((e, i) => {
-      const isMe = e.username.toLowerCase() === username.toLowerCase();
+      const isMe = e.display_name.toLowerCase() === username.toLowerCase();
+      const hintNote = e.hints_used > 0 ? ` <span class="lb-hints">(${e.hints_used}h)</span>` : '';
       return `<li class="lb-row${isMe ? ' lb-me' : ''}">
         <span class="lb-rank">${i + 1}</span>
-        <span class="lb-name">${escapeHtml(e.username)}</span>
-        <span class="lb-time">${formatTime(e.time_sec)}</span>
+        <span class="lb-name">${escapeHtml(e.display_name)}${hintNote}</span>
+        <span class="lb-time">${formatTime(e.time_seconds)}</span>
       </li>`;
     }).join('');
-  }
-
-  function escapeHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   // ── SHARE ───────────────────────────────────────────────
 
   function shareResult() {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const dayOfYear = Math.floor((now - start) / 86400000);
-    const diffEmoji = { easy: '🟢', medium: '🟡', hard: '🔴' }[difficulty];
-
+    const hintLine = hintsUsed > 0 ? `\n${hintsUsed} hint${hintsUsed > 1 ? 's' : ''} used` : '\nNo hints';
     const text = [
-      `Total Cross #${dayOfYear} ${diffEmoji}`,
+      `Total Cross #${puzzleNumber}`,
       `Across: ${puzzle.acrossTheme}`,
       `Down: ${puzzle.downTheme}`,
-      `Solved in ${formatTime(timerSeconds)}`,
-      `etlabs.app/totalcross`,
+      `Time: ${formatTime(timerSeconds)}${hintLine}`,
+      `etlabs.app/apps/totalcross/`,
     ].join('\n');
 
     if (navigator.clipboard) {
@@ -1029,49 +997,45 @@
 
   // ── STATS ───────────────────────────────────────────────
 
-  const STATS_KEY = 'totalcross_stats';
-
   function loadStats() {
     try { return JSON.parse(localStorage.getItem(STATS_KEY)) || defaultStats(); }
     catch { return defaultStats(); }
   }
 
   function defaultStats() {
-    return { solved: 0, streak: 0, bestStreak: 0, lastSolvedDay: null, bestTimes: {} };
+    return { solved: 0, streak: 0, bestStreak: 0, lastSolvedPuzzle: null, bestTime: null, bestHints: null };
   }
 
   function saveStats() {
     const stats = loadStats();
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const today = Math.floor((now - start) / 86400000);
 
     stats.solved++;
-    if (stats.lastSolvedDay === null) {
+
+    if (stats.lastSolvedPuzzle === null) {
       stats.streak = 1;
-    } else if (stats.lastSolvedDay === today) {
-      // already solved today, no change
-    } else if (today - stats.lastSolvedDay === 1) {
+    } else if (stats.lastSolvedPuzzle === puzzleNumber) {
+      // already solved today
+    } else if (puzzleNumber - stats.lastSolvedPuzzle === 1) {
       stats.streak++;
     } else {
       stats.streak = 1;
     }
-    stats.lastSolvedDay = today;
+
+    stats.lastSolvedPuzzle = puzzleNumber;
     if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
-    if (!stats.bestTimes[difficulty] || timerSeconds < stats.bestTimes[difficulty]) {
-      stats.bestTimes[difficulty] = timerSeconds;
-    }
+    if (stats.bestTime === null || timerSeconds < stats.bestTime) stats.bestTime = timerSeconds;
+    if (stats.bestHints === null || hintsUsed < stats.bestHints) stats.bestHints = hintsUsed;
+
     localStorage.setItem(STATS_KEY, JSON.stringify(stats));
   }
 
   function populateStats() {
     const stats = loadStats();
-    document.getElementById('stat-solved').textContent = stats.solved;
-    document.getElementById('stat-streak').textContent = stats.streak;
+    document.getElementById('stat-solved').textContent     = stats.solved;
+    document.getElementById('stat-streak').textContent     = stats.streak;
     document.getElementById('stat-best-streak').textContent = stats.bestStreak;
-    document.getElementById('best-easy').textContent   = stats.bestTimes.easy   ? formatTime(stats.bestTimes.easy)   : '—';
-    document.getElementById('best-medium').textContent = stats.bestTimes.medium ? formatTime(stats.bestTimes.medium) : '—';
-    document.getElementById('best-hard').textContent   = stats.bestTimes.hard   ? formatTime(stats.bestTimes.hard)   : '—';
+    document.getElementById('best-time').textContent       = stats.bestTime !== null ? formatTime(stats.bestTime) : '—';
+    document.getElementById('best-hints').textContent      = stats.bestHints !== null ? stats.bestHints : '—';
   }
 
 })();
