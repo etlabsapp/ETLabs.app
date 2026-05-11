@@ -692,8 +692,8 @@ body {
   .brand-text { display: none; }
   .site-nav a { display: none; }
   .nav-btn { padding: 0 14px; font-size: .68rem; }
-  .nav-shell { height: 56px; }
-  .tc-logo { height: 36px; }
+  .nav-shell { height: 72px; }
+  .tc-logo { height: 60px; }
   .puzzle-stats-bar .container { grid-template-columns: auto 1fr; gap: 8px; }
   .stats-bar-item.center { text-align: right; }
 }

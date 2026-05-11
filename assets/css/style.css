@@ -1590,6 +1590,11 @@ html.intro-complete body > .site-footer {
         flex-direction: column;
         align-items: flex-start;
     }
+
+    .bg-orb,
+    .bg-grid {
+        display: none;
+    }
 }
 
 @media (max-width: 720px) {
