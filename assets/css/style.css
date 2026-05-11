@@ -38,6 +38,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -276,10 +277,6 @@ main,
     margin-bottom: 22px;
 }
 
-.hero-product-strip--totalcross {
-    background: linear-gradient(180deg, rgba(255, 247, 234, 0.55), rgba(244, 237, 224, 0.35));
-}
-
 .hero-totalcross-visual {
     position: relative;
     padding: 48px 24px;
@@ -289,23 +286,9 @@ main,
     align-items: center;
     justify-content: center;
     gap: 18px;
-    background: radial-gradient(circle at 50% 35%, rgba(213, 178, 122, 0.35), rgba(255, 255, 255, 0.92));
-    border: 1px solid rgba(180, 132, 70, 0.18);
+    background: #FFFFFF;
+    border: 1px solid var(--border);
     overflow: hidden;
-}
-
-.hero-totalcross-visual::before {
-    content: "";
-    position: absolute;
-    width: 70%;
-    height: 55%;
-    left: 50%;
-    top: 22%;
-    transform: translateX(-50%);
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(213, 178, 122, 0.32), transparent 70%);
-    filter: blur(24px);
-    pointer-events: none;
 }
 
 .hero-totalcross-mark {
