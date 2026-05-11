@@ -65,7 +65,7 @@
   }
 
   function saveProgress() {
-    if (archiveMode || gameComplete || !grid.length) return;
+    if (gameComplete || !grid.length) return;
     const letters = [];
     grid.forEach(row => row.forEach(cell => {
       if (cell.active && cell.letter) {
@@ -210,7 +210,7 @@
       restoreGridState();
       showCompleteModal();
     } else {
-      const savedProgress = !archiveMode ? loadProgress() : null;
+      const savedProgress = loadProgress();
       if (savedProgress && Array.isArray(savedProgress.letters) && savedProgress.letters.length) {
         resumeGame(savedProgress);
       } else {
