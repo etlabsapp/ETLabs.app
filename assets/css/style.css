@@ -317,6 +317,24 @@ main,
     animation: hero-visual-float 8s ease-in-out infinite;
 }
 
+.hero-totalcross-mark .tc-cell {
+    fill: #14110D;
+}
+
+.hero-totalcross-mark .tc-cell-shared {
+    fill: #D7321F;
+}
+
+.hero-totalcross-mark .tc-letter {
+    fill: #FFFFFF;
+    font-family: "Space Grotesk", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-weight: 700;
+    font-size: 62px;
+    text-anchor: middle;
+    dominant-baseline: central;
+    letter-spacing: -1px;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .hero-totalcross-mark {
         animation: none;
