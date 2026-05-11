@@ -2,10 +2,18 @@
   <title>Total Cross — Primary mark (light)</title>
   <defs>
     <style>
-      .cell { fill: #14110D; }
-      .cell.shared { fill: #D7321F; }
-      .letter {
+      .cell {
         fill: #FFFFFF;
+        stroke: #14110D;
+        stroke-width: 4;
+      }
+      .cell.shared {
+        fill: #D7321F;
+        stroke: #14110D;
+        stroke-width: 4;
+      }
+      .letter {
+        fill: #14110D;
         font-family: "Space Grotesk", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
         font-weight: 700;
         font-size: 62px;
