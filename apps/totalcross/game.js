@@ -976,30 +976,46 @@
   }
 
   function undoMove() {
-    if (!moveHistory.length || gameComplete) return;
-    const { row, col, prev } = moveHistory.pop();
-    const cell = grid[row][col];
-    if (cell.revealed) { undoMove(); return; }
+    if (gameComplete) return;
 
-    cell.letter = prev;
-    if (cell.inputEl) cell.inputEl.value = prev;
+    // A cell is locked if revealed by hint, or part of another solved crossing word.
+    const isLocked = (pos, exceptWord) => {
+      const cell = grid[pos.row][pos.col];
+      if (cell.revealed) return true;
+      return getWordsForCell(pos.row, pos.col).some(w => w !== exceptWord && w.solved);
+    };
 
-    const affected = getWordsForCell(row, col);
-    affected.forEach(w => {
-      if (w.solved) {
-        w.solved = false;
-        w.cells.forEach(pos => grid[pos.row][pos.col].el?.classList.remove('correct'));
-        document.querySelector(`.clue-item[data-id="${w.id}"]`)?.classList.remove('solved');
-        document.querySelector(`.sum-chip[data-id="${w.id}"]`)?.classList.remove('matched');
-      }
+    // Target the selected word if it isn't itself solved; otherwise the first
+    // unsolved word that has any user-entered letters in non-locked cells.
+    let target = selectedWord && !selectedWord.solved ? selectedWord : null;
+    if (!target) {
+      target = words.find(w => !w.solved && w.cells.some(p => {
+        const cell = grid[p.row][p.col];
+        return cell.letter && !isLocked(p, w);
+      }));
+    }
+    if (!target) return;
+
+    const clearedKeys = new Set();
+    target.cells.forEach(pos => {
+      if (isLocked(pos, target)) return;
+      const cell = grid[pos.row][pos.col];
+      if (!cell.letter) return;
+      cell.letter = '';
+      if (cell.inputEl) cell.inputEl.value = '';
+      clearedKeys.add(pos.row + ',' + pos.col);
     });
-    updateClueSum(affected);
 
-    selectedCell = { row, col };
-    const targetWord = affected.find(w => w === selectedWord) || affected[0];
-    if (targetWord) selectedWord = targetWord;
-    highlightWord();
-    cell.inputEl?.focus();
+    moveHistory = moveHistory.filter(m => !clearedKeys.has(m.row + ',' + m.col));
+    updateClueSum([target]);
+
+    const first = target.cells.find(pos => !isLocked(pos, target));
+    if (first) {
+      selectedCell = { row: first.row, col: first.col };
+      selectedWord = target;
+      highlightWord();
+      grid[first.row][first.col].inputEl?.focus();
+    }
     saveProgress();
   }
 
