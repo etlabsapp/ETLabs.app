@@ -318,15 +318,19 @@ main,
 }
 
 .hero-totalcross-mark .tc-cell {
-    fill: #14110D;
+    fill: #FFFFFF;
+    stroke: #14110D;
+    stroke-width: 4;
 }
 
 .hero-totalcross-mark .tc-cell-shared {
     fill: #D7321F;
+    stroke: #14110D;
+    stroke-width: 4;
 }
 
 .hero-totalcross-mark .tc-letter {
-    fill: #FFFFFF;
+    fill: #14110D;
     font-family: "Space Grotesk", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     font-weight: 700;
     font-size: 62px;
