@@ -782,6 +782,11 @@ body {
   text-decoration: none; color: var(--text); transition: background .1s;
 }
 .archive-row:hover { background: #ede8e0; }
+.archive-row.solved {
+  background: #d4edda; border-color: var(--correct); color: var(--correct);
+}
+.archive-row.solved:hover { background: #c3e6cb; }
+.archive-row.solved .archive-num { color: var(--correct); }
 .archive-num {
   font-family: 'JetBrains Mono', monospace;
   font-size: .72rem; color: var(--muted); min-width: 36px;
