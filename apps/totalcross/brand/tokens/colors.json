@@ -1,0 +1,13 @@
+{
+  "name": "Total Cross — Color tokens",
+  "version": "1.0.0",
+  "colors": {
+    "signalRed":  { "hex": "#D7321F", "rgb": [215, 50, 31],  "oklch": "56% 0.20 28",  "role": "Pivot. The shared O. Never used elsewhere in the mark." },
+    "gridInk":    { "hex": "#14110D", "rgb": [20, 17, 13],   "oklch": "16% 0.005 70", "role": "Cell stroke and primary type." },
+    "cellWhite":  { "hex": "#FFFFFF", "rgb": [255, 255, 255], "oklch": "100% 0 0",    "role": "Lettered cells on the light mark." }
+  },
+  "surfaces": {
+    "paper":      { "hex": "#F3EFE9", "role": "Off-white background for decks/stationery. Not part of the logo." },
+    "muted":      { "hex": "#7A736A", "role": "Captions, metadata, JetBrains Mono crumbs." }
+  }
+}

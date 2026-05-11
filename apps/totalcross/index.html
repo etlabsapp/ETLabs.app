@@ -6,7 +6,9 @@
   <title>Total Cross | ET Labs</title>
   <meta name="description" content="A word puzzle where every answer must sum to its target. Daily puzzle. Free to play.">
   <meta name="theme-color" content="#f5f0e8">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="brand/logos/png/favicon-32.png">
+  <link rel="apple-touch-icon" href="brand/logos/png/favicon-apple-touch-180.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="brand/logos/png/favicon-512.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,700;0,800;0,900;1,700;1,800;1,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -18,13 +20,17 @@
   <header class="site-header">
     <div class="nav-shell container">
       <a href="../../index.html" class="brand-mark" aria-label="Back to ET Labs">
-        <span class="brand-name">Total Cross</span>
-        <span class="brand-sub">by ET Labs</span>
+        <img src="brand/logos/svg/totalcross-mark-light.svg" alt="Total Cross" class="tc-logo">
+        <div class="brand-text">
+          <span class="brand-name">Total Cross</span>
+          <span class="brand-sub">by ET Labs</span>
+        </div>
       </a>
       <nav class="site-nav">
         <a href="../../index.html">ET Labs</a>
         <button id="btn-how-to-play" class="nav-btn" type="button">How to Play</button>
         <button id="btn-stats" class="nav-btn" type="button">Stats</button>
+        <button id="btn-archive" class="nav-btn" type="button">Archive</button>
       </nav>
     </div>
   </header>
@@ -175,36 +181,70 @@
       </div>
     </div>
 
+    <!-- ARCHIVE MODAL -->
+    <div id="modal-archive" class="modal" role="dialog" aria-modal="true" aria-labelledby="archive-title" hidden>
+      <div class="modal-backdrop"></div>
+      <div class="modal-box">
+        <button class="modal-close" aria-label="Close">&times;</button>
+        <h2 id="archive-title">Archive</h2>
+        <p class="modal-intro">Play any puzzle from the last 14 days.</p>
+        <ol class="archive-list" id="archive-list"></ol>
+      </div>
+    </div>
+
+    <!-- DIFFICULTY PICKER -->
+    <section class="difficulty-section" id="difficulty-section">
+      <div class="container">
+        <p class="picker-label">Choose your difficulty</p>
+        <div class="picker-buttons">
+          <button class="diff-btn" data-diff="easy" type="button">
+            <span class="diff-btn-num">01</span>
+            <span class="diff-btn-name">Easy</span>
+            <span class="diff-btn-desc">Crossing letters revealed to start</span>
+          </button>
+          <button class="diff-btn" data-diff="normal" type="button">
+            <span class="diff-btn-num">02</span>
+            <span class="diff-btn-name">Normal</span>
+            <span class="diff-btn-desc">Blank grid, letter key available</span>
+          </button>
+          <button class="diff-btn" data-diff="hard" type="button">
+            <span class="diff-btn-num">03</span>
+            <span class="diff-btn-name">Hard</span>
+            <span class="diff-btn-desc">Blank grid, no letter key</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
     <!-- GAME SECTION -->
-    <section class="game-section">
+    <section class="game-section" id="game-section" hidden>
       <div class="container">
 
-        <!-- PUZZLE META -->
-        <div class="puzzle-meta" id="puzzle-meta">
-          <div class="puzzle-number" id="puzzle-number">Daily #<span id="puzzle-num">—</span></div>
-          <div class="puzzle-theme" id="puzzle-theme-display"></div>
-          <div class="timer-block" id="timer-block">
-            <span class="timer-display" id="timer-display">0:00</span>
-          </div>
-        </div>
+        <!-- hidden elements kept for JS compatibility -->
+        <span id="puzzle-num" hidden></span>
+        <div id="puzzle-theme-display" hidden></div>
 
         <!-- GAME BOARD -->
         <div class="game-board" id="game-board">
 
           <!-- GRID -->
           <div class="grid-wrapper" id="grid-wrapper">
+            <button id="btn-letter-ref" class="letter-ref-toggle" type="button" aria-label="Toggle letter values">A=1</button>
+            <div class="letter-ref-popup" id="letter-ref-popup" hidden></div>
             <div class="grid" id="puzzle-grid" role="grid" aria-label="Puzzle grid"></div>
           </div>
 
           <!-- CLUE PANEL -->
           <div class="clue-panel" id="clue-panel">
 
-            <!-- Hint button -->
+            <!-- Hint / Undo bar -->
             <div class="hint-bar" id="hint-bar">
               <button id="btn-hint" class="hint-btn" type="button">
                 Hint <span class="hint-cost">+60s</span>
               </button>
+              <button id="btn-undo" class="undo-btn" type="button" title="Undo (Ctrl+Z)">↩ Undo</button>
               <span class="hint-count" id="hint-count"></span>
+              <span class="timer-display" id="timer-display">0:00</span>
             </div>
 
             <div class="clue-columns">

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Total Cross — Brand Guidelines</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&family=Fraunces:wght@600;700&family=Archivo:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f3efe9; --ink:#14110d; --muted:#7a736a;
+    --red:#d7321f; --paper:#fff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:64px 40px 120px;display:flex;flex-direction:column;gap:64px}
+  header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid color-mix(in oklab,var(--ink) 15%,transparent);padding-bottom:14px}
+  .crumb{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  h1{font-family:"Fraunces",serif;font-weight:700;font-size:32px;margin:0;letter-spacing:-0.01em}
+  h2{font-family:"Fraunces",serif;font-weight:700;font-size:28px;margin:0 0 18px;letter-spacing:-0.01em}
+  h3{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  p{font-size:15px;line-height:1.55;max-width:62ch;text-wrap:pretty;color:color-mix(in oklab,var(--ink) 80%,transparent);margin:0 0 12px}
+  section{display:flex;flex-direction:column;gap:18px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  @media (max-width:760px){.row{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:1px solid color-mix(in oklab,var(--ink) 12%,transparent);border-radius:10px;padding:28px}
+  .swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:760px){.swatches{grid-template-columns:1fr}}
+  .sw{border:1px solid color-mix(in oklab,var(--ink) 12%,transparent);border-radius:8px;overflow:hidden;background:#fff}
+  .sw .chip{height:120px}
+  .sw .meta{padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+  .sw .name{font-family:"Archivo",sans-serif;font-weight:700;font-size:14px}
+  .sw .hex{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted)}
+  .logo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .logo-tile{border:1px solid color-mix(in oklab,var(--ink) 12%,transparent);border-radius:10px;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;background:#fff;padding:32px;position:relative;overflow:hidden}
+  .logo-tile img{width:80%;height:80%;object-fit:contain}
+  .logo-tile .lbl{position:absolute;bottom:10px;left:14px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .logo-tile.dark{background:#14110d}
+  .logo-tile.red{background:var(--red)}
+  .dont-do{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:760px){.dont-do{grid-template-columns:1fr}}
+  .dd{border:1px solid color-mix(in oklab,var(--ink) 12%,transparent);border-radius:10px;padding:18px;background:#fff;display:flex;flex-direction:column;gap:10px}
+  .dd .x{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+  .dd .y{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#1a8c4a}
+  .dd .demo{aspect-ratio:1/1;display:grid;place-items:center;background:var(--bg);border-radius:6px;overflow:hidden;position:relative}
+  .dd .demo img{width:75%;height:75%;object-fit:contain}
+  .dd p{font-size:13px;margin:0}
+  dl.spec{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:10px 18px}
+  dl.spec dt{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);align-self:center}
+  dl.spec dd{margin:0;font-size:14px}
+  .files{display:grid;grid-template-columns:1fr;gap:6px;font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink)}
+  .files .file{display:flex;justify-content:space-between;border-bottom:1px dashed color-mix(in oklab,var(--ink) 12%,transparent);padding:6px 0}
+  .files .file span:last-child{color:var(--muted)}
+  footer{border-top:1px solid color-mix(in oklab,var(--ink) 15%,transparent);padding-top:14px;display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="crumb">Brand Package · v1</span>
+  <h1>Total&nbsp;Cross — Guidelines</h1>
+  <span class="crumb">2026</span>
+</header>
+
+<section>
+  <h2>The mark</h2>
+  <p>Total Cross is a 5×5 crossword. <b>TOTAL</b> runs across, <b>CROSS</b> runs down, and they meet at a single shared <b>O</b> — always shown in Signal Red. Every other lettered cell is white with a black grid stroke. The mark reads as a logo first and a puzzle second.</p>
+
+  <div class="logo-grid">
+    <div class="logo-tile"><img src="logos/svg/totalcross-mark-light.svg" alt="Light mark"/><span class="lbl">01 · Light · primary</span></div>
+    <div class="logo-tile dark"><img src="logos/svg/totalcross-mark-dark.svg" alt="Dark mark"/><span class="lbl" style="color:#8a8276">02 · Dark</span></div>
+    <div class="logo-tile"><img src="logos/svg/totalcross-mark-mono.svg" alt="Mono mark"/><span class="lbl">03 · Mono · single ink</span></div>
+    <div class="logo-tile red"><img src="logos/svg/totalcross-mark-reverse.svg" alt="Reverse mark"/><span class="lbl" style="color:rgba(255,255,255,.8)">04 · Reverse · on red</span></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Construction</h2>
+  <div class="row">
+    <dl class="spec">
+      <dt>Grid</dt><dd>5 × 5 cells, square.</dd>
+      <dt>Across</dt><dd>TOTAL — row 3, columns 1–5.</dd>
+      <dt>Down</dt><dd>CROSS — column 2, rows 1–5.</dd>
+      <dt>Pivot</dt><dd>Shared <b>O</b> at (row 3, col 2). Always Signal Red.</dd>
+      <dt>Stroke</dt><dd>1 unit when grid = 40 units. Min 1.5px on screen.</dd>
+      <dt>Letters</dt><dd>Archivo 800. Optical-centered. ~58% of cell height.</dd>
+      <dt>Clearspace</dt><dd>One full empty cell on every side of the grid.</dd>
+      <dt>Min size</dt><dd>Digital 24px tall · Print 12mm tall.</dd>
+    </dl>
+    <div class="logo-tile" style="aspect-ratio:1/1"><img src="logos/svg/totalcross-mark-light-clearspace.svg" alt="Mark with clearspace"/><span class="lbl">Clearspace = 1 cell</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Color</h2>
+  <p>Three colors. Don't add more.</p>
+  <div class="swatches">
+    <div class="sw">
+      <div class="chip" style="background:#d7321f"></div>
+      <div class="meta"><span class="name">Signal Red</span><span class="hex">#D7321F · oklch(56% 0.20 28)</span><span class="hex">RGB 215 50 31</span></div>
+    </div>
+    <div class="sw">
+      <div class="chip" style="background:#14110d"></div>
+      <div class="meta"><span class="name">Grid Ink</span><span class="hex">#14110D</span><span class="hex">RGB 20 17 13</span></div>
+    </div>
+    <div class="sw">
+      <div class="chip" style="background:#fff;border-bottom:1px solid #eee"></div>
+      <div class="meta"><span class="name">Cell White</span><span class="hex">#FFFFFF</span><span class="hex">RGB 255 255 255</span></div>
+    </div>
+  </div>
+  <p style="margin-top:12px"><b>Paper</b> <code style="font-family:JetBrains Mono,monospace">#F3EFE9</code> is the off-white used for slides, decks, and stationery — <i>not</i> a logo color.</p>
+</section>
+
+<section>
+  <h2>Type</h2>
+  <div class="row">
+    <div class="card">
+      <h3>Display & UI</h3>
+      <p style="font-family:Archivo,sans-serif;font-weight:800;font-size:48px;line-height:1;margin:0">Archivo 800</p>
+      <p style="font-family:Archivo,sans-serif;font-weight:600;font-size:18px;margin:8px 0 0">Archivo 600 / 700 · The geometric grotesk used inside the logo cells, in headlines, and on UI labels.</p>
+    </div>
+    <div class="card">
+      <h3>Editorial / accent</h3>
+      <p style="font-family:Fraunces,serif;font-weight:700;font-size:40px;line-height:1.05;letter-spacing:-0.01em;margin:0">Fraunces 700</p>
+      <p style="font-family:Fraunces,serif;font-weight:600;font-style:italic;font-size:16px;margin:8px 0 0">Fraunces italic for editorial flourish — clue numbers, pull quotes, headlines.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Mono / metadata</h3>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:13px;margin:0">JetBrains Mono · for crumbs, captions, file paths, and anywhere the brand wants to feel like a puzzle clue. Tracked +0.14em uppercase for labels.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Voice</h2>
+  <div class="row">
+    <div class="card">
+      <h3>Tone</h3>
+      <p>Crisp. Wry. A little self-amused. Confident enough to leave white space. Never breathless, never twee.</p>
+      <p>Lean on puzzle vocabulary — <i>across, down, clue, fill, solve, pivot</i> — without overusing it.</p>
+    </div>
+    <div class="card">
+      <h3>Naming</h3>
+      <p>Always two words: <b>Total Cross</b>. Never "TotalCross" or "Total-Cross". Lowercased only inside URLs.</p>
+      <p>The shared red O is the brand's <b>pivot</b>. That's the noun.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Do · Don't</h2>
+  <div class="dont-do">
+    <div class="dd">
+      <span class="y">✓ DO</span>
+      <div class="demo"><img src="logos/svg/totalcross-mark-light.svg" alt="Correct usage"/></div>
+      <p>Keep one full cell of clearspace. Black grid, white cells, red O.</p>
+    </div>
+    <div class="dd">
+      <span class="x">✗ DON'T</span>
+      <div class="demo" style="background:#9bc7ff"><img src="logos/svg/totalcross-mark-light.svg" alt="Don't recolor cells"/></div>
+      <p>Don't place the light mark on a tinted background. Use the dark or reverse variant instead.</p>
+    </div>
+    <div class="dd">
+      <span class="x">✗ DON'T</span>
+      <div class="demo"><img src="logos/svg/totalcross-mark-light.svg" alt="Don't squish" style="transform:scaleX(.65)"/></div>
+      <p>Don't stretch, skew, or rotate the grid. Cells must remain square.</p>
+    </div>
+    <div class="dd">
+      <span class="x">✗ DON'T</span>
+      <div class="demo" style="background:#fff"><div style="display:grid;grid-template-columns:repeat(5,16px);grid-template-rows:repeat(5,16px);gap:0;font-family:'Arial Black',sans-serif;font-size:9px;color:#14110d"><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">C</span><span></span><span></span><span></span><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">R</span><span></span><span></span><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">T</span><span style="border:1px solid #14110d;background:#d7321f;color:#fff;display:grid;place-items:center">O</span><span style="border:1px solid #14110d;display:grid;place-items:center">T</span><span style="border:1px solid #14110d;display:grid;place-items:center">A</span><span style="border:1px solid #14110d;display:grid;place-items:center">L</span><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">S</span><span></span><span></span><span></span><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">S</span><span></span><span></span><span></span></div></div>
+      <p>Don't reproduce below 24px tall on screen — the cells lose their stroke.</p>
+    </div>
+    <div class="dd">
+      <span class="x">✗ DON'T</span>
+      <div class="demo"><div style="position:relative;width:75%;aspect-ratio:1/1"><img src="logos/svg/totalcross-mark-light.svg" alt="" style="width:100%;height:100%"/><div style="position:absolute;inset:0;background:linear-gradient(135deg,#7a3cff 0%,#39c8ff 100%);mix-blend-mode:hue;opacity:.9;border-radius:6px"></div></div></div>
+      <p>Don't apply gradients, shadows, glows, or other effects to the mark.</p>
+    </div>
+    <div class="dd">
+      <span class="x">✗ DON'T</span>
+      <div class="demo" style="background:#fff;display:grid;place-items:center"><div style="display:grid;grid-template-columns:repeat(5,28px);grid-template-rows:repeat(5,28px);font-family:'Arial Black',sans-serif;font-size:16px"><span></span><span style="border:1px solid #14110d;background:#d7321f;color:#fff;display:grid;place-items:center">C</span><span></span><span></span><span></span><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">R</span><span></span><span></span><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">T</span><span style="border:1px solid #14110d;display:grid;place-items:center">O</span><span style="border:1px solid #14110d;display:grid;place-items:center">T</span><span style="border:1px solid #14110d;display:grid;place-items:center">A</span><span style="border:1px solid #14110d;display:grid;place-items:center">L</span><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">S</span><span></span><span></span><span></span><span></span><span style="border:1px solid #14110d;display:grid;place-items:center">S</span><span></span><span></span><span></span></div></div>
+      <p>Only the shared O is red. Never re-color other cells, even for emphasis.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>What's in this package</h2>
+  <div class="files">
+    <div class="file"><span>logos/svg/totalcross-mark-light.svg</span><span>Primary, light surfaces</span></div>
+    <div class="file"><span>logos/svg/totalcross-mark-dark.svg</span><span>For dark / photo backgrounds</span></div>
+    <div class="file"><span>logos/svg/totalcross-mark-mono.svg</span><span>Single-ink reproduction</span></div>
+    <div class="file"><span>logos/svg/totalcross-mark-reverse.svg</span><span>White on Signal Red</span></div>
+    <div class="file"><span>logos/svg/totalcross-mark-light-clearspace.svg</span><span>Includes 1-cell clearspace</span></div>
+    <div class="file"><span>logos/png/totalcross-mark-{variant}-{size}.png</span><span>256 / 512 / 1024 / 2048</span></div>
+    <div class="file"><span>logos/png/favicon-{32, 180, 512}.png</span><span>Favicons + Apple touch icon</span></div>
+    <div class="file"><span>tokens/colors.json · tokens/colors.css</span><span>Design tokens</span></div>
+    <div class="file"><span>guidelines.html</span><span>This document</span></div>
+    <div class="file"><span>README.md</span><span>Quick reference</span></div>
+  </div>
+</section>
+
+<footer>
+  <span>TOTAL × CROSS</span>
+  <span>One grid · One pivot</span>
+  <span>v1 · 2026</span>
+</footer>
+
+</div>
+</body>
+</html>

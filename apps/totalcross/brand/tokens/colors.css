@@ -1,0 +1,9 @@
+/* Total Cross — color tokens (v1) */
+:root {
+  --tc-signal-red: #D7321F;   /* the pivot — shared O only */
+  --tc-grid-ink:   #14110D;   /* cell stroke + type */
+  --tc-cell-white: #FFFFFF;   /* lettered cells */
+
+  --tc-paper:      #F3EFE9;   /* off-white surface (not a logo color) */
+  --tc-muted:      #7A736A;   /* metadata / captions */
+}
