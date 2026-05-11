@@ -11,6 +11,8 @@
   const USERNAME_KEY = 'tc_username';
   const DEVICE_KEY   = 'tc_device_id';
   const STATS_KEY    = 'totalcross_stats';
+  const PROGRESS_KEY = 'tc_progress_';
+  const PROGRESS_SAVE_EVERY = 10; // seconds between timer-tick saves
 
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -54,6 +56,40 @@
   function formatTime(secs) {
     const m = Math.floor(secs / 60), s = secs % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  // ── PROGRESS (resume same-day puzzle) ───────────────────
+
+  function progressKey() {
+    return PROGRESS_KEY + puzzleNumber;
+  }
+
+  function saveProgress() {
+    if (archiveMode || gameComplete || !grid.length) return;
+    const letters = [];
+    grid.forEach(row => row.forEach(cell => {
+      if (cell.active && cell.letter) {
+        letters.push({ row: cell.row, col: cell.col, letter: cell.letter, revealed: !!cell.revealed });
+      }
+    }));
+    try {
+      localStorage.setItem(progressKey(), JSON.stringify({
+        difficulty,
+        letters,
+        timer: timerSeconds,
+        hints: hintsUsed,
+        savedAt: Date.now()
+      }));
+    } catch (_) { /* quota — skip */ }
+  }
+
+  function loadProgress() {
+    try { return JSON.parse(localStorage.getItem(progressKey()) || 'null'); }
+    catch (_) { return null; }
+  }
+
+  function clearProgress() {
+    try { localStorage.removeItem(progressKey()); } catch (_) {}
   }
 
   function letterValue(ch) {
@@ -163,20 +199,67 @@
 
     const savedSolve = JSON.parse(localStorage.getItem('tc_solved_' + puzzleNumber) || 'null');
     if (savedSolve) {
-      timerSeconds = savedSolve.time;
-      hintsUsed    = savedSolve.hints;
-      gameComplete = true;
       showGameSection();
       startGame();
       stopTimer();
+      gameComplete = true;
+      timerSeconds = savedSolve.time;
+      hintsUsed    = savedSolve.hints;
       updateTimerDisplay();
+      updateHintCount();
       restoreGridState();
       showCompleteModal();
     } else {
-      initDifficultyPicker();
+      const savedProgress = !archiveMode ? loadProgress() : null;
+      if (savedProgress && Array.isArray(savedProgress.letters) && savedProgress.letters.length) {
+        resumeGame(savedProgress);
+      } else {
+        initDifficultyPicker();
+      }
     }
 
+    window.addEventListener('beforeunload', saveProgress);
     loadSolveCount();
+  }
+
+  function resumeGame(progress) {
+    difficulty = progress.difficulty || 'normal';
+    showGameSection();
+    startGame();
+    markIntersectionCells();
+    if (difficulty === 'easy') prefillIntersections();
+    if (difficulty === 'hard') {
+      const refBtn = document.getElementById('btn-letter-ref');
+      if (refBtn) refBtn.style.display = 'none';
+    }
+    applyProgressLetters(progress.letters || []);
+    stopTimer();
+    timerSeconds = progress.timer || 0;
+    hintsUsed    = progress.hints || 0;
+    updateTimerDisplay();
+    updateHintCount();
+    startTimer();
+  }
+
+  function applyProgressLetters(letters) {
+    letters.forEach(({ row, col, letter, revealed }) => {
+      const cell = grid[row]?.[col];
+      if (!cell || !letter) return;
+      cell.letter   = letter;
+      cell.revealed = !!revealed;
+      if (cell.inputEl) {
+        cell.inputEl.value = letter.toUpperCase();
+        if (revealed) cell.inputEl.readOnly = true;
+      }
+      if (cell.el && revealed) cell.el.classList.add('prefill');
+    });
+    words.forEach(w => {
+      const correct = w.cells.every((pos, i) =>
+        (grid[pos.row][pos.col].letter || '').toUpperCase() === w.answer[i].toUpperCase()
+      );
+      if (correct) { w.solved = true; markWordSolved(w); }
+      updateClueSum([w]);
+    });
   }
 
   function showGameSection() {
@@ -860,6 +943,7 @@
         cell.letter = '';
         cell.inputEl.value = '';
         updateClueSum(getWordsForCell(r, c));
+        saveProgress();
       } else if (!cell.revealed) {
         moveFocus(-1);
       }
@@ -888,6 +972,7 @@
       checkWordsSolved(getWordsForCell(r, c));
       moveFocus(1);
     }
+    saveProgress();
   }
 
   function undoMove() {
@@ -915,6 +1000,7 @@
     if (targetWord) selectedWord = targetWord;
     highlightWord();
     cell.inputEl?.focus();
+    saveProgress();
   }
 
   function moveFocus(dir) {
@@ -1143,6 +1229,8 @@
     const timerEl = document.getElementById('timer-display');
     timerEl.classList.add('timer-penalty');
     setTimeout(() => timerEl.classList.remove('timer-penalty'), 800);
+
+    saveProgress();
   }
 
   function updateHintCount() {
@@ -1205,9 +1293,13 @@
   // ── TIMER ───────────────────────────────────────────────
 
   function startTimer() {
-    timerSeconds = 0;
+    if (timerInterval) clearInterval(timerInterval);
     updateTimerDisplay();
-    timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+    timerInterval = setInterval(() => {
+      timerSeconds++;
+      updateTimerDisplay();
+      if (timerSeconds % PROGRESS_SAVE_EVERY === 0) saveProgress();
+    }, 1000);
   }
 
   function stopTimer() { clearInterval(timerInterval); }
@@ -1222,6 +1314,7 @@
     if (gameComplete) return;
     gameComplete = true;
     stopTimer();
+    clearProgress();
     localStorage.setItem('tc_solved_' + puzzleNumber, JSON.stringify({ time: timerSeconds, hints: hintsUsed }));
     const gridState = [];
     grid.forEach(row => row.forEach(cell => {

@@ -1,7 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 506 506" width="500" height="500" role="img" aria-label="Total Cross logo">
   <title>Total Cross — Primary mark (light)</title>
   <defs>
-    
+    <style>
+      .cell { fill: #14110D; }
+      .cell.shared { fill: #D7321F; }
+      .letter {
+        fill: #FFFFFF;
+        font-family: "Space Grotesk", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-weight: 700;
+        font-size: 62px;
+        text-anchor: middle;
+        dominant-baseline: central;
+        letter-spacing: -1px;
+      }
+    </style>
   </defs>
   <g>
     <rect class="cell" x="100" y="0" width="100" height="100"></rect>
@@ -15,14 +27,14 @@
     <rect class="cell" x="100" y="400" width="100" height="100"></rect>
   </g>
   <g>
-    <text class="letter" x="150" y="52">C</text>
-    <text class="letter" x="150" y="152">R</text>
-    <text class="letter" x="50" y="252">T</text>
-    <text class="letter letter-shared" x="150" y="252">O</text>
-    <text class="letter" x="250" y="252">T</text>
-    <text class="letter" x="350" y="252">A</text>
-    <text class="letter" x="450" y="252">L</text>
-    <text class="letter" x="150" y="352">S</text>
-    <text class="letter" x="150" y="452">S</text>
+    <text class="letter" x="150" y="50">C</text>
+    <text class="letter" x="150" y="150">R</text>
+    <text class="letter" x="50" y="250">T</text>
+    <text class="letter letter-shared" x="150" y="250">O</text>
+    <text class="letter" x="250" y="250">T</text>
+    <text class="letter" x="350" y="250">A</text>
+    <text class="letter" x="450" y="250">L</text>
+    <text class="letter" x="150" y="350">S</text>
+    <text class="letter" x="150" y="450">S</text>
   </g>
 </svg>
