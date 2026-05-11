@@ -69,7 +69,7 @@ export default function SiteHeader() {
                   SleepTight: DreamWrite
                 </Link>
                 <Link href="/apps/lattice3/index.html" role="menuitem" onClick={closeProducts}>
-                  Lattice³ <em>(Coming soon)</em>
+                  Lattice³ <span className="nav-badge">Soon</span>
                 </Link>
               </div>
             </div>

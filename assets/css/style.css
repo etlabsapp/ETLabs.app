@@ -669,23 +669,24 @@ main,
     color: var(--text);
 }
 
-.nav-dropdown-menu a em {
-    font-style: normal;
-    font-size: .82rem;
+.nav-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.66);
     color: var(--soft);
-    margin-left: 6px;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    vertical-align: 1px;
 }
 
 .nav-dropdown-item.coming-soon {
     color: var(--muted);
     cursor: default;
-}
-
-.nav-dropdown-item.coming-soon em {
-    font-style: normal;
-    font-size: .82rem;
-    color: var(--soft);
-    margin-left: 6px;
 }
 
 .nav-cta,
@@ -738,6 +739,21 @@ main,
 
 .hero-grid {
     grid-template-columns: 1.2fr .8fr;
+}
+
+.hero-solo {
+    display: flex;
+    justify-content: center;
+}
+
+.hero-solo .hero-copy {
+    max-width: 720px;
+    text-align: center;
+}
+
+.hero-solo .hero-actions,
+.hero-solo .hero-points {
+    justify-content: center;
 }
 
 .hero-copy {
@@ -1102,6 +1118,20 @@ html.intro-complete body > .site-footer {
     display: flex;
     align-items: flex-end;
     gap: 0;
+}
+
+.brand-logo img {
+    display: block;
+    width: auto;
+    height: 72px;
+}
+
+.site-header .brand-logo--home img {
+    height: 96px;
+}
+
+.site-footer .brand-logo img {
+    height: 70px;
 }
 
 /* ----- Logo battery-jitter ----- */
