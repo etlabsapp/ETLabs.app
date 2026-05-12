@@ -768,22 +768,28 @@
 
   // ── GRID RENDER ─────────────────────────────────────────
 
-  // Size cells so the puzzle fits the wrapper's content width on any viewport.
-  // Without this, a 17-col puzzle at the CSS-default 30px cell renders 510px
-  // wide and overflows / gets clipped on phones.
+  // Size cells so the puzzle always fits the wrapper's content width on any
+  // viewport. Without this, a 17-col puzzle at the CSS-default 30px cell
+  // renders 510px wide and overflows on phones — and the wrapper's overflow
+  // scroll doesn't reliably reveal the clipped right edge on iOS Safari.
   function fitGridCellSize(wrapperId, gridId, cols) {
     const wrapper = document.getElementById(wrapperId);
     const gridEl  = document.getElementById(gridId);
     if (!wrapper || !gridEl || !cols) return;
     const vw = window.innerWidth;
     const maxCell = vw <= 500 ? 32 : vw <= 900 ? 38 : 48;
+    // Desktop: wrapper is content-sized, so just use the max (no fit needed)
+    if (vw > 900) {
+      gridEl.style.setProperty('--cell-size', `${maxCell}px`);
+      return;
+    }
     const cs = getComputedStyle(wrapper);
     const padX = (parseInt(cs.paddingLeft, 10) || 0)
                + (parseInt(cs.paddingRight, 10) || 0);
     const available = wrapper.clientWidth - padX - 4; // 4px = 2px grid border × 2
     if (available <= 0) return;
-    const fit = Math.floor(available / cols);
-    const cellSize = Math.max(20, Math.min(maxCell, fit));
+    const cellSize = Math.min(maxCell, Math.floor(available / cols));
+    if (cellSize <= 0) return;
     gridEl.style.setProperty('--cell-size', `${cellSize}px`);
   }
 

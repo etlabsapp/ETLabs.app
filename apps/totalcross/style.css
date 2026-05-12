@@ -672,7 +672,11 @@ body {
 @media (max-width: 900px) {
   :root { --cell-size: 38px; }
   .game-board { flex-direction: column; }
-  .grid-wrapper { overflow-x: auto; flex: none; width: 100%; padding-right: 36px; }
+  /* Stack the letter-ref toggle above the grid so it doesn't sit on top of
+     cells once the grid is fit-sized to a 100%-width wrapper. */
+  .grid-wrapper { overflow-x: auto; flex: none; width: 100%; padding: 32px 36px 36px 0; }
+  .letter-ref-toggle { right: 0; }
+  .letter-ref-popup  { right: 0; }
   .clue-panel { max-width: 100%; min-width: 0; width: 100%; }
   .clue-list { max-height: 180px; }
   .clue-columns { flex-direction: row; gap: 12px; }
@@ -702,7 +706,11 @@ body {
   :root { --cell-size: 30px; }
   .cell-number { font-size: 7px; }
   .sum-chip { font-size: 9px; padding: 2px 5px; }
-  .grid-wrapper { padding-right: 28px; padding-bottom: 28px; }
+  /* Stack the letter-ref toggle above the grid so it doesn't overlap cells
+     when the grid is sized to fit a narrow viewport. */
+  .grid-wrapper { padding: 28px 28px 28px 0; }
+  .letter-ref-toggle { right: 0; }
+  .letter-ref-popup  { right: 0; }
   .game-section > .container { padding: 0 12px; }
 }
 
