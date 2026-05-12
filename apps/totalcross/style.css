@@ -672,7 +672,7 @@ body {
 @media (max-width: 900px) {
   :root { --cell-size: 38px; }
   .game-board { flex-direction: column; }
-  .grid-wrapper { overflow-x: auto; flex: none; width: 100%; }
+  .grid-wrapper { overflow-x: auto; flex: none; width: 100%; padding-right: 36px; }
   .clue-panel { max-width: 100%; min-width: 0; width: 100%; }
   .clue-list { max-height: 180px; }
   .clue-columns { flex-direction: row; gap: 12px; }
@@ -702,6 +702,8 @@ body {
   :root { --cell-size: 30px; }
   .cell-number { font-size: 7px; }
   .sum-chip { font-size: 9px; padding: 2px 5px; }
+  .grid-wrapper { padding-right: 28px; padding-bottom: 28px; }
+  .game-section > .container { padding: 0 12px; }
 }
 
 /* ── OVER-SUM SHAKE ──────────────────────────────────────── */
