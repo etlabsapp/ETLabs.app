@@ -331,9 +331,11 @@ body {
   background: var(--border);
   line-height: 1;
   user-select: none;
-  /* Shrink to fit the explicit track widths so the right/bottom border
-     hugs the last cell instead of being pushed to the wrapper edge. */
+  /* Sized to exactly tracks + border by JS (fitGridCellSize) so the right
+     and bottom borders sit flush against the last cell. fit-content is a
+     fallback before JS runs. */
   width: fit-content;
+  box-sizing: content-box;
 }
 
 .cell {

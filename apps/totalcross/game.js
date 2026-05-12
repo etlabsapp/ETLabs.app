@@ -226,7 +226,7 @@
       clearTimeout(resizeT);
       resizeT = setTimeout(() => {
         if (puzzle && document.getElementById('puzzle-grid').children.length) {
-          fitGridCellSize('grid-wrapper', 'puzzle-grid', puzzle.grid[0].length);
+          fitGridCellSize('grid-wrapper', 'puzzle-grid', puzzle.grid[0].length, puzzle.grid.length);
           renderSumChips();
         }
       }, 120);
@@ -369,7 +369,7 @@
     gridEl.innerHTML = '';
     const rows = TUTORIAL_PUZZLE.grid.length;
     const cols = TUTORIAL_PUZZLE.grid[0].length;
-    fitGridCellSize('tut-grid-wrap', 'tut-grid', cols);
+    fitGridCellSize('tut-grid-wrap', 'tut-grid', cols, rows);
     gridEl.style.gridTemplateColumns = `repeat(${cols}, var(--cell-size))`;
     gridEl.style.gridTemplateRows    = `repeat(${rows}, var(--cell-size))`;
 
@@ -772,25 +772,29 @@
   // viewport. Without this, a 17-col puzzle at the CSS-default 30px cell
   // renders 510px wide and overflows on phones — and the wrapper's overflow
   // scroll doesn't reliably reveal the clipped right edge on iOS Safari.
-  function fitGridCellSize(wrapperId, gridId, cols) {
+  function fitGridCellSize(wrapperId, gridId, cols, rows) {
     const wrapper = document.getElementById(wrapperId);
     const gridEl  = document.getElementById(gridId);
     if (!wrapper || !gridEl || !cols) return;
     const vw = window.innerWidth;
     const maxCell = vw <= 500 ? 32 : vw <= 900 ? 38 : 48;
-    // Desktop: wrapper is content-sized, so just use the max (no fit needed)
-    if (vw > 900) {
-      gridEl.style.setProperty('--cell-size', `${maxCell}px`);
-      return;
+    let cellSize = maxCell;
+    if (vw <= 900) {
+      const cs = getComputedStyle(wrapper);
+      const padX = (parseInt(cs.paddingLeft, 10) || 0)
+                 + (parseInt(cs.paddingRight, 10) || 0);
+      const available = wrapper.clientWidth - padX - 4; // 4px = 2px grid border × 2
+      if (available <= 0) return;
+      cellSize = Math.min(maxCell, Math.floor(available / cols));
+      if (cellSize <= 0) return;
     }
-    const cs = getComputedStyle(wrapper);
-    const padX = (parseInt(cs.paddingLeft, 10) || 0)
-               + (parseInt(cs.paddingRight, 10) || 0);
-    const available = wrapper.clientWidth - padX - 4; // 4px = 2px grid border × 2
-    if (available <= 0) return;
-    const cellSize = Math.min(maxCell, Math.floor(available / cols));
-    if (cellSize <= 0) return;
     gridEl.style.setProperty('--cell-size', `${cellSize}px`);
+    // Pin the grid's content size to exactly the track total so the right
+    // and bottom borders sit flush against the last cell. Without this,
+    // width:auto stretches the grid to the wrapper's content area and the
+    // right border ends up beyond the last column. (.grid uses content-box.)
+    gridEl.style.width = `${cellSize * cols}px`;
+    if (rows) gridEl.style.height = `${cellSize * rows}px`;
   }
 
   function renderGrid() {
@@ -799,7 +803,7 @@
     const rows = puzzle.grid.length;
     const cols = puzzle.grid[0].length;
 
-    fitGridCellSize('grid-wrapper', 'puzzle-grid', cols);
+    fitGridCellSize('grid-wrapper', 'puzzle-grid', cols, rows);
     gridEl.style.gridTemplateColumns = `repeat(${cols}, var(--cell-size))`;
     gridEl.style.gridTemplateRows    = `repeat(${rows}, var(--cell-size))`;
 
