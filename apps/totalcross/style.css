@@ -331,9 +331,6 @@ body {
   background: var(--border);
   line-height: 1;
   user-select: none;
-  /* Size to the track total so the dark backdrop covers every cell, even
-     when the grid is wider than its wrapper and scrolls horizontally. */
-  width: max-content;
 }
 
 .cell {

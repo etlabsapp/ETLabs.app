@@ -6,7 +6,7 @@
   // ── CONFIG ──────────────────────────────────────────────
   const SUPABASE_URL = 'https://ygfnplpkztkcxmofkyci.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlnZm5wbHBrenRrY3htb2ZreWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyOTc0NzgsImV4cCI6MjA5Mzg3MzQ3OH0.8A1SUGb7hDxnUjE2RSG2KinJs-_NLZMYMNYfpHhRR-M';
-  const LAUNCH_DATE  = new Date('2026-05-10T00:00:00');
+  const LAUNCH_DATE  = new Date('2026-05-08T00:00:00');
   const HINT_PENALTY = 60; // seconds per hint
   const USERNAME_KEY = 'tc_username';
   const DEVICE_KEY   = 'tc_device_id';
