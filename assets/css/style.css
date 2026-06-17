@@ -427,17 +427,6 @@ main,
     padding-top: 8px;
 }
 
-.product-shelfie-featured .product-featured-media {
-    background: linear-gradient(165deg, rgba(193, 120, 23, 0.22), rgba(34, 25, 15, 0.55));
-}
-.product-shelfie-featured .featured-chips {
-    margin: 18px 0 20px;
-}
-.product-shelfie-featured .split-actions {
-    margin-top: auto;
-    padding-top: 8px;
-}
-
 .products-secondary-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
