@@ -16,6 +16,9 @@ out/
 dist/
 *.tsbuildinfo
 
+# Cloudflare Wrangler scratch / deploy artifacts
+.wrangler/
+
 # OS
 .DS_Store
 Thumbs.db

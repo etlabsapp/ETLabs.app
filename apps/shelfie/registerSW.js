@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/apps/shelfie/sw.js', { scope: '/apps/shelfie/' })})}
