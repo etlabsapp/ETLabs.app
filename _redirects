@@ -1,0 +1,5 @@
+/app/totalcross    /apps/totalcross/    301
+/app/totalcross/   /apps/totalcross/    301
+/app/totalcross/*  /apps/totalcross/    301
+/totalcross        /apps/totalcross/    301
+/totalcross/       /apps/totalcross/    301
