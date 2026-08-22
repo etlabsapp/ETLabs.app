@@ -1,0 +1,269 @@
+{
+  "launchDate": "2026-05-08",
+  "themes": [
+    {
+      "acrossTheme": "Planets & Space",
+      "downTheme": "Big Cats"
+    },
+    {
+      "acrossTheme": "US Presidents",
+      "downTheme": "European Capitals"
+    },
+    {
+      "acrossTheme": "Musical Instruments",
+      "downTheme": "Oceans & Seas"
+    },
+    {
+      "acrossTheme": "Greek Gods",
+      "downTheme": "Gemstones"
+    },
+    {
+      "acrossTheme": "Famous Scientists",
+      "downTheme": "Chemical Elements"
+    },
+    {
+      "acrossTheme": "Olympic Sports",
+      "downTheme": "Countries"
+    },
+    {
+      "acrossTheme": "Classic Films",
+      "downTheme": "Flowers"
+    },
+    {
+      "acrossTheme": "Shakespeare Plays",
+      "downTheme": "Rivers"
+    },
+    {
+      "acrossTheme": "Dinosaurs",
+      "downTheme": "Currencies"
+    },
+    {
+      "acrossTheme": "Famous Artists",
+      "downTheme": "Dances"
+    },
+    {
+      "acrossTheme": "World Capitals",
+      "downTheme": "Wild Animals"
+    },
+    {
+      "acrossTheme": "Famous Explorers",
+      "downTheme": "Mountains"
+    },
+    {
+      "acrossTheme": "Famous Authors",
+      "downTheme": "Spices & Herbs"
+    },
+    {
+      "acrossTheme": "Famous Inventors",
+      "downTheme": "Colors & Shades"
+    },
+    {
+      "acrossTheme": "Roman Emperors",
+      "downTheme": "Birds"
+    },
+    {
+      "acrossTheme": "Greek Mythology Heroes",
+      "downTheme": "Trees"
+    },
+    {
+      "acrossTheme": "World Religions",
+      "downTheme": "Musical Genres"
+    },
+    {
+      "acrossTheme": "US National Parks",
+      "downTheme": "Sea Creatures"
+    },
+    {
+      "acrossTheme": "Famous Philosophers",
+      "downTheme": "Fish"
+    },
+    {
+      "acrossTheme": "Famous Generals",
+      "downTheme": "Vegetables"
+    },
+    {
+      "acrossTheme": "Ancient Wonders",
+      "downTheme": "Gems & Minerals"
+    },
+    {
+      "acrossTheme": "Mythological Creatures",
+      "downTheme": "Languages"
+    },
+    {
+      "acrossTheme": "Famous Battles",
+      "downTheme": "Metals & Alloys"
+    },
+    {
+      "acrossTheme": "Opera Titles",
+      "downTheme": "Fruit"
+    },
+    {
+      "acrossTheme": "Constellations",
+      "downTheme": "Insects & Bugs"
+    },
+    {
+      "acrossTheme": "Famous Architects",
+      "downTheme": "African Animals"
+    },
+    {
+      "acrossTheme": "Shakespeare Characters",
+      "downTheme": "Cheeses"
+    },
+    {
+      "acrossTheme": "Roman Gods",
+      "downTheme": "Breads & Pastries"
+    },
+    {
+      "acrossTheme": "Ancient Civilizations",
+      "downTheme": "Dances"
+    },
+    {
+      "acrossTheme": "Famous Poets",
+      "downTheme": "Gemstones II"
+    },
+    {
+      "acrossTheme": "Famous Physicists",
+      "downTheme": "Weather Phenomena"
+    },
+    {
+      "acrossTheme": "Broadway Musicals",
+      "downTheme": "Herbs"
+    },
+    {
+      "acrossTheme": "Famous Biologists",
+      "downTheme": "African Countries"
+    },
+    {
+      "acrossTheme": "Famous Chemists",
+      "downTheme": "Landforms"
+    },
+    {
+      "acrossTheme": "Norse Gods",
+      "downTheme": "Cocktails"
+    },
+    {
+      "acrossTheme": "Famous Mathematicians",
+      "downTheme": "Pasta Types"
+    },
+    {
+      "acrossTheme": "Egyptian Pharaohs",
+      "downTheme": "Constellations"
+    },
+    {
+      "acrossTheme": "Famous Economists",
+      "downTheme": "Sports Equipment"
+    },
+    {
+      "acrossTheme": "Famous Psychologists",
+      "downTheme": "Pasta & Rice Dishes"
+    },
+    {
+      "acrossTheme": "World Heritage Sites",
+      "downTheme": "Sharks & Ocean Predators"
+    },
+    {
+      "acrossTheme": "Famous Lawyers",
+      "downTheme": "Card Games"
+    },
+    {
+      "acrossTheme": "Famous Painters II",
+      "downTheme": "Knots & Ties"
+    },
+    {
+      "acrossTheme": "Space Missions",
+      "downTheme": "Mountains II"
+    },
+    {
+      "acrossTheme": "Famous Architects II",
+      "downTheme": "Amphibians & Reptiles"
+    },
+    {
+      "acrossTheme": "Famous Sociologists",
+      "downTheme": "Cocktail Ingredients"
+    },
+    {
+      "acrossTheme": "Famous Anthropologists",
+      "downTheme": "Wine Regions"
+    },
+    {
+      "acrossTheme": "World Wonders (Modern)",
+      "downTheme": "Cooking Methods"
+    },
+    {
+      "acrossTheme": "Famous Geographers",
+      "downTheme": "Knitting & Fabrics"
+    },
+    {
+      "acrossTheme": "Famous Astronomers",
+      "downTheme": "Architectural Styles"
+    },
+    {
+      "acrossTheme": "Famous Linguists",
+      "downTheme": "Rocks & Minerals"
+    },
+    {
+      "acrossTheme": "Famous Journalists",
+      "downTheme": "Pasta Sauces"
+    },
+    {
+      "acrossTheme": "Famous Dancers",
+      "downTheme": "Car Brands"
+    },
+    {
+      "acrossTheme": "Famous Sculptors",
+      "downTheme": "Pizza Styles"
+    },
+    {
+      "acrossTheme": "Famous Conductors",
+      "downTheme": "Sushi Types"
+    },
+    {
+      "acrossTheme": "Famous Novelists",
+      "downTheme": "Nuts & Seeds"
+    },
+    {
+      "acrossTheme": "Ancient Greek Cities",
+      "downTheme": "Yoga Poses"
+    },
+    {
+      "acrossTheme": "Pop Stars",
+      "downTheme": "Dance Moves"
+    },
+    {
+      "acrossTheme": "90s Movies",
+      "downTheme": "Pizza Toppings"
+    },
+    {
+      "acrossTheme": "Video Games",
+      "downTheme": "Colors"
+    },
+    {
+      "acrossTheme": "Marvel Heroes",
+      "downTheme": "Cocktails"
+    },
+    {
+      "acrossTheme": "Streaming Shows",
+      "downTheme": "Fast Food"
+    },
+    {
+      "acrossTheme": "Social Media",
+      "downTheme": "Emojis"
+    },
+    {
+      "acrossTheme": "Sports Teams",
+      "downTheme": "Cities"
+    },
+    {
+      "acrossTheme": "Music Genres",
+      "downTheme": "Instruments"
+    },
+    {
+      "acrossTheme": "Snack Foods",
+      "downTheme": "Superheroes"
+    },
+    {
+      "acrossTheme": "TV Cartoons",
+      "downTheme": "Weather"
+    }
+  ]
+}
