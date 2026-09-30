@@ -1140,6 +1140,19 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .why.bad{border-color:rgba(255,56,96,.55)} .why.bad b{color:var(--red)}
 .missed li.sc i{display:block;font-style:normal;font-size:13.5px;line-height:1.35;opacity:.85}
 .missed li.sc b{margin-top:4px;color:var(--green);font-family:var(--sans);font-size:14px}
+/* cert anatomy */
+#modeSeg span.certopt{grid-column:1/-1;letter-spacing:.1em}
+.certpane{display:none;position:relative;margin-top:10px;max-height:min(34vh,300px);overflow-y:auto;overflow-x:hidden;background:rgba(3,10,14,.92);
+  border:1px solid var(--line);border-radius:10px;padding:8px 8px;font-family:var(--mono);font-size:10.5px;line-height:1.55;color:#8fcfb5;
+  white-space:pre-wrap;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch;box-shadow:inset 0 0 24px rgba(57,255,136,.05)}
+.card.cert .certpane{display:block}
+.card.cert .q{font-size:15px;font-weight:600;margin-top:4px}
+.certpane .ln{min-height:1.5em}
+.certpane .ln.demo{color:var(--amber);opacity:.85}
+.certpane .fld{margin:1px -4px;padding:1px 4px;border-radius:6px;border:1px solid transparent;transition:border-color .2s,background .2s,box-shadow .2s}
+.certpane .fld.on{border-color:var(--cyan);background:rgba(34,230,255,.10);color:#eafffb;box-shadow:0 0 0 1px var(--cyan),0 0 16px rgba(34,230,255,.5)}
+.certpane .fld.on.ok{border-color:var(--green);background:rgba(57,255,136,.12);box-shadow:0 0 0 1px var(--green),0 0 16px rgba(57,255,136,.5)}
+.certpane .fld.on.bad{border-color:var(--red);background:rgba(255,56,96,.12);box-shadow:0 0 0 1px var(--red),0 0 16px rgba(255,56,96,.5)}
 /* completion badges on deck/mode pickers */
 .seg span.done::after{content:" \2713";color:var(--green);text-shadow:0 0 8px rgba(57,255,136,.6)}
 /* leaderboard (picker + end screen) */
@@ -1197,7 +1210,7 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
       <div class="modepick daypick"><div class="lbl">Deck<small id="dayHint"></small></div>
         <div class="seg" id="daySeg"><span data-v="day1">DAY 1</span><span data-v="day2">DAY 2</span><span data-v="all">ALL</span></div></div>
       <div class="modepick"><div class="lbl">Mode<small id="modeHint"></small></div>
-        <div class="seg" id="modeSeg"><span data-v="terms">TERMS</span><span data-v="scen">SCENARIOS</span><span data-v="mixed">MIXED</span></div></div>
+        <div class="seg" id="modeSeg"><span data-v="terms">TERMS</span><span data-v="scen">SCENARIOS</span><span data-v="mixed">MIXED</span><span data-v="cert" class="certopt">CERT ANATOMY</span></div></div>
       <button class="tog" id="togMode"><span class="lbl">Show first<small>For term cards (Terms &amp; Mixed)</small></span>
         <span class="seg"><span data-v="0">WORD</span><span data-v="1">MEANING</span></span></button>
       <button class="tog" id="togTimer"><span class="lbl">Countdown<small>15s terms · 30s scenarios · faster = bonus</small></span><span class="pill"></span></button>
@@ -1227,6 +1240,7 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
       <div class="card" id="card">
         <div class="tag" id="qtag">// DECRYPT THE MEANING</div>
         <div class="q" id="q"></div>
+        <div class="certpane" id="certPane" aria-label="Demo X.509 certificate"></div>
         <div class="ring" id="ring"><svg viewBox="0 0 56 56"><circle class="bgc" cx="28" cy="28" r="24"/><circle class="fg" id="ringFg" cx="28" cy="28" r="24"/></svg><b id="ringT">15</b></div>
       </div>
     </div>
@@ -1278,7 +1292,8 @@ const STORE = "hackquiz:study-site";
 const DAYS = { all: { label:"All", sub:"Days 1-" + DAY_ORDER.length + ": Cumulative review" } };
 DAY_ORDER.forEach(d => { DAYS[d] = DECKS[d]; });
 let CARDS = [], SCEN = [], DECK_SUBTITLE = "";
-const MODES = { terms:"Terms", scen:"Scenarios", mixed:"Mixed" };
+const MODES = { terms:"Terms", scen:"Scenarios", mixed:"Mixed", cert:"Cert Anatomy" };
+const TIME_CERT = 20;
 
 /* normalize scenario answers: index (0-3) or exact option text */
 DAY_ORDER.forEach(d => DECKS[d].scen.forEach((s, i) => {
@@ -1304,6 +1319,7 @@ if(qs.get("day")) settings.day = qs.get("day");
 if(qs.get("mode")) settings.mode = qs.get("mode");
 setDeck(settings.day);
 if(!MODES[settings.mode] || (!SCEN.length && settings.mode !== "terms")) settings.mode = "terms";
+if(settings.mode === "cert" && settings.day === "day1"){ settings.mode = "terms"; setTimeout(syncUrl, 0); }
 // high score + best streak are kept per deck + mode, e.g. highs["day2:scen"]
 const highs = Object.assign({}, saved.highs || {});
 const bests = Object.assign({}, saved.bests || {});
@@ -1452,12 +1468,92 @@ const multFor = s => s >= 10 ? 4 : s >= 8 ? 3 : s >= 3 ? 2 : 1;
 /* ---------- question pool: items are "t:<i>" (term card) or "s:<i>" (scenario) ---------- */
 const termIds = () => CARDS.map((_, i) => "t:" + i);
 const scenIds = () => SCEN.map((_, i) => "s:" + i);
+
+/* ---------- CERT ANATOMY: a DEMO X.509 v3 cert (fake domain, fake CA, fake key material) ---------- */
+const CERT_FIELDS = [
+  { id:"version",  label:"Version", why:"v3 (stored as 0x2) is the version that allows extensions like SAN and Key Usage." },
+  { id:"serial",   label:"Serial Number", why:"Unique per issuing CA; CRLs and OCSP identify a revoked cert by this number." },
+  { id:"sigalg",   label:"Signature Algorithm", why:"How the CA signed the cert: a SHA-256 hash signed with the CA's RSA private key." },
+  { id:"issuer",   label:"Issuer", why:"The CA that signed the certificate and vouches for the subject." },
+  { id:"validity", label:"Validity (Not Before / Not After)", why:"Outside this window the cert is invalid, even if it was never revoked." },
+  { id:"subject",  label:"Subject (CN)", why:"Who the cert identifies; browsers match the hostname against the SAN list." },
+  { id:"spki",     label:"Subject Public Key Info", why:"The subject's public key (RSA 2048). The private key never appears in a cert." },
+  { id:"san",      label:"Subject Alternative Name", why:"Every hostname the cert is valid for, e.g. the apex domain and www." },
+  { id:"ku",       label:"Key Usage / Extended Key Usage", why:"Limits the key to signing and key encipherment, for TLS server authentication." },
+  { id:"bc",       label:"Basic Constraints (CA:FALSE)", why:"CA:FALSE marks an end-entity cert; it can't be used to sign other certs." },
+  { id:"crl",      label:"CRL Distribution Points", why:"Where clients download the CA's certificate revocation list." },
+  { id:"aia",      label:"Authority Info Access (OCSP)", why:"OCSP URL for live revocation checks, plus where to fetch the issuing CA cert." },
+  { id:"sigval",   label:"CA's Digital Signature (Signature Value)", why:"The CA's signature over the cert data; verify it with the issuer's public key." }
+];
+const CERT_LINES = [
+  [null, "# DEMO CERT for study only: fake domain, fake CA, fake key material", "demo"],
+  [null, "$ openssl x509 -in etlabs-demo.app.crt -text -noout"],
+  [null, "Certificate:"],
+  [null, "  Data:"],
+  ["version", "    Version: 3 (0x2)"],
+  ["serial", "    Serial Number:"],
+  ["serial", "     0d:e7:1a:b3:5c:42:9f:07:e8:61:c4:2a:93:d5:0b:7e"],
+  ["sigalg", "    Signature Algorithm: sha256WithRSAEncryption"],
+  ["issuer", "    Issuer: C = US, O = ET Labs Demo, CN = ET Labs Demo CA"],
+  ["validity", "    Validity"],
+  ["validity", "      Not Before: Sep 15 00:00:00 2026 GMT"],
+  ["validity", "      Not After : Dec 14 23:59:59 2026 GMT"],
+  ["subject", "    Subject: CN = etlabs-demo.app"],
+  ["spki", "    Subject Public Key Info:"],
+  ["spki", "      Public Key Algorithm: rsaEncryption"],
+  ["spki", "        Public-Key: (2048 bit)"],
+  ["spki", "        Modulus:"],
+  ["spki", "          00:c3:5a:7e:10:de:ad:be:ef:42:9b:1c:07:"],
+  ["spki", "          e4:8f:33:d2:6a:c0:ff:ee:51:18:7d:a9:02:"],
+  ["spki", "          ... (demo value, truncated)"],
+  ["spki", "        Exponent: 65537 (0x10001)"],
+  [null, "    X509v3 extensions:"],
+  ["ku", "      X509v3 Key Usage: critical"],
+  ["ku", "        Digital Signature, Key Encipherment"],
+  ["ku", "      X509v3 Extended Key Usage:"],
+  ["ku", "        TLS Web Server Authentication"],
+  ["bc", "      X509v3 Basic Constraints: critical"],
+  ["bc", "        CA:FALSE"],
+  ["san", "      X509v3 Subject Alternative Name:"],
+  ["san", "        DNS:etlabs-demo.app, DNS:www.etlabs-demo.app"],
+  ["crl", "      X509v3 CRL Distribution Points:"],
+  ["crl", "        Full Name:"],
+  ["crl", "          URI:http://crl.ca.etlabs-demo.app/demo-ca.crl"],
+  ["aia", "      Authority Information Access:"],
+  ["aia", "        OCSP - URI:http://ocsp.ca.etlabs-demo.app"],
+  ["aia", "        CA Issuers - URI:http://ca.etlabs-demo.app/demo-ca.crt"],
+  ["sigval", "  Signature Algorithm: sha256WithRSAEncryption"],
+  ["sigval", "  Signature Value:"],
+  ["sigval", "    5f:1c:9e:0a:de:ad:c0:de:77:3b:e2:18:"],
+  ["sigval", "    a4:6d:0f:91:ca:fe:ba:be:3c:58:e0:47:"],
+  ["sigval", "    ... (demo value, truncated)"]
+];
+const certIds = () => CERT_FIELDS.map((_, i) => "c:" + i);
+const certOK = () => settings.day !== "day1";      // Cert Anatomy lives under Day 2 and All only
+function renderCert(){
+  let html = "", cur = null, buf = [];
+  const flush = () => { if(buf.length) html += cur ? "<div class='fld' data-f='" + cur + "'>" + buf.join("") + "</div>" : buf.join(""); buf = []; };
+  CERT_LINES.forEach(([f, t, cls]) => {
+    if(f !== cur){ flush(); cur = f; }
+    buf.push("<div class='ln" + (cls ? " " + cls : "") + "'>" + esc(t) + "</div>");
+  });
+  flush();
+  $("certPane").innerHTML = html;
+}
+function certFocus(id, state){
+  const pane = $("certPane");
+  pane.querySelectorAll(".fld").forEach(el => { el.classList.toggle("on", el.dataset.f === id); el.classList.remove("ok", "bad"); if(el.dataset.f === id && state) el.classList.add(state); });
+  const el = pane.querySelector(".fld[data-f='" + id + "']"); if(!el) return;
+  const room = pane.clientHeight, top = el.offsetTop, h = el.offsetHeight;
+  pane.scrollTop = Math.max(0, h + 12 > room ? top - 6 : top - (room - h) / 2);
+}
 function fullPool(mode){
+  if(mode === "cert") return shuffle(certIds());
   if(mode === "scen") return scenIds();
   if(mode === "mixed") return shuffle(termIds()).slice(0, MIXED_EACH).concat(shuffle(scenIds()).slice(0, MIXED_EACH));
   return termIds();
 }
-const fullLen = mode => mode === "scen" ? SCEN.length : mode === "mixed" ? Math.min(MIXED_EACH, CARDS.length) + Math.min(MIXED_EACH, SCEN.length) : CARDS.length;
+const fullLen = mode => mode === "cert" ? CERT_FIELDS.length : mode === "scen" ? SCEN.length : mode === "mixed" ? Math.min(MIXED_EACH, CARDS.length) + Math.min(MIXED_EACH, SCEN.length) : CARDS.length;
 const parseId = id => ({ kind: id[0], i: +id.slice(2) });
 
 /* ---------- state ---------- */
@@ -1481,14 +1577,16 @@ function renderStart(){
   syncToggles();
 }
 function syncToggles(){
+  if(settings.mode === "cert" && !certOK()) settings.mode = "terms";
+  $("modeSeg").querySelector("[data-v=cert]").style.display = certOK() ? "" : "none";
   const m = settings.mode;
   $("stCards").textContent = fullLen(m); $("stHigh").textContent = highs[hk(m)] || 0; $("stBest").textContent = bests[hk(m)] || 0;
   $("stCardsK").textContent = m === "terms" ? "Cards" : "Nodes";
   $("modeSeg").querySelectorAll("span").forEach(s => s.classList.toggle("sel", s.dataset.v === m));
-  $("modeHint").textContent = m === "terms" ? CARDS.length + " term flashcards" : m === "scen" ? SCEN.length + " exam-style scenarios · tap Next after each" : Math.min(MIXED_EACH, CARDS.length) + " terms + " + Math.min(MIXED_EACH, SCEN.length) + " scenarios, shuffled";
+  $("modeHint").textContent = m === "cert" ? CERT_FIELDS.length + " fields of a demo X.509 v3 cert · tap Next after each" : m === "terms" ? CARDS.length + " term flashcards" : m === "scen" ? SCEN.length + " exam-style scenarios · tap Next after each" : Math.min(MIXED_EACH, CARDS.length) + " terms + " + Math.min(MIXED_EACH, SCEN.length) + " scenarios, shuffled";
   $("togTimer").classList.toggle("on", settings.timer);
   $("togSound").classList.toggle("on", settings.sound);
-  $("togMode").classList.toggle("off", m === "scen");
+  $("togMode").classList.toggle("off", m === "scen" || m === "cert");
   $("togMode").querySelectorAll(".seg span").forEach(s => s.classList.toggle("sel", (s.dataset.v === "1") === settings.rev));
   $("bMute").innerHTML = settings.sound ? "&#x1F50A;" : "&#x1F507;";
   syncBadges(); loadStartBoard();
@@ -1507,7 +1605,7 @@ $("modeSeg").querySelectorAll("span").forEach(s => s.onclick = e => {
   e.stopPropagation(); if(s.dataset.v !== "terms" && !SCEN.length) return;
   settings.mode = s.dataset.v; sfx.click(); syncToggles(); persist(); bootLog(); syncUrl();
 });
-$("togMode").onclick = () => { if(settings.mode === "scen") return; settings.rev = !settings.rev; sfx.click(); syncToggles(); persist(); };
+$("togMode").onclick = () => { if(settings.mode === "scen" || settings.mode === "cert") return; settings.rev = !settings.rev; sfx.click(); syncToggles(); persist(); };
 $("togTimer").onclick = () => { settings.timer = !settings.timer; sfx.click(); syncToggles(); persist(); };
 $("togSound").onclick = () => { settings.sound = !settings.sound; syncToggles(); persist(); sfx.click(); };
 $("bMute").onclick = () => { settings.sound = !settings.sound; syncToggles(); persist(); sfx.click(); };
@@ -1523,8 +1621,9 @@ function startGame(ids){
 function question(){
   clearTimeout(advanceTO); cancelAnimationFrame(raf);
   locked = false;
-  const it = parseId(order[idx]), scen = it.kind === "s";
+  const it = parseId(order[idx]), cert = it.kind === "c", scen = it.kind === "s" || cert;
   $("count").textContent = "NODE " + (idx+1) + "/" + order.length;
+  $("card").classList.toggle("cert", cert);
   $("bar").style.width = (idx / order.length * 100) + "%";
   $("card").classList.remove("shake");
   $("card").classList.toggle("scen", scen);
@@ -1532,7 +1631,14 @@ function question(){
   $("fb").textContent = ""; $("fb").className = "feedback"; $("next").style.display = "none";
   $("why").style.display = "none"; $("why").innerHTML = "";
   let opts, rightText;
-  if(scen){
+  if(cert){
+    const f = CERT_FIELDS[it.i];
+    $("card").classList.remove("rev");
+    $("qtag").textContent = "// CERT ANATOMY — NAME THE HIGHLIGHTED FIELD";
+    $("q").textContent = "What is the field in the neon box?";
+    rightText = f.label;
+    opts = shuffle([f.label].concat(shuffle(CERT_FIELDS.filter(x => x !== f)).slice(0, 3).map(x => x.label)));
+  } else if(scen){
     const s = SCEN[it.i];
     $("card").classList.remove("rev");
     $("qtag").textContent = "// SCENARIO — PICK THE BEST ANSWER";
@@ -1558,7 +1664,11 @@ function question(){
     b.onclick = () => answer(b);
     box.appendChild(b);
   });
-  limit = scen ? TIME_SCEN : TIME_TERM;
+  limit = cert ? TIME_CERT : scen ? TIME_SCEN : TIME_TERM;
+  if(cert){
+    certFocus(CERT_FIELDS[it.i].id);
+    const r = $("card").getBoundingClientRect(); if(r.top < 0) window.scrollTo(0, window.scrollY + r.top - 8);
+  }
   $("ring").style.display = settings.timer ? "" : "none";
   if(settings.timer){ tStart = performance.now(); lastTick = -1; tickRing(); }
 }
@@ -1574,12 +1684,13 @@ function tickRing(){
 }
 function answer(btn){
   if(locked) return; locked = true; cancelAnimationFrame(raf);
-  const it = parseId(order[idx]), scen = it.kind === "s";
+  const it = parseId(order[idx]), cert = it.kind === "c", scen = it.kind === "s";
   const buttons = [...$("opts").children], rightBtn = buttons.find(b => b.dataset.ok);
   const ok = btn && btn.dataset.ok;
   buttons.forEach(b => { if(b !== rightBtn && b !== btn) b.classList.add("dim"); });
   rightBtn.classList.add("right");
-  const rightText = scen ? SCEN[it.i].options[SCEN[it.i]._a] : (settings.rev ? CARDS[it.i].term : CARDS[it.i].meaning);
+  if(cert) certFocus(CERT_FIELDS[it.i].id, ok ? "ok" : "bad");
+  const rightText = cert ? CERT_FIELDS[it.i].label : scen ? SCEN[it.i].options[SCEN[it.i]._a] : (settings.rev ? CARDS[it.i].term : CARDS[it.i].meaning);
   if(ok){
     streak++; correct++; bestStreak = Math.max(bestStreak, streak);
     // time bonus is scaled so a scenario's 30s window is worth the same max bonus as a term's 15s
@@ -1589,7 +1700,7 @@ function answer(btn){
     $("fb").className = "feedback ok"; $("fb").textContent = RIGHT_MSG[Math.floor(Math.random()*RIGHT_MSG.length)] + "  +" + pts;
     if(LEVELS[streak]) levelUp(LEVELS[streak]);
     if(streak % 5 === 0) confetti();
-    if(!scen) advanceTO = setTimeout(next, LEVELS[streak] ? 1500 : 950);
+    if(!scen && !cert) advanceTO = setTimeout(next, LEVELS[streak] ? 1500 : 950);
   } else {
     if(btn) btn.classList.add("wrong"); else $("card").classList.add("shake");
     streak = 0; missed.push(order[idx]);
@@ -1597,11 +1708,17 @@ function answer(btn){
     $("fb").className = "feedback bad";
     $("fb").textContent = (btn ? WRONG_MSG[Math.floor(Math.random()*WRONG_MSG.length)] : "> TIMEOUT") + " — answer: " + rightText;
   }
-  if(scen){
-    $("why").innerHTML = "<b>" + (ok ? "&#x2713; WHY" : "&#x2717; WHY") + "</b>" + esc(SCEN[it.i].why || "");
+  if(scen || cert){
+    $("why").innerHTML = "<b>" + (ok ? "&#x2713; WHY" : "&#x2717; WHY") + "</b>" + esc((cert ? CERT_FIELDS[it.i].why : SCEN[it.i].why) || "");
     $("why").className = "why " + (ok ? "ok" : "bad"); $("why").style.display = "block";
   }
-  if(scen || !ok) $("next").style.display = "block";
+  if(scen || cert || !ok) $("next").style.display = "block";
+  if(cert){
+    // mobile: bring the WHY line + Next into view, but never push the neon box off the top
+    const nb = $("next").getBoundingClientRect(), hb = $("certPane").querySelector(".fld.on").getBoundingClientRect();
+    const dy = Math.min(nb.bottom - innerHeight + 10, hb.top - 6);
+    if(dy > 0) window.scrollBy({ top: dy, behavior: "smooth" });
+  }
   updateStreak();
   $("bar").style.width = ((idx+1) / order.length * 100) + "%";
 }
@@ -1662,7 +1779,8 @@ function endGame(){
   if(!uniq.length) ul.innerHTML = "<li class='none'>&gt; Flawless run. No vulnerabilities found.</li>";
   uniq.forEach(id => {
     const it = parseId(id), li = document.createElement("li");
-    if(it.kind === "s"){ const s = SCEN[it.i]; li.className = "sc";
+    if(it.kind === "c"){ const f = CERT_FIELDS[it.i]; li.innerHTML = "<b>" + esc(f.label) + "</b><span>" + esc(f.why) + "</span>"; }
+    else if(it.kind === "s"){ const s = SCEN[it.i]; li.className = "sc";
       li.innerHTML = "<i>" + esc(shorten(s.q, 95)) + "</i><b>&#x2713; " + esc(s.options[s._a]) + "</b>"; }
     else li.innerHTML = "<b>" + esc(CARDS[it.i].term) + "</b><span>" + esc(CARDS[it.i].meaning) + "</span>";
     ul.appendChild(li);
@@ -1688,6 +1806,7 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- boot + demo flags (?demo=q | ?demo=end | ?demo=scenario) for screenshots ---------- */
+renderCert();
 renderStart(); bootLog();
 const demo = (location.search.match(/demo=(\w+)/) || [])[1];
 if(demo) document.documentElement.classList.add("demo");
@@ -1705,6 +1824,14 @@ if(demo === "scenario" && SCEN.length){
   idx = 4; question(); tStart = performance.now() - 9000; if(settings.timer) tickRing();
   const wrongBtn = [...$("opts").children].find(b => !b.dataset.ok);
   answer(wrongBtn);
+}
+if(demo === "cert" && certOK()){
+  // a cert question answered correctly: neon box + WHY line (for screenshots)
+  settings.sound = false; settings.mode = "cert"; startGame();
+  const pick = "c:" + CERT_FIELDS.findIndex(f => f.id === "aia");
+  order.splice(order.indexOf(pick), 1); order.splice(5, 0, pick);
+  idx = 5; question(); tStart = performance.now() - 6000; if(settings.timer) tickRing();
+  answer([...$("opts").children].find(b => b.dataset.ok));
 }
 if(demo === "end"){
   settings.sound = false; runMode = "mixed";
