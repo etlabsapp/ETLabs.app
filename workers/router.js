@@ -76,8 +76,8 @@ const STUDY_DECKS = {
 };
 const STUDY_MODES = ["terms", "scen", "mixed"];
 const ROUND_TTL_MS = 2 * 60 * 60 * 1000;     // nonce valid for 2h
-const SCORE_LIMIT = 5, SCORE_WINDOW_MS = 10 * 60 * 1000;   // 5 score posts / 10 min / client
-const ROUND_LIMIT = 40;                       // 40 round starts / 10 min / client
+const SCORE_LIMIT = 30, SCORE_WINDOW_MS = 10 * 60 * 1000;  // 30 score posts / 10 min / client (class shares one Wi-Fi IP)
+const ROUND_LIMIT = 240;                      // 240 round starts / 10 min / client
 const MAX_BODY = 1024;
 
 let studySchemaReady = false;
