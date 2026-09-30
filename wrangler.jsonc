@@ -13,5 +13,14 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  // Study leaderboard (/study/api/*). No database_id on purpose: wrangler v4 auto-provisions
+  // the D1 database "etlabs-study" on first build/deploy. Pin the id here once it exists.
+  "d1_databases": [
+    {
+      "binding": "STUDY_DB",
+      "database_name": "etlabs-study",
+      "migrations_dir": "migrations"
+    }
   ]
 }

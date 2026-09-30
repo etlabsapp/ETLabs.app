@@ -77,6 +77,23 @@ a.day:active{transform:scale(.98)}
 .day.mix::before{background:var(--mag);box-shadow:0 0 14px var(--mag)}
 a.day.mix:hover,a.day.mix:focus-visible{border-color:var(--mag);box-shadow:0 0 0 1px var(--mag),0 0 26px rgba(255,77,255,.3)}
 .day.mix .go{color:var(--mag)}
+.done{display:none;margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--green)}
+.day.cleared .done{display:block}
+.day.cleared h3::after{content:" \2713";color:var(--green);text-shadow:0 0 10px rgba(57,255,136,.7)}
+.lbhub{margin-top:22px}
+.lbbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.lbtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#0b1820;border-bottom:1px solid var(--line);padding:4px}
+.lbtabs button{font:inherit;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--dim);background:none;border:0;border-radius:8px;padding:9px 4px;cursor:pointer}
+.lbtabs button.sel{background:rgba(34,230,255,.16);color:var(--cyan);box-shadow:0 0 0 1px rgba(34,230,255,.5)}
+.lbrows{list-style:none;margin:0;padding:0}
+.lbrows li{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid rgba(22,51,63,.6);font-family:var(--mono);font-size:14px}
+.lbrows li:first-child{border-top:0}
+.lbrows .r{width:30px;color:var(--dim);flex:none}
+.lbrows li:nth-child(1) .r{color:var(--amber)} .lbrows li:nth-child(2) .r,.lbrows li:nth-child(3) .r{color:var(--cyan)}
+.lbrows .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbrows .s{color:var(--green);font-weight:800}
+.lbrows .t{width:44px;text-align:right;color:var(--dim);font-size:12px}
+.lbrows li.empty{justify-content:center;color:var(--dim);font-size:12px}
 .spacer{flex:1;min-height:24px}
 footer{text-align:center;color:var(--dim);font-family:var(--mono);font-size:12px;padding-top:18px;opacity:.85}
 footer b{color:var(--green);font-weight:700}
@@ -97,10 +114,11 @@ footer a:hover,footer a:focus-visible{color:var(--cyan);border-bottom-color:var(
 
   <h2>// MODULES</h2>
   <div class="cards">
-    <a class="day" href="./day1/">
+    <a class="day" href="./day1/" data-day="1">
       <div class="top"><span class="num">DAY 01</span><span class="badge live">&#x25CF; ONLINE</span></div>
       <h3>Security Fundamentals</h3>
       <p>CIA triad, AAA, least privilege, control categories &amp; types, gap analysis, SOC/CIRT, honeypots &amp; honeytokens.</p>
+      <div class="done"></div>
       <div class="go">&gt; open day 1</div>
     </a>
 
@@ -118,8 +136,54 @@ footer a:hover,footer a:focus-visible{color:var(--cyan);border-bottom-color:var(
     </a>
   </div>
 
+  <section class="lbhub" id="lbHub" data-day="1">
+    <h2>// LEADERBOARD · DAY 01</h2>
+    <div class="lbbox">
+      <div class="lbtabs" role="tablist"><button data-m="terms" class="sel">TERMS</button><button data-m="scen">SCENARIOS</button><button data-m="mixed">MIXED</button></div>
+      <ol class="lbrows" id="lbRows"><li class="empty">&gt; fetching scores ...</li></ol>
+    </div>
+  </section>
+
   <div class="spacer"></div>
   <footer>Made by <b>ET Labs</b> · <a href="https://etlabs.app/">etlabs.app</a></footer>
 </div>
+<script>
+(function(){
+"use strict";
+var MODES = { terms:"TERMS", scen:"SCENARIOS", mixed:"MIXED" };
+/* completion badges: set by each quiz when a full round finishes (any mode). Nothing is locked. */
+var prog = {};
+try{ prog = JSON.parse(localStorage.getItem("etlabs:study:progress")) || {}; }catch(e){}
+document.querySelectorAll(".day[data-day]").forEach(function(card){
+  var done = prog[card.getAttribute("data-day")];
+  var modes = done ? Object.keys(MODES).filter(function(m){ return done[m]; }) : [];
+  if(!modes.length) return;
+  card.classList.add("cleared");
+  card.querySelector(".done").textContent = "\u2713 CLEARED // " + modes.map(function(m){ return MODES[m]; }).join(" \u00b7 ");
+});
+/* leaderboard (optional; hides nothing if the API is down) */
+var hub = document.getElementById("lbHub"), rows = document.getElementById("lbRows"), data = null, cur = "terms";
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function fmt(s){ return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
+function render(){
+  if(!data){ rows.innerHTML = "<li class='empty'>&gt; leaderboard offline — quizzes still work</li>"; return; }
+  var list = data[cur] || [];
+  rows.innerHTML = list.length ? list.map(function(e){
+    return "<li><span class='r'>#" + e.rank + "</span><span class='n'>" + esc(e.nick) + "</span><span class='s'>" + e.score + "/" + e.questions + "</span><span class='t'>" + fmt(e.durationSec) + "</span></li>";
+  }).join("") : "<li class='empty'>&gt; no scores yet. Finish a full round to claim #1.</li>";
+}
+hub.querySelectorAll(".lbtabs button").forEach(function(b){
+  b.onclick = function(){ cur = b.getAttribute("data-m");
+    hub.querySelectorAll(".lbtabs button").forEach(function(x){ x.classList.toggle("sel", x === b); }); render(); };
+});
+if(location.protocol === "file:" || !window.fetch){ render(); return; }
+var ctl = window.AbortController ? new AbortController() : null, to = setTimeout(function(){ if(ctl) ctl.abort(); }, 6000);
+fetch("/study/api/leaderboard?day=" + hub.getAttribute("data-day") + "&limit=5", ctl ? { signal: ctl.signal } : {})
+  .then(function(r){ return r.json(); })
+  .then(function(j){ data = j && j.ok ? j.modes : null; })
+  .catch(function(){ data = null; })
+  .then(function(){ clearTimeout(to); render(); });
+})();
+</script>
 </body>
 </html>
