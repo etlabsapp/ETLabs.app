@@ -27,6 +27,7 @@
    ===================================================================== */
 const DECK_TITLE = "Security+ Day 1: Hack the Quiz";
 const DECK_SUBTITLE = "CompTIA Security+ // Fundamentals";
+const DECK_DAY = "1";   // leaderboard + progress key: "1", "2", ... or "all"
 const CARDS = [
   {"term": "Confidentiality", "meaning": "Only the right people see it"},
   {"term": "Integrity", "meaning": "Nobody changed it without you knowing"},
@@ -343,6 +344,29 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
   margin-top:18px;padding:0 8px;line-height:1.5}
 .site-foot a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(111,154,166,.4)}
 .site-foot a:hover,.site-foot a:focus-visible{color:var(--cyan);border-bottom-color:var(--cyan)}
+/* leaderboard (end screen) */
+.lb{margin:6px 0 16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.lb h3{margin:0;padding:12px 14px;font-size:13px;letter-spacing:.12em;color:var(--cyan);border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.lb h3 small{color:var(--dim);font-size:10px;letter-spacing:.08em;font-weight:400;text-align:right}
+.lbform{display:flex;gap:8px;padding:12px 14px 0}
+.lbform input{flex:1;min-width:0;height:46px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:#07121a;color:var(--text);
+  font-family:var(--mono);font-size:16px;outline:none}
+.lbform input:focus{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 14px rgba(34,230,255,.25)}
+.lbbtn{flex:none;height:46px;padding:0 14px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.06em;
+  text-transform:uppercase;color:#02140a;background:linear-gradient(180deg,#5dffa0,#1fd46d);box-shadow:0 0 0 1px rgba(57,255,136,.6),0 0 14px rgba(57,255,136,.3)}
+.lbbtn:disabled{opacity:.5}
+.lbmsg{min-height:18px;padding:8px 14px 0;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.lbmsg.ok{color:var(--green)} .lbmsg.bad{color:var(--red)}
+.lblist{list-style:none;margin:8px 0 0;padding:0}
+.lblist li{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid rgba(22,51,63,.6);font-family:var(--mono);font-size:14px}
+.lblist li .r{width:30px;color:var(--dim);flex:none}
+.lblist li:nth-child(1) .r{color:var(--amber)} .lblist li:nth-child(2) .r,.lblist li:nth-child(3) .r{color:var(--cyan)}
+.lblist li .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.lblist li .s{color:var(--green);font-weight:800}
+.lblist li .t{width:44px;text-align:right;color:var(--dim);font-size:12px}
+.lblist li.me{background:rgba(57,255,136,.08)} .lblist li.me .n{color:var(--green)}
+.lblist li.empty{color:var(--dim);font-size:12px;justify-content:center}
 /* static render for ?demo= screenshots */
 html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms!important;animation-iteration-count:1!important} }
@@ -413,6 +437,15 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
       <div class="stat"><div class="k">Accuracy</div><div class="v glow-c" id="eAcc">0%</div></div>
       <div class="stat"><div class="k">Best streak</div><div class="v" style="color:var(--amber)" id="eStreak">0</div></div>
     </div>
+    <div class="lb" id="lb">
+      <h3><span id="lbH">LEADERBOARD</span><small>nickname only</small></h3>
+      <form class="lbform" id="lbForm" autocomplete="off" novalidate>
+        <input id="lbNick" maxlength="16" placeholder="nickname (2-16)" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Nickname">
+        <button type="submit" class="lbbtn" id="lbBtn">Submit score</button>
+      </form>
+      <div class="lbmsg" id="lbMsg"></div>
+      <ol class="lblist" id="lbList"></ol>
+    </div>
     <div class="missed"><h3 id="missedH">MISSED — REVIEW THESE</h3><ul id="missedList"></ul></div>
     <button class="btn warn" id="bRetryMissed">&#x21BB; Retry missed only</button>
     <button class="btn" id="bAgain">&gt; Full run again</button>
@@ -450,6 +483,81 @@ if(!MODES[settings.mode] || (!SCEN.length && settings.mode !== "terms")) setting
 const highs = Object.assign({ terms: typeof saved.high === "number" ? saved.high : 0, scen:0, mixed:0 }, saved.highs || {});
 const bests = Object.assign({ terms: typeof saved.best === "number" ? saved.best : 0, scen:0, mixed:0 }, saved.bests || {});
 function persist(){ if(/demo=/.test(location.search)) return; save({ settings, highs, bests }); }
+
+/* ---------- study progress (hub badges) + leaderboard API (optional; quiz works without it) ---------- */
+const PROGRESS = "etlabs:study:progress", NICK = "etlabs:study:nick", API = "/study/api/";
+const isDemo = () => /demo=/.test(location.search);
+function markDone(mode){
+  if(isDemo()) return;
+  try{ const p = JSON.parse(localStorage.getItem(PROGRESS)) || {};
+    p[DECK_DAY] = Object.assign({}, p[DECK_DAY], { [mode]: Date.now() });
+    localStorage.setItem(PROGRESS, JSON.stringify(p)); }catch(e){}
+}
+function api(path, body){
+  if(location.protocol === "file:") return Promise.resolve(null);
+  const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const to = setTimeout(() => ctl && ctl.abort(), 6000);
+  const opt = body ? { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify(body) } : {};
+  if(ctl) opt.signal = ctl.signal;
+  return fetch(API + path, opt).then(r => r.json().catch(() => null).then(j => j || { ok:false, error:"http_" + r.status }))
+    .catch(() => null).finally(() => clearTimeout(to));
+}
+let roundNonce = null, runId = 0, lbSubmitted = false;
+function requestRound(mode){
+  const my = ++runId; roundNonce = null;
+  if(isDemo()) return;
+  api("round", { day:DECK_DAY, mode }).then(r => { if(my === runId && r && r.ok && r.nonce) roundNonce = r.nonce; });
+}
+const LB_ERR = {
+  nick_too_short:"Nickname needs at least 2 characters.", nick_too_long:"Nickname max is 16 characters.",
+  nick_bad_chars:"Use letters, numbers, space, _ . - only.", nick_not_allowed:"That nickname isn't allowed. Pick another.",
+  nick_reserved:"That nickname is reserved.", nick_required:"Enter a nickname.", rate_limited:"Too many submissions. Try again in a few minutes.",
+  too_fast:"Round finished too fast to rank.", nonce_used:"This round was already submitted.", round_expired:"Round expired (2h). Play again to rank.",
+  bad_nonce:"Leaderboard didn't register this round.", bad_score:"Score rejected.", storage_unavailable:"Leaderboard is offline right now."
+};
+const fmtT = s => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+function lbMsg(t, cls){ $("lbMsg").textContent = t || ""; $("lbMsg").className = "lbmsg" + (cls ? " " + cls : ""); }
+function loadBoard(mode, meNick){
+  const ul = $("lbList");
+  api("leaderboard?day=" + encodeURIComponent(DECK_DAY) + "&mode=" + mode + "&limit=10" + (meNick ? "&t=" + Date.now() : "")).then(r => {
+    if(!r || !r.ok){ ul.innerHTML = "<li class='empty'>&gt; leaderboard offline — your run still counts locally</li>"; return; }
+    if(!r.entries.length){ ul.innerHTML = "<li class='empty'>&gt; no scores yet. Be the first.</li>"; return; }
+    ul.innerHTML = r.entries.map(e => "<li" + (meNick && e.nick.toLowerCase() === meNick.toLowerCase() ? " class='me'" : "") + "><span class='r'>#" + e.rank +
+      "</span><span class='n'>" + esc(e.nick) + "</span><span class='s'>" + e.score + "/" + e.questions + "</span><span class='t'>" + fmtT(e.durationSec) + "</span></li>").join("");
+  });
+}
+function renderBoard(mode, canSubmit){
+  lbSubmitted = false;
+  $("lbH").textContent = "LEADERBOARD // " + MODES[mode].toUpperCase();
+  $("lbList").innerHTML = "<li class='empty'>&gt; fetching scores ...</li>";
+  let nick = ""; try{ nick = localStorage.getItem(NICK) || ""; }catch(e){}
+  $("lbNick").value = nick; $("lbBtn").disabled = false;
+  $("lbForm").style.display = canSubmit ? "flex" : "none";
+  lbMsg(canSubmit ? correct + "/" + order.length + " correct — submit it under a nickname?" : (review ? "Review rounds aren't ranked. Run the full deck to submit." : isDemo() ? "Demo view — submit disabled." : ""));
+  loadBoard(mode);
+}
+$("lbForm").onsubmit = e => {
+  e.preventDefault();
+  if(lbSubmitted) return;
+  const nick = $("lbNick").value.trim().replace(/\s+/g, " ");
+  if(nick.length < 2) return lbMsg(LB_ERR.nick_too_short, "bad");
+  if(nick.length > 16) return lbMsg(LB_ERR.nick_too_long, "bad");
+  if(!/^[A-Za-z0-9 _.\-]+$/.test(nick)) return lbMsg(LB_ERR.nick_bad_chars, "bad");
+  if(!roundNonce) return lbMsg("Leaderboard is offline (or didn't register this round). Your run still counts locally.", "bad");
+  $("lbBtn").disabled = true; lbMsg("> transmitting ...");
+  const mode = runMode;
+  api("score", { nonce:roundNonce, day:DECK_DAY, mode, nick, score:correct }).then(r => {
+    if(r && r.ok){
+      lbSubmitted = true; roundNonce = null; $("lbForm").style.display = "none";
+      try{ localStorage.setItem(NICK, r.entry.nick); }catch(e){}
+      lbMsg(r.hidden ? "> test score accepted (TEST_ nicks are hidden from the board)." : "> score uploaded. You're #" + r.rank + " in " + MODES[mode] + ".", "ok"); loadBoard(mode, r.entry.nick);
+    } else {
+      $("lbBtn").disabled = false;
+      lbMsg(r ? (LB_ERR[r.error] || "Submit failed (" + r.error + ").") : "Leaderboard is offline. Your run still counts locally.", "bad");
+      if(r && (r.error === "nonce_used" || r.error === "too_fast" || r.error === "round_expired" || r.error === "bad_nonce")) $("lbBtn").disabled = true;
+    }
+  });
+};
 
 /* ---------- helpers ---------- */
 const shuffle = a => { a = a.slice(); for(let j=a.length-1;j>0;j--){ const k=Math.floor(Math.random()*(j+1)); [a[j],a[k]]=[a[k],a[j]]; } return a; };
@@ -554,6 +662,7 @@ function startGame(ids){
   runMode = settings.mode; review = !!ids;
   order = shuffle(ids || fullPool(runMode));
   idx = 0; score = 0; streak = 0; bestStreak = 0; correct = 0; missed = [];
+  if(review){ runId++; roundNonce = null; } else requestRound(runMode);
   $("score").textContent = "0"; updateStreak(); show("sGame"); audio(); question();
 }
 function question(){
@@ -688,6 +797,8 @@ function endGame(){
   const newHigh = !review && score > (highs[runMode] || 0);
   if(newHigh) highs[runMode] = score;
   bests[runMode] = Math.max(bests[runMode] || 0, bestStreak); persist();
+  if(!review) markDone(runMode);
+  renderBoard(runMode, !review && !isDemo());
   $("newhs").style.display = newHigh ? "block" : "none";
   $("endHigh").textContent = "HIGH SCORE (" + MODES[runMode] + ", full run): " + highs[runMode] + "  //  BEST STREAK: " + bests[runMode];
   const ul = $("missedList"); ul.innerHTML = "";
