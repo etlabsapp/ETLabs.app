@@ -622,11 +622,11 @@ const DECKS = {
 },
 {
 "term": "Pepper",
-"meaning": "Secret value added to passwords, stored apart from the database"
+"meaning": "A secret value stored separately from the database (often appended to the password before hashing)"
 },
 {
 "term": "Key stretching",
-"meaning": "Hash over and over (PBKDF2, bcrypt) to slow brute force"
+"meaning": "Hashing the password many times (bcrypt, PBKDF2) so each guess is slow; this also makes the key longer"
 }
 ],
 "scen": [
@@ -925,7 +925,7 @@ const DECKS = {
 "Root certificate"
 ],
 "answer": 2,
-"why": "A pepper is a secret value stored separately from the database, unlike a salt, which sits next to the hash."
+"why": "A pepper is a secret value stored separately from the database (often appended to the password before hashing); a salt is stored right next to the hash."
 },
 {
 "q": "A company switches to bcrypt with a high work factor so each password guess takes hundreds of times longer to check. What technique is this?",
@@ -936,7 +936,7 @@ const DECKS = {
 "Key stretching"
 ],
 "answer": 3,
-"why": "Key stretching runs the hash many times (bcrypt, PBKDF2) to slow down brute-force guessing."
+"why": "Key stretching hashes the password many times (bcrypt, PBKDF2) so each guess is slow; this also makes the key longer."
 }
 ]
 }
