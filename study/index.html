@@ -1315,6 +1315,10 @@ function persist(){ if(/demo=/.test(location.search)) return; save({ settings, h
 const DAY_KEY = { day1:"1", day2:"2", all:"all" };
 const PROGRESS = "etlabs:study:progress", NICK = "etlabs:study:nick", API = "/study/api/";
 const isDemo = () => /demo=/.test(location.search);
+function syncUrl(){
+  if(isDemo() || location.protocol === "file:") return;
+  try{ history.replaceState(null, "", location.pathname + "?day=" + encodeURIComponent(settings.day) + "&mode=" + encodeURIComponent(settings.mode) + location.hash); }catch(e){}
+}
 const dayKey = d => DAY_KEY[d] || d;
 function loadProgress(){ try{ return JSON.parse(localStorage.getItem(PROGRESS)) || {}; }catch(e){ return {}; } }
 function markDone(day, mode){
@@ -1497,11 +1501,11 @@ function bootLog(){
   (function step(){ if(run !== bootRun) return; if(n < lines.length){ el.innerHTML += lines[n++] + "<br>"; setTimeout(step, 260); } else el.innerHTML += "<span class='cursor'></span>"; })();
 }
 $("daySeg").querySelectorAll("span").forEach(s => s.onclick = e => {
-  e.stopPropagation(); setDeck(s.dataset.v); sfx.click(); renderStart(); persist(); bootLog();
+  e.stopPropagation(); setDeck(s.dataset.v); sfx.click(); renderStart(); persist(); bootLog(); syncUrl();
 });
 $("modeSeg").querySelectorAll("span").forEach(s => s.onclick = e => {
   e.stopPropagation(); if(s.dataset.v !== "terms" && !SCEN.length) return;
-  settings.mode = s.dataset.v; sfx.click(); syncToggles(); persist();
+  settings.mode = s.dataset.v; sfx.click(); syncToggles(); persist(); bootLog(); syncUrl();
 });
 $("togMode").onclick = () => { if(settings.mode === "scen") return; settings.rev = !settings.rev; sfx.click(); syncToggles(); persist(); };
 $("togTimer").onclick = () => { settings.timer = !settings.timer; sfx.click(); syncToggles(); persist(); };
