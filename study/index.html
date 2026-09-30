@@ -538,7 +538,47 @@ const DECKS = {
 },
 {
 "term": "Digital certificate",
-"meaning": "ID card that ties a public key to an owner, signed by a CA"
+"meaning": "Proves who a user, device, or app is: public key + owner, signed by a CA"
+},
+{
+"term": "X.509",
+"meaning": "The standard format for digital certificates"
+},
+{
+"term": "X.509 version",
+"meaning": "Which X.509 version the cert uses; almost always v3 (needed for extensions like SAN)"
+},
+{
+"term": "Serial number",
+"meaning": "Unique number the CA gives each cert; used to list it on a CRL"
+},
+{
+"term": "Signature algorithm",
+"meaning": "How the CA signed the cert (e.g., SHA-256 with RSA)"
+},
+{
+"term": "Issuer",
+"meaning": "The CA that signed the cert"
+},
+{
+"term": "Validity period",
+"meaning": "Not-before and not-after dates; outside them the cert isn't trusted"
+},
+{
+"term": "Subject",
+"meaning": "Who the cert is issued to (common name, like www.example.com)"
+},
+{
+"term": "SAN",
+"meaning": "Subject alternative name: extra names the cert also covers"
+},
+{
+"term": "EKU",
+"meaning": "Extended key usage: what the cert may be used for (server auth, code signing)"
+},
+{
+"term": "CRL distribution point",
+"meaning": "URL in the cert where the CA's CRL can be downloaded"
 },
 {
 "term": "Root certificate",
@@ -772,6 +812,61 @@ const DECKS = {
 ],
 "answer": 0,
 "why": "OCSP checks a single certificate's status in real time; a CRL is the full list you have to download."
+},
+{
+"q": "One certificate must secure www.example.com, shop.example.com, and example.net. Which certificate field lists all of those names?",
+"options": [
+"Subject alternative name (SAN)",
+"Serial number",
+"Issuer",
+"CRL distribution point"
+],
+"answer": 0,
+"why": "The SAN field lists every extra name (domains, IPs, wildcards) the certificate is valid for."
+},
+{
+"q": "Users suddenly get a browser warning on the company site. The certificate is otherwise fine, but today's date is past its \"Not After\" date. Which field caused the warning?",
+"options": [
+"Signature algorithm",
+"Validity period",
+"Extended key usage",
+"Serial number"
+],
+"answer": 1,
+"why": "The validity period sets not-before and not-after dates; outside that window the cert isn't trusted."
+},
+{
+"q": "A developer tries to sign an app with the web server's TLS certificate, but the signing tool rejects it because the cert is only allowed for server authentication. Which field enforces this?",
+"options": [
+"Subject",
+"Validity period",
+"Extended key usage (EKU)",
+"Issuer"
+],
+"answer": 2,
+"why": "EKU lists what the certificate may be used for, such as server authentication or code signing."
+},
+{
+"q": "A client wants to check whether a certificate was revoked and needs to know where to download the CA's revocation list. Where in the certificate does it look?",
+"options": [
+"Subject alternative name",
+"Subject",
+"Signature algorithm",
+"CRL distribution point"
+],
+"answer": 3,
+"why": "The CRL distribution point field holds the URL where the CA publishes its CRL."
+},
+{
+"q": "A CA revokes a stolen certificate. What value does the CRL use to identify exactly which certificate was revoked?",
+"options": [
+"Serial number",
+"Subject",
+"Public key",
+"Signature algorithm"
+],
+"answer": 0,
+"why": "Each cert gets a unique serial number from its CA, and the CRL lists revoked certs by serial number."
 },
 {
 "q": "A web server's private key is stolen. The CA revokes the certificate and publishes its serial number in a downloadable list. What is that list?",
@@ -1471,63 +1566,223 @@ const scenIds = () => SCEN.map((_, i) => "s:" + i);
 
 /* ---------- CERT ANATOMY: a DEMO X.509 v3 cert (fake domain, fake CA, fake key material) ---------- */
 const CERT_FIELDS = [
-  { id:"version",  label:"Version", why:"v3 (stored as 0x2) is the version that allows extensions like SAN and Key Usage." },
-  { id:"serial",   label:"Serial Number", why:"Unique per issuing CA; CRLs and OCSP identify a revoked cert by this number." },
-  { id:"sigalg",   label:"Signature Algorithm", why:"How the CA signed the cert: a SHA-256 hash signed with the CA's RSA private key." },
-  { id:"issuer",   label:"Issuer", why:"The CA that signed the certificate and vouches for the subject." },
-  { id:"validity", label:"Validity (Not Before / Not After)", why:"Outside this window the cert is invalid, even if it was never revoked." },
-  { id:"subject",  label:"Subject (CN)", why:"Who the cert identifies; browsers match the hostname against the SAN list." },
-  { id:"spki",     label:"Subject Public Key Info", why:"The subject's public key (RSA 2048). The private key never appears in a cert." },
-  { id:"san",      label:"Subject Alternative Name", why:"Every hostname the cert is valid for, e.g. the apex domain and www." },
-  { id:"ku",       label:"Key Usage / Extended Key Usage", why:"Limits the key to signing and key encipherment, for TLS server authentication." },
-  { id:"bc",       label:"Basic Constraints (CA:FALSE)", why:"CA:FALSE marks an end-entity cert; it can't be used to sign other certs." },
-  { id:"crl",      label:"CRL Distribution Points", why:"Where clients download the CA's certificate revocation list." },
-  { id:"aia",      label:"Authority Info Access (OCSP)", why:"OCSP URL for live revocation checks, plus where to fetch the issuing CA cert." },
-  { id:"sigval",   label:"CA's Digital Signature (Signature Value)", why:"The CA's signature over the cert data; verify it with the issuer's public key." }
+{
+"id": "version",
+"label": "Version",
+"why": "Tells software which X.509 format to expect; v3 is what allows extensions like SAN and EKU."
+},
+{
+"id": "serial-number",
+"label": "Serial Number",
+"why": "Unique ID from the CA; revocation lists (CRL/OCSP) identify a revoked cert by this number."
+},
+{
+"id": "signature-algorithm",
+"label": "Signature Algorithm",
+"why": "Shows how the CA signed the cert so clients can verify it; weak ones (MD5, SHA-1) aren't trusted."
+},
+{
+"id": "issuer",
+"label": "Issuer",
+"why": "Names the CA that signed the cert; the browser follows it up the chain to a trusted root."
+},
+{
+"id": "validity-period",
+"label": "Validity Period",
+"why": "Outside these dates the cert is expired or not yet valid, and browsers show a warning."
+},
+{
+"id": "subject",
+"label": "Subject",
+"why": "Who the cert was issued to; the name must match the site or user being verified."
+},
+{
+"id": "public-key",
+"label": "Public Key",
+"why": "The subject's public key, which clients use for key exchange or to verify signatures; it is the core of what the cert vouches for."
+},
+{
+"id": "extended-key-usage",
+"label": "Extended Key Usage",
+"why": "Limits what the cert may do; a server-auth cert can't be used for code signing."
+},
+{
+"id": "subject-alternative-name",
+"label": "Subject Alternative Name",
+"why": "Lists every name the cert covers; browsers check the SAN, not just the Subject CN."
+},
+{
+"id": "crl-distribution-points",
+"label": "CRL Distribution Points",
+"why": "Tells clients where to download the CA's revocation list to confirm the cert wasn't revoked."
+},
+{
+"id": "basic-constraints-ca-false",
+"label": "Basic Constraints (CA:FALSE)",
+"why": "CA:FALSE marks an end-entity cert; it can't be used to sign other certificates."
+},
+{
+"id": "authority-info-access-ocsp",
+"label": "Authority Info Access (OCSP)",
+"why": "Gives the OCSP URL for live revocation checks, plus where to fetch the issuing CA's cert."
+}
 ];
 const CERT_LINES = [
-  [null, "# DEMO CERT for study only: fake domain, fake CA, fake key material", "demo"],
-  [null, "$ openssl x509 -in etlabs-demo.app.crt -text -noout"],
-  [null, "Certificate:"],
-  [null, "  Data:"],
-  ["version", "    Version: 3 (0x2)"],
-  ["serial", "    Serial Number:"],
-  ["serial", "     0d:e7:1a:b3:5c:42:9f:07:e8:61:c4:2a:93:d5:0b:7e"],
-  ["sigalg", "    Signature Algorithm: sha256WithRSAEncryption"],
-  ["issuer", "    Issuer: C = US, O = ET Labs Demo, CN = ET Labs Demo CA"],
-  ["validity", "    Validity"],
-  ["validity", "      Not Before: Sep 15 00:00:00 2026 GMT"],
-  ["validity", "      Not After : Dec 14 23:59:59 2026 GMT"],
-  ["subject", "    Subject: CN = etlabs-demo.app"],
-  ["spki", "    Subject Public Key Info:"],
-  ["spki", "      Public Key Algorithm: rsaEncryption"],
-  ["spki", "        Public-Key: (2048 bit)"],
-  ["spki", "        Modulus:"],
-  ["spki", "          00:c3:5a:7e:10:de:ad:be:ef:42:9b:1c:07:"],
-  ["spki", "          e4:8f:33:d2:6a:c0:ff:ee:51:18:7d:a9:02:"],
-  ["spki", "          ... (demo value, truncated)"],
-  ["spki", "        Exponent: 65537 (0x10001)"],
-  [null, "    X509v3 extensions:"],
-  ["ku", "      X509v3 Key Usage: critical"],
-  ["ku", "        Digital Signature, Key Encipherment"],
-  ["ku", "      X509v3 Extended Key Usage:"],
-  ["ku", "        TLS Web Server Authentication"],
-  ["bc", "      X509v3 Basic Constraints: critical"],
-  ["bc", "        CA:FALSE"],
-  ["san", "      X509v3 Subject Alternative Name:"],
-  ["san", "        DNS:etlabs-demo.app, DNS:www.etlabs-demo.app"],
-  ["crl", "      X509v3 CRL Distribution Points:"],
-  ["crl", "        Full Name:"],
-  ["crl", "          URI:http://crl.ca.etlabs-demo.app/demo-ca.crl"],
-  ["aia", "      Authority Information Access:"],
-  ["aia", "        OCSP - URI:http://ocsp.ca.etlabs-demo.app"],
-  ["aia", "        CA Issuers - URI:http://ca.etlabs-demo.app/demo-ca.crt"],
-  ["sigval", "  Signature Algorithm: sha256WithRSAEncryption"],
-  ["sigval", "  Signature Value:"],
-  ["sigval", "    5f:1c:9e:0a:de:ad:c0:de:77:3b:e2:18:"],
-  ["sigval", "    a4:6d:0f:91:ca:fe:ba:be:3c:58:e0:47:"],
-  ["sigval", "    ... (demo value, truncated)"]
+[
+null,
+"# DEMO CERT for study only: example names, fake key material",
+"demo"
+],
+[
+null,
+"$ openssl x509 -in www.example.com.crt -text -noout"
+],
+[
+null,
+"Certificate:"
+],
+[
+null,
+"  Data:"
+],
+[
+"version",
+"    Version: 3 (0x2)"
+],
+[
+"serial-number",
+"    Serial Number:"
+],
+[
+"serial-number",
+"      4c:1f:9a:02:7e:33:b8:d1:6a:05"
+],
+[
+"signature-algorithm",
+"    Signature Algorithm: sha256WithRSAEncryption"
+],
+[
+"issuer",
+"    Issuer: C = US, O = Example Trust, CN = Example Issuing CA 1"
+],
+[
+"validity-period",
+"    Validity"
+],
+[
+"validity-period",
+"      Not Before: Sep  1 00:00:00 2026 GMT"
+],
+[
+"validity-period",
+"      Not After : Sep  1 23:59:59 2027 GMT"
+],
+[
+"subject",
+"    Subject: C = US, O = Example Corp, CN = www.example.com"
+],
+[
+"public-key",
+"    Subject Public Key Info:"
+],
+[
+"public-key",
+"      Public Key Algorithm: rsaEncryption"
+],
+[
+"public-key",
+"        Public-Key: (2048 bit)"
+],
+[
+"public-key",
+"        Modulus:"
+],
+[
+"public-key",
+"          00:c3:5a:7e:10:de:ad:be:ef:42:9b:1c:07:"
+],
+[
+"public-key",
+"          e4:8f:33:d2:6a:c0:ff:ee:51:18:7d:a9:02:"
+],
+[
+"public-key",
+"          ... (demo value, truncated)"
+],
+[
+"public-key",
+"        Exponent: 65537 (0x10001)"
+],
+[
+null,
+"    X509v3 extensions:"
+],
+[
+"basic-constraints-ca-false",
+"      X509v3 Basic Constraints: critical"
+],
+[
+"basic-constraints-ca-false",
+"        CA:FALSE"
+],
+[
+"extended-key-usage",
+"      X509v3 Extended Key Usage:"
+],
+[
+"extended-key-usage",
+"        TLS Web Server Authentication (1.3.6.1.5.5.7.3.1)"
+],
+[
+"subject-alternative-name",
+"      X509v3 Subject Alternative Name:"
+],
+[
+"subject-alternative-name",
+"        DNS:www.example.com, DNS:shop.example.com, DNS:*.example.com"
+],
+[
+"crl-distribution-points",
+"      X509v3 CRL Distribution Points:"
+],
+[
+"crl-distribution-points",
+"        Full Name:"
+],
+[
+"crl-distribution-points",
+"          URI:http://crl.example-trust.com/issuingca1.crl"
+],
+[
+"authority-info-access-ocsp",
+"      Authority Information Access:"
+],
+[
+"authority-info-access-ocsp",
+"        OCSP - URI:http://ocsp.example-trust.com"
+],
+[
+"authority-info-access-ocsp",
+"        CA Issuers - URI:http://crt.example-trust.com/issuingca1.crt"
+],
+[
+null,
+"  Signature Algorithm: sha256WithRSAEncryption"
+],
+[
+null,
+"  Signature Value:"
+],
+[
+null,
+"    5f:1c:9e:0a:de:ad:c0:de:77:3b:e2:18:"
+],
+[
+null,
+"    ... (demo value, truncated)"
+]
 ];
+
 const certIds = () => CERT_FIELDS.map((_, i) => "c:" + i);
 const certOK = () => settings.day !== "day1";      // Cert Anatomy lives under Day 2 and All only
 function renderCert(){
@@ -1828,7 +2083,7 @@ if(demo === "scenario" && SCEN.length){
 if(demo === "cert" && certOK()){
   // a cert question answered correctly: neon box + WHY line (for screenshots)
   settings.sound = false; settings.mode = "cert"; startGame();
-  const pick = "c:" + CERT_FIELDS.findIndex(f => f.id === "aia");
+  const pick = "c:" + Math.max(0, CERT_FIELDS.findIndex(f => /ocsp|crl/i.test(f.label)));
   order.splice(order.indexOf(pick), 1); order.splice(5, 0, pick);
   idx = 5; question(); tStart = performance.now() - 6000; if(settings.timer) tickRing();
   answer([...$("opts").children].find(b => b.dataset.ok));

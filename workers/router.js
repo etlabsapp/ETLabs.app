@@ -74,16 +74,16 @@ const STUDY_DECKS = {
     mixed: { questions: 24, minSec: 36 },   // 12 terms x 1.0s + 12 scenarios x 2.0s
   },
   "2": {
-    terms: { questions: 43, minSec: 43 },   // 43 term cards   x 1.0s
-    scen:  { questions: 28, minSec: 56 },   // 28 scenarios    x 2.0s
+    terms: { questions: 53, minSec: 53 },   // 53 term cards   x 1.0s
+    scen:  { questions: 33, minSec: 66 },   // 33 scenarios    x 2.0s
     mixed: { questions: 24, minSec: 36 },   // 12 terms x 1.0s + 12 scenarios x 2.0s
-    cert:  { questions: 13, minSec: 20 },   // 13 cert fields  x ~1.5s (Cert Anatomy; Day 2 + All only)
+    cert:  { questions: 12, minSec: 18 },   // 12 cert fields  x 1.5s (Cert Anatomy; Day 2 + All only)
   },
   "all": {                                  // Day 1 + Day 2 combined
-    terms: { questions: 71, minSec: 71 },   // 28 + 43 term cards  x 1.0s
-    scen:  { questions: 56, minSec: 112 },  // 28 + 28 scenarios   x 2.0s
+    terms: { questions: 81, minSec: 81 },   // 28 + 53 term cards  x 1.0s
+    scen:  { questions: 61, minSec: 122 },  // 28 + 33 scenarios   x 2.0s
     mixed: { questions: 24, minSec: 36 },   // still 12 terms + 12 scenarios (MIXED_EACH = 12)
-    cert:  { questions: 13, minSec: 20 },   // same 13-field demo cert as Day 2
+    cert:  { questions: 12, minSec: 18 },   // same 12-field demo cert as Day 2
   },
 };
 const STUDY_MODES = ["terms", "scen", "mixed", "cert"];   // "cert" only where the deck defines it (not Day 1)
