@@ -20,6 +20,10 @@
    DECK CONFIG  --  to make a new day's quiz, change ONLY this block.
    DECK_TITLE : shown on screen; also keys the saved high score.
    CARDS      : array of { term, meaning } (need at least 4 cards).
+   SCENARIOS  : array of { q, options:[4 strings], answer, why }
+                answer = index 0-3 or the exact option text; why = 1 sentence
+                shown after answering. Options are shuffled on screen.
+                Leave as [] and only Terms mode is playable.
    ===================================================================== */
 const DECK_TITLE = "Security+ Day 1: Hack the Quiz";
 const DECK_SUBTITLE = "CompTIA Security+ // Fundamentals";
@@ -52,6 +56,92 @@ const CARDS = [
   {"term": "Honeynet", "meaning": "Fake network"},
   {"term": "Honeyfile", "meaning": "Fake file"},
   {"term": "Honeytoken", "meaning": "Fake password or data"}
+];
+const SCENARIOS = [
+  {"q": "A ransomware attack knocks a hospital's patient-records system offline, and nurses can't pull up charts for six hours. No data was stolen or changed. Which part of the CIA triad was hit?",
+   "options": ["Availability", "Confidentiality", "Integrity", "Non-repudiation"], "answer": 0,
+   "why": "Availability means the system works when people need it; an outage with no theft or tampering is an availability problem."},
+  {"q": "An attacker intercepts a payroll file on its way to the bank and changes one employee's account number to their own. Which security goal was violated?",
+   "options": ["Confidentiality", "Integrity", "Availability", "Accounting"], "answer": 1,
+   "why": "The data was changed without permission, which breaks integrity (hashing and digital signatures help catch this)."},
+  {"q": "A sales rep emails a spreadsheet of customer Social Security numbers to their personal Gmail. Nothing was altered or deleted. Which CIA goal was compromised?",
+   "options": ["Integrity", "Availability", "Confidentiality", "Authorization"], "answer": 2,
+   "why": "Sensitive data reached someone who shouldn't have it, so confidentiality was lost even though the data is unchanged."},
+  {"q": "A vendor claims they never approved a contract change. The company shows the approval email was digitally signed with the vendor's private key. What does the signature provide?",
+   "options": ["Least privilege", "Availability", "Authorization", "Non-repudiation"], "answer": 3,
+   "why": "Only the vendor holds their private key, so a valid signature means they can't credibly deny sending it: non-repudiation."},
+  {"q": "To connect to the VPN, an employee enters their username and password, then approves a push notification on their phone. Which AAA step is this?",
+   "options": ["Authentication", "Authorization", "Accounting", "Due care"], "answer": 0,
+   "why": "Proving you are who you claim to be (password plus phone push) is authentication."},
+  {"q": "A help desk tech logs in successfully and can reset user passwords, but gets \"access denied\" when opening the HR payroll folder. Which AAA function is blocking them?",
+   "options": ["Authentication", "Authorization", "Accounting", "Non-repudiation"], "answer": 1,
+   "why": "They already proved who they are; authorization decides what they're allowed to access, and payroll isn't part of their role."},
+  {"q": "An auditor asks who deleted a customer record last Tuesday. The admin pulls timestamped logs showing the exact account and time of the deletion. Which AAA function made this possible?",
+   "options": ["Authorization", "Authentication", "Accounting", "Availability"], "answer": 2,
+   "why": "Accounting is the record of what each user did, with timestamps, which is what the logs provide."},
+  {"q": "A new marketing intern is given domain admin rights \"so IT doesn't have to keep adding permissions later.\" Which principle does this violate?",
+   "options": ["Due diligence", "Non-repudiation", "Gap analysis", "Least privilege"], "answer": 3,
+   "why": "Least privilege means giving users only the access their job needs; an intern doesn't need domain admin."},
+  {"q": "The company publishes an acceptable use policy stating employees may not install personal software on work laptops. What type of control is this policy?",
+   "options": ["Directive", "Detective", "Corrective", "Compensating"], "answer": 0,
+   "why": "A policy that tells people the expected behavior is a directive control (and its category is managerial)."},
+  {"q": "Facilities installs clearly visible cameras at the parking garage entrance, plus signs reading \"24/7 video surveillance,\" mainly to discourage car break-ins. What type of control is this?",
+   "options": ["Detective", "Deterrent", "Corrective", "Directive"], "answer": 1,
+   "why": "Visible cameras and warning signs are meant to scare attackers off before they try, which makes them deterrent."},
+  {"q": "A laptop goes missing from the office overnight. The next morning, security reviews the recorded camera footage to find out who took it. In this use, the cameras are acting as what type of control?",
+   "options": ["Deterrent", "Preventive", "Detective", "Corrective"], "answer": 2,
+   "why": "Reviewing footage to discover what happened is detection; the same camera is deterrent only when its visibility discourages the act."},
+  {"q": "Ransomware encrypts a file server. IT wipes the server and restores last night's backups so users can work again. What type of control are the backups?",
+   "options": ["Preventive", "Deterrent", "Detective", "Corrective"], "answer": 3,
+   "why": "Restoring from backup fixes things after the incident, which is a corrective control."},
+  {"q": "A factory's press is controlled by an old Windows XP machine that the vendor no longer patches. Until it can be replaced, the team unplugs it from the network (air-gaps it). What type of control is this?",
+   "options": ["Compensating", "Corrective", "Directive", "Deterrent"], "answer": 0,
+   "why": "Patching (the normal control) isn't possible, so air-gapping is a substitute that reduces the risk: a compensating control."},
+  {"q": "A network admin adds a firewall rule that blocks all inbound RDP (port 3389) traffic from the internet. What type of control is this?",
+   "options": ["Detective", "Preventive", "Deterrent", "Directive"], "answer": 1,
+   "why": "The rule stops the connection before an attack can happen, so it's preventive (its category is technical)."},
+  {"q": "The security team runs quarterly phishing awareness training that every employee must complete. Which control category is this?",
+   "options": ["Technical", "Physical", "Operational", "Managerial"], "answer": 2,
+   "why": "Training is carried out by people rather than systems, which puts it in the operational category."},
+  {"q": "The CISO leads an annual risk assessment and assigns a business owner to each major risk. Which control category is this?",
+   "options": ["Operational", "Technical", "Physical", "Managerial"], "answer": 3,
+   "why": "Risk assessments and assigning responsibility are oversight activities, which are managerial controls."},
+  {"q": "After a car crashed into a nearby store's lobby, the company installs concrete posts in front of its own glass entrance. Which control category are these bollards?",
+   "options": ["Physical", "Technical", "Managerial", "Operational"], "answer": 0,
+   "why": "Bollards physically block vehicles from reaching the building, so they're a physical control."},
+  {"q": "IT deploys endpoint detection and response (EDR) software on every laptop to spot and quarantine malware automatically. Which control category is EDR?",
+   "options": ["Operational", "Technical", "Physical", "Managerial"], "answer": 1,
+   "why": "EDR is implemented by software on systems, which makes it a technical control."},
+  {"q": "Before an audit, a consultant compares the company's current security controls against the NIST Cybersecurity Framework and lists everything that's missing. What is this process?",
+   "options": ["Due care", "Vulnerability scan", "Gap analysis", "Accounting"], "answer": 2,
+   "why": "Comparing where you are now to where a framework says you should be is a gap analysis."},
+  {"q": "An admin disables unused services, closes a dozen unneeded open ports, and decommissions an old test web server nobody uses. What are they mainly reducing?",
+   "options": ["Non-repudiation", "Gap analysis", "Accounting", "The attack surface"], "answer": 3,
+   "why": "Every open port, service, and server is a possible way in; removing the unneeded ones shrinks the attack surface."},
+  {"q": "Before signing with a new cloud provider, the company reviews the provider's security certifications, breach history, and contract terms. What is this an example of?",
+   "options": ["Due diligence", "Due care", "Least privilege", "Gap analysis"], "answer": 0,
+   "why": "Doing your homework before committing is due diligence; due care is the ongoing monitoring afterward."},
+  {"q": "A year after onboarding a vendor, the company still reviews the vendor's access logs every month and re-checks their security controls annually. What is this an example of?",
+   "options": ["Due diligence", "Due care", "Gap analysis", "Non-repudiation"], "answer": 1,
+   "why": "Continuing to watch and act responsibly after the decision is due care (\"trust but verify\")."},
+  {"q": "At 2 a.m., a SIEM alert fires for unusual outbound traffic from a finance workstation. Which team, which monitors security alerts around the clock, would most likely see it first?",
+   "options": ["CIRT", "Change advisory board", "SOC", "Help desk"], "answer": 2,
+   "why": "The SOC is the team that monitors systems and alerts 24/7, so they're usually first to spot suspicious activity."},
+  {"q": "A breach is confirmed on the payroll server. A designated team is activated to contain the attacker, remove the malware, and restore the system. Which team is this?",
+   "options": ["SOC", "Red team", "Data custodians", "CIRT"], "answer": 3,
+   "why": "The CIRT (Cyber Incident Response Team) handles confirmed incidents: containment, eradication, and recovery."},
+  {"q": "The security team puts a single decoy server that looks unpatched in the DMZ, so they can attract attackers and study their tools. What is this?",
+   "options": ["Honeypot", "Honeynet", "Honeyfile", "Honeytoken"], "answer": 0,
+   "why": "A single fake machine set up to lure attackers is a honeypot."},
+  {"q": "Researchers build an isolated segment of fake servers and workstations so they can watch how attackers move from one machine to another. What is this?",
+   "options": ["Honeypot", "Honeynet", "Honeyfile", "Honeytoken"], "answer": 1,
+   "why": "A network of multiple decoy systems is a honeynet, which lets defenders watch lateral movement."},
+  {"q": "A file named \"2026_Executive_Salaries.xlsx\" is placed on a shared drive. Nobody has a business reason to open it, and any access triggers an alert. What is this?",
+   "options": ["Honeypot", "Honeytoken", "Honeyfile", "Honeynet"], "answer": 2,
+   "why": "An enticing fake file that alerts when opened is a honeyfile, useful for catching snooping insiders."},
+  {"q": "A fake admin username and password is planted in an old configuration script. The account has no real access, and any login attempt with it sends an alert. What is this?",
+   "options": ["Honeypot", "Honeyfile", "Honeynet", "Honeytoken"], "answer": 3,
+   "why": "A fake credential or data record whose use sets off an alert is a honeytoken."}
 ];
 /* ============================ END DECK ============================== */
 </script>
@@ -226,12 +316,35 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .missed li span{color:var(--text);opacity:.85}
 .missed .none{padding:14px;color:var(--green);font-family:var(--mono);font-size:14px}
 .foot{text-align:center;color:var(--dim);font-family:var(--mono);font-size:11px;margin-top:14px;opacity:.7}
+/* mode picker + scenario layout */
+.modepick{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.modepick .lbl{font-family:var(--mono);font-size:14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.modepick .lbl small{color:var(--dim);font-size:11px;text-align:right}
+.modepick .seg{margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr)}
+.modepick .seg span{text-align:center;padding:10px 4px;font-family:var(--mono);font-size:13px;cursor:pointer}
+.tog.off{opacity:.4}
+.card.scen{justify-content:flex-start;min-height:0;padding:14px 14px 16px}
+.card.scen .tag{min-height:44px;display:flex;align-items:center;padding-right:56px;line-height:1.3}
+.card.scen .ring{width:44px;height:44px;right:10px;top:10px}
+.card.scen .ring svg{width:44px;height:44px}
+.card.scen .ring b{font-size:14px}
+.card.scen .q{font-size:clamp(15.5px,4.3vw,18px);font-weight:600;line-height:1.45;margin-top:6px}
+.opts.scen{gap:8px;margin-top:12px}
+.opts.scen .o{min-height:52px;font-size:15px;line-height:1.3;padding:10px 12px}
+.opts.scen .o .key{width:28px;height:28px;font-size:13px}
+.why{display:none;margin-top:10px;padding:11px 13px;border-radius:12px;font-size:14.5px;line-height:1.45;background:rgba(34,230,255,.06);
+  border:1px solid rgba(34,230,255,.4);border-left-width:4px;animation:boot .3s ease-out}
+.why b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;margin-bottom:3px;color:var(--cyan)}
+.why.ok{border-color:rgba(57,255,136,.55)} .why.ok b{color:var(--green)}
+.why.bad{border-color:rgba(255,56,96,.55)} .why.bad b{color:var(--red)}
+.missed li.sc i{display:block;font-style:normal;font-size:13.5px;line-height:1.35;opacity:.85}
+.missed li.sc b{margin-top:4px;color:var(--green);font-family:var(--sans);font-size:14px}
 .site-foot{text-align:center;color:var(--dim);font-family:var(--mono);font-size:11px;letter-spacing:.04em;opacity:.7;
   margin-top:18px;padding:0 8px;line-height:1.5}
 .site-foot a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(111,154,166,.4)}
 .site-foot a:hover,.site-foot a:focus-visible{color:var(--cyan);border-bottom-color:var(--cyan)}
 /* static render for ?demo= screenshots */
-html.demo .screen,html.demo .o{animation:none!important}
+html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms!important;animation-iteration-count:1!important} }
 </style>
 </head>
@@ -247,14 +360,16 @@ html.demo .screen,html.demo .o{animation:none!important}
     <div class="sub" id="tSub"></div>
     <div class="term" id="bootlog"></div>
     <div class="stats3">
-      <div class="stat"><div class="k">Cards</div><div class="v glow-c" id="stCards">0</div></div>
+      <div class="stat"><div class="k" id="stCardsK">Cards</div><div class="v glow-c" id="stCards">0</div></div>
       <div class="stat"><div class="k">High score</div><div class="v glow-g" id="stHigh">0</div></div>
       <div class="stat"><div class="k">Best streak</div><div class="v" style="color:var(--amber)" id="stBest">0</div></div>
     </div>
     <div class="opts-set">
-      <button class="tog" id="togMode"><span class="lbl">Show first<small>What appears as the question</small></span>
+      <div class="modepick"><div class="lbl">Mode<small id="modeHint"></small></div>
+        <div class="seg" id="modeSeg"><span data-v="terms">TERMS</span><span data-v="scen">SCENARIOS</span><span data-v="mixed">MIXED</span></div></div>
+      <button class="tog" id="togMode"><span class="lbl">Show first<small>For term cards (Terms &amp; Mixed)</small></span>
         <span class="seg"><span data-v="0">WORD</span><span data-v="1">MEANING</span></span></button>
-      <button class="tog" id="togTimer"><span class="lbl">15s countdown<small>Faster answers = bonus points</small></span><span class="pill"></span></button>
+      <button class="tog" id="togTimer"><span class="lbl">Countdown<small>15s terms · 30s scenarios · faster = bonus</small></span><span class="pill"></span></button>
       <button class="tog" id="togSound"><span class="lbl">Sound FX<small>Retro beeps</small></span><span class="pill"></span></button>
     </div>
     <div class="spacer"></div>
@@ -282,6 +397,7 @@ html.demo .screen,html.demo .o{animation:none!important}
     </div>
     <div class="opts" id="opts"></div>
     <div class="feedback" id="fb"></div>
+    <div class="why" id="why"></div>
     <button class="btn alt" id="next">Next node &gt;</button>
   </section>
 
@@ -299,7 +415,7 @@ html.demo .screen,html.demo .o{animation:none!important}
     </div>
     <div class="missed"><h3 id="missedH">MISSED — REVIEW THESE</h3><ul id="missedList"></ul></div>
     <button class="btn warn" id="bRetryMissed">&#x21BB; Retry missed only</button>
-    <button class="btn" id="bAgain">&gt; Full deck again</button>
+    <button class="btn" id="bAgain">&gt; Full run again</button>
     <button class="btn alt" id="bMenu">Main menu</button>
     <div class="foot" id="endHigh"></div>
   </section>
@@ -311,21 +427,34 @@ html.demo .screen,html.demo .o{animation:none!important}
 (function(){
 "use strict";
 const $ = id => document.getElementById(id);
-const TIME_LIMIT = 15;                // seconds per question when timer is on
+const TIME_TERM = 15, TIME_SCEN = 30;   // seconds per question when timer is on
+const MIXED_EACH = 12;                  // Mixed round = up to 12 terms + 12 scenarios
 const BASE_POINTS = 100;
 const STORE = "hackquiz:" + DECK_TITLE;
+const SCEN = (typeof SCENARIOS !== "undefined" && Array.isArray(SCENARIOS)) ? SCENARIOS : [];
+const MODES = { terms:"Terms", scen:"Scenarios", mixed:"Mixed" };
+
+/* normalize scenario answers: index (0-3) or exact option text */
+SCEN.forEach((s, i) => {
+  s._a = typeof s.answer === "number" ? s.answer : s.options.indexOf(s.answer);
+  if(!Array.isArray(s.options) || s.options.length !== 4 || s._a < 0 || s._a > 3) console.warn("SCENARIOS[" + i + "] needs 4 options and a valid answer");
+});
 
 /* ---------- storage (safe for Safari file:// / private mode) ---------- */
 function load(){ try{ return JSON.parse(localStorage.getItem(STORE)) || {}; }catch(e){ return {}; } }
 function save(o){ try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){} }
 const saved = load();
-const settings = Object.assign({ rev:false, timer:true, sound:true }, saved.settings || {});
-let high = saved.high || 0, bestEver = saved.best || 0;
-function persist(){ if(/demo=/.test(location.search)) return; save({ settings, high, best: bestEver }); }
+const settings = Object.assign({ rev:false, timer:true, sound:true, mode:"terms" }, saved.settings || {});
+if(!MODES[settings.mode] || (!SCEN.length && settings.mode !== "terms")) settings.mode = "terms";
+// high score + best streak are kept per mode (older saves had a single number = Terms)
+const highs = Object.assign({ terms: typeof saved.high === "number" ? saved.high : 0, scen:0, mixed:0 }, saved.highs || {});
+const bests = Object.assign({ terms: typeof saved.best === "number" ? saved.best : 0, scen:0, mixed:0 }, saved.bests || {});
+function persist(){ if(/demo=/.test(location.search)) return; save({ settings, highs, bests }); }
 
 /* ---------- helpers ---------- */
 const shuffle = a => { a = a.slice(); for(let j=a.length-1;j>0;j--){ const k=Math.floor(Math.random()*(j+1)); [a[j],a[k]]=[a[k],a[j]]; } return a; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shorten = (s, n) => s.length <= n ? s : s.slice(0, n).replace(/\s+\S*$/, "") + "…";
 
 /* ---------- WebAudio beeps (generated, no files) ---------- */
 let ac = null;
@@ -364,9 +493,20 @@ const RIGHT_MSG = ["> Packet decrypted", "> Hash cracked", "> Port open", "> Aut
 const WRONG_MSG = ["> Intrusion detected", "> Access denied", "> Alarm tripped", "> Blocked by IDS"];
 const multFor = s => s >= 10 ? 4 : s >= 8 ? 3 : s >= 3 ? 2 : 1;
 
+/* ---------- question pool: items are "t:<i>" (term card) or "s:<i>" (scenario) ---------- */
+const termIds = () => CARDS.map((_, i) => "t:" + i);
+const scenIds = () => SCEN.map((_, i) => "s:" + i);
+function fullPool(mode){
+  if(mode === "scen") return scenIds();
+  if(mode === "mixed") return shuffle(termIds()).slice(0, MIXED_EACH).concat(shuffle(scenIds()).slice(0, MIXED_EACH));
+  return termIds();
+}
+const fullLen = mode => mode === "scen" ? SCEN.length : mode === "mixed" ? Math.min(MIXED_EACH, CARDS.length) + Math.min(MIXED_EACH, SCEN.length) : CARDS.length;
+const parseId = id => ({ kind: id[0], i: +id.slice(2) });
+
 /* ---------- state ---------- */
-let order = [], idx = 0, score = 0, streak = 0, bestStreak = 0, correct = 0, missed = [], locked = false;
-let tStart = 0, raf = 0, lastTick = -1, advanceTO = 0;
+let order = [], idx = 0, score = 0, streak = 0, bestStreak = 0, correct = 0, missed = [], locked = false, review = false, runMode = "terms";
+let tStart = 0, raf = 0, lastTick = -1, advanceTO = 0, limit = TIME_TERM;
 const RING_C = 2 * Math.PI * 24;
 $("ringFg").style.strokeDasharray = RING_C;
 
@@ -380,61 +520,88 @@ function renderStart(){
   $("tMain").textContent = main; $("tMain").setAttribute("data-t", main);
   $("tSub").textContent = DECK_SUBTITLE;
   document.title = DECK_TITLE;
-  $("stCards").textContent = CARDS.length; $("stHigh").textContent = high; $("stBest").textContent = bestEver;
   syncToggles();
 }
 function syncToggles(){
+  const m = settings.mode;
+  $("stCards").textContent = fullLen(m); $("stHigh").textContent = highs[m] || 0; $("stBest").textContent = bests[m] || 0;
+  $("stCardsK").textContent = m === "terms" ? "Cards" : "Nodes";
+  $("modeSeg").querySelectorAll("span").forEach(s => s.classList.toggle("sel", s.dataset.v === m));
+  $("modeHint").textContent = m === "terms" ? CARDS.length + " term flashcards" : m === "scen" ? SCEN.length + " exam-style scenarios · tap Next after each" : Math.min(MIXED_EACH, CARDS.length) + " terms + " + Math.min(MIXED_EACH, SCEN.length) + " scenarios, shuffled";
   $("togTimer").classList.toggle("on", settings.timer);
   $("togSound").classList.toggle("on", settings.sound);
+  $("togMode").classList.toggle("off", m === "scen");
   $("togMode").querySelectorAll(".seg span").forEach(s => s.classList.toggle("sel", (s.dataset.v === "1") === settings.rev));
   $("bMute").innerHTML = settings.sound ? "&#x1F50A;" : "&#x1F507;";
 }
 function bootLog(){
-  const lines = ["<span class='p'>$</span> loading deck ... "+CARDS.length+" cards", "<span class='p'>$</span> bypassing firewall ... ok",
-                 "<span class='p'>$</span> high score on file: "+high, "<span class='p'>$</span> ready. tap START"];
+  const lines = ["<span class='p'>$</span> loading deck ... "+CARDS.length+" cards, "+SCEN.length+" scenarios", "<span class='p'>$</span> bypassing firewall ... ok",
+                 "<span class='p'>$</span> high score on file ("+MODES[settings.mode].toLowerCase()+"): "+(highs[settings.mode]||0), "<span class='p'>$</span> ready. tap START"];
   const el = $("bootlog"); el.innerHTML = ""; let n = 0;
   (function step(){ if(n < lines.length){ el.innerHTML += lines[n++] + "<br>"; setTimeout(step, 260); } else el.innerHTML += "<span class='cursor'></span>"; })();
 }
-$("togMode").onclick = () => { settings.rev = !settings.rev; sfx.click(); syncToggles(); persist(); };
+$("modeSeg").querySelectorAll("span").forEach(s => s.onclick = e => {
+  e.stopPropagation(); if(s.dataset.v !== "terms" && !SCEN.length) return;
+  settings.mode = s.dataset.v; sfx.click(); syncToggles(); persist();
+});
+$("togMode").onclick = () => { if(settings.mode === "scen") return; settings.rev = !settings.rev; sfx.click(); syncToggles(); persist(); };
 $("togTimer").onclick = () => { settings.timer = !settings.timer; sfx.click(); syncToggles(); persist(); };
 $("togSound").onclick = () => { settings.sound = !settings.sound; syncToggles(); persist(); sfx.click(); };
 $("bMute").onclick = () => { settings.sound = !settings.sound; syncToggles(); persist(); sfx.click(); };
 
 /* ---------- game ---------- */
-function startGame(indices){
-  order = shuffle(indices || CARDS.map((_, i) => i));
+function startGame(ids){
+  runMode = settings.mode; review = !!ids;
+  order = shuffle(ids || fullPool(runMode));
   idx = 0; score = 0; streak = 0; bestStreak = 0; correct = 0; missed = [];
   $("score").textContent = "0"; updateStreak(); show("sGame"); audio(); question();
 }
 function question(){
   clearTimeout(advanceTO); cancelAnimationFrame(raf);
   locked = false;
-  const c = CARDS[order[idx]], qKey = settings.rev ? "meaning" : "term", aKey = settings.rev ? "term" : "meaning";
+  const it = parseId(order[idx]), scen = it.kind === "s";
   $("count").textContent = "NODE " + (idx+1) + "/" + order.length;
   $("bar").style.width = (idx / order.length * 100) + "%";
-  $("card").classList.toggle("rev", settings.rev);
   $("card").classList.remove("shake");
-  $("qtag").textContent = settings.rev ? "// IDENTIFY THE TERM" : "// DECRYPT THE MEANING";
-  $("q").textContent = c[qKey];
+  $("card").classList.toggle("scen", scen);
+  $("opts").classList.toggle("scen", scen);
   $("fb").textContent = ""; $("fb").className = "feedback"; $("next").style.display = "none";
-  // distractors: unique answer texts from the whole deck
-  const seen = new Set([c[aKey]]), wrong = [];
-  for(const x of shuffle(CARDS)){ if(wrong.length === 3) break; if(!seen.has(x[aKey])){ seen.add(x[aKey]); wrong.push(x[aKey]); } }
-  const opts = shuffle([c[aKey], ...wrong]), box = $("opts"); box.innerHTML = "";
+  $("why").style.display = "none"; $("why").innerHTML = "";
+  let opts, rightText;
+  if(scen){
+    const s = SCEN[it.i];
+    $("card").classList.remove("rev");
+    $("qtag").textContent = "// SCENARIO — PICK THE BEST ANSWER";
+    $("q").textContent = s.q;
+    rightText = s.options[s._a];
+    opts = shuffle(s.options);
+  } else {
+    const c = CARDS[it.i], qKey = settings.rev ? "meaning" : "term", aKey = settings.rev ? "term" : "meaning";
+    $("card").classList.toggle("rev", settings.rev);
+    $("qtag").textContent = settings.rev ? "// IDENTIFY THE TERM" : "// DECRYPT THE MEANING";
+    $("q").textContent = c[qKey];
+    rightText = c[aKey];
+    // distractors: unique answer texts from the whole deck
+    const seen = new Set([rightText]), wrong = [];
+    for(const x of shuffle(CARDS)){ if(wrong.length === 3) break; if(!seen.has(x[aKey])){ seen.add(x[aKey]); wrong.push(x[aKey]); } }
+    opts = shuffle([rightText, ...wrong]);
+  }
+  const box = $("opts"); box.innerHTML = "";
   opts.forEach((t, i) => {
     const b = document.createElement("button"); b.className = "o";
     b.innerHTML = "<span class='key'>" + "ABCD"[i] + "</span><span>" + esc(t) + "</span>";
-    b.dataset.ok = t === c[aKey] ? "1" : "";
+    b.dataset.ok = t === rightText ? "1" : "";
     b.onclick = () => answer(b);
     box.appendChild(b);
   });
+  limit = scen ? TIME_SCEN : TIME_TERM;
   $("ring").style.display = settings.timer ? "" : "none";
   if(settings.timer){ tStart = performance.now(); lastTick = -1; tickRing(); }
 }
-function timeLeft(){ return Math.max(0, TIME_LIMIT - (performance.now() - tStart) / 1000); }
+function timeLeft(){ return Math.max(0, limit - (performance.now() - tStart) / 1000); }
 function tickRing(){
   const left = timeLeft(), secs = Math.ceil(left);
-  $("ringFg").style.strokeDashoffset = RING_C * (1 - left / TIME_LIMIT);
+  $("ringFg").style.strokeDashoffset = RING_C * (1 - left / limit);
   $("ringT").textContent = secs;
   $("ring").classList.toggle("low", left <= 5);
   if(secs <= 3 && secs !== lastTick && secs > 0){ lastTick = secs; sfx.tick(); }
@@ -443,28 +610,34 @@ function tickRing(){
 }
 function answer(btn){
   if(locked) return; locked = true; cancelAnimationFrame(raf);
+  const it = parseId(order[idx]), scen = it.kind === "s";
   const buttons = [...$("opts").children], rightBtn = buttons.find(b => b.dataset.ok);
   const ok = btn && btn.dataset.ok;
   buttons.forEach(b => { if(b !== rightBtn && b !== btn) b.classList.add("dim"); });
   rightBtn.classList.add("right");
+  const rightText = scen ? SCEN[it.i].options[SCEN[it.i]._a] : (settings.rev ? CARDS[it.i].term : CARDS[it.i].meaning);
   if(ok){
     streak++; correct++; bestStreak = Math.max(bestStreak, streak);
-    const m = multFor(streak), bonus = settings.timer ? Math.round(timeLeft() * 10) : 0, pts = (BASE_POINTS + bonus) * m;
+    // time bonus is scaled so a scenario's 30s window is worth the same max bonus as a term's 15s
+    const m = multFor(streak), bonus = settings.timer ? Math.round(timeLeft() / limit * 150) : 0, pts = (BASE_POINTS + bonus) * m;
     score += pts; bumpScore(pts, m);
     flash("g"); sfx.right();
     $("fb").className = "feedback ok"; $("fb").textContent = RIGHT_MSG[Math.floor(Math.random()*RIGHT_MSG.length)] + "  +" + pts;
     if(LEVELS[streak]) levelUp(LEVELS[streak]);
     if(streak % 5 === 0) confetti();
-    advanceTO = setTimeout(next, LEVELS[streak] ? 1500 : 950);
+    if(!scen) advanceTO = setTimeout(next, LEVELS[streak] ? 1500 : 950);
   } else {
     if(btn) btn.classList.add("wrong"); else $("card").classList.add("shake");
     streak = 0; missed.push(order[idx]);
     flash("r"); sfx.wrong();
-    const c = CARDS[order[idx]];
     $("fb").className = "feedback bad";
-    $("fb").textContent = (btn ? WRONG_MSG[Math.floor(Math.random()*WRONG_MSG.length)] : "> TIMEOUT") + " — answer: " + (settings.rev ? c.term : c.meaning);
-    $("next").style.display = "block";
+    $("fb").textContent = (btn ? WRONG_MSG[Math.floor(Math.random()*WRONG_MSG.length)] : "> TIMEOUT") + " — answer: " + rightText;
   }
+  if(scen){
+    $("why").innerHTML = "<b>" + (ok ? "&#x2713; WHY" : "&#x2717; WHY") + "</b>" + esc(SCEN[it.i].why || "");
+    $("why").className = "why " + (ok ? "ok" : "bad"); $("why").style.display = "block";
+  }
+  if(scen || !ok) $("next").style.display = "block";
   updateStreak();
   $("bar").style.width = ((idx+1) / order.length * 100) + "%";
 }
@@ -510,25 +683,32 @@ function endGame(){
   $("grade").textContent = grade; $("grade").style.color = col; $("grade").style.textShadow = "0 0 18px " + col;
   $("gradeBox").style.borderColor = col; $("gradeBox").style.boxShadow = "0 0 30px " + col + "66, inset 0 0 30px " + col + "33";
   $("endTitle").textContent = titles[grade];
-  $("endSub").textContent = correct + " / " + total + " nodes cracked" + (total < CARDS.length ? "  (review round)" : "");
+  $("endSub").textContent = correct + " / " + total + " nodes cracked · " + MODES[runMode] + (review ? "  (review round)" : "");
   $("eScore").textContent = score; $("eAcc").textContent = acc + "%"; $("eStreak").textContent = bestStreak;
-  const isFull = total === CARDS.length, newHigh = isFull && score > high;
-  if(newHigh) high = score;
-  bestEver = Math.max(bestEver, bestStreak); persist();
+  const newHigh = !review && score > (highs[runMode] || 0);
+  if(newHigh) highs[runMode] = score;
+  bests[runMode] = Math.max(bests[runMode] || 0, bestStreak); persist();
   $("newhs").style.display = newHigh ? "block" : "none";
-  $("endHigh").textContent = "HIGH SCORE (full deck): " + high + "  //  BEST STREAK EVER: " + bestEver;
+  $("endHigh").textContent = "HIGH SCORE (" + MODES[runMode] + ", full run): " + highs[runMode] + "  //  BEST STREAK: " + bests[runMode];
   const ul = $("missedList"); ul.innerHTML = "";
   const uniq = [...new Set(missed)];
   $("missedH").textContent = uniq.length ? "MISSED (" + uniq.length + ") — REVIEW THESE" : "MISSED — NONE";
   if(!uniq.length) ul.innerHTML = "<li class='none'>&gt; Flawless run. No vulnerabilities found.</li>";
-  uniq.forEach(i => { const li = document.createElement("li"); li.innerHTML = "<b>" + esc(CARDS[i].term) + "</b><span>" + esc(CARDS[i].meaning) + "</span>"; ul.appendChild(li); });
+  uniq.forEach(id => {
+    const it = parseId(id), li = document.createElement("li");
+    if(it.kind === "s"){ const s = SCEN[it.i]; li.className = "sc";
+      li.innerHTML = "<i>" + esc(shorten(s.q, 95)) + "</i><b>&#x2713; " + esc(s.options[s._a]) + "</b>"; }
+    else li.innerHTML = "<b>" + esc(CARDS[it.i].term) + "</b><span>" + esc(CARDS[it.i].meaning) + "</span>";
+    ul.appendChild(li);
+  });
   $("bRetryMissed").style.display = uniq.length ? "block" : "none";
   $("bRetryMissed").dataset.ids = JSON.stringify(uniq);
+  $("bAgain").innerHTML = "&gt; Full " + MODES[runMode].toLowerCase() + " run again";
   show("sEnd"); sfx.end();
   if(grade === "S" || grade === "A") setTimeout(confetti, 300);
 }
-$("bRetryMissed").onclick = () => { sfx.click(); startGame(JSON.parse($("bRetryMissed").dataset.ids || "[]")); };
-$("bAgain").onclick = () => { sfx.click(); startGame(); };
+$("bRetryMissed").onclick = () => { sfx.click(); settings.mode = runMode; startGame(JSON.parse($("bRetryMissed").dataset.ids || "[]")); };
+$("bAgain").onclick = () => { sfx.click(); settings.mode = runMode; startGame(); };
 $("bMenu").onclick = () => { sfx.click(); renderStart(); show("sStart"); bootLog(); };
 $("bStart").onclick = () => { sfx.click(); startGame(); };
 $("bQuit").onclick = () => { if(confirm("Abort this run and return to menu?")){ cancelAnimationFrame(raf); clearTimeout(advanceTO); renderStart(); show("sStart"); bootLog(); } };
@@ -541,19 +721,30 @@ document.addEventListener("keydown", e => {
   else if((k === "enter" || k === " ") && locked){ e.preventDefault(); next(); }
 });
 
-/* ---------- boot + demo flags (?demo=q | ?demo=end) for screenshots ---------- */
+/* ---------- boot + demo flags (?demo=q | ?demo=end | ?demo=scenario) for screenshots ---------- */
 renderStart(); bootLog();
 const demo = (location.search.match(/demo=(\w+)/) || [])[1];
 if(demo) document.documentElement.classList.add("demo");
 if(demo === "q"){
-  settings.sound = false; startGame();
+  settings.sound = false; settings.mode = "terms"; startGame();
   score = 1840; streak = 6; bestStreak = 6; $("score").textContent = score; updateStreak();
   idx = 7; question(); tStart = performance.now() - 4200;
 }
+if(demo === "scenario" && SCEN.length){
+  // shows a scenario answered wrong: red pick, green correct answer, and the WHY box
+  settings.sound = false; settings.mode = "scen"; startGame();
+  score = 2310; $("score").textContent = score;
+  const pick = SCEN.length - 1;                      // the honeytoken scenario
+  order.splice(order.indexOf("s:" + pick), 1); order.splice(4, 0, "s:" + pick);
+  idx = 4; question(); tStart = performance.now() - 9000; if(settings.timer) tickRing();
+  const wrongBtn = [...$("opts").children].find(b => !b.dataset.ok);
+  answer(wrongBtn);
+}
 if(demo === "end"){
-  settings.sound = false;
-  order = shuffle(CARDS.map((_, i) => i)); idx = order.length;
-  missed = order.slice(0, 4); correct = order.length - 4; bestStreak = 11; streak = 0; score = 6420;
+  settings.sound = false; runMode = "mixed";
+  order = fullPool("mixed"); idx = order.length;
+  missed = [order.find(x => x[0] === "s"), order.find(x => x[0] === "t"), order.filter(x => x[0] === "s")[1]];
+  correct = order.length - 3; bestStreak = 11; streak = 0; score = 6420;
   endGame();
 }
 })();
