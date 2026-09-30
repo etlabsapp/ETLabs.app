@@ -1242,7 +1242,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
   white-space:pre-wrap;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch;box-shadow:inset 0 0 24px rgba(57,255,136,.05)}
 .card.cert .certpane{display:block}
 .card.cert .q{font-size:15px;font-weight:600;margin-top:4px}
-.certpane .ln{min-height:1.5em}
+.certpane .ln{min-height:1.5em;white-space:pre-wrap;overflow-wrap:anywhere}
 .certpane .ln.demo{color:var(--amber);opacity:.85}
 .certpane .fld{margin:1px -4px;padding:1px 4px;border-radius:6px;border:1px solid transparent;transition:border-color .2s,background .2s,box-shadow .2s}
 .certpane .fld.on{border-color:var(--cyan);background:rgba(34,230,255,.10);color:#eafffb;box-shadow:0 0 0 1px var(--cyan),0 0 16px rgba(34,230,255,.5)}
@@ -1308,7 +1308,7 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
         <div class="seg" id="modeSeg"><span data-v="terms">TERMS</span><span data-v="scen">SCENARIOS</span><span data-v="mixed">MIXED</span><span data-v="cert" class="certopt">CERT ANATOMY</span></div></div>
       <button class="tog" id="togMode"><span class="lbl">Show first<small>For term cards (Terms &amp; Mixed)</small></span>
         <span class="seg"><span data-v="0">WORD</span><span data-v="1">MEANING</span></span></button>
-      <button class="tog" id="togTimer"><span class="lbl">Countdown<small>15s terms · 30s scenarios · faster = bonus</small></span><span class="pill"></span></button>
+      <button class="tog" id="togTimer"><span class="lbl">Countdown<small>15s terms · 30s scenarios · 20s cert · faster = bonus</small></span><span class="pill"></span></button>
       <button class="tog" id="togSound"><span class="lbl">Sound FX<small>Retro beeps</small></span><span class="pill"></span></button>
     </div>
     <div class="spacer"></div>
@@ -1699,11 +1699,15 @@ null,
 ],
 [
 "public-key",
-"          00:c3:5a:7e:10:de:ad:be:ef:42:9b:1c:07:"
+"          00:c3:5a:7e:10:de:ad:be:ef:"
 ],
 [
 "public-key",
-"          e4:8f:33:d2:6a:c0:ff:ee:51:18:7d:a9:02:"
+"          42:9b:1c:07:e4:8f:33:d2:6a:"
+],
+[
+"public-key",
+"          c0:ff:ee:51:18:7d:a9:02:6b:"
 ],
 [
 "public-key",
@@ -1775,7 +1779,11 @@ null,
 ],
 [
 null,
-"    5f:1c:9e:0a:de:ad:c0:de:77:3b:e2:18:"
+"    5f:1c:9e:0a:de:ad:c0:de:77:"
+],
+[
+null,
+"    3b:e2:18:a4:6d:0f:91:ca:fe:"
 ],
 [
 null,
@@ -1790,7 +1798,8 @@ function renderCert(){
   const flush = () => { if(buf.length) html += cur ? "<div class='fld' data-f='" + cur + "'>" + buf.join("") + "</div>" : buf.join(""); buf = []; };
   CERT_LINES.forEach(([f, t, cls]) => {
     if(f !== cur){ flush(); cur = f; }
-    buf.push("<div class='ln" + (cls ? " " + cls : "") + "'>" + esc(t) + "</div>");
+    const ind = t.length - t.trimStart().length;
+    buf.push("<div class='ln" + (cls ? " " + cls : "") + "'" + (ind ? " style='padding-left:" + ind + "ch'" : "") + ">" + esc(t.trimStart()) + "</div>");
   });
   flush();
   $("certPane").innerHTML = html;
