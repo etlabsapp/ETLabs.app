@@ -73,6 +73,16 @@ const STUDY_DECKS = {
     scen:  { questions: 28, minSec: 56 },   // 28 scenarios    x 2.0s
     mixed: { questions: 24, minSec: 36 },   // 12 terms x 1.0s + 12 scenarios x 2.0s
   },
+  "2": {
+    terms: { questions: 43, minSec: 43 },   // 43 term cards   x 1.0s
+    scen:  { questions: 28, minSec: 56 },   // 28 scenarios    x 2.0s
+    mixed: { questions: 24, minSec: 36 },   // 12 terms x 1.0s + 12 scenarios x 2.0s
+  },
+  "all": {                                  // Day 1 + Day 2 combined
+    terms: { questions: 71, minSec: 71 },   // 28 + 43 term cards  x 1.0s
+    scen:  { questions: 56, minSec: 112 },  // 28 + 28 scenarios   x 2.0s
+    mixed: { questions: 24, minSec: 36 },   // still 12 terms + 12 scenarios (MIXED_EACH = 12)
+  },
 };
 const STUDY_MODES = ["terms", "scen", "mixed"];
 const ROUND_TTL_MS = 2 * 60 * 60 * 1000;     // nonce valid for 2h
@@ -282,6 +292,14 @@ export default {
 
     if (url.pathname === "/study/api" || url.pathname.startsWith("/study/api/")) {
       return handleStudyApi(request, env, url);
+    }
+
+    // Old per-day quiz URLs (shared in Discord) -> the single /study/ picker, keeping any extra params (e.g. mode)
+    const studyDay = /^\/study\/(day1|day2|all)\/?$/.exec(url.pathname);
+    if (studyDay) {
+      const params = new URLSearchParams({ day: studyDay[1] });
+      url.searchParams.forEach((v, k) => { if (k !== "day") params.append(k, v); });
+      return new Response(null, { status: 302, headers: { location: "/study/?" + params.toString(), "cache-control": "no-store" } });
     }
 
     // Static site
