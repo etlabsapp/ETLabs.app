@@ -550,7 +550,7 @@ $("lbForm").onsubmit = e => {
     if(r && r.ok){
       lbSubmitted = true; roundNonce = null; $("lbForm").style.display = "none";
       try{ localStorage.setItem(NICK, r.entry.nick); }catch(e){}
-      lbMsg("> score uploaded. You're #" + r.rank + " in " + MODES[mode] + ".", "ok"); loadBoard(mode, r.entry.nick);
+      lbMsg(r.hidden ? "> test score accepted (TEST_ nicks are hidden from the board)." : "> score uploaded. You're #" + r.rank + " in " + MODES[mode] + ".", "ok"); loadBoard(mode, r.entry.nick);
     } else {
       $("lbBtn").disabled = false;
       lbMsg(r ? (LB_ERR[r.error] || "Submit failed (" + r.error + ").") : "Leaderboard is offline. Your run still counts locally.", "bad");

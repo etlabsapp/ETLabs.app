@@ -3,6 +3,7 @@
  * Matches live game.js: LAUNCH_DATE 2026-05-08, device-local day index.
  */
 import catalog from "../apps/totalcross/api/themes-catalog.json";
+import { cleanNick } from "./study-nick.mjs";
 
 const LAUNCH = catalog.launchDate; // YYYY-MM-DD
 const THEMES = catalog.themes;
@@ -63,6 +64,7 @@ function jsonResponse(body, status = 200) {
  * Storage: D1 binding STUDY_DB. No PII: nickname only; IPs are never stored, only
  * SHA-256(daily random salt + IP) kept <= 10 minutes for rate limiting; salts rotate daily.
  * Add future decks by adding a key to STUDY_DECKS ("2", "all", ...).
+ * Nicks starting with TEST_ (any case) are accepted and stored but hidden from boards and ranks.
  * ===================================================================== */
 const STUDY_DECKS = {
   // questions = full-round length per mode; minSec = minimum plausible seconds for a full round
@@ -77,12 +79,6 @@ const ROUND_TTL_MS = 2 * 60 * 60 * 1000;     // nonce valid for 2h
 const SCORE_LIMIT = 5, SCORE_WINDOW_MS = 10 * 60 * 1000;   // 5 score posts / 10 min / client
 const ROUND_LIMIT = 40;                       // 40 round starts / 10 min / client
 const MAX_BODY = 1024;
-const NICK_RE = /^[A-Za-z0-9 _.\-]{2,16}$/;
-const RESERVED = ["admin", "administrator", "etlabs", "moderator", "mod", "official", "system", "root"];
-const BLOCK = ["fuck", "fuk", "fck", "shit", "bitch", "biatch", "cunt", "dick", "cock", "pussy", "fag", "nigg", "niga",
-  "whore", "slut", "rape", "rapist", "nazi", "hitler", "porn", "penis", "vagina", "asshole", "ashole", "bastard", "retard",
-  "kike", "spic", "chink", "twat", "wank", "jizz", "dildo", "boob", "tits", "milf", "hentai", "sex", "kkk", "heil", "molest", "pedo"];
-const LEET = { "0": "o", "1": "i", "!": "i", "|": "i", "3": "e", "4": "a", "@": "a", "5": "s", "$": "s", "7": "t", "8": "b", "9": "g", "2": "z" };
 
 let studySchemaReady = false;
 
@@ -93,23 +89,6 @@ function studyJson(body, status = 200, extra = {}) {
   });
 }
 const studyErr = (error, status = 400, extra = {}) => studyJson({ ok: false, error, ...extra }, status);
-
-function cleanNick(raw) {
-  if (typeof raw !== "string") return { error: "nick_required" };
-  const nick = raw.normalize("NFKC").trim().replace(/\s+/g, " ");
-  if (nick.length < 2) return { error: "nick_too_short" };
-  if (nick.length > 16) return { error: "nick_too_long" };
-  if (!NICK_RE.test(nick) || !/[A-Za-z0-9]/.test(nick)) return { error: "nick_bad_chars" };
-  const lower = nick.toLowerCase();
-  const plain = lower.replace(/[^a-z]/g, "");
-  const leet = lower.split("").map(c => LEET[c] || c).join("").replace(/[^a-z]/g, "");
-  const squash = leet.replace(/(.)\1+/g, "$1");
-  if (RESERVED.includes(plain) || RESERVED.includes(leet)) return { error: "nick_reserved" };
-  for (const w of BLOCK) {
-    if (plain.includes(w) || leet.includes(w) || squash.includes(w)) return { error: "nick_not_allowed" };
-  }
-  return { nick };
-}
 
 function deckFor(day, mode) {
   const d = typeof day === "string" || typeof day === "number" ? STUDY_DECKS[String(day)] : null;
@@ -181,7 +160,7 @@ async function topScores(db, day, mode, limit) {
     `SELECT nick, score, questions, duration_ms, created_at FROM (
        SELECT nick, score, questions, duration_ms, created_at,
               ROW_NUMBER() OVER (PARTITION BY lower(nick) ORDER BY score DESC, duration_ms ASC, created_at ASC) AS rn
-       FROM study_scores WHERE day = ? AND mode = ?)
+       FROM study_scores WHERE day = ? AND mode = ? AND nick NOT LIKE 'TEST!_%' ESCAPE '!')
      WHERE rn = 1 ORDER BY score DESC, duration_ms ASC, created_at ASC LIMIT ?`
   ).bind(day, mode, limit).all();
   return results.map((r, i) => ({
@@ -256,9 +235,10 @@ async function handleStudyApi(request, env, url) {
     await db.prepare("INSERT INTO study_scores (day, mode, nick, score, questions, duration_ms, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)")
       .bind(day, mode, n.nick, score, deck.questions, duration, now).run();
     const better = await db.prepare(
-      `SELECT COUNT(*) AS n FROM (SELECT lower(nick) AS k, MAX(score) AS s FROM study_scores WHERE day = ? AND mode = ? GROUP BY k) WHERE s > ?`
+      `SELECT COUNT(*) AS n FROM (SELECT lower(nick) AS k, MAX(score) AS s FROM study_scores WHERE day = ? AND mode = ? AND nick NOT LIKE 'TEST!_%' ESCAPE '!' GROUP BY k) WHERE s > ?`
     ).bind(day, mode, score).first();
-    return studyJson({ ok: true, rank: (better ? better.n : 0) + 1,
+    // TEST_ nicks are stored (so submits can be verified) but never shown or counted in ranks
+    return studyJson({ ok: true, hidden: !!n.test, rank: (better ? better.n : 0) + 1,
       entry: { nick: n.nick, score, questions: deck.questions, durationSec: Math.round(duration / 1000) } });
   } catch (e) {
     console.error("study api error", e && e.message);
