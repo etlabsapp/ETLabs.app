@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050a0e">
+<title>ET Labs // Security+ Study</title>
+<meta name="description" content="CompTIA Security+ (SY0-701) study notes and hacker-style quizzes, one day of class at a time.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ET Labs">
+<meta property="og:title" content="ET Labs // Security+ Study">
+<meta property="og:description" content="CompTIA Security+ (SY0-701) study notes and hacker-style quizzes, one day of class at a time.">
+<meta property="og:url" content="https://etlabs.app/study/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ET Labs // Security+ Study">
+<meta name="twitter:description" content="CompTIA Security+ (SY0-701) study notes and hacker-style quizzes, one day of class at a time.">
+<style>
+:root{
+  --bg:#050a0e; --panel:#0a141b; --panel2:#0e1d27; --line:#16333f;
+  --green:#39ff88; --cyan:#22e6ff; --red:#ff3860; --amber:#ffc53d; --mag:#ff4dff;
+  --text:#d6fbe8; --dim:#6f9aa6;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans)}
+body{min-height:100vh;min-height:100dvh;overflow-x:hidden;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(34,230,255,.16), transparent 60%),
+    radial-gradient(ellipse at 50% 110%, rgba(57,255,136,.12), transparent 60%),
+    linear-gradient(rgba(34,230,255,.05) 1px, transparent 1px) 0 0/28px 28px,
+    linear-gradient(90deg, rgba(34,230,255,.05) 1px, transparent 1px) 0 0/28px 28px,
+    var(--bg);}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.035) 0 1px, transparent 1px 3px);mix-blend-mode:overlay}
+body::before{content:"";position:fixed;left:0;right:0;height:120px;top:-120px;pointer-events:none;z-index:49;
+  background:linear-gradient(to bottom, transparent, rgba(57,255,136,.06), transparent);animation:sweep 7s linear infinite}
+@keyframes sweep{to{top:110%}}
+.wrap{max-width:620px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));
+  min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.mono,h1,h2{font-family:var(--mono)}
+.prompt{margin:18px 0 6px;font-size:13px;color:var(--dim);font-family:var(--mono)}
+.prompt b{color:var(--green)}
+h1{font-size:clamp(28px,8.6vw,42px);line-height:1.08;margin:6px 0 6px;font-weight:800}
+.g{color:var(--green);text-shadow:0 0 8px rgba(57,255,136,.7),0 0 22px rgba(57,255,136,.35)}
+.c{color:var(--cyan);text-shadow:0 0 8px rgba(34,230,255,.7),0 0 22px rgba(34,230,255,.35)}
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;overflow:hidden;opacity:.7}
+.glitch::before{color:var(--mag);clip-path:inset(0 0 60% 0);animation:gl 3s infinite steps(2)}
+.glitch::after{color:var(--cyan);clip-path:inset(55% 0 0 0);animation:gl 2.3s infinite reverse steps(2)}
+@keyframes gl{0%,86%{transform:translate(0)}88%{transform:translate(3px,-1px)}92%{transform:translate(-3px,1px)}96%{transform:translate(2px,0)}}
+.sub{color:var(--dim);font-family:var(--mono);font-size:13px;margin:0 0 16px;line-height:1.5}
+.term{background:rgba(5,14,20,.85);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;
+  color:var(--green);box-shadow:inset 0 0 30px rgba(57,255,136,.05);margin-bottom:18px;line-height:1.6}
+.term .p{color:var(--cyan)}
+.cursor{display:inline-block;width:8px;height:14px;background:var(--green);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+h2{font-size:12px;letter-spacing:.16em;color:var(--dim);margin:4px 0 10px;font-weight:700}
+.cards{display:grid;gap:12px}
+.day{position:relative;display:block;text-decoration:none;color:inherit;border-radius:16px;padding:16px 16px 16px 18px;
+  background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 0 40px rgba(34,230,255,.04);transition:transform .08s,border-color .15s,box-shadow .15s;overflow:hidden}
+.day::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green);box-shadow:0 0 14px var(--green)}
+a.day:hover,a.day:focus-visible{border-color:var(--green);box-shadow:0 0 0 1px var(--green),0 0 26px rgba(57,255,136,.3);outline:none}
+a.day:active{transform:scale(.98)}
+.day .top{display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.14em}
+.day .num{color:var(--cyan)}
+.badge{padding:3px 9px;border-radius:20px;border:1px solid currentColor;font-weight:700;white-space:nowrap}
+.badge.live{color:var(--green);box-shadow:0 0 10px rgba(57,255,136,.35)}
+.badge.lock{color:var(--dim)}
+.badge.soon{color:var(--amber)}
+.day h3{margin:8px 0 4px;font-size:21px;font-weight:750}
+.day p{margin:0;color:var(--dim);font-size:14px;line-height:1.45}
+.day .go{margin-top:10px;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green)}
+.day.locked{opacity:.5;cursor:not-allowed;filter:grayscale(.6)}
+.day.locked::before{background:var(--dim);box-shadow:none}
+.day.mix::before{background:var(--mag);box-shadow:0 0 14px var(--mag)}
+a.day.mix:hover,a.day.mix:focus-visible{border-color:var(--mag);box-shadow:0 0 0 1px var(--mag),0 0 26px rgba(255,77,255,.3)}
+.day.mix .go{color:var(--mag)}
+.spacer{flex:1;min-height:24px}
+footer{text-align:center;color:var(--dim);font-family:var(--mono);font-size:12px;padding-top:18px;opacity:.85}
+footer b{color:var(--green);font-weight:700}
+footer a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(111,154,166,.4)}
+footer a:hover,footer a:focus-visible{color:var(--cyan);border-bottom-color:var(--cyan)}
+@media (prefers-reduced-motion: reduce){ *{animation:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="prompt">root@<b>etlabs</b>:~$ ls ./study</div>
+  <h1><span class="g">ET Labs //</span><br><span class="glitch c" data-t="Security+ Study">Security+ Study</span></h1>
+  <p class="sub">CompTIA Security+ SY0-701 // notes + quizzes, one class day at a time.</p>
+  <div class="term" aria-hidden="true">
+    <span class="p">$</span> scanning modules ... 1 unlocked, 1 locked<br>
+    <span class="p">$</span> pick a node to begin <span class="cursor"></span>
+  </div>
+
+  <h2>// MODULES</h2>
+  <div class="cards">
+    <a class="day" href="./day1/">
+      <div class="top"><span class="num">DAY 01</span><span class="badge live">&#x25CF; ONLINE</span></div>
+      <h3>Security Fundamentals</h3>
+      <p>CIA triad, AAA, least privilege, control categories &amp; types, gap analysis, SOC/CIRT, honeypots &amp; honeytokens.</p>
+      <div class="go">&gt; open day 1</div>
+    </a>
+
+    <div class="day locked" aria-disabled="true">
+      <div class="top"><span class="num">DAY 02</span><span class="badge lock">&#x1F512; LOCKED</span></div>
+      <h3>Day 2</h3>
+      <p>Unlocks after Wednesday class.</p>
+    </div>
+
+    <a class="day mix" href="./day1/">
+      <div class="top"><span class="num">MIX // ALL DAYS</span><span class="badge soon">DAY 1 ONLY FOR NOW</span></div>
+      <h3>Mix all days</h3>
+      <p>Only Day 1 is out, so this opens Day 1 for now. A true cross-day mix is coming soon, once Day 2 unlocks.</p>
+      <div class="go">&gt; open day 1</div>
+    </a>
+  </div>
+
+  <div class="spacer"></div>
+  <footer>Made by <b>ET Labs</b> · <a href="https://etlabs.app/">etlabs.app</a></footer>
+</div>
+</body>
+</html>
