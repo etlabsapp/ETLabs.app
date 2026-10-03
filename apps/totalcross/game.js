@@ -14,6 +14,30 @@
   const PROGRESS_KEY = 'tc_progress_';
   const PROGRESS_SAVE_EVERY = 10; // seconds between timer-tick saves
 
+  // ── ROTATION ────────────────────────────────────────────
+  // Puzzles #1 to #(CUTOVER-1) keep the original 66-puzzle cycle, so today's puzzle, the
+  // archive, saved progress (tc_grid_N / tc_solved_N) and leaderboard rows keep pointing at the same grids.
+  // From the cutover day on, the 100 new puzzles (indexes 66-165) roll out in order, then the full pool cycles from index 0.
+  // Keep in sync with workers/totalcross-rotation.mjs (themes API); checked by workers/totalcross-rotation.test.mjs.
+  const LEGACY_PUZZLE_COUNT = 66;
+  const ROTATION_CUTOVER_DATE = '2026-10-12'; // local date of the first new-sequence puzzle (#158)
+  const ROTATION_CUTOVER_N = (() => {
+    const [y, m, d] = ROTATION_CUTOVER_DATE.split('-').map(Number);
+    return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(2026, 4, 8)) / 86400000) + 1;
+  })();
+
+  function puzzleIndexForNumber(n) {
+    const total = PUZZLES.length;
+    if (n < ROTATION_CUTOVER_N) return (Math.max(1, n) - 1) % LEGACY_PUZZLE_COUNT % total;
+    return (LEGACY_PUZZLE_COUNT + (n - ROTATION_CUTOVER_N)) % total;
+  }
+
+  function puzzleForNumber(n) {
+    return PUZZLES[puzzleIndexForNumber(n)];
+  }
+
+  window.TotalCrossRotation = { puzzleIndexForNumber, cutoverDate: ROTATION_CUTOVER_DATE, cutoverN: ROTATION_CUTOVER_N, legacyCount: LEGACY_PUZZLE_COUNT };
+
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   // ── STATE ───────────────────────────────────────────────
@@ -185,12 +209,12 @@
         archiveMode = true;
         archiveDayN = n;
         puzzleNumber = n;
-        puzzle = getPuzzleByIndex(n - 1);
+        puzzle = puzzleForNumber(n);
       }
     }
     if (!puzzle) {
       puzzleNumber = getPuzzleNumber();
-      puzzle = getTodaysPuzzle();
+      puzzle = puzzleForNumber(puzzleNumber);
     }
 
     setupPuzzleMeta();

@@ -159,6 +159,8 @@ class CrosswordBuilder {
   }
 }
 
+module.exports = { CrosswordBuilder, wordSum, letterValue };
+
 // ── MODERN PUZZLE DEFINITIONS ───────────────────────────────
 
 const PUZZLES_TO_GEN = [
@@ -226,6 +228,7 @@ const PUZZLES_TO_GEN = [
 
 // ── GENERATE ────────────────────────────────────────────────
 
+if (require.main === module) {
 const results = [];
 let startId = 56; // append after existing 56 puzzles (0-55)
 
@@ -242,3 +245,4 @@ PUZZLES_TO_GEN.forEach((def, i) => {
 });
 
 process.stdout.write(JSON.stringify(results, null, 2) + '\n');
+}
