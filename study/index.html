@@ -1257,6 +1257,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
   display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .lb h3 small{color:var(--dim);font-size:10px;letter-spacing:.08em;font-weight:400;text-align:right}
 .lbform{display:flex;gap:8px;padding:12px 14px 0}
+.lbform{flex-wrap:wrap}.lbts{flex-basis:100%}.lbts:empty{display:none}
 .lbform input{flex:1;min-width:0;height:46px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:#07121a;color:var(--text);
   font-family:var(--mono);font-size:16px;outline:none}
 .lbform input:focus{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 14px rgba(34,230,255,.25)}
@@ -1362,6 +1363,7 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
       <form class="lbform" id="lbForm" autocomplete="off" novalidate>
         <input id="lbNick" maxlength="16" placeholder="nickname (2-16)" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Nickname">
         <button type="submit" class="lbbtn" id="lbBtn">Submit score</button>
+        <div id="lbTs" class="lbts"></div>
       </form>
       <div class="lbmsg" id="lbMsg"></div>
       <ol class="lblist" id="lbList"></ol>
@@ -1454,6 +1456,29 @@ function api(path, body){
     .catch(() => null).finally(() => clearTimeout(to));
 }
 let roundNonce = null, runId = 0, lbSubmitted = false, runDay = "day1", startBoardReq = 0;
+/* Cloudflare Turnstile (anti-bot) for score posts: enabled only when the server publishes a site key. */
+let tsSiteKey = null, tsWidget = null, tsLoading = null;
+function tsLoad(){
+  if(tsLoading) return tsLoading;
+  tsLoading = new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    s.async = true; s.onload = () => res(); s.onerror = () => { tsLoading = null; rej(new Error("turnstile_load")); };
+    document.head.appendChild(s);
+  });
+  return tsLoading;
+}
+function tsRender(){
+  if(!tsSiteKey) return;
+  tsLoad().then(() => {
+    if(!window.turnstile) return;
+    if(tsWidget !== null){ try{ window.turnstile.reset(tsWidget); }catch(e){} return; }
+    tsWidget = window.turnstile.render("#lbTs", { sitekey: tsSiteKey, action: "study_score", appearance: "interaction-only", theme: "dark" });
+  }).catch(() => {});
+}
+function tsToken(){ try{ return tsWidget !== null && window.turnstile ? window.turnstile.getResponse(tsWidget) || "" : ""; }catch(e){ return ""; } }
+function tsReset(){ try{ if(tsWidget !== null && window.turnstile) window.turnstile.reset(tsWidget); }catch(e){} }
+if(location.protocol !== "file:") api("config").then(r => { if(r && r.ok && r.turnstileSiteKey) tsSiteKey = r.turnstileSiteKey; });
 function requestRound(day, mode){
   const my = ++runId; roundNonce = null;
   if(isDemo()) return;
@@ -1464,7 +1489,8 @@ const LB_ERR = {
   nick_bad_chars:"Use letters, numbers, space, _ . - only.", nick_not_allowed:"That nickname isn't allowed. Pick another.",
   nick_reserved:"That nickname is reserved.", nick_required:"Enter a nickname.", rate_limited:"Too many submissions. Try again in a few minutes.",
   too_fast:"Round finished too fast to rank.", nonce_used:"This round was already submitted.", round_expired:"Round expired (2h). Play again to rank.",
-  bad_nonce:"Leaderboard didn't register this round.", bad_score:"Score rejected.", storage_unavailable:"Leaderboard is offline right now."
+  bad_nonce:"Leaderboard didn't register this round.", bad_score:"Score rejected.", storage_unavailable:"Leaderboard is offline right now.",
+  turnstile_required:"Finish the quick human check, then submit.", turnstile_failed:"Human check failed. Try again.", turnstile_unavailable:"Human check is unavailable right now. Try again shortly."
 };
 const fmtT = s => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
 const boardTitle = (day, mode) => "LEADERBOARD // " + DAYS[day].label.toUpperCase() + " · " + MODES[mode].toUpperCase();
@@ -1491,6 +1517,7 @@ function renderBoard(day, mode, canSubmit){
   let nick = ""; try{ nick = localStorage.getItem(NICK) || ""; }catch(e){}
   $("lbNick").value = nick; $("lbBtn").disabled = false;
   $("lbForm").style.display = canSubmit ? "flex" : "none";
+  if(canSubmit) tsRender();
   lbMsg(canSubmit ? correct + "/" + order.length + " correct — submit it under a nickname?" : (review ? "Review rounds aren't ranked. Run the full deck to submit." : isDemo() ? "Demo view — submit disabled." : ""));
   fillBoard($("lbList"), day, mode);
 }
@@ -1502,9 +1529,14 @@ $("lbForm").onsubmit = e => {
   if(nick.length > 16) return lbMsg(LB_ERR.nick_too_long, "bad");
   if(!/^[A-Za-z0-9 _.\-]+$/.test(nick)) return lbMsg(LB_ERR.nick_bad_chars, "bad");
   if(!roundNonce) return lbMsg("Leaderboard is offline (or didn't register this round). Your run still counts locally.", "bad");
+  const turnstileToken = tsToken();
+  if(tsSiteKey && !turnstileToken){ tsRender(); return lbMsg(LB_ERR.turnstile_required, "bad"); }
   $("lbBtn").disabled = true; lbMsg("> transmitting ...");
   const mode = runMode, day = runDay;
-  api("score", { nonce:roundNonce, day:dayKey(day), mode, nick, score:correct }).then(r => {
+  const payload = { nonce:roundNonce, day:dayKey(day), mode, nick, score:correct };
+  if(turnstileToken) payload.turnstileToken = turnstileToken;
+  api("score", payload).then(r => {
+    tsReset();
     if(r && r.ok){
       lbSubmitted = true; roundNonce = null; $("lbForm").style.display = "none";
       try{ localStorage.setItem(NICK, r.entry.nick); }catch(e){}

@@ -1,0 +1,34 @@
+# Only public site files are uploaded as Worker static assets (assets.directory is the repo root).
+# Everything below is repo plumbing and must never be served. Gitignore syntax.
+.git
+.github
+.claude
+.wrangler
+node_modules
+.gitignore
+.assetsignore
+.env*
+.dev.vars*
+*.md
+*.pem
+*.p8
+*.key
+wrangler.jsonc
+wrangler.toml
+wrangler.json
+package.json
+package-lock.json
+bun.lock
+tsconfig.json
+docs/
+migrations/
+workers/
+tools/
+scripts/
+apps/dashboard/
+apps/marketing/
+apps/sleeptight-desktop/
+apps/totalcross/worker/
+# FlipFeed lives on Vercel; keep only the redirect stub page
+apps/flipfeed/*
+!apps/flipfeed/index.html
