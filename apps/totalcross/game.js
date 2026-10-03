@@ -762,6 +762,7 @@
     const rows = puzzle.grid.length;
     const cols = puzzle.grid[0].length;
 
+    fitGridToWidth();
     gridEl.style.gridTemplateColumns = `repeat(${cols}, var(--cell-size))`;
     gridEl.style.gridTemplateRows    = `repeat(${rows}, var(--cell-size))`;
 
@@ -819,45 +820,122 @@
     wrapper.querySelectorAll('.sum-chip').forEach(el => el.remove());
 
     requestAnimationFrame(() => {
-      const cellEl = document.querySelector('.cell.active');
-      if (!cellEl) return;
-      const cellSize = cellEl.getBoundingClientRect().width;
-      if (!cellSize) return;
-      const wrapRect = wrapper.getBoundingClientRect();
-
       words.forEach(w => {
         const chip = document.createElement('div');
         chip.className = 'sum-chip';
         chip.textContent = w.sum;
         chip.dataset.id = w.id;
-
-        let left, top;
-        if (w.direction === 'across') {
-          const lastEl = document.querySelector(`[data-row="${w.row}"][data-col="${w.col + w.length - 1}"]`);
-          if (lastEl) {
-            const cr = lastEl.getBoundingClientRect();
-            left = cr.right - wrapRect.left + 4;
-            top  = cr.top - wrapRect.top + cellSize / 2;
-            chip.style.transform = 'translateY(-50%)';
-          }
-        } else {
-          const lastEl = document.querySelector(`[data-row="${w.row + w.length - 1}"][data-col="${w.col}"]`);
-          if (lastEl) {
-            const cr = lastEl.getBoundingClientRect();
-            left = cr.left - wrapRect.left + cellSize / 2;
-            top  = cr.bottom - wrapRect.top + 4;
-            chip.style.transform = 'translateX(-50%)';
-          }
-        }
-
-        if (left !== undefined) {
-          chip.style.left = left + 'px';
-          chip.style.top  = top + 'px';
-          wrapper.appendChild(chip);
-        }
+        wrapper.appendChild(chip);
       });
+      positionSumChips();
     });
   }
+
+  // Place (or re-place, after a resize) every sum chip next to the last cell
+  // of its word. Chips keep their state classes because they are reused.
+  function positionSumChips() {
+    const wrapper = document.getElementById('grid-wrapper');
+    const cellEl = document.querySelector('#puzzle-grid .cell.active');
+    if (!wrapper || !cellEl) return;
+    const cellSize = cellEl.getBoundingClientRect().width;
+    if (!cellSize) return;
+    const wrapRect = wrapper.getBoundingClientRect();
+    // Positions are relative to the wrapper's padding box; include any
+    // horizontal scroll so chips stay attached when the grid is scrolled.
+    const scrollX = wrapper.scrollLeft;
+    const gap = cellSize < 24 ? 2 : 4; // tighter chip offset on small mobile cells
+
+    words.forEach(w => {
+      const chip = wrapper.querySelector(`.sum-chip[data-id="${w.id}"]`);
+      if (!chip) return;
+
+      let left, top;
+      if (w.direction === 'across') {
+        const lastEl = document.querySelector(`#puzzle-grid [data-row="${w.row}"][data-col="${w.col + w.length - 1}"]`);
+        if (lastEl) {
+          const cr = lastEl.getBoundingClientRect();
+          left = cr.right - wrapRect.left + scrollX + gap;
+          top  = cr.top - wrapRect.top + cellSize / 2;
+          chip.style.transform = 'translateY(-50%)';
+        }
+      } else {
+        const lastEl = document.querySelector(`#puzzle-grid [data-row="${w.row + w.length - 1}"][data-col="${w.col}"]`);
+        if (lastEl) {
+          const cr = lastEl.getBoundingClientRect();
+          left = cr.left - wrapRect.left + scrollX + cellSize / 2;
+          top  = cr.bottom - wrapRect.top + gap;
+          chip.style.transform = 'translateX(-50%)';
+        }
+      }
+
+      if (left !== undefined) {
+        chip.style.left = left + 'px';
+        chip.style.top  = top + 'px';
+        chip.hidden = false;
+      } else {
+        chip.hidden = true;
+      }
+    });
+  }
+
+  // ── MOBILE GRID FIT ─────────────────────────────────────
+  // On small screens (<=900px, where the board stacks) size cells so the
+  // whole grid fits the available width instead of scrolling sideways.
+  // Desktop keeps the stylesheet's 48px cells untouched.
+  const MOBILE_FIT_QUERY = '(max-width: 900px)';
+  const MIN_CELL_PX      = 16;   // floor so cells stay tappable; below this the wrapper scrolls
+  const GRID_BORDER_PX   = 4;    // .grid has a 2px border on each side
+  const LETTER_RATIO     = 0.46; // matches .cell-letter font-size calc in style.css
+  const SMALL_LETTER_RATIO = 0.56; // slightly bolder letters on very small cells for legibility
+  const IOS_MIN_INPUT_PX = 16;   // iOS Safari zooms on focus when an input is < 16px
+
+  function fitGridToWidth() {
+    const wrapper = document.getElementById('grid-wrapper');
+    if (!wrapper || !puzzle) return false;
+    const prev = wrapper.style.getPropertyValue('--cell-size');
+    wrapper.style.removeProperty('--cell-size');
+    wrapper.style.removeProperty('--letter-scale');
+    wrapper.classList.remove('grid-fit-small');
+
+    if (!window.matchMedia(MOBILE_FIT_QUERY).matches) return prev !== '';
+
+    const cs = getComputedStyle(wrapper);
+    const maxCell = parseFloat(cs.getPropertyValue('--cell-size')) || 38;
+    const content = wrapper.clientWidth
+      - (parseFloat(cs.paddingLeft) || 0)
+      - (parseFloat(cs.paddingRight) || 0);
+    if (content <= 0) return prev !== '';
+
+    const cols = puzzle.grid[0].length;
+    const fit  = Math.floor(((content - GRID_BORDER_PX) / cols) * 4) / 4; // quarter-px steps
+    const size = Math.max(MIN_CELL_PX, Math.min(maxCell, fit));
+
+    // Inputs always compute to >=16px (no iOS focus zoom); a transform scales
+    // the glyph back down so letters keep their normal size relative to the cell.
+    const small  = size < 24;
+    const visual = size * (small ? SMALL_LETTER_RATIO : LETTER_RATIO);
+    const scale  = Math.min(1, visual / IOS_MIN_INPUT_PX);
+
+    wrapper.style.setProperty('--cell-size', size + 'px');
+    wrapper.style.setProperty('--letter-scale', scale.toFixed(4));
+    wrapper.classList.toggle('grid-fit-small', small);
+    return wrapper.style.getPropertyValue('--cell-size') !== prev;
+  }
+
+  let fitRaf = 0;
+  function onViewportResize() {
+    if (fitRaf) cancelAnimationFrame(fitRaf);
+    fitRaf = requestAnimationFrame(() => {
+      fitRaf = 0;
+      if (!puzzle || !document.querySelector('#puzzle-grid .cell')) return;
+      fitGridToWidth();
+      // Chips are absolutely positioned in px; re-place them after any
+      // resize (cell size or container width/position may have changed).
+      positionSumChips();
+    });
+  }
+  window.addEventListener('resize', onViewportResize);
+  window.addEventListener('orientationchange', onViewportResize);
 
   // ── GRID INTERACTION ────────────────────────────────────
 
