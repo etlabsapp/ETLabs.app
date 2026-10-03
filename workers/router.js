@@ -4,6 +4,7 @@
  */
 import catalog from "../apps/totalcross/api/themes-catalog.json";
 import { cleanNick } from "./study-nick.mjs";
+import { rateKeyForIp, isBlockedPath } from "./security.mjs";
 
 const LAUNCH = catalog.launchDate; // YYYY-MM-DD
 const THEMES = catalog.themes;
@@ -90,7 +91,13 @@ const STUDY_MODES = ["terms", "scen", "mixed", "cert"];   // "cert" only where t
 const ROUND_TTL_MS = 2 * 60 * 60 * 1000;     // nonce valid for 2h
 const SCORE_LIMIT = 30, SCORE_WINDOW_MS = 10 * 60 * 1000;  // 30 score posts / 10 min / client (class shares one Wi-Fi IP)
 const ROUND_LIMIT = 240;                      // 240 round starts / 10 min / client
-const MAX_BODY = 1024;
+// Site-wide caps per 10-minute window (all clients combined) so address rotation can't flood D1.
+const GLOBAL_SCORE_LIMIT = 600, GLOBAL_ROUND_LIMIT = 3000;
+const MAX_BODY = 4096;                        // room for a Turnstile token (up to ~2 KB)
+const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+// Public Turnstile site key for etlabs.app (paste it here once the widget exists; env.TURNSTILE_SITE_KEY overrides).
+// Score posts require a valid token only when the TURNSTILE_SECRET secret is set (`wrangler secret put TURNSTILE_SECRET`).
+const TURNSTILE_SITE_KEY = "";
 
 let studySchemaReady = false;
 
@@ -118,13 +125,14 @@ async function ensureStudySchema(db) {
     db.prepare(`CREATE TABLE IF NOT EXISTS study_rounds (nonce TEXT PRIMARY KEY, day TEXT NOT NULL, mode TEXT NOT NULL, issued_at INTEGER NOT NULL, used INTEGER NOT NULL DEFAULT 0)`),
     db.prepare(`CREATE TABLE IF NOT EXISTS study_rate (bucket TEXT NOT NULL, kind TEXT NOT NULL, ts INTEGER NOT NULL)`),
     db.prepare(`CREATE INDEX IF NOT EXISTS study_rate_idx ON study_rate (bucket, kind, ts)`),
+    db.prepare(`CREATE INDEX IF NOT EXISTS study_rate_kind_idx ON study_rate (kind, ts)`),
     db.prepare(`CREATE TABLE IF NOT EXISTS study_salts (day TEXT PRIMARY KEY, salt TEXT NOT NULL)`),
   ]);
   studySchemaReady = true;
 }
 
 async function clientBucket(db, request) {
-  const ip = request.headers.get("cf-connecting-ip") || "unknown";
+  const ip = rateKeyForIp(request.headers.get("cf-connecting-ip"));
   const today = new Date().toISOString().slice(0, 10);
   let row = await db.prepare("SELECT salt FROM study_salts WHERE day = ?").bind(today).first();
   if (!row) {
@@ -140,15 +148,20 @@ async function clientBucket(db, request) {
   return [...new Uint8Array(digest)].slice(0, 16).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-/* counts this attempt; returns true if over the limit */
-async function rateLimited(db, bucket, kind, limit) {
+/* counts this attempt; returns true if over the per-client or the site-wide limit */
+async function rateLimited(db, bucket, kind, limit, globalLimit) {
   const now = Date.now(), since = now - SCORE_WINDOW_MS;
   const res = await db.batch([
     db.prepare("DELETE FROM study_rate WHERE ts < ?").bind(since),
     db.prepare("SELECT COUNT(*) AS n FROM study_rate WHERE bucket = ? AND kind = ? AND ts >= ?").bind(bucket, kind, since),
+    db.prepare("SELECT COUNT(*) AS n FROM study_rate WHERE kind = ? AND ts >= ?").bind(kind, since),
   ]);
-  const n = res[1].results[0].n;
+  const n = res[1].results[0].n, total = res[2].results[0].n;
   if (n >= limit) return true;
+  if (globalLimit && total >= globalLimit) {
+    console.warn("study global rate cap hit", kind, total);
+    return true;
+  }
   await db.prepare("INSERT INTO study_rate (bucket, kind, ts) VALUES (?, ?, ?)").bind(bucket, kind, now).run();
   return false;
 }
@@ -164,6 +177,30 @@ async function readJsonBody(request) {
     return { body };
   } catch {
     return { error: "bad_json" };
+  }
+}
+
+/* Turnstile check for score posts. Active only when the TURNSTILE_SECRET secret is set; fails closed once active. */
+async function turnstileCheck(env, request, token) {
+  if (!env.TURNSTILE_SECRET) {
+    console.log("turnstile: TURNSTILE_SECRET not set, skipping score verification");
+    return { ok: true, skipped: true };
+  }
+  if (typeof token !== "string" || !token || token.length > 2048) return { ok: false, error: "turnstile_required" };
+  try {
+    const form = new FormData();
+    form.append("secret", env.TURNSTILE_SECRET);
+    form.append("response", token);
+    const ip = request.headers.get("cf-connecting-ip");
+    if (ip) form.append("remoteip", ip);
+    const r = await fetch(TURNSTILE_VERIFY_URL, { method: "POST", body: form, signal: AbortSignal.timeout(5000) });
+    const j = await r.json();
+    if (j && j.success === true) return { ok: true };
+    console.warn("turnstile rejected", j && j["error-codes"]);
+    return { ok: false, error: "turnstile_failed" };
+  } catch (e) {
+    console.error("turnstile verify error", e && e.message);
+    return { ok: false, error: "turnstile_unavailable" };
   }
 }
 
@@ -184,8 +221,13 @@ async function topScores(db, day, mode, limit) {
 async function handleStudyApi(request, env, url) {
   const db = env.STUDY_DB;
   const path = url.pathname.replace(/\/+$/, "");
-  const known = ["/study/api/leaderboard", "/study/api/round", "/study/api/score"];
+  const known = ["/study/api/leaderboard", "/study/api/round", "/study/api/score", "/study/api/config"];
   if (!known.includes(path)) return studyErr("not_found", 404);
+  if (path === "/study/api/config") {
+    if (request.method !== "GET" && request.method !== "HEAD") return studyErr("method_not_allowed", 405);
+    // Public config for the client. Site key is public by design; empty = Turnstile widget not rendered.
+    return studyJson({ ok: true, turnstileSiteKey: String(env.TURNSTILE_SITE_KEY || TURNSTILE_SITE_KEY || "").trim() || null });
+  }
   if (!db) return studyErr("storage_unavailable", 503);
   try {
     await ensureStudySchema(db);
@@ -220,7 +262,7 @@ async function handleStudyApi(request, env, url) {
     const now = Date.now();
 
     if (path === "/study/api/round") {
-      if (await rateLimited(db, bucket, "round", ROUND_LIMIT)) return studyErr("rate_limited", 429, { retryAfterSec: 600 });
+      if (await rateLimited(db, bucket, "round", ROUND_LIMIT, GLOBAL_ROUND_LIMIT)) return studyErr("rate_limited", 429, { retryAfterSec: 600 });
       const nonce = crypto.randomUUID();
       await db.batch([
         db.prepare("DELETE FROM study_rounds WHERE issued_at < ?").bind(now - ROUND_TTL_MS),
@@ -230,7 +272,9 @@ async function handleStudyApi(request, env, url) {
     }
 
     // POST /study/api/score
-    if (await rateLimited(db, bucket, "score", SCORE_LIMIT)) return studyErr("rate_limited", 429, { retryAfterSec: 600 });
+    if (await rateLimited(db, bucket, "score", SCORE_LIMIT, GLOBAL_SCORE_LIMIT)) return studyErr("rate_limited", 429, { retryAfterSec: 600 });
+    const ts = await turnstileCheck(env, request, body.turnstileToken);
+    if (!ts.ok) return studyErr(ts.error, 403);
     const n = cleanNick(body.nick);
     if (n.error) return studyErr(n.error);
     const score = body.score;
@@ -261,6 +305,9 @@ async function handleStudyApi(request, env, url) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (isBlockedPath(url.pathname)) {
+      return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
+    }
     if (url.pathname === "/apps/totalcross/api/themes.json") {
       if (request.method === "OPTIONS") {
         return new Response(null, {
