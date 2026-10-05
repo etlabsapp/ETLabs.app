@@ -870,3 +870,52 @@ body {
   .lb-tabs { width: 100%; }
   .lb-tab { flex: 1; padding: 8px 6px; }
 }
+
+/* ── r7: BOARD STANDARD (light board, even 1px lines) ───────────────
+   Picked on the dev board page (dev/board.html?sq=thin&bl=clear&ch=plain):
+   - no black slab: white squares sit on the cream page, blocked cells clear;
+   - every grid line is the same 1px ink, horizontal and vertical. Each square
+     draws its frame with a ::before that overhangs its right/bottom edge by
+     1px, landing on the same pixels as the neighbour's own left/top line, so a
+     shared edge is one line and perimeter edges match it at any DPR/zoom;
+   - solid highlight colours (the old rgba tints sat on the black slab = muddy);
+   - plain sum numbers next to each word (tutorial keeps boxed chips because it
+     sits on a dark backdrop).
+   .grid keeps its 2px border WIDTH (transparent) so cell sizing and the
+   phone-fit branch's 4px grid-border maths are unchanged. */
+.grid { background: transparent; border-color: transparent; }
+.cell.blocked { background: transparent; }
+.cell.active,
+.cell.active.space-cell { border: 0; }
+.cell.active::before {
+  content: ''; position: absolute; pointer-events: none;
+  top: 0; left: 0; right: -1px; bottom: -1px;
+  border: 1px solid var(--border);
+}
+
+.cell.active.intersection             { background: #fbefec; }
+.cell.active.word-active              { background: #fff7d6; }
+.cell.active.intersection.word-active { background: #fde6cf; }
+.cell.active.selected,
+.cell.active.intersection.selected    { background: #ffd0d3; }
+.cell.active.prefill                  { background: #e6f4ec; }
+.cell.active.correct,
+.cell.active.intersection.correct     { background: #d7eedd; }
+.cell.active.correct.word-active      { background: #c9e8d2; }
+.cell.active.correct.selected         { background: #b9e0c5; }
+
+/* grey phrase-space squares: same frame, so a multi-word answer stays one strip */
+.cell.active.space-cell { background: #e4ded3; }
+.cell.active.space-cell::after { background: #a9a091; }
+
+/* tutorial highlight: accent ring drawn inside the frame (even on all 4 sides) */
+.cell.active.tut-intersection { background: #fff7d6; box-shadow: none; }
+.cell.active.tut-intersection::before { box-shadow: inset 0 0 0 2px var(--accent); }
+.cell.active.tut-intersection.correct { background: #d7eedd; }
+
+/* plain sum numbers */
+.sum-chip { background: transparent; color: var(--text); font-weight: 800; }
+.sum-chip.active  { background: transparent; color: var(--accent); }
+.sum-chip.matched { background: transparent; color: var(--correct); }
+.tutorial-grid-wrap .sum-chip { background: #14110d; color: #f5f0e8; box-shadow: 0 0 0 1px rgba(245,240,232,.5); }
+.tutorial-grid-wrap .sum-chip.matched { background: var(--correct); color: #fff; }
