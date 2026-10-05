@@ -16,7 +16,7 @@ export function rateKeyForIp(ip) {
 }
 
 /* Repo plumbing that must never be served, even if it slips into the asset upload (.assetsignore is the primary control). */
-export const BLOCKED_PATH = /^\/(?:\.git|\.github|\.claude|\.wrangler|\.env|\.dev\.vars|\.gitignore|\.assetsignore|node_modules|docs|migrations|workers|tools|scripts|wrangler\.(?:jsonc?|toml)|package(?:-lock)?\.json|apps\/(?:dashboard|marketing|sleeptight-desktop)|apps\/totalcross\/worker)(?:[\/.]|$)|\.(?:md|pem|p8|key)$|\/\.env/i;
+export const BLOCKED_PATH = /^\/(?:\.git|\.github|\.claude|\.wrangler|\.env|\.dev\.vars|\.gitignore|\.assetsignore|node_modules|docs|migrations|supabase|workers|tools|scripts|wrangler\.(?:jsonc?|toml)|package(?:-lock)?\.json|apps\/(?:dashboard|marketing|sleeptight-desktop)|apps\/totalcross\/worker)(?:[\/.]|$)|\.(?:md|pem|p8|key)$|\/\.env/i;
 
 export function isBlockedPath(pathname) {
   let p = pathname;

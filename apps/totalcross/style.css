@@ -47,7 +47,7 @@ body {
   border-right: 1.5px solid var(--border);
 }
 .tc-logo {
-  height: 72px; width: auto; display: block;
+  height: 52px; /* fits the 64px .nav-shell with 6px clear top/bottom (was 72px, overran header lines) */ width: auto; display: block;
 }
 .brand-text { display: flex; flex-direction: column; justify-content: center; gap: 1px; }
 .brand-name {
@@ -703,9 +703,39 @@ body {
 }
 
 @media (max-width: 500px) {
-  :root { --cell-size: 30px; }
+  :root { --cell-size: 30px; --letter-scale: .8625; }
   .cell-number { font-size: 7px; }
-  .sum-chip { font-size: 9px; padding: 2px 5px; }
+  .sum-chip { font-size: 9px; padding: 2px 4px; }
+  /* Tighter gutters so the grid can use more of a phone's width
+     (applies to the game section only; header/nav untouched). */
+  .game-section > .container { padding-left: 10px; padding-right: 10px; }
+  .grid-wrapper { padding-right: 28px; } /* room for across sum chips */
+  /* keep the A=1 toggle pinned to the grid's top-right corner (was right:56px for the 52px desktop gutter) */
+  .grid-wrapper .letter-ref-toggle, .grid-wrapper .letter-ref-popup { right: 32px; }
+}
+
+/* ── MOBILE GRID FIT ─────────────────────────────────────────
+   game.js sets --cell-size / --letter-scale on #grid-wrapper on small
+   screens so the grid fits the width. iOS Safari zooms the page when a
+   focused input's font-size is < 16px, so on mobile the letter input is
+   always >= 16px and a transform scales the glyph back down to its usual
+   size relative to the cell. Desktop (> 900px) is unaffected. */
+@media (max-width: 900px) {
+  .cell-letter {
+    font-size: max(16px, calc(var(--cell-size) * 0.46));
+    inset: auto;
+    top: 0; left: 0;
+    width:  calc(100% / var(--letter-scale, 1));
+    height: calc(100% / var(--letter-scale, 1));
+    padding-top: calc(6px / var(--letter-scale, 1)); /* same 6px visual offset as desktop */
+    transform: scale(var(--letter-scale, 1));
+    transform-origin: 0 0;
+  }
+  .grid-fit-small .cell-number { font-size: 6px; top: 1px; left: 2px; }
+  /* keep sum chips proportional so they don't cover neighbouring cells */
+  .grid-fit-small .sum-chip { font-size: 7px; padding: 1px 2px; letter-spacing: 0; }
+  .grid-fit-small .letter-ref-toggle { padding: 2px 5px; font-size: .55rem; }
+  .grid-fit-small .cell-letter { padding-top: calc(var(--cell-size) * 0.16 / var(--letter-scale, 1)); }
 }
 
 /* ── OVER-SUM SHAKE ──────────────────────────────────────── */
@@ -797,3 +827,95 @@ body {
 /* Archive mode stats-bar override */
 .stats-bar-archive { color: var(--accent); font-weight: 700; }
 .stats-bar-archive::before { content: '⟳ '; font-size: .7rem; }
+
+/* ── r4: SEO heading, hook, Start here, leaderboard tabs, footer pitch ───── */
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.picker-hook {
+  font-size: 1.15rem; font-weight: 700; line-height: 1.35; letter-spacing: -.01em;
+  color: var(--text); margin-bottom: 14px; max-width: 60ch;
+}
+.diff-btn-tag {
+  position: absolute; top: 24px; right: 24px;
+  font-size: .62rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: #fff; background: var(--accent); padding: 3px 7px; line-height: 1.3;
+}
+.diff-btn:hover .diff-btn-tag { background: var(--bg); color: var(--text); }
+
+.lb-tabs { display: flex; gap: 0; margin-bottom: 10px; border: 1.5px solid var(--border); width: max-content; max-width: 100%; }
+.lb-tab {
+  background: var(--surface); color: var(--text); border: none; border-right: 1.5px solid var(--border);
+  font-family: inherit; font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  padding: 8px 14px; cursor: pointer; min-height: 34px;
+}
+.lb-tab:last-child { border-right: none; }
+.lb-tab:hover { background: var(--bg); }
+.lb-tab.active { background: var(--text); color: var(--bg); }
+.lb-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lb-note { font-size: .78rem; color: var(--muted); margin: -2px 0 8px; }
+
+.page-leaderboard { padding: 28px 0 36px; border-top: 1.5px solid var(--border); }
+.page-leaderboard-wrap { max-width: 520px; margin-bottom: 0; }
+
+.site-footer .footer-pitch { margin-bottom: 8px; color: var(--text); }
+
+@media (max-width: 900px) {
+  .diff-btn-tag { top: 20px; right: 20px; }
+}
+@media (max-width: 560px) {
+  .picker-hook { font-size: 1.02rem; }
+  .lb-tabs { width: 100%; }
+  .lb-tab { flex: 1; padding: 8px 6px; }
+}
+
+/* ── r7: BOARD STANDARD (light board, even 1px lines) ───────────────
+   Picked on the dev board page (dev/board.html?sq=thin&bl=clear&ch=plain):
+   - no black slab: white squares sit on the cream page, blocked cells clear;
+   - every grid line is the same 1px ink, horizontal and vertical. Each square
+     draws its frame with a ::before that overhangs its right/bottom edge by
+     1px, landing on the same pixels as the neighbour's own left/top line, so a
+     shared edge is one line and perimeter edges match it at any DPR/zoom;
+   - solid highlight colours (the old rgba tints sat on the black slab = muddy);
+   - plain sum numbers next to each word (tutorial keeps boxed chips because it
+     sits on a dark backdrop).
+   .grid keeps its 2px border WIDTH (transparent) so cell sizing and the
+   phone-fit branch's 4px grid-border maths are unchanged. */
+.grid { background: transparent; border-color: transparent; }
+.cell.blocked { background: transparent; }
+.cell.active,
+.cell.active.space-cell { border: 0; }
+.cell.active::before {
+  content: ''; position: absolute; pointer-events: none;
+  top: 0; left: 0; right: -1px; bottom: -1px;
+  border: 1px solid var(--border);
+}
+
+.cell.active.intersection             { background: #fbefec; }
+.cell.active.word-active              { background: #fff7d6; }
+.cell.active.intersection.word-active { background: #fde6cf; }
+.cell.active.selected,
+.cell.active.intersection.selected    { background: #ffd0d3; }
+.cell.active.prefill                  { background: #e6f4ec; }
+.cell.active.correct,
+.cell.active.intersection.correct     { background: #d7eedd; }
+.cell.active.correct.word-active      { background: #c9e8d2; }
+.cell.active.correct.selected         { background: #b9e0c5; }
+
+/* grey phrase-space squares: same frame, so a multi-word answer stays one strip */
+.cell.active.space-cell { background: #e4ded3; }
+.cell.active.space-cell::after { background: #a9a091; }
+
+/* tutorial highlight: accent ring drawn inside the frame (even on all 4 sides) */
+.cell.active.tut-intersection { background: #fff7d6; box-shadow: none; }
+.cell.active.tut-intersection::before { box-shadow: inset 0 0 0 2px var(--accent); }
+.cell.active.tut-intersection.correct { background: #d7eedd; }
+
+/* plain sum numbers */
+.sum-chip { background: transparent; color: var(--text); font-weight: 800; }
+.sum-chip.active  { background: transparent; color: var(--accent); }
+.sum-chip.matched { background: transparent; color: var(--correct); }
+.tutorial-grid-wrap .sum-chip { background: #14110d; color: #f5f0e8; box-shadow: 0 0 0 1px rgba(245,240,232,.5); }
+.tutorial-grid-wrap .sum-chip.matched { background: var(--correct); color: #fff; }

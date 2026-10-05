@@ -32,3 +32,4 @@ apps/totalcross/worker/
 # FlipFeed lives on Vercel; keep only the redirect stub page
 apps/flipfeed/*
 !apps/flipfeed/index.html
+supabase/
