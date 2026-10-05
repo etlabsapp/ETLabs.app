@@ -827,3 +827,46 @@ body {
 /* Archive mode stats-bar override */
 .stats-bar-archive { color: var(--accent); font-weight: 700; }
 .stats-bar-archive::before { content: '⟳ '; font-size: .7rem; }
+
+/* ── r4: SEO heading, hook, Start here, leaderboard tabs, footer pitch ───── */
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.picker-hook {
+  font-size: 1.15rem; font-weight: 700; line-height: 1.35; letter-spacing: -.01em;
+  color: var(--text); margin-bottom: 14px; max-width: 60ch;
+}
+.diff-btn-tag {
+  position: absolute; top: 24px; right: 24px;
+  font-size: .62rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: #fff; background: var(--accent); padding: 3px 7px; line-height: 1.3;
+}
+.diff-btn:hover .diff-btn-tag { background: var(--bg); color: var(--text); }
+
+.lb-tabs { display: flex; gap: 0; margin-bottom: 10px; border: 1.5px solid var(--border); width: max-content; max-width: 100%; }
+.lb-tab {
+  background: var(--surface); color: var(--text); border: none; border-right: 1.5px solid var(--border);
+  font-family: inherit; font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  padding: 8px 14px; cursor: pointer; min-height: 34px;
+}
+.lb-tab:last-child { border-right: none; }
+.lb-tab:hover { background: var(--bg); }
+.lb-tab.active { background: var(--text); color: var(--bg); }
+.lb-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lb-note { font-size: .78rem; color: var(--muted); margin: -2px 0 8px; }
+
+.page-leaderboard { padding: 28px 0 36px; border-top: 1.5px solid var(--border); }
+.page-leaderboard-wrap { max-width: 520px; margin-bottom: 0; }
+
+.site-footer .footer-pitch { margin-bottom: 8px; color: var(--text); }
+
+@media (max-width: 900px) {
+  .diff-btn-tag { top: 20px; right: 20px; }
+}
+@media (max-width: 560px) {
+  .picker-hook { font-size: 1.02rem; }
+  .lb-tabs { width: 100%; }
+  .lb-tab { flex: 1; padding: 8px 6px; }
+}

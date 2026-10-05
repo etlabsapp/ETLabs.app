@@ -17,7 +17,7 @@ assert.equal(rateKeyForIp("::ffff:198.51.100.4"), "198.51.100.4");
 
 // Blocked repo plumbing
 for (const p of ["/.git/config", "/.git/HEAD", "/.git", "/%2Egit/HEAD", "//.git/index", "/.claude/launch.json", "/workers/router.js",
-  "/migrations/0001_study_leaderboard.sql", "/wrangler.jsonc", "/docs/DEPLOY-ETLABS-APP.md", "/README.md", "/package.json",
+  "/migrations/0001_study_leaderboard.sql", "/supabase/migrations/20261003_totalcross_scores_difficulty.sql", "/supabase", "/wrangler.jsonc", "/docs/DEPLOY-ETLABS-APP.md", "/README.md", "/package.json",
   "/tools/appstore-download-stats/.env.example", "/apps/flipfeed/.env.example", "/apps/totalcross/worker/wrangler.toml",
   "/apps/dashboard/package.json", "/apps/marketing/", "/scripts/build_social_banner.py", "/.gitignore", "/.assetsignore"]) {
   assert.equal(isBlockedPath(p), true, p);

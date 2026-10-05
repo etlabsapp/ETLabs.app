@@ -244,6 +244,8 @@
 
     window.addEventListener('beforeunload', saveProgress);
     loadSolveCount();
+    initLeaderboardTabs();
+    loadLeaderboard(document.getElementById('page-leaderboard-list'));
   }
 
   function resumeGame(progress) {
@@ -291,6 +293,7 @@
     const gameEl = document.getElementById('game-section');
     if (diffEl) diffEl.setAttribute('hidden', '');
     if (gameEl) gameEl.removeAttribute('hidden');
+    refreshLeaderboards();
   }
 
   function initDifficultyPicker() {
@@ -350,14 +353,19 @@
 
   // ── TUTORIAL ────────────────────────────────────────────
 
+  let tutButtonsBound = false;
   function startTutorial() {
+    pauseTimer('tutorial'); // the clock doesn't run while the tutorial is open
     tutStep = 0;
     buildTutorialGrid();
     renderTutorialGrid();
     renderTutorialStep();
     document.getElementById('tutorial-overlay').removeAttribute('hidden');
-    document.getElementById('tut-next').addEventListener('click', advanceTutorial);
-    document.getElementById('tut-skip').addEventListener('click', endTutorial);
+    if (!tutButtonsBound) { // bind once (re-opening from How to Play used to stack or miss listeners)
+      tutButtonsBound = true;
+      document.getElementById('tut-next').addEventListener('click', advanceTutorial);
+      document.getElementById('tut-skip').addEventListener('click', endTutorial);
+    }
   }
 
   function buildTutorialGrid() {
@@ -499,6 +507,7 @@
   function endTutorial() {
     localStorage.setItem('tc_tutorial_done', '1');
     document.getElementById('tutorial-overlay').setAttribute('hidden', '');
+    resumeTimer('tutorial');
   }
 
   function renderTutLetterGrid() {
@@ -622,11 +631,7 @@
     document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', closeAllModals));
     document.getElementById('btn-take-tutorial').addEventListener('click', () => {
       closeAllModals();
-      tutStep = 0;
-      buildTutorialGrid();
-      renderTutorialGrid();
-      renderTutorialStep();
-      document.getElementById('tutorial-overlay').removeAttribute('hidden');
+      startTutorial();
     });
     document.getElementById('btn-share').addEventListener('click', shareResult);
     document.getElementById('btn-view-solution').addEventListener('click', () => { closeAllModals(); revealSolution(); });
@@ -1394,9 +1399,29 @@
 
   // ── TIMER ───────────────────────────────────────────────
 
+  // The clock runs only while a game is active AND nothing is pausing it.
+  // Pause reasons: 'tutorial' (overlay open) and 'hidden' (tab in background).
+  // One interval at most, so pausing/resuming can never double-count seconds.
+  let timerActive = false;
+  const timerPauses = new Set();
+
   function startTimer() {
-    if (timerInterval) clearInterval(timerInterval);
+    timerActive = true;
+    if (typeof document.hidden === 'boolean' && document.hidden) timerPauses.add('hidden');
     updateTimerDisplay();
+    runTicker();
+  }
+
+  function stopTimer() {
+    timerActive = false;
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  function runTicker() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    if (!timerActive || gameComplete || timerPauses.size) return;
     timerInterval = setInterval(() => {
       timerSeconds++;
       updateTimerDisplay();
@@ -1404,7 +1429,19 @@
     }, 1000);
   }
 
-  function stopTimer() { clearInterval(timerInterval); }
+  function pauseTimer(reason) {
+    timerPauses.add(reason);
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; saveProgress(); }
+  }
+
+  function resumeTimer(reason) {
+    timerPauses.delete(reason);
+    runTicker();
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pauseTimer('hidden'); else resumeTimer('hidden');
+  });
 
   function updateTimerDisplay() {
     document.getElementById('timer-display').textContent = formatTime(timerSeconds);
@@ -1417,7 +1454,8 @@
     gameComplete = true;
     stopTimer();
     clearProgress();
-    localStorage.setItem('tc_solved_' + puzzleNumber, JSON.stringify({ time: timerSeconds, hints: hintsUsed }));
+    localStorage.setItem('tc_solved_' + puzzleNumber, JSON.stringify({ time: timerSeconds, hints: hintsUsed, difficulty }));
+    try { localStorage.setItem(LAST_DIFF_KEY, difficulty); } catch (_) {}
     const gridState = [];
     grid.forEach(row => row.forEach(cell => {
       if (cell.active && cell.letter) gridState.push({ row: cell.row, col: cell.col, letter: cell.letter, revealed: cell.revealed });
@@ -1478,15 +1516,22 @@
 
   async function submitScore(displayName) {
     try {
-      await sb.from('scores').insert({
+      const row = {
         puzzle_number: puzzleNumber,
         puzzle_date:   currentPuzzleISO(),
         display_name:  displayName,
         time_seconds:  timerSeconds,
         hints_used:    hintsUsed,
         device_id:     getDeviceId(),
-      });
-      loadLeaderboard(document.getElementById('leaderboard-list'));
+        difficulty:    LB_DIFFS.includes(difficulty) ? difficulty : 'normal',
+      };
+      const { error } = await sb.from('scores').insert(row);
+      if (error && isMissingDifficultyColumn(error)) {
+        // DB migration not applied yet: keep the score, just without difficulty.
+        delete row.difficulty;
+        await sb.from('scores').insert(row);
+      }
+      refreshLeaderboards();
       loadSolveCount();
     } catch { /* offline — silently skip */ }
   }
@@ -1506,18 +1551,83 @@
 
   // ── SUPABASE — LEADERBOARD ──────────────────────────────
 
+  // Scores carry a difficulty ('easy' | 'normal' | 'hard'); rows saved before that column
+  // existed are backfilled to 'normal' by the migration (supabase/migrations/…_totalcross_scores_difficulty.sql).
+  // Tabs default to the player's current difficulty until they pick one.
+  const LB_DIFFS = ['easy', 'normal', 'hard'];
+  const LAST_DIFF_KEY = 'tc_last_difficulty';
+  let lbTab = null; // set when the player clicks a tab
+
+  function playerDifficulty() {
+    const gameEl = document.getElementById('game-section');
+    const solved = JSON.parse(localStorage.getItem('tc_solved_' + puzzleNumber) || 'null');
+    if (solved && LB_DIFFS.includes(solved.difficulty)) return solved.difficulty;
+    if (gameEl && !gameEl.hasAttribute('hidden') && LB_DIFFS.includes(difficulty)) return difficulty;
+    const progress = !archiveMode ? loadProgress() : null;
+    if (progress && LB_DIFFS.includes(progress.difficulty)) return progress.difficulty;
+    const last = localStorage.getItem(LAST_DIFF_KEY);
+    return LB_DIFFS.includes(last) ? last : 'normal';
+  }
+
+  function leaderboardDifficulty() { return lbTab || playerDifficulty(); }
+
+  function isMissingDifficultyColumn(error) {
+    const msg = `${error && error.code} ${error && error.message}`;
+    return /difficulty/i.test(msg) && /(42703|PGRST204|column|schema cache)/i.test(msg);
+  }
+
+  function initLeaderboardTabs() {
+    document.querySelectorAll('.lb-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        lbTab = tab.dataset.lbDiff;
+        refreshLeaderboards();
+      });
+    });
+  }
+
+  // Reload every leaderboard that is on screen (the page one is always visible).
+  function refreshLeaderboards() {
+    document.querySelectorAll('.leaderboard-list').forEach(list => {
+      const modal = list.closest('.modal');
+      if (!modal || !modal.hasAttribute('hidden')) loadLeaderboard(list);
+    });
+  }
+
+  function syncLeaderboardTabs(listEl, diff) {
+    const wrap = listEl.closest('.leaderboard-wrap');
+    if (!wrap) return;
+    wrap.querySelectorAll('.lb-tab').forEach(tab => {
+      const on = tab.dataset.lbDiff === diff;
+      tab.classList.toggle('active', on);
+      tab.setAttribute('aria-selected', String(on));
+    });
+    listEl.setAttribute('aria-label', `Leaderboard: ${diff}`);
+  }
+
   async function loadLeaderboard(listEl) {
     listEl = listEl || document.getElementById('leaderboard-list');
     if (!listEl) return;
+    const diff = leaderboardDifficulty();
+    syncLeaderboardTabs(listEl, diff);
+    const note = listEl.closest('.leaderboard-wrap')?.querySelector('.lb-note');
+    if (note) note.hidden = true;
     listEl.innerHTML = '<li class="lb-loading">Loading…</li>';
-    try {
-      const { data, error } = await sb
+    const query = byDifficulty => {
+      let q = sb
         .from('scores')
         .select('display_name, time_seconds, hints_used')
-        .eq('puzzle_date', currentPuzzleISO())
-        .order('time_seconds', { ascending: true })
-        .limit(10);
-
+        .eq('puzzle_date', currentPuzzleISO());
+      if (byDifficulty) q = q.eq('difficulty', diff);
+      return q.order('time_seconds', { ascending: true }).limit(10);
+    };
+    try {
+      let { data, error } = await query(true);
+      if (error && isMissingDifficultyColumn(error)) {
+        // Migration not applied yet: show everyone, and say so.
+        ({ data, error } = await query(false));
+        if (!error && note) { note.textContent = 'Showing all difficulties for now.'; note.hidden = false; }
+      }
+      if (diff !== leaderboardDifficulty()) return; // tab changed while loading
       if (error) throw error;
       renderLeaderboard(data || [], listEl);
     } catch {
@@ -1528,7 +1638,8 @@
   function renderLeaderboard(entries, listEl) {
     const username = localStorage.getItem(USERNAME_KEY) || '';
     if (!entries.length) {
-      listEl.innerHTML = '<li class="lb-loading">No scores yet — be the first!</li>';
+      const label = { easy: 'Easy', normal: 'Normal', hard: 'Hard' }[leaderboardDifficulty()] || '';
+      listEl.innerHTML = `<li class="lb-loading">No ${label} scores yet — be the first!</li>`;
       return;
     }
     listEl.innerHTML = entries.map((e, i) => {
