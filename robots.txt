@@ -1,0 +1,6 @@
+# etlabs.app
+User-agent: *
+Allow: /
+Disallow: /study/api/
+
+Sitemap: https://etlabs.app/sitemap.xml

@@ -5,6 +5,7 @@
 import catalog from "../apps/totalcross/api/themes-catalog.json";
 import { cleanNick } from "./study-nick.mjs";
 import { rateKeyForIp, isBlockedPath } from "./security.mjs";
+import { canonicalHostRedirect, legacyRedirect, permanentRedirect, wantsNoindex } from "./seo.mjs";
 
 const LAUNCH = catalog.launchDate; // YYYY-MM-DD
 const THEMES = catalog.themes;
@@ -302,9 +303,30 @@ async function handleStudyApi(request, env, url) {
   }
 }
 
+function redirect301(location) {
+  return new Response(null, { status: 301, headers: { location, "cache-control": "public, max-age=3600" } });
+}
+
+/* Preview deployments (workers.dev / SEO_NOINDEX=1) must never be indexed. */
+function finalize(response, url, env) {
+  if (!wantsNoindex(url.hostname, env)) return response;
+  const r = new Response(response.body, response);
+  r.headers.set("x-robots-tag", "noindex");
+  return r;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    // http -> https and www -> apex in one 301 (only for etlabs.app hosts; workers.dev/localhost untouched)
+    const canonical = canonicalHostRedirect(request.url);
+    if (canonical) return finalize(redirect301(canonical), url, env);
+    return finalize(await route(request, env, url), url, env);
+  },
+};
+
+async function route(request, env, url) {
+  {
     if (isBlockedPath(url.pathname)) {
       return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
     }
@@ -351,7 +373,14 @@ export default {
       return new Response(null, { status: 302, headers: { location: "/study/?" + params.toString(), "cache-control": "no-store" } });
     }
 
-    // Static site
-    return env.ASSETS.fetch(request);
-  },
-};
+    // Stale/orphaned pages -> their current home (301)
+    const legacy = legacyRedirect(url.pathname);
+    if (legacy) return redirect301(legacy + url.search);
+
+    // Static site. The asset layer answers /x.html -> /x and /x/ -> /x with 307; those moves are permanent, so send 301.
+    const res = await env.ASSETS.fetch(request);
+    const perm = permanentRedirect(res.status, res.headers.get("location"));
+    if (perm) return redirect301(perm.location);
+    return res;
+  }
+}

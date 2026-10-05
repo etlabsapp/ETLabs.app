@@ -5,15 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#050a0e">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Security+ Study: Hack the Quiz</title>
+<title>Free Security+ SY0-701 Practice Quiz Games | ET Labs</title>
 <meta name="description" content="Interactive CompTIA Security+ (SY0-701) quizzes: pick Day 1, Day 2, or All, then drill terms, exam-style scenarios, or a mix. Live nickname leaderboard.">
-<meta property="og:title" content="Security+ Study: Hack the Quiz">
+<link rel="canonical" href="https://etlabs.app/study/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Security+ Study: Hack the Quiz","url":"https://etlabs.app/study/","description":"Free CompTIA Security+ (SY0-701) practice quiz games: terms, exam-style scenarios or a mix, with a nickname leaderboard.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","@id":"https://etlabs.app/#organization","name":"ET Labs","url":"https://etlabs.app/"}}</script>
+<meta property="og:title" content="Free Security+ SY0-701 Practice Quiz Games | ET Labs">
 <meta property="og:description" content="Hacker-style CompTIA Security+ quizzes. Pick a class day or all of them, choose Terms, Scenarios, or Mixed, and climb the leaderboard.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://etlabs.app/study/">
 <meta property="og:site_name" content="ET Labs">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Security+ Study: Hack the Quiz">
+<meta name="twitter:title" content="Free Security+ SY0-701 Practice Quiz Games | ET Labs">
 <meta name="twitter:description" content="Hacker-style CompTIA Security+ quizzes. Pick a class day or all of them, choose Terms, Scenarios, or Mixed, and climb the leaderboard.">
 <script>
 /* =====================================================================
@@ -1294,7 +1296,7 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
   <!-- ===== START ===== -->
   <section class="screen on" id="sStart">
     <div class="logo">root@<b>secplus</b>:~$ ./quiz --deck</div>
-    <h1 class="title"><span class="glow-g" id="tTop"></span><br><span class="glitch glow-c" id="tMain"></span></h1>
+    <h1 class="title"><span class="glow-g" id="tTop">Security+ Study</span><br><span class="glitch glow-c" id="tMain" data-t="Hack the Quiz">Hack the Quiz</span></h1>
     <div class="sub" id="tSub"></div>
     <div class="term" id="bootlog"></div>
     <div class="stats3">
@@ -1869,7 +1871,7 @@ function renderStart(){
   const main = (parts.length > 1 ? parts.slice(1).join(":") : DECK_TITLE).trim();
   $("tMain").textContent = main; $("tMain").setAttribute("data-t", main);
   $("tSub").textContent = DECK_SUBTITLE;
-  document.title = DECK_TITLE;
+  // document.title stays the static, search-friendly <title> from the HTML (SEO 2026-10-04)
   syncToggles();
 }
 function syncToggles(){
