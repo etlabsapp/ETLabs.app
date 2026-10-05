@@ -15,7 +15,7 @@ const gameSrc = fs.readFileSync(root + "apps/totalcross/game.js", "utf8");
 // Run puzzles.js + game.js in a stub browser context to reach window.TotalCrossRotation.
 const store = {};
 const ctx = {
-  window: { supabase: { createClient: () => ({}) }, location: { search: "" } },
+  window: { supabase: { createClient: () => ({}) }, location: { search: "" }, addEventListener() {} },
   document: { addEventListener() {}, getElementById() { return null; } },
   localStorage: { getItem: k => store[k] ?? null, setItem: (k, v) => { store[k] = String(v); } },
   console, Date, Math, JSON, URLSearchParams,
