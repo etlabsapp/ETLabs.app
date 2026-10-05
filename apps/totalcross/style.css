@@ -47,7 +47,7 @@ body {
   border-right: 1.5px solid var(--border);
 }
 .tc-logo {
-  height: 72px; width: auto; display: block;
+  height: 52px; /* fits the 64px .nav-shell with 6px clear top/bottom (was 72px, overran header lines) */ width: auto; display: block;
 }
 .brand-text { display: flex; flex-direction: column; justify-content: center; gap: 1px; }
 .brand-name {
