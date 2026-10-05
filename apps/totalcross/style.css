@@ -276,6 +276,10 @@ body {
   border-bottom: 1.5px solid var(--border);
 }
 .difficulty-section[hidden] { display: none; }
+.tc-page-title {
+  font-size: clamp(1.5rem, 4.5vw, 2.25rem); font-weight: 800; line-height: 1.1;
+  letter-spacing: -.02em; margin: 0 0 14px;
+}
 .picker-label {
   font-size: .7rem; font-weight: 800; letter-spacing: .12em;
   text-transform: uppercase; color: var(--muted); margin-bottom: 20px;

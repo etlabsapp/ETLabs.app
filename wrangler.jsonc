@@ -9,7 +9,9 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    "run_worker_first": true
+    "run_worker_first": true,
+    // Unknown paths get /404.html with status 404 (instead of an empty 404 body)
+    "not_found_handling": "404-page"
   },
   "compatibility_flags": [
     "nodejs_compat"

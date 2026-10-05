@@ -3,28 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Total Cross | ET Labs</title>
+  <title>Total Cross: Free Daily Number Crossword Puzzle | ET Labs</title>
   <meta name="description" content="A crossword where every word adds up. Letters have values — A is 1, Z is 26. One free puzzle a day.">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Total Cross","url":"https://etlabs.app/apps/totalcross/","description":"A free daily number crossword: letters have values (A=1 to Z=26) and every word must add up to its target. One puzzle a day, three difficulty levels.","applicationCategory":"GameApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","image":"https://etlabs.app/apps/totalcross/brand/og-totalcross.png","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","@id":"https://etlabs.app/#organization","name":"ET Labs","url":"https://etlabs.app/"}}</script>
   <link rel="canonical" href="https://etlabs.app/apps/totalcross/">
   <meta name="theme-color" content="#f5f0e8">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="ET Labs">
-  <meta property="og:title" content="Total Cross">
+  <meta property="og:title" content="Total Cross: Free Daily Number Crossword Puzzle | ET Labs">
   <meta property="og:description" content="A crossword where every word adds up. Letters have values — A is 1, Z is 26. One free puzzle a day.">
   <meta property="og:url" content="https://etlabs.app/apps/totalcross/">
   <meta property="og:image" content="https://etlabs.app/apps/totalcross/brand/og-totalcross.png">
   <meta property="og:image:width" content="1536">
   <meta property="og:image:height" content="1024">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Total Cross">
+  <meta name="twitter:title" content="Total Cross: Free Daily Number Crossword Puzzle | ET Labs">
   <meta name="twitter:description" content="A crossword where every word adds up. One free puzzle a day.">
   <meta name="twitter:image" content="https://etlabs.app/apps/totalcross/brand/og-totalcross.png">
   <link rel="icon" type="image/png" sizes="32x32" href="brand/logos/png/favicon-32.png">
   <link rel="apple-touch-icon" href="brand/logos/png/favicon-apple-touch-180.png">
   <link rel="icon" type="image/png" sizes="512x512" href="brand/logos/png/favicon-512.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,700;0,800;0,900;1,700;1,800;1,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="/assets/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/fonts-totalcross.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,7 +32,7 @@
   <!-- HEADER -->
   <header class="site-header">
     <div class="nav-shell container">
-      <a href="../../index.html" class="brand-mark" aria-label="Back to ET Labs">
+      <a href="/" class="brand-mark" aria-label="Back to ET Labs">
         <img src="brand/logos/svg/totalcross-mark-light.svg" alt="Total Cross" class="tc-logo">
         <div class="brand-text">
           <span class="brand-name">Total Cross</span>
@@ -40,7 +40,7 @@
         </div>
       </a>
       <nav class="site-nav">
-        <a href="../../index.html">ET Labs</a>
+        <a href="/">ET Labs</a>
         <button id="btn-how-to-play" class="nav-btn" type="button">How to Play</button>
         <button id="btn-stats" class="nav-btn" type="button">Stats</button>
         <button id="btn-archive" class="nav-btn" type="button">Archive</button>
@@ -208,6 +208,7 @@
     <!-- DIFFICULTY PICKER -->
     <section class="difficulty-section" id="difficulty-section">
       <div class="container">
+        <h1 class="tc-page-title">Total Cross: today&rsquo;s number crossword</h1>
         <p class="picker-label">Choose your difficulty</p>
         <div class="picker-buttons">
           <button class="diff-btn" data-diff="easy" type="button">
@@ -315,7 +316,7 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p>Total Cross is a free daily puzzle by <a href="../../index.html">ET Labs</a>. &copy; 2026 ET Labs. All rights reserved.</p>
+      <p>Total Cross is a free daily puzzle by <a href="/">ET Labs</a>. &copy; 2026 ET Labs. All rights reserved.</p>
     </div>
   </footer>
 

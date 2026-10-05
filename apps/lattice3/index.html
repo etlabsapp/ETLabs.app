@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lattice³ | ET Labs</title>
+    <title>Lattice³: 3D Crossword Puzzle on a Rotating Cube | ET Labs</title>
     <meta name="description" content="Lattice³ — a 3D crossword played on a rotating cube. Solve words along X, Y, and Z axes.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <link rel="canonical" href="https://etlabs.app/apps/lattice3/">
+    <meta property="og:url" content="https://etlabs.app/apps/lattice3/">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Lattice³","url":"https://etlabs.app/apps/lattice3/","description":"A 3D crossword played on a rotating cube: solve words along the X, Y and Z axes.","applicationCategory":"GameApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","publisher":{"@type":"Organization","@id":"https://etlabs.app/#organization","name":"ET Labs","url":"https://etlabs.app/"}}</script>
+    <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="../../assets/css/style.css">
 
     <style>
@@ -29,6 +31,7 @@
         flex-shrink: 0;
     }
     .puzzle-bar-label {
+        margin: 0;
         font-size: 12px;
         font-weight: 600;
         color: var(--muted);
@@ -285,7 +288,7 @@
     <header class="site-header">
         <div class="container">
             <div class="nav-shell">
-                <a href="../../index.html" class="brand-mark" aria-label="ET Labs home">
+                <a href="/" class="brand-mark" aria-label="ET Labs home">
                     <span class="brand-logo" role="img" aria-label="ET Labs">
                         <img src="../../assets/images/etlabs-logo-etl.svg" alt="" class="logo-etl" style="height:72px;width:auto;display:block;">
                         <img src="../../assets/images/etlabs-logo-abs.svg" alt="" style="height:72px;width:auto;display:block;">
@@ -295,20 +298,20 @@
                     <span></span><span></span>
                 </button>
                 <nav class="site-nav" id="site-menu">
-                    <a href="../../philosophy.html">Philosophy</a>
+                    <a href="/philosophy">Philosophy</a>
                     <div class="nav-dropdown">
                         <button type="button" class="nav-dropdown-trigger" aria-expanded="false"
                             aria-haspopup="true" aria-controls="products-dropdown" id="products-dropdown-trigger">
                             Products
                         </button>
                         <div class="nav-dropdown-menu" id="products-dropdown" role="menu">
-                            <a href="../sleeptight/index.html" role="menuitem">SleepTight: DreamWrite</a>
-                            <a href="index.html" role="menuitem">Lattice³</a>
-                            <a href="../totalcross/index.html" role="menuitem">Total Cross</a>
+                            <a href="/apps/sleeptight/" role="menuitem">SleepTight: DreamWrite</a>
+                            <a href="/apps/lattice3/" role="menuitem">Lattice³</a>
+                            <a href="/apps/totalcross/" role="menuitem">Total Cross</a>
                         </div>
                     </div>
-                    <a href="../../studio.html">Studio</a>
-                    <a href="../../contact.html">Contact</a>
+                    <a href="/studio">Studio</a>
+                    <a href="/contact">Contact</a>
                 </nav>
             </div>
         </div>
@@ -318,7 +321,7 @@
 
         <!-- Puzzle selector -->
         <div class="puzzle-bar">
-            <span class="puzzle-bar-label">Puzzle</span>
+            <h1 class="puzzle-bar-label">Lattice³ 3D crossword</h1>
             <div class="puzzle-tabs">
                 <button class="puzzle-tab active" data-puzzle="0">
                     Starter Cube <em>· Easy</em>
