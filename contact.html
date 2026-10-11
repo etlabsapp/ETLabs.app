@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to content</a>
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
     <div class="bg-grid"></div>
@@ -26,7 +27,7 @@
                     </span>
                 </a>
 
-                <button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
+                <button class="mobile-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-menu">
                     <span></span>
                     <span></span>
                 </button>
@@ -34,21 +35,25 @@
                 <nav class="site-nav" id="site-menu">
                     <a href="/philosophy">Philosophy</a>
                     <div class="nav-dropdown">
-                        <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="products-dropdown" id="products-dropdown-trigger">Products</button>
-                        <div class="nav-dropdown-menu" id="products-dropdown" role="menu">
-                            <a href="/apps/sleeptight/" role="menuitem">SleepTight: DreamWrite</a>
-                            <a href="/apps/lattice3/" role="menuitem">Lattice³ <span class="nav-badge">Soon</span></a>
-                            <a href="/apps/totalcross/" role="menuitem">Total Cross</a>
+                        <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-controls="products-dropdown" id="products-dropdown-trigger">Products</button>
+                        <div class="nav-dropdown-menu" id="products-dropdown">
+<a href="/products">All products</a>
+<a href="https://skillsforvets.org/">Skills for Vets</a>
+<a href="/study/">Security+ Study</a>
+                            <a href="/apps/sleeptight/">SleepTight: DreamWrite</a>
+                            <a href="/apps/lattice3/">Lattice³ <span class="nav-badge">Soon</span></a>
+                            <a href="/apps/totalcross/">Total Cross</a>
                         </div>
                     </div>
                     <a href="/studio">Studio</a>
-                    <a href="/contact">Contact</a>
+                    <a href="/apps/sleeptight/support">Support</a>
+<a href="/contact">Contact</a>
                 </nav>
             </div>
         </div>
     </header>
 
-    <main>
+    <main id="main-content" tabindex="-1">
         <section class="section" id="contact">
             <div class="container">
                 <div class="contact-shell">
@@ -66,9 +71,9 @@
                             Use this email for SleepTight, future ET Labs products, or general studio conversations.
                         </p>
                         <div class="social-row">
-                            <a href="https://www.instagram.com/sleeptight.app/" target="_blank" rel="noopener noreferrer">Instagram</a>
-                            <a href="https://x.com/sleeptight_app" target="_blank" rel="noopener noreferrer">X</a>
-                            <a href="https://www.tiktok.com/@sleeptight_app" target="_blank" rel="noopener noreferrer">TikTok</a>
+                            <a href="https://www.instagram.com/sleeptight.app/" target="_blank" rel="noopener noreferrer">SleepTight on Instagram</a>
+                            <a href="https://x.com/sleeptight_app" target="_blank" rel="noopener noreferrer">SleepTight on X</a>
+                            <a href="https://www.tiktok.com/@sleeptight_app" target="_blank" rel="noopener noreferrer">SleepTight on TikTok</a>
                         </div>
                     </div>
                 </div>

@@ -1,38 +1,34 @@
 const toggle = document.querySelector('.mobile-toggle');
 const menu = document.querySelector('.site-nav');
-
-if (toggle && menu) {
-  toggle.addEventListener('click', () => {
-    const open = menu.classList.toggle('is-open');
-    toggle.setAttribute('aria-expanded', String(open));
-  });
-
-  menu.querySelectorAll('a[href]').forEach((link) => {
-    link.addEventListener('click', () => {
-      menu.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
-  });
-}
-
-// Products dropdown
 const productsTrigger = document.getElementById('products-dropdown-trigger');
 const productsDropdown = document.querySelector('.nav-dropdown');
-
-if (productsTrigger && productsDropdown) {
-  productsTrigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = productsDropdown.classList.toggle('is-open');
-    productsTrigger.setAttribute('aria-expanded', String(open));
-  });
-
-  document.addEventListener('click', () => {
-    productsDropdown.classList.remove('is-open');
-    productsTrigger.setAttribute('aria-expanded', 'false');
-  });
-
-  productsDropdown.addEventListener('click', (e) => e.stopPropagation());
+function setMenu(open) {
+  if (!toggle || !menu) return;
+  menu.classList.toggle('is-open', open);
+  toggle.setAttribute('aria-expanded', String(open));
+  toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
 }
+function setProducts(open) {
+  if (!productsTrigger || !productsDropdown) return;
+  productsDropdown.classList.toggle('is-open', open);
+  productsTrigger.setAttribute('aria-expanded', String(open));
+}
+if (toggle && menu) {
+  toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+  menu.querySelectorAll('a[href]').forEach(link => link.addEventListener('click', () => {setMenu(false); setProducts(false);}));
+}
+if (productsTrigger) productsTrigger.addEventListener('click', () => setProducts(productsTrigger.getAttribute('aria-expanded') !== 'true'));
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (productsTrigger?.getAttribute('aria-expanded') === 'true') {setProducts(false); productsTrigger.focus();}
+  else if (toggle?.getAttribute('aria-expanded') === 'true') {setMenu(false); toggle.focus();}
+});
+document.addEventListener('click', e => {
+  if (!productsDropdown?.contains(e.target)) setProducts(false);
+  if (menu && !menu.contains(e.target) && !toggle?.contains(e.target)) setMenu(false);
+});
+const mobileLayout = matchMedia('(max-width: 980px)');
+mobileLayout.addEventListener('change', () => {setMenu(false);setProducts(false);});
 
 /** Scroll reveal animations. */
 function setupRevealAnimations() {
@@ -68,6 +64,7 @@ setupRevealAnimations();
     if (!logoImg) return;
 
     function playJitter() {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         if (logoImg.classList.contains('logo-jitter')) return;
         logoImg.classList.add('logo-jitter');
         setTimeout(function () {
