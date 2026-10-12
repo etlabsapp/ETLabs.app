@@ -71,11 +71,27 @@ function jsonResponse(body, status = 200) {
  *   GET  /study/api/leaderboard?day=1                        -> {day, modes:{terms:[],scen:[],mixed:[]}}
  * Storage: D1 binding STUDY_DB. No PII: nickname only; IPs are never stored, only
  * SHA-256(daily random salt + IP) kept <= 10 minutes for rate limiting; salts rotate daily.
- * Add future decks by adding a key to STUDY_DECKS ("2", "all", ...).
+ * Deck keys: "exam" (whole Security+ exam) and "d1".."d5" (one domain); "1"/"2"/"all" are legacy class-day boards.
  * Nicks starting with TEST_ (any case) are accepted and stored but hidden from boards and ranks.
  * ===================================================================== */
+// Security+ SY0-701 whole-exam rounds (2026-10-12): every run is a random draw of a fixed size from the
+// selected pool, so all of these boards share one round shape. Must match ROUND in study/index.html
+// (checked by scripts/study-coverage.mjs).
+const STUDY_EXAM_DECK = {
+  terms: { questions: 30, minSec: 30 },   // 30 random term cards  x 1.0s
+  scen:  { questions: 20, minSec: 40 },   // 20 random scenarios   x 2.0s
+  mixed: { questions: 24, minSec: 36 },   // 12 terms x 1.0s + 12 scenarios x 2.0s
+  cert:  { questions: 12, minSec: 18 },   // 12 cert fields x 1.5s (Full exam + Domain 1 only on the client)
+};
 const STUDY_DECKS = {
   // questions = full-round length per mode; minSec = minimum plausible seconds for a full round
+  "exam": STUDY_EXAM_DECK,                  // whole exam (all 5 domains), the default
+  "d1": STUDY_EXAM_DECK,                    // 1.0 General Security Concepts
+  "d2": STUDY_EXAM_DECK,                    // 2.0 Threats, Vulnerabilities & Mitigations
+  "d3": STUDY_EXAM_DECK,                    // 3.0 Security Architecture
+  "d4": STUDY_EXAM_DECK,                    // 4.0 Security Operations
+  "d5": STUDY_EXAM_DECK,                    // 5.0 Security Program Management & Oversight
+  // Legacy class-day boards (Day 1 / Day 2 / All). The client no longer uses them; kept so old scores stay readable.
   "1": {
     terms: { questions: 28, minSec: 28 },   // 28 term cards   x 1.0s
     scen:  { questions: 28, minSec: 56 },   // 28 scenarios    x 2.0s
