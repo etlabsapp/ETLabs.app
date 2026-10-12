@@ -1,0 +1,24 @@
+/* Shared Lattice glass sculpture: teaser and catalog cards. */
+.glass-scene { --glass-size:146px; --glass-depth:73px; position:relative; width:260px; height:260px; display:grid; place-items:center; perspective:850px; }
+.glass-scene::after { content:""; position:absolute; width:150px; height:24px; left:50%; bottom:5px; transform:translateX(-50%); border-radius:50%; background:radial-gradient(ellipse,rgba(89,84,133,.24),rgba(137,132,174,0) 72%); filter:blur(9px); }
+.lattice-cube { position:relative; width:var(--glass-size); height:var(--glass-size); transform-style:preserve-3d; transform:rotateX(-22deg) rotateY(34deg) rotateZ(-3deg); animation:orbit-cube 28s linear infinite; }
+.lattice-cube .face { position:absolute; inset:0; border:1px solid rgba(142,140,180,.5); border-radius:4px; backface-visibility:visible; background:linear-gradient(135deg,rgba(255,255,255,.68) 0%,rgba(241,245,255,.15) 28%,rgba(202,208,237,.12) 53%,rgba(173,166,214,.3) 100%); box-shadow:inset 1px 1px 2px rgba(255,255,255,.95),inset -2px -2px 3px rgba(130,122,176,.19),inset 0 0 22px rgba(220,224,248,.24); }
+.lattice-cube .face::before { content:""; position:absolute; inset:3px; border-radius:2px; background:linear-gradient(125deg,transparent 4%,rgba(255,255,255,.68) 5%,rgba(255,255,255,.08) 17%,transparent 18%,transparent 56%,rgba(255,255,255,.4) 57%,rgba(255,255,255,.04) 68%,transparent 69%); border-top:1px solid rgba(255,255,255,.65); border-left:1px solid rgba(255,255,255,.35); }
+.lattice-cube .face::after { content:""; position:absolute; inset:0; border-radius:4px; box-shadow:inset 0 0 0 3px rgba(255,255,255,.13); }
+.lattice-cube .front { transform:translateZ(var(--glass-depth)); }
+.lattice-cube .back { transform:rotateY(180deg) translateZ(var(--glass-depth)); }
+.lattice-cube .right { transform:rotateY(90deg) translateZ(var(--glass-depth)); background-color:rgba(116,111,169,.055); }
+.lattice-cube .left { transform:rotateY(-90deg) translateZ(var(--glass-depth)); }
+.lattice-cube .top { transform:rotateX(90deg) translateZ(var(--glass-depth)); background-color:rgba(255,255,255,.2); }
+.lattice-cube .bottom { transform:rotateX(-90deg) translateZ(var(--glass-depth)); background-color:rgba(153,145,194,.12); }
+[data-lattice-motion].paused .lattice-cube { animation-play-state:paused; }
+.motion-toggle { display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid #bcb6cf;color:#615787;background:rgba(255,255,255,.55);cursor:pointer; }
+.motion-toggle:hover { background:#fff; }
+.motion-toggle:focus-visible { outline:3px solid #4b59c9;outline-offset:4px; }
+.lattice-card { position:relative; background:radial-gradient(ellipse at 50% 24%,#eeedf8,#faf9f6 75%); }
+.lattice-card .glass-scene { --glass-size:90px;--glass-depth:45px;width:180px;height:170px;margin:0 auto 24px; }
+.lattice-card .glass-scene::after { width:110px;height:15px;bottom:0; }
+.lattice-card .motion-toggle { position:absolute;right:16px;top:16px; }
+@keyframes orbit-cube { from{transform:rotateX(-22deg) rotateY(34deg) rotateZ(-3deg)}to{transform:rotateX(-22deg) rotateY(394deg) rotateZ(-3deg)} }
+@media(prefers-reduced-motion:reduce) { .lattice-cube{animation:none}.motion-toggle{display:none} }
+@supports not (transform-style:preserve-3d) { .lattice-cube{animation:none;transform:rotate(-12deg)}.lattice-cube .face:not(.front){display:none}.lattice-cube .front{transform:none}.motion-toggle{display:none} }
