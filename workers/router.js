@@ -6,9 +6,15 @@ import catalog from "../apps/totalcross/api/themes-catalog.json";
 import { cleanNick } from "./study-nick.mjs";
 import { rateKeyForIp, isBlockedPath } from "./security.mjs";
 import { canonicalHostRedirect, legacyRedirect, permanentRedirect, wantsNoindex } from "./seo.mjs";
+import { cutoverNumber, puzzleIndexForNumber } from "./totalcross-rotation.mjs";
 
 const LAUNCH = catalog.launchDate; // YYYY-MM-DD
 const THEMES = catalog.themes;
+const ROTATION = {
+  total: THEMES.length,
+  legacyCount: catalog.legacyCount,
+  cutoverN: catalog.cutoverDate ? cutoverNumber(LAUNCH, catalog.cutoverDate) : null,
+};
 
 function parseYmd(s) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || "");
@@ -34,7 +40,7 @@ function themesForDate(dateStr) {
   const target = parseYmd(dateStr);
   if (!launch || !target) return null;
   const puzzleNumber = Math.max(1, daysBetweenUtc(launch, target) + 1);
-  const theme = THEMES[(puzzleNumber - 1) % THEMES.length];
+  const theme = THEMES[puzzleIndexForNumber(puzzleNumber, ROTATION)];
   return {
     schemaVersion: 1,
     date: dateStr,

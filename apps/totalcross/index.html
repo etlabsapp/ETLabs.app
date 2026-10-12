@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Total Cross: Free Daily Number Crossword Puzzle | ET Labs</title>
-  <meta name="description" content="A crossword where every word adds up. Letters have values — A is 1, Z is 26. One free puzzle a day.">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Total Cross","url":"https://etlabs.app/apps/totalcross/","description":"A free daily number crossword: letters have values (A=1 to Z=26) and every word must add up to its target. One puzzle a day, three difficulty levels.","applicationCategory":"GameApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","image":"https://etlabs.app/apps/totalcross/brand/og-totalcross.png","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","@id":"https://etlabs.app/#organization","name":"ET Labs","url":"https://etlabs.app/"}}</script>
+  <meta name="description" content="Total Cross is a free daily number crossword: every letter has a value from A=1 to Z=26, and each word must add up to its target. Three difficulty levels, a daily leaderboard, no login.">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Total Cross","alternateName":"Total Cross: Free Daily Number Crossword","url":"https://etlabs.app/apps/totalcross/","description":"A free daily number crossword: letters have values (A=1 to Z=26) and every word must add up to its target. One puzzle a day, three difficulty levels.","image":"https://etlabs.app/apps/totalcross/brand/og-totalcross.png","genre":["Puzzle","Crossword","Word game"],"gamePlatform":"Web browser","applicationCategory":"GameApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","playMode":"SinglePlayer","isAccessibleForFree":true,"inLanguage":"en","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","@id":"https://etlabs.app/#organization","name":"ET Labs","url":"https://etlabs.app/"},"publisher":{"@type":"Organization","@id":"https://etlabs.app/#organization","name":"ET Labs","url":"https://etlabs.app/"}}</script>
   <link rel="canonical" href="https://etlabs.app/apps/totalcross/">
   <meta name="theme-color" content="#f5f0e8">
   <meta property="og:type" content="website">
@@ -23,6 +23,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="brand/logos/png/favicon-32.png">
   <link rel="apple-touch-icon" href="brand/logos/png/favicon-apple-touch-180.png">
   <link rel="icon" type="image/png" sizes="512x512" href="brand/logos/png/favicon-512.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="preload" href="/assets/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/css/fonts-totalcross.css">
   <link rel="stylesheet" href="style.css">
@@ -142,6 +143,12 @@
         <div class="reaction-tally" id="stats-reaction-tally"></div>
         <div class="leaderboard-wrap" id="stats-leaderboard-wrap">
           <h3 class="leaderboard-title">Today's leaderboard</h3>
+          <div class="lb-tabs" role="tablist" aria-label="Leaderboard difficulty">
+            <button type="button" role="tab" class="lb-tab" data-lb-diff="easy" aria-selected="false">Easy</button>
+            <button type="button" role="tab" class="lb-tab" data-lb-diff="normal" aria-selected="true">Normal</button>
+            <button type="button" role="tab" class="lb-tab" data-lb-diff="hard" aria-selected="false">Hard</button>
+          </div>
+          <p class="lb-note" hidden></p>
           <ol class="leaderboard-list" id="stats-leaderboard-list">
             <li class="lb-loading">Loading…</li>
           </ol>
@@ -180,6 +187,12 @@
         <!-- Leaderboard -->
         <div class="leaderboard-wrap" id="leaderboard-wrap">
           <h3 class="leaderboard-title">Today's leaderboard</h3>
+          <div class="lb-tabs" role="tablist" aria-label="Leaderboard difficulty">
+            <button type="button" role="tab" class="lb-tab" data-lb-diff="easy" aria-selected="false">Easy</button>
+            <button type="button" role="tab" class="lb-tab" data-lb-diff="normal" aria-selected="true">Normal</button>
+            <button type="button" role="tab" class="lb-tab" data-lb-diff="hard" aria-selected="false">Hard</button>
+          </div>
+          <p class="lb-note" hidden></p>
           <ol class="leaderboard-list" id="leaderboard-list">
             <li class="lb-loading">Loading…</li>
           </ol>
@@ -209,10 +222,12 @@
     <section class="difficulty-section" id="difficulty-section">
       <div class="container">
         <h1 class="tc-page-title">Total Cross: today&rsquo;s number crossword</h1>
+        <p class="picker-hook">Every letter has a value. Fill the grid so each word hits its number.</p>
         <p class="picker-label">Choose your difficulty</p>
         <div class="picker-buttons">
           <button class="diff-btn" data-diff="easy" type="button">
             <span class="diff-btn-num">01</span>
+            <span class="diff-btn-tag">Start here</span>
             <span class="diff-btn-name">Easy</span>
             <span class="diff-btn-desc">Crossing letters revealed to start</span>
           </button>
@@ -284,6 +299,24 @@
       </div>
     </section>
 
+    <!-- LEADERBOARD (always visible) -->
+    <section class="page-leaderboard" id="leaderboard" aria-labelledby="page-lb-title">
+      <div class="container">
+        <div class="leaderboard-wrap page-leaderboard-wrap">
+          <h2 class="leaderboard-title" id="page-lb-title">Today's leaderboard</h2>
+          <div class="lb-tabs" role="tablist" aria-label="Leaderboard difficulty">
+          <button type="button" role="tab" class="lb-tab" data-lb-diff="easy" aria-selected="false">Easy</button>
+          <button type="button" role="tab" class="lb-tab" data-lb-diff="normal" aria-selected="true">Normal</button>
+          <button type="button" role="tab" class="lb-tab" data-lb-diff="hard" aria-selected="false">Hard</button>
+        </div>
+          <p class="lb-note" hidden></p>
+          <ol class="leaderboard-list" id="page-leaderboard-list">
+            <li class="lb-loading">Loading…</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
     <!-- ABOUT SECTION -->
     <section class="about-section" id="about">
       <div class="container">
@@ -316,6 +349,7 @@
 
   <footer class="site-footer">
     <div class="container">
+      <p class="footer-pitch">Built by ET Labs. <a href="/contact">Need something like this for your business?</a></p>
       <p>Total Cross is a free daily puzzle by <a href="/">ET Labs</a>. &copy; 2026 ET Labs. All rights reserved.</p>
     </div>
   </footer>

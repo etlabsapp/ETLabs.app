@@ -1,0 +1,17 @@
+{
+  "name": "Total Cross: Free Daily Number Crossword",
+  "short_name": "Total Cross",
+  "description": "A free daily number crossword. Every letter has a value from A=1 to Z=26.",
+  "id": "/apps/totalcross/",
+  "start_url": "/apps/totalcross/",
+  "scope": "/apps/totalcross/",
+  "display": "standalone",
+  "theme_color": "#14110D",
+  "background_color": "#F3EFE9",
+  "icons": [
+    { "src": "/apps/totalcross/brand/logos/png/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apps/totalcross/brand/logos/png/favicon-apple-touch-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/apps/totalcross/brand/logos/png/totalcross-mark-light-256.png", "sizes": "256x256", "type": "image/png" },
+    { "src": "/apps/totalcross/brand/logos/png/favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

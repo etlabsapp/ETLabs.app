@@ -14,6 +14,30 @@
   const PROGRESS_KEY = 'tc_progress_';
   const PROGRESS_SAVE_EVERY = 10; // seconds between timer-tick saves
 
+  // ── ROTATION ────────────────────────────────────────────
+  // Puzzles #1 to #(CUTOVER-1) keep the original 66-puzzle cycle, so today's puzzle, the
+  // archive, saved progress (tc_grid_N / tc_solved_N) and leaderboard rows keep pointing at the same grids.
+  // From the cutover day on, the 100 new puzzles (indexes 66-165) roll out in order, then the full pool cycles from index 0.
+  // Keep in sync with workers/totalcross-rotation.mjs (themes API); checked by workers/totalcross-rotation.test.mjs.
+  const LEGACY_PUZZLE_COUNT = 66;
+  const ROTATION_CUTOVER_DATE = '2026-10-12'; // local date of the first new-sequence puzzle (#158)
+  const ROTATION_CUTOVER_N = (() => {
+    const [y, m, d] = ROTATION_CUTOVER_DATE.split('-').map(Number);
+    return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(2026, 4, 8)) / 86400000) + 1;
+  })();
+
+  function puzzleIndexForNumber(n) {
+    const total = PUZZLES.length;
+    if (n < ROTATION_CUTOVER_N) return (Math.max(1, n) - 1) % LEGACY_PUZZLE_COUNT % total;
+    return (LEGACY_PUZZLE_COUNT + (n - ROTATION_CUTOVER_N)) % total;
+  }
+
+  function puzzleForNumber(n) {
+    return PUZZLES[puzzleIndexForNumber(n)];
+  }
+
+  window.TotalCrossRotation = { puzzleIndexForNumber, cutoverDate: ROTATION_CUTOVER_DATE, cutoverN: ROTATION_CUTOVER_N, legacyCount: LEGACY_PUZZLE_COUNT };
+
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   // ── STATE ───────────────────────────────────────────────
@@ -185,12 +209,12 @@
         archiveMode = true;
         archiveDayN = n;
         puzzleNumber = n;
-        puzzle = getPuzzleByIndex(n - 1);
+        puzzle = puzzleForNumber(n);
       }
     }
     if (!puzzle) {
       puzzleNumber = getPuzzleNumber();
-      puzzle = getTodaysPuzzle();
+      puzzle = puzzleForNumber(puzzleNumber);
     }
 
     setupPuzzleMeta();
@@ -220,6 +244,8 @@
 
     window.addEventListener('beforeunload', saveProgress);
     loadSolveCount();
+    initLeaderboardTabs();
+    loadLeaderboard(document.getElementById('page-leaderboard-list'));
   }
 
   function resumeGame(progress) {
@@ -267,6 +293,7 @@
     const gameEl = document.getElementById('game-section');
     if (diffEl) diffEl.setAttribute('hidden', '');
     if (gameEl) gameEl.removeAttribute('hidden');
+    refreshLeaderboards();
   }
 
   function initDifficultyPicker() {
@@ -326,14 +353,19 @@
 
   // ── TUTORIAL ────────────────────────────────────────────
 
+  let tutButtonsBound = false;
   function startTutorial() {
+    pauseTimer('tutorial'); // the clock doesn't run while the tutorial is open
     tutStep = 0;
     buildTutorialGrid();
     renderTutorialGrid();
     renderTutorialStep();
     document.getElementById('tutorial-overlay').removeAttribute('hidden');
-    document.getElementById('tut-next').addEventListener('click', advanceTutorial);
-    document.getElementById('tut-skip').addEventListener('click', endTutorial);
+    if (!tutButtonsBound) { // bind once (re-opening from How to Play used to stack or miss listeners)
+      tutButtonsBound = true;
+      document.getElementById('tut-next').addEventListener('click', advanceTutorial);
+      document.getElementById('tut-skip').addEventListener('click', endTutorial);
+    }
   }
 
   function buildTutorialGrid() {
@@ -475,6 +507,7 @@
   function endTutorial() {
     localStorage.setItem('tc_tutorial_done', '1');
     document.getElementById('tutorial-overlay').setAttribute('hidden', '');
+    resumeTimer('tutorial');
   }
 
   function renderTutLetterGrid() {
@@ -598,11 +631,7 @@
     document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', closeAllModals));
     document.getElementById('btn-take-tutorial').addEventListener('click', () => {
       closeAllModals();
-      tutStep = 0;
-      buildTutorialGrid();
-      renderTutorialGrid();
-      renderTutorialStep();
-      document.getElementById('tutorial-overlay').removeAttribute('hidden');
+      startTutorial();
     });
     document.getElementById('btn-share').addEventListener('click', shareResult);
     document.getElementById('btn-view-solution').addEventListener('click', () => { closeAllModals(); revealSolution(); });
@@ -762,6 +791,7 @@
     const rows = puzzle.grid.length;
     const cols = puzzle.grid[0].length;
 
+    fitGridToWidth();
     gridEl.style.gridTemplateColumns = `repeat(${cols}, var(--cell-size))`;
     gridEl.style.gridTemplateRows    = `repeat(${rows}, var(--cell-size))`;
 
@@ -819,45 +849,122 @@
     wrapper.querySelectorAll('.sum-chip').forEach(el => el.remove());
 
     requestAnimationFrame(() => {
-      const cellEl = document.querySelector('.cell.active');
-      if (!cellEl) return;
-      const cellSize = cellEl.getBoundingClientRect().width;
-      if (!cellSize) return;
-      const wrapRect = wrapper.getBoundingClientRect();
-
       words.forEach(w => {
         const chip = document.createElement('div');
         chip.className = 'sum-chip';
         chip.textContent = w.sum;
         chip.dataset.id = w.id;
-
-        let left, top;
-        if (w.direction === 'across') {
-          const lastEl = document.querySelector(`[data-row="${w.row}"][data-col="${w.col + w.length - 1}"]`);
-          if (lastEl) {
-            const cr = lastEl.getBoundingClientRect();
-            left = cr.right - wrapRect.left + 4;
-            top  = cr.top - wrapRect.top + cellSize / 2;
-            chip.style.transform = 'translateY(-50%)';
-          }
-        } else {
-          const lastEl = document.querySelector(`[data-row="${w.row + w.length - 1}"][data-col="${w.col}"]`);
-          if (lastEl) {
-            const cr = lastEl.getBoundingClientRect();
-            left = cr.left - wrapRect.left + cellSize / 2;
-            top  = cr.bottom - wrapRect.top + 4;
-            chip.style.transform = 'translateX(-50%)';
-          }
-        }
-
-        if (left !== undefined) {
-          chip.style.left = left + 'px';
-          chip.style.top  = top + 'px';
-          wrapper.appendChild(chip);
-        }
+        wrapper.appendChild(chip);
       });
+      positionSumChips();
     });
   }
+
+  // Place (or re-place, after a resize) every sum chip next to the last cell
+  // of its word. Chips keep their state classes because they are reused.
+  function positionSumChips() {
+    const wrapper = document.getElementById('grid-wrapper');
+    const cellEl = document.querySelector('#puzzle-grid .cell.active');
+    if (!wrapper || !cellEl) return;
+    const cellSize = cellEl.getBoundingClientRect().width;
+    if (!cellSize) return;
+    const wrapRect = wrapper.getBoundingClientRect();
+    // Positions are relative to the wrapper's padding box; include any
+    // horizontal scroll so chips stay attached when the grid is scrolled.
+    const scrollX = wrapper.scrollLeft;
+    const gap = cellSize < 24 ? 2 : 4; // tighter chip offset on small mobile cells
+
+    words.forEach(w => {
+      const chip = wrapper.querySelector(`.sum-chip[data-id="${w.id}"]`);
+      if (!chip) return;
+
+      let left, top;
+      if (w.direction === 'across') {
+        const lastEl = document.querySelector(`#puzzle-grid [data-row="${w.row}"][data-col="${w.col + w.length - 1}"]`);
+        if (lastEl) {
+          const cr = lastEl.getBoundingClientRect();
+          left = cr.right - wrapRect.left + scrollX + gap;
+          top  = cr.top - wrapRect.top + cellSize / 2;
+          chip.style.transform = 'translateY(-50%)';
+        }
+      } else {
+        const lastEl = document.querySelector(`#puzzle-grid [data-row="${w.row + w.length - 1}"][data-col="${w.col}"]`);
+        if (lastEl) {
+          const cr = lastEl.getBoundingClientRect();
+          left = cr.left - wrapRect.left + scrollX + cellSize / 2;
+          top  = cr.bottom - wrapRect.top + gap;
+          chip.style.transform = 'translateX(-50%)';
+        }
+      }
+
+      if (left !== undefined) {
+        chip.style.left = left + 'px';
+        chip.style.top  = top + 'px';
+        chip.hidden = false;
+      } else {
+        chip.hidden = true;
+      }
+    });
+  }
+
+  // ── MOBILE GRID FIT ─────────────────────────────────────
+  // On small screens (<=900px, where the board stacks) size cells so the
+  // whole grid fits the available width instead of scrolling sideways.
+  // Desktop keeps the stylesheet's 48px cells untouched.
+  const MOBILE_FIT_QUERY = '(max-width: 900px)';
+  const MIN_CELL_PX      = 16;   // floor so cells stay tappable; below this the wrapper scrolls
+  const GRID_BORDER_PX   = 4;    // .grid has a 2px border on each side
+  const LETTER_RATIO     = 0.46; // matches .cell-letter font-size calc in style.css
+  const SMALL_LETTER_RATIO = 0.56; // slightly bolder letters on very small cells for legibility
+  const IOS_MIN_INPUT_PX = 16;   // iOS Safari zooms on focus when an input is < 16px
+
+  function fitGridToWidth() {
+    const wrapper = document.getElementById('grid-wrapper');
+    if (!wrapper || !puzzle) return false;
+    const prev = wrapper.style.getPropertyValue('--cell-size');
+    wrapper.style.removeProperty('--cell-size');
+    wrapper.style.removeProperty('--letter-scale');
+    wrapper.classList.remove('grid-fit-small');
+
+    if (!window.matchMedia(MOBILE_FIT_QUERY).matches) return prev !== '';
+
+    const cs = getComputedStyle(wrapper);
+    const maxCell = parseFloat(cs.getPropertyValue('--cell-size')) || 38;
+    const content = wrapper.clientWidth
+      - (parseFloat(cs.paddingLeft) || 0)
+      - (parseFloat(cs.paddingRight) || 0);
+    if (content <= 0) return prev !== '';
+
+    const cols = puzzle.grid[0].length;
+    const fit  = Math.floor(((content - GRID_BORDER_PX) / cols) * 4) / 4; // quarter-px steps
+    const size = Math.max(MIN_CELL_PX, Math.min(maxCell, fit));
+
+    // Inputs always compute to >=16px (no iOS focus zoom); a transform scales
+    // the glyph back down so letters keep their normal size relative to the cell.
+    const small  = size < 24;
+    const visual = size * (small ? SMALL_LETTER_RATIO : LETTER_RATIO);
+    const scale  = Math.min(1, visual / IOS_MIN_INPUT_PX);
+
+    wrapper.style.setProperty('--cell-size', size + 'px');
+    wrapper.style.setProperty('--letter-scale', scale.toFixed(4));
+    wrapper.classList.toggle('grid-fit-small', small);
+    return wrapper.style.getPropertyValue('--cell-size') !== prev;
+  }
+
+  let fitRaf = 0;
+  function onViewportResize() {
+    if (fitRaf) cancelAnimationFrame(fitRaf);
+    fitRaf = requestAnimationFrame(() => {
+      fitRaf = 0;
+      if (!puzzle || !document.querySelector('#puzzle-grid .cell')) return;
+      fitGridToWidth();
+      // Chips are absolutely positioned in px; re-place them after any
+      // resize (cell size or container width/position may have changed).
+      positionSumChips();
+    });
+  }
+  window.addEventListener('resize', onViewportResize);
+  window.addEventListener('orientationchange', onViewportResize);
 
   // ── GRID INTERACTION ────────────────────────────────────
 
@@ -1292,9 +1399,29 @@
 
   // ── TIMER ───────────────────────────────────────────────
 
+  // The clock runs only while a game is active AND nothing is pausing it.
+  // Pause reasons: 'tutorial' (overlay open) and 'hidden' (tab in background).
+  // One interval at most, so pausing/resuming can never double-count seconds.
+  let timerActive = false;
+  const timerPauses = new Set();
+
   function startTimer() {
-    if (timerInterval) clearInterval(timerInterval);
+    timerActive = true;
+    if (typeof document.hidden === 'boolean' && document.hidden) timerPauses.add('hidden');
     updateTimerDisplay();
+    runTicker();
+  }
+
+  function stopTimer() {
+    timerActive = false;
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  function runTicker() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    if (!timerActive || gameComplete || timerPauses.size) return;
     timerInterval = setInterval(() => {
       timerSeconds++;
       updateTimerDisplay();
@@ -1302,7 +1429,19 @@
     }, 1000);
   }
 
-  function stopTimer() { clearInterval(timerInterval); }
+  function pauseTimer(reason) {
+    timerPauses.add(reason);
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; saveProgress(); }
+  }
+
+  function resumeTimer(reason) {
+    timerPauses.delete(reason);
+    runTicker();
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pauseTimer('hidden'); else resumeTimer('hidden');
+  });
 
   function updateTimerDisplay() {
     document.getElementById('timer-display').textContent = formatTime(timerSeconds);
@@ -1315,7 +1454,8 @@
     gameComplete = true;
     stopTimer();
     clearProgress();
-    localStorage.setItem('tc_solved_' + puzzleNumber, JSON.stringify({ time: timerSeconds, hints: hintsUsed }));
+    localStorage.setItem('tc_solved_' + puzzleNumber, JSON.stringify({ time: timerSeconds, hints: hintsUsed, difficulty }));
+    try { localStorage.setItem(LAST_DIFF_KEY, difficulty); } catch (_) {}
     const gridState = [];
     grid.forEach(row => row.forEach(cell => {
       if (cell.active && cell.letter) gridState.push({ row: cell.row, col: cell.col, letter: cell.letter, revealed: cell.revealed });
@@ -1376,15 +1516,22 @@
 
   async function submitScore(displayName) {
     try {
-      await sb.from('scores').insert({
+      const row = {
         puzzle_number: puzzleNumber,
         puzzle_date:   currentPuzzleISO(),
         display_name:  displayName,
         time_seconds:  timerSeconds,
         hints_used:    hintsUsed,
         device_id:     getDeviceId(),
-      });
-      loadLeaderboard(document.getElementById('leaderboard-list'));
+        difficulty:    LB_DIFFS.includes(difficulty) ? difficulty : 'normal',
+      };
+      const { error } = await sb.from('scores').insert(row);
+      if (error && isMissingDifficultyColumn(error)) {
+        // DB migration not applied yet: keep the score, just without difficulty.
+        delete row.difficulty;
+        await sb.from('scores').insert(row);
+      }
+      refreshLeaderboards();
       loadSolveCount();
     } catch { /* offline — silently skip */ }
   }
@@ -1404,18 +1551,83 @@
 
   // ── SUPABASE — LEADERBOARD ──────────────────────────────
 
+  // Scores carry a difficulty ('easy' | 'normal' | 'hard'); rows saved before that column
+  // existed are backfilled to 'normal' by the migration (supabase/migrations/…_totalcross_scores_difficulty.sql).
+  // Tabs default to the player's current difficulty until they pick one.
+  const LB_DIFFS = ['easy', 'normal', 'hard'];
+  const LAST_DIFF_KEY = 'tc_last_difficulty';
+  let lbTab = null; // set when the player clicks a tab
+
+  function playerDifficulty() {
+    const gameEl = document.getElementById('game-section');
+    const solved = JSON.parse(localStorage.getItem('tc_solved_' + puzzleNumber) || 'null');
+    if (solved && LB_DIFFS.includes(solved.difficulty)) return solved.difficulty;
+    if (gameEl && !gameEl.hasAttribute('hidden') && LB_DIFFS.includes(difficulty)) return difficulty;
+    const progress = !archiveMode ? loadProgress() : null;
+    if (progress && LB_DIFFS.includes(progress.difficulty)) return progress.difficulty;
+    const last = localStorage.getItem(LAST_DIFF_KEY);
+    return LB_DIFFS.includes(last) ? last : 'normal';
+  }
+
+  function leaderboardDifficulty() { return lbTab || playerDifficulty(); }
+
+  function isMissingDifficultyColumn(error) {
+    const msg = `${error && error.code} ${error && error.message}`;
+    return /difficulty/i.test(msg) && /(42703|PGRST204|column|schema cache)/i.test(msg);
+  }
+
+  function initLeaderboardTabs() {
+    document.querySelectorAll('.lb-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        lbTab = tab.dataset.lbDiff;
+        refreshLeaderboards();
+      });
+    });
+  }
+
+  // Reload every leaderboard that is on screen (the page one is always visible).
+  function refreshLeaderboards() {
+    document.querySelectorAll('.leaderboard-list').forEach(list => {
+      const modal = list.closest('.modal');
+      if (!modal || !modal.hasAttribute('hidden')) loadLeaderboard(list);
+    });
+  }
+
+  function syncLeaderboardTabs(listEl, diff) {
+    const wrap = listEl.closest('.leaderboard-wrap');
+    if (!wrap) return;
+    wrap.querySelectorAll('.lb-tab').forEach(tab => {
+      const on = tab.dataset.lbDiff === diff;
+      tab.classList.toggle('active', on);
+      tab.setAttribute('aria-selected', String(on));
+    });
+    listEl.setAttribute('aria-label', `Leaderboard: ${diff}`);
+  }
+
   async function loadLeaderboard(listEl) {
     listEl = listEl || document.getElementById('leaderboard-list');
     if (!listEl) return;
+    const diff = leaderboardDifficulty();
+    syncLeaderboardTabs(listEl, diff);
+    const note = listEl.closest('.leaderboard-wrap')?.querySelector('.lb-note');
+    if (note) note.hidden = true;
     listEl.innerHTML = '<li class="lb-loading">Loading…</li>';
-    try {
-      const { data, error } = await sb
+    const query = byDifficulty => {
+      let q = sb
         .from('scores')
         .select('display_name, time_seconds, hints_used')
-        .eq('puzzle_date', currentPuzzleISO())
-        .order('time_seconds', { ascending: true })
-        .limit(10);
-
+        .eq('puzzle_date', currentPuzzleISO());
+      if (byDifficulty) q = q.eq('difficulty', diff);
+      return q.order('time_seconds', { ascending: true }).limit(10);
+    };
+    try {
+      let { data, error } = await query(true);
+      if (error && isMissingDifficultyColumn(error)) {
+        // Migration not applied yet: show everyone, and say so.
+        ({ data, error } = await query(false));
+        if (!error && note) { note.textContent = 'Showing all difficulties for now.'; note.hidden = false; }
+      }
+      if (diff !== leaderboardDifficulty()) return; // tab changed while loading
       if (error) throw error;
       renderLeaderboard(data || [], listEl);
     } catch {
@@ -1426,7 +1638,8 @@
   function renderLeaderboard(entries, listEl) {
     const username = localStorage.getItem(USERNAME_KEY) || '';
     if (!entries.length) {
-      listEl.innerHTML = '<li class="lb-loading">No scores yet — be the first!</li>';
+      const label = { easy: 'Easy', normal: 'Normal', hard: 'Hard' }[leaderboardDifficulty()] || '';
+      listEl.innerHTML = `<li class="lb-loading">No ${label} scores yet — be the first!</li>`;
       return;
     }
     listEl.innerHTML = entries.map((e, i) => {

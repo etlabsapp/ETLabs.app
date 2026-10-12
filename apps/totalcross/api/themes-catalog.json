@@ -1,5 +1,7 @@
 {
   "launchDate": "2026-05-08",
+  "legacyCount": 66,
+  "cutoverDate": "2026-10-12",
   "themes": [
     {
       "acrossTheme": "Planets & Space",
@@ -264,6 +266,406 @@
     {
       "acrossTheme": "TV Cartoons",
       "downTheme": "Weather"
+    },
+    {
+      "acrossTheme": "Famous Composers",
+      "downTheme": "Breakfast Foods"
+    },
+    {
+      "acrossTheme": "Tennis Legends",
+      "downTheme": "Kitchen Utensils"
+    },
+    {
+      "acrossTheme": "Jazz Legends",
+      "downTheme": "Dog Breeds"
+    },
+    {
+      "acrossTheme": "Hollywood Legends",
+      "downTheme": "Jobs & Professions"
+    },
+    {
+      "acrossTheme": "Film Directors",
+      "downTheme": "Board Games"
+    },
+    {
+      "acrossTheme": "Fashion Designers",
+      "downTheme": "Tropical Fruits"
+    },
+    {
+      "acrossTheme": "Celebrity Chefs",
+      "downTheme": "Cat Breeds"
+    },
+    {
+      "acrossTheme": "Stand-Up Comedians",
+      "downTheme": "Sandwiches"
+    },
+    {
+      "acrossTheme": "Astronauts",
+      "downTheme": "Camping Gear"
+    },
+    {
+      "acrossTheme": "Basketball Legends",
+      "downTheme": "Ice Cream Flavors"
+    },
+    {
+      "acrossTheme": "Baseball Legends",
+      "downTheme": "Soups"
+    },
+    {
+      "acrossTheme": "Soccer Stars",
+      "downTheme": "Farm Animals"
+    },
+    {
+      "acrossTheme": "Golf Legends",
+      "downTheme": "Tools"
+    },
+    {
+      "acrossTheme": "Boxing Champions",
+      "downTheme": "Shoes & Footwear"
+    },
+    {
+      "acrossTheme": "Gymnasts",
+      "downTheme": "Cookies"
+    },
+    {
+      "acrossTheme": "Figure Skaters",
+      "downTheme": "Winter Clothing"
+    },
+    {
+      "acrossTheme": "NFL Quarterbacks",
+      "downTheme": "Kitchen Appliances"
+    },
+    {
+      "acrossTheme": "Hockey Legends",
+      "downTheme": "Berries"
+    },
+    {
+      "acrossTheme": "Race Car Drivers",
+      "downTheme": "Car Parts"
+    },
+    {
+      "acrossTheme": "Country Singers",
+      "downTheme": "US States"
+    },
+    {
+      "acrossTheme": "Rock Legends",
+      "downTheme": "Beach Items"
+    },
+    {
+      "acrossTheme": "Disney Princesses",
+      "downTheme": "Jewelry"
+    },
+    {
+      "acrossTheme": "Disney Villains",
+      "downTheme": "Halloween Things"
+    },
+    {
+      "acrossTheme": "Pixar Characters",
+      "downTheme": "Toys"
+    },
+    {
+      "acrossTheme": "Star Wars Characters",
+      "downTheme": "Coffee Drinks"
+    },
+    {
+      "acrossTheme": "Harry Potter Characters",
+      "downTheme": "Candy"
+    },
+    {
+      "acrossTheme": "Fairy Tale Figures",
+      "downTheme": "Vehicles"
+    },
+    {
+      "acrossTheme": "English Monarchs",
+      "downTheme": "Tea Varieties"
+    },
+    {
+      "acrossTheme": "British Prime Ministers",
+      "downTheme": "Garden Tools"
+    },
+    {
+      "acrossTheme": "Founding Fathers",
+      "downTheme": "Hats"
+    },
+    {
+      "acrossTheme": "Civil Rights Leaders",
+      "downTheme": "Flowers II"
+    },
+    {
+      "acrossTheme": "Wild West Figures",
+      "downTheme": "Horse Breeds"
+    },
+    {
+      "acrossTheme": "Famous Pirates",
+      "downTheme": "Seafood"
+    },
+    {
+      "acrossTheme": "Famous Magicians",
+      "downTheme": "Office Supplies"
+    },
+    {
+      "acrossTheme": "Children's Authors",
+      "downTheme": "Shapes"
+    },
+    {
+      "acrossTheme": "Mystery Writers",
+      "downTheme": "Sauces & Condiments"
+    },
+    {
+      "acrossTheme": "Playwrights",
+      "downTheme": "Furniture"
+    },
+    {
+      "acrossTheme": "Fictional Detectives",
+      "downTheme": "Rooms of a House"
+    },
+    {
+      "acrossTheme": "Talk Show Hosts",
+      "downTheme": "Salad Ingredients"
+    },
+    {
+      "acrossTheme": "Tech Founders",
+      "downTheme": "Hobbies"
+    },
+    {
+      "acrossTheme": "Supermodels",
+      "downTheme": "Makeup & Beauty"
+    },
+    {
+      "acrossTheme": "Opera Singers",
+      "downTheme": "Italian Foods"
+    },
+    {
+      "acrossTheme": "Famous Aviators",
+      "downTheme": "Cakes"
+    },
+    {
+      "acrossTheme": "Nobel Peace Laureates",
+      "downTheme": "Backyard Birds"
+    },
+    {
+      "acrossTheme": "Renaissance Masters",
+      "downTheme": "Vegetables II"
+    },
+    {
+      "acrossTheme": "Modern Artists",
+      "downTheme": "Beverages"
+    },
+    {
+      "acrossTheme": "Famous Cartoonists",
+      "downTheme": "Pets"
+    },
+    {
+      "acrossTheme": "Famous Scientists II",
+      "downTheme": "Ball Sports"
+    },
+    {
+      "acrossTheme": "Famous Inventors II",
+      "downTheme": "Desserts"
+    },
+    {
+      "acrossTheme": "Famous Mathematicians II",
+      "downTheme": "Units of Measure"
+    },
+    {
+      "acrossTheme": "Famous Explorers II",
+      "downTheme": "Islands"
+    },
+    {
+      "acrossTheme": "Olympic Legends",
+      "downTheme": "Mexican Foods"
+    },
+    {
+      "acrossTheme": "Rock Bands",
+      "downTheme": "Birds of Prey"
+    },
+    {
+      "acrossTheme": "Classic Sitcoms",
+      "downTheme": "Rainforest Animals"
+    },
+    {
+      "acrossTheme": "Looney Tunes Characters",
+      "downTheme": "Clothing"
+    },
+    {
+      "acrossTheme": "Muppets & Sesame Street",
+      "downTheme": "Orchard Fruits"
+    },
+    {
+      "acrossTheme": "Comic Book Villains",
+      "downTheme": "Winter Sports"
+    },
+    {
+      "acrossTheme": "Arthurian Legends",
+      "downTheme": "Snakes"
+    },
+    {
+      "acrossTheme": "US Presidents II",
+      "downTheme": "Baking Ingredients"
+    },
+    {
+      "acrossTheme": "Video Game Characters",
+      "downTheme": "Asian Countries"
+    },
+    {
+      "acrossTheme": "Motown Legends",
+      "downTheme": "Car Models"
+    },
+    {
+      "acrossTheme": "Pop Divas",
+      "downTheme": "Hairstyles"
+    },
+    {
+      "acrossTheme": "Animated Movies",
+      "downTheme": "Musical Terms"
+    },
+    {
+      "acrossTheme": "Famous Dogs",
+      "downTheme": "Body Parts"
+    },
+    {
+      "acrossTheme": "Cartoon Cats",
+      "downTheme": "Craft Supplies"
+    },
+    {
+      "acrossTheme": "Superhero Alter Egos",
+      "downTheme": "US State Capitals"
+    },
+    {
+      "acrossTheme": "Best Picture Winners",
+      "downTheme": "Cookout Foods"
+    },
+    {
+      "acrossTheme": "Sci-Fi Authors",
+      "downTheme": "Houseplants"
+    },
+    {
+      "acrossTheme": "Lord of the Rings Characters",
+      "downTheme": "Mushrooms"
+    },
+    {
+      "acrossTheme": "Egyptian Gods",
+      "downTheme": "Desert Animals"
+    },
+    {
+      "acrossTheme": "Famous Coaches",
+      "downTheme": "Classroom Items"
+    },
+    {
+      "acrossTheme": "Famous Ships",
+      "downTheme": "Bones of the Body"
+    },
+    {
+      "acrossTheme": "Famous Landmarks",
+      "downTheme": "Baseball Terms"
+    },
+    {
+      "acrossTheme": "Famous Composers II",
+      "downTheme": "Water Sports"
+    },
+    {
+      "acrossTheme": "Cartoon Characters",
+      "downTheme": "Things in the Sky"
+    },
+    {
+      "acrossTheme": "Broadway Musicals II",
+      "downTheme": "Cleaning Supplies"
+    },
+    {
+      "acrossTheme": "Dickens Characters",
+      "downTheme": "Christmas Things"
+    },
+    {
+      "acrossTheme": "Famous Romans",
+      "downTheme": "Farm Crops"
+    },
+    {
+      "acrossTheme": "Guitar Heroes",
+      "downTheme": "Citrus Fruits"
+    },
+    {
+      "acrossTheme": "Women Writers",
+      "downTheme": "Sewing Supplies"
+    },
+    {
+      "acrossTheme": "Native American Leaders",
+      "downTheme": "American Rivers"
+    },
+    {
+      "acrossTheme": "Game Show Hosts",
+      "downTheme": "Party Snacks"
+    },
+    {
+      "acrossTheme": "Famous Dancers II",
+      "downTheme": "Shades of Blue"
+    },
+    {
+      "acrossTheme": "Mythological Creatures II",
+      "downTheme": "Playground Games"
+    },
+    {
+      "acrossTheme": "Western Movie Stars",
+      "downTheme": "Cuts of Beef"
+    },
+    {
+      "acrossTheme": "Medicine Pioneers",
+      "downTheme": "Workout Moves"
+    },
+    {
+      "acrossTheme": "Famous Captains",
+      "downTheme": "Boats & Ships"
+    },
+    {
+      "acrossTheme": "Famous Robots",
+      "downTheme": "Computer Words"
+    },
+    {
+      "acrossTheme": "Kings & Conquerors",
+      "downTheme": "Chess Terms"
+    },
+    {
+      "acrossTheme": "Classic Comedians",
+      "downTheme": "Circus Acts"
+    },
+    {
+      "acrossTheme": "Football Teams",
+      "downTheme": "Days & Months"
+    },
+    {
+      "acrossTheme": "Famous Canadians",
+      "downTheme": "Canadian Cities"
+    },
+    {
+      "acrossTheme": "Famous Australians",
+      "downTheme": "Australian Animals"
+    },
+    {
+      "acrossTheme": "Famous Irish",
+      "downTheme": "Potato Dishes"
+    },
+    {
+      "acrossTheme": "Famous Scots",
+      "downTheme": "Golf Terms"
+    },
+    {
+      "acrossTheme": "Great Inventions",
+      "downTheme": "Wedding Day"
+    },
+    {
+      "acrossTheme": "Winnie the Pooh Friends",
+      "downTheme": "Woodland Animals"
+    },
+    {
+      "acrossTheme": "Famous Doctors (Fictional)",
+      "downTheme": "Apple Varieties"
+    },
+    {
+      "acrossTheme": "Pokemon",
+      "downTheme": "Video Game Consoles"
+    },
+    {
+      "acrossTheme": "Famous Chess Players",
+      "downTheme": "Puzzles & Brain Games"
     }
   ]
 }
