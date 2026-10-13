@@ -111,6 +111,38 @@ if (!process.argv.includes("--quiet")) {
   });
   console.log(`\nPBQs: ${P.length} total, per domain ` + Object.keys(DOMAINS).map(d => d + ":" + (per[d] || 0)).join(" "));
 }
+// objective tune: item flags + official SY0-701 bullet coverage (bullets in scripts/sy0701-objectives.json)
+{
+  const all = [...CARDS_ALL.map(x => ["t", x]), ...SCEN_ALL.map(x => ["s", x]), ...(ctx.PBQ || []).map(x => ["p", x])];
+  all.forEach(([k, x]) => {
+    if (x.x !== undefined && (typeof x.x !== "string" || !x.x)) errors.push(`${k} ${x.o}: x must be a reason string`);
+    ["h", "hy"].forEach(f => { if (x[f] !== undefined && x[f] !== 1) errors.push(`${k} ${x.o}: ${f} must be 1`); });
+    if (x.hy && x.x && !x.h) errors.push(`${k} ${x.o}: an excluded item can't be high-yield`);
+  });
+  const inRun = x => !x.x || !!x.h, per = {};
+  Object.keys(DOMAINS).forEach(d => per[d] = { on: 0, off: 0, hand: 0, handOff: 0, hy: 0 });
+  all.filter(([k]) => k !== "t").forEach(([k, x]) => { const p = per[x.o.split(".")[0]];
+    if (x.h) { p.hand++; if (x.x) p.handOff++; } else if (x.x) p.off++; else p.on++; if (x.hy) p.hy++; });
+  console.log("\nExam Run bank (scenarios + PBQs) per domain:");
+  Object.entries(per).forEach(([d, p]) => console.log(`  D${d}  on-objective ${p.on}  off (excluded) ${p.off}  handout ${p.hand} (${p.handOff} off-list, kept)  high-yield ${p.hy}`));
+  const tOff = CARDS_ALL.filter(x => x.x && !x.h).length, tH = CARDS_ALL.filter(x => x.h).length;
+  console.log(`  term cards (not in Exam Run): ${CARDS_ALL.length - tOff - tH} on, ${tOff} off-list, ${tH} handout`);
+  let OBJ = null;
+  try { OBJ = JSON.parse(fs.readFileSync(path.join(root, "scripts", "sy0701-objectives.json"), "utf8")); } catch (e) { warns.push("scripts/sy0701-objectives.json missing: bullet coverage skipped"); }
+  if (OBJ) {
+    const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), cache = {};
+    const rx = k => cache[k] || (cache[k] = new RegExp("(?<![a-z0-9])" + esc(k) + "(?:s|es)?(?![a-z0-9])"));
+    const text = x => (x.term ? x.term + " " + x.meaning : x.title ? x.title + " " + x.prompt + " " + x.exhibit + " " + x.items.map(i => i[0] + " " + i[1]).join(" ") + " " + x.why : x.q + " " + (x.payload || "") + " " + x.options.join(" ") + " " + x.why).toLowerCase();
+    const run = all.filter(([k, x]) => k !== "t" && inRun(x)).map(([, x]) => [x.o, text(x)]);
+    const ALL = run.map(r => r[1]).join(" \n "), byO = {};
+    run.forEach(([o, t]) => (byO[o] = byO[o] || []).push(t));
+    let n = 0, hit = 0; const gaps = [];
+    Object.entries(OBJ.bullets).forEach(([o, L]) => { const T = (byO[o] || []).join(" \n ");
+      L.forEach(b => { n++; const ok = b.keys.some(k => rx(k).test(T)) || b.keys.some(k => !b.local.includes(k) && rx(k).test(ALL)); if (ok) hit++; else gaps.push(o + " " + b.b); }); });
+    console.log(`\nOfficial SY0-701 leaf bullets covered by Exam Run items: ${hit}/${n} (${Math.round(hit / n * 100)}%)`);
+    if (process.argv.includes("--gaps")) gaps.forEach(g => console.log("  gap  " + g)); else console.log(`  ${gaps.length} open (run with --gaps to list them)`);
+  }
+}
 warns.forEach(w => console.log("WARN  " + w));
 errors.forEach(e => console.log("ERROR " + e));
 console.log(errors.length ? `\nFAIL: ${errors.length} error(s)` : `\nOK: ${Object.keys(OBJECTIVES).length} objectives covered, ${CARDS_ALL.length} terms, ${SCEN_ALL.length} scenarios`);

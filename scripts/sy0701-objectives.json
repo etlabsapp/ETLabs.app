@@ -1,0 +1,5496 @@
+{
+ "source": "CompTIA Security+ SY0-701 Exam Objectives v5.0, official PDF: https://assets.ctfassets.net/82ripq7fjls2/6TYWUym0Nudqa8nGEnegjG/0f9b974d3b1837fe85ab8e6553f4d623/CompTIA-Security-Plus-SY0-701-Exam-Objectives.pdf",
+ "note": "Leaf bullets per sub-objective. keys = match strings (bullet words, acronym, synonyms); local = keys that only count inside the same objective. Not deployed; used by study-coverage.mjs only.",
+ "bullets": {
+  "1.1": [
+   {
+    "b": "Technical",
+    "keys": [
+     "technical"
+    ],
+    "local": []
+   },
+   {
+    "b": "Managerial",
+    "keys": [
+     "managerial"
+    ],
+    "local": []
+   },
+   {
+    "b": "Operational",
+    "keys": [
+     "operational"
+    ],
+    "local": []
+   },
+   {
+    "b": "Physical",
+    "keys": [
+     "physical"
+    ],
+    "local": [
+     "physical"
+    ]
+   },
+   {
+    "b": "Preventive",
+    "keys": [
+     "preventive"
+    ],
+    "local": []
+   },
+   {
+    "b": "Deterrent",
+    "keys": [
+     "deterrent"
+    ],
+    "local": []
+   },
+   {
+    "b": "Detective",
+    "keys": [
+     "detective"
+    ],
+    "local": []
+   },
+   {
+    "b": "Corrective",
+    "keys": [
+     "corrective"
+    ],
+    "local": []
+   },
+   {
+    "b": "Compensating",
+    "keys": [
+     "compensating"
+    ],
+    "local": []
+   },
+   {
+    "b": "Directive",
+    "keys": [
+     "directive"
+    ],
+    "local": []
+   }
+  ],
+  "1.2": [
+   {
+    "b": "Confidentiality, Integrity, and Availability (CIA)",
+    "keys": [
+     "availability",
+     "cia",
+     "confidentiality",
+     "confidentiality, integrity, and availability",
+     "integrity"
+    ],
+    "local": [
+     "cia"
+    ]
+   },
+   {
+    "b": "Non-repudiation",
+    "keys": [
+     "non-repudiation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Authenticating people",
+    "keys": [
+     "authenticating people"
+    ],
+    "local": []
+   },
+   {
+    "b": "Authenticating systems",
+    "keys": [
+     "authenticating systems"
+    ],
+    "local": []
+   },
+   {
+    "b": "Authorization models",
+    "keys": [
+     "authorization models"
+    ],
+    "local": []
+   },
+   {
+    "b": "Gap analysis",
+    "keys": [
+     "gap analysis"
+    ],
+    "local": []
+   },
+   {
+    "b": "Adaptive identity",
+    "keys": [
+     "adaptive identity"
+    ],
+    "local": []
+   },
+   {
+    "b": "Threat scope reduction",
+    "keys": [
+     "threat scope reduction"
+    ],
+    "local": []
+   },
+   {
+    "b": "Policy-driven access control",
+    "keys": [
+     "policy-driven access control"
+    ],
+    "local": []
+   },
+   {
+    "b": "Policy Administrator",
+    "keys": [
+     "policy administrator"
+    ],
+    "local": []
+   },
+   {
+    "b": "Policy Engine",
+    "keys": [
+     "policy engine"
+    ],
+    "local": []
+   },
+   {
+    "b": "Implicit trust zones",
+    "keys": [
+     "implicit trust zones"
+    ],
+    "local": []
+   },
+   {
+    "b": "Subject/System",
+    "keys": [
+     "subject",
+     "subject/system",
+     "system"
+    ],
+    "local": []
+   },
+   {
+    "b": "Policy Enforcement Point",
+    "keys": [
+     "policy enforcement point"
+    ],
+    "local": []
+   },
+   {
+    "b": "Bollards",
+    "keys": [
+     "bollards"
+    ],
+    "local": []
+   },
+   {
+    "b": "Access control vestibule",
+    "keys": [
+     "access control vestibule"
+    ],
+    "local": []
+   },
+   {
+    "b": "Fencing",
+    "keys": [
+     "fencing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Video surveillance",
+    "keys": [
+     "camera",
+     "cctv",
+     "video",
+     "video surveillance"
+    ],
+    "local": [
+     "camera",
+     "video"
+    ]
+   },
+   {
+    "b": "Security guard",
+    "keys": [
+     "guard",
+     "security guard"
+    ],
+    "local": [
+     "guard"
+    ]
+   },
+   {
+    "b": "Access badge",
+    "keys": [
+     "access badge"
+    ],
+    "local": []
+   },
+   {
+    "b": "Lighting",
+    "keys": [
+     "lighting"
+    ],
+    "local": []
+   },
+   {
+    "b": "Infrared",
+    "keys": [
+     "infrared"
+    ],
+    "local": []
+   },
+   {
+    "b": "Pressure",
+    "keys": [
+     "pressure"
+    ],
+    "local": []
+   },
+   {
+    "b": "Microwave",
+    "keys": [
+     "microwave"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ultrasonic",
+    "keys": [
+     "ultrasonic"
+    ],
+    "local": []
+   },
+   {
+    "b": "Honeypot",
+    "keys": [
+     "honeypot"
+    ],
+    "local": []
+   },
+   {
+    "b": "Honeynet",
+    "keys": [
+     "honeynet"
+    ],
+    "local": []
+   },
+   {
+    "b": "Honeyfile",
+    "keys": [
+     "honeyfile"
+    ],
+    "local": []
+   },
+   {
+    "b": "Honeytoken",
+    "keys": [
+     "honeytoken"
+    ],
+    "local": []
+   }
+  ],
+  "1.3": [
+   {
+    "b": "Approval process",
+    "keys": [
+     "approval process"
+    ],
+    "local": [
+     "approval process"
+    ]
+   },
+   {
+    "b": "Ownership",
+    "keys": [
+     "ownership"
+    ],
+    "local": [
+     "ownership"
+    ]
+   },
+   {
+    "b": "Stakeholders",
+    "keys": [
+     "stakeholders"
+    ],
+    "local": [
+     "stakeholders"
+    ]
+   },
+   {
+    "b": "Impact analysis",
+    "keys": [
+     "impact analysis"
+    ],
+    "local": []
+   },
+   {
+    "b": "Test results",
+    "keys": [
+     "test results"
+    ],
+    "local": [
+     "test results"
+    ]
+   },
+   {
+    "b": "Backout plan",
+    "keys": [
+     "backout plan"
+    ],
+    "local": []
+   },
+   {
+    "b": "Maintenance window",
+    "keys": [
+     "maintenance window"
+    ],
+    "local": []
+   },
+   {
+    "b": "Standard operating procedure",
+    "keys": [
+     "standard operating procedure"
+    ],
+    "local": []
+   },
+   {
+    "b": "Allow lists/deny lists",
+    "keys": [
+     "allow lists",
+     "allow lists/deny lists",
+     "deny lists"
+    ],
+    "local": []
+   },
+   {
+    "b": "Restricted activities",
+    "keys": [
+     "restricted activities"
+    ],
+    "local": []
+   },
+   {
+    "b": "Downtime",
+    "keys": [
+     "downtime"
+    ],
+    "local": [
+     "downtime"
+    ]
+   },
+   {
+    "b": "Service restart",
+    "keys": [
+     "restart",
+     "service restart"
+    ],
+    "local": [
+     "restart"
+    ]
+   },
+   {
+    "b": "Application restart",
+    "keys": [
+     "application restart",
+     "restart"
+    ],
+    "local": [
+     "restart"
+    ]
+   },
+   {
+    "b": "Legacy applications",
+    "keys": [
+     "legacy",
+     "legacy applications"
+    ],
+    "local": [
+     "legacy"
+    ]
+   },
+   {
+    "b": "Dependencies",
+    "keys": [
+     "dependenc",
+     "dependencies"
+    ],
+    "local": [
+     "dependencies"
+    ]
+   },
+   {
+    "b": "Updating diagrams",
+    "keys": [
+     "updating diagrams"
+    ],
+    "local": []
+   },
+   {
+    "b": "Updating policies/procedures",
+    "keys": [
+     "procedures",
+     "updating policies",
+     "updating policies/procedures"
+    ],
+    "local": [
+     "procedures"
+    ]
+   },
+   {
+    "b": "Version control",
+    "keys": [
+     "version control"
+    ],
+    "local": []
+   }
+  ],
+  "1.4": [
+   {
+    "b": "Public key",
+    "keys": [
+     "public key"
+    ],
+    "local": []
+   },
+   {
+    "b": "Private key",
+    "keys": [
+     "private key"
+    ],
+    "local": []
+   },
+   {
+    "b": "Key escrow",
+    "keys": [
+     "key escrow"
+    ],
+    "local": []
+   },
+   {
+    "b": "Full-disk",
+    "keys": [
+     "full-disk"
+    ],
+    "local": []
+   },
+   {
+    "b": "Partition",
+    "keys": [
+     "partition"
+    ],
+    "local": []
+   },
+   {
+    "b": "File",
+    "keys": [
+     "file"
+    ],
+    "local": [
+     "file"
+    ]
+   },
+   {
+    "b": "Volume",
+    "keys": [
+     "volume"
+    ],
+    "local": [
+     "volume"
+    ]
+   },
+   {
+    "b": "Database",
+    "keys": [
+     "database"
+    ],
+    "local": []
+   },
+   {
+    "b": "Record",
+    "keys": [
+     "record"
+    ],
+    "local": [
+     "record"
+    ]
+   },
+   {
+    "b": "Transport/communication",
+    "keys": [
+     "communication",
+     "transport",
+     "transport/communication"
+    ],
+    "local": []
+   },
+   {
+    "b": "Asymmetric",
+    "keys": [
+     "asymmetric"
+    ],
+    "local": []
+   },
+   {
+    "b": "Symmetric",
+    "keys": [
+     "symmetric"
+    ],
+    "local": []
+   },
+   {
+    "b": "Key exchange",
+    "keys": [
+     "key exchange"
+    ],
+    "local": []
+   },
+   {
+    "b": "Algorithms",
+    "keys": [
+     "algorithms"
+    ],
+    "local": []
+   },
+   {
+    "b": "Key length",
+    "keys": [
+     "key length"
+    ],
+    "local": []
+   },
+   {
+    "b": "Trusted Platform Module (TPM)",
+    "keys": [
+     "tpm",
+     "trusted platform module"
+    ],
+    "local": [
+     "tpm"
+    ]
+   },
+   {
+    "b": "Hardware security module (HSM)",
+    "keys": [
+     "hardware security module",
+     "hsm"
+    ],
+    "local": [
+     "hsm"
+    ]
+   },
+   {
+    "b": "Key management system",
+    "keys": [
+     "key management system"
+    ],
+    "local": []
+   },
+   {
+    "b": "Secure enclave",
+    "keys": [
+     "secure enclave"
+    ],
+    "local": []
+   },
+   {
+    "b": "Steganography",
+    "keys": [
+     "steganography"
+    ],
+    "local": []
+   },
+   {
+    "b": "Tokenization",
+    "keys": [
+     "tokenization"
+    ],
+    "local": [
+     "tokenization"
+    ]
+   },
+   {
+    "b": "Data masking",
+    "keys": [
+     "data masking"
+    ],
+    "local": []
+   },
+   {
+    "b": "Hashing",
+    "keys": [
+     "hashing"
+    ],
+    "local": [
+     "hashing"
+    ]
+   },
+   {
+    "b": "Salting",
+    "keys": [
+     "salting"
+    ],
+    "local": []
+   },
+   {
+    "b": "Digital signatures",
+    "keys": [
+     "digital signature",
+     "digital signatures",
+     "signed with",
+     "signs"
+    ],
+    "local": []
+   },
+   {
+    "b": "Key stretching",
+    "keys": [
+     "key stretching"
+    ],
+    "local": []
+   },
+   {
+    "b": "Blockchain",
+    "keys": [
+     "blockchain"
+    ],
+    "local": []
+   },
+   {
+    "b": "Open public ledger",
+    "keys": [
+     "open public ledger"
+    ],
+    "local": []
+   },
+   {
+    "b": "Certificate authorities",
+    "keys": [
+     " ca ",
+     "certificate authorities",
+     "certificate authority"
+    ],
+    "local": []
+   },
+   {
+    "b": "Certificate revocation lists (CRLs)",
+    "keys": [
+     "certificate revocation lists",
+     "crl",
+     "crls"
+    ],
+    "local": [
+     "crl"
+    ]
+   },
+   {
+    "b": "Online Certificate Status Protocol (OCSP)",
+    "keys": [
+     "ocsp",
+     "online certificate status protocol"
+    ],
+    "local": []
+   },
+   {
+    "b": "Self-signed",
+    "keys": [
+     "self-signed"
+    ],
+    "local": []
+   },
+   {
+    "b": "Third-party",
+    "keys": [
+     "third-party"
+    ],
+    "local": []
+   },
+   {
+    "b": "Root of trust",
+    "keys": [
+     "root ca",
+     "root certificate",
+     "root of trust"
+    ],
+    "local": []
+   },
+   {
+    "b": "Certificate signing request (CSR) generation",
+    "keys": [
+     "certificate signing request generation",
+     "csr"
+    ],
+    "local": [
+     "csr"
+    ]
+   },
+   {
+    "b": "Wildcard",
+    "keys": [
+     "wildcard"
+    ],
+    "local": []
+   }
+  ],
+  "2.1": [
+   {
+    "b": "Nation-state",
+    "keys": [
+     "nation-state"
+    ],
+    "local": []
+   },
+   {
+    "b": "Unskilled attacker",
+    "keys": [
+     "unskilled attacker"
+    ],
+    "local": []
+   },
+   {
+    "b": "Hacktivist",
+    "keys": [
+     "hacktivist"
+    ],
+    "local": []
+   },
+   {
+    "b": "Insider threat",
+    "keys": [
+     "insider",
+     "insider threat"
+    ],
+    "local": [
+     "insider"
+    ]
+   },
+   {
+    "b": "Organized crime",
+    "keys": [
+     "organized crime"
+    ],
+    "local": []
+   },
+   {
+    "b": "Shadow IT",
+    "keys": [
+     "shadow it"
+    ],
+    "local": []
+   },
+   {
+    "b": "Internal/external",
+    "keys": [
+     "external",
+     "internal",
+     "internal/external"
+    ],
+    "local": [
+     "external",
+     "internal"
+    ]
+   },
+   {
+    "b": "Resources/funding",
+    "keys": [
+     "funding",
+     "resources",
+     "resources/funding"
+    ],
+    "local": []
+   },
+   {
+    "b": "Level of sophistication/capability",
+    "keys": [
+     "capability",
+     "level of sophistication",
+     "level of sophistication/capability"
+    ],
+    "local": []
+   },
+   {
+    "b": "Data exfiltration",
+    "keys": [
+     "data exfiltration"
+    ],
+    "local": []
+   },
+   {
+    "b": "Espionage",
+    "keys": [
+     "espionage"
+    ],
+    "local": []
+   },
+   {
+    "b": "Service disruption",
+    "keys": [
+     "service disruption"
+    ],
+    "local": []
+   },
+   {
+    "b": "Blackmail",
+    "keys": [
+     "blackmail"
+    ],
+    "local": []
+   },
+   {
+    "b": "Financial gain",
+    "keys": [
+     "financial gain"
+    ],
+    "local": []
+   },
+   {
+    "b": "Philosophical/political beliefs",
+    "keys": [
+     "philosophical",
+     "philosophical/political beliefs",
+     "political beliefs"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ethical",
+    "keys": [
+     "ethical"
+    ],
+    "local": []
+   },
+   {
+    "b": "Revenge",
+    "keys": [
+     "revenge"
+    ],
+    "local": []
+   },
+   {
+    "b": "Disruption/chaos",
+    "keys": [
+     "chaos",
+     "disruption",
+     "disruption/chaos"
+    ],
+    "local": []
+   },
+   {
+    "b": "War",
+    "keys": [
+     "war"
+    ],
+    "local": [
+     "war"
+    ]
+   }
+  ],
+  "2.2": [
+   {
+    "b": "Email",
+    "keys": [
+     "email"
+    ],
+    "local": []
+   },
+   {
+    "b": "Short Message Service (SMS)",
+    "keys": [
+     "short message service",
+     "sms"
+    ],
+    "local": [
+     "sms"
+    ]
+   },
+   {
+    "b": "Instant messaging (IM)",
+    "keys": [
+     "chat app",
+     "im",
+     "instant message",
+     "instant messaging"
+    ],
+    "local": [
+     "im"
+    ]
+   },
+   {
+    "b": "Image-based",
+    "keys": [
+     "image-based"
+    ],
+    "local": []
+   },
+   {
+    "b": "File-based",
+    "keys": [
+     "file-based"
+    ],
+    "local": []
+   },
+   {
+    "b": "Voice call",
+    "keys": [
+     "voice call"
+    ],
+    "local": []
+   },
+   {
+    "b": "Removable device",
+    "keys": [
+     "removable device"
+    ],
+    "local": []
+   },
+   {
+    "b": "Client-based vs. agentless",
+    "keys": [
+     "agentless",
+     "client-based",
+     "client-based vs. agentless"
+    ],
+    "local": []
+   },
+   {
+    "b": "Unsupported systems and applications",
+    "keys": [
+     "unsupported systems and applications"
+    ],
+    "local": []
+   },
+   {
+    "b": "Wireless",
+    "keys": [
+     "wireless"
+    ],
+    "local": [
+     "wireless"
+    ]
+   },
+   {
+    "b": "Wired",
+    "keys": [
+     "wired"
+    ],
+    "local": [
+     "wired"
+    ]
+   },
+   {
+    "b": "Bluetooth",
+    "keys": [
+     "bluetooth"
+    ],
+    "local": [
+     "bluetooth"
+    ]
+   },
+   {
+    "b": "Open service ports",
+    "keys": [
+     "open port",
+     "open service ports",
+     "unneeded port",
+     "unused port"
+    ],
+    "local": []
+   },
+   {
+    "b": "Default credentials",
+    "keys": [
+     "default credentials"
+    ],
+    "local": []
+   },
+   {
+    "b": "Managed service providers (MSPs)",
+    "keys": [
+     "managed service provider",
+     "managed service providers",
+     "msp",
+     "msps"
+    ],
+    "local": [
+     "msp"
+    ]
+   },
+   {
+    "b": "Vendors",
+    "keys": [
+     "vendors"
+    ],
+    "local": [
+     "vendors"
+    ]
+   },
+   {
+    "b": "Suppliers",
+    "keys": [
+     "suppliers"
+    ],
+    "local": [
+     "suppliers"
+    ]
+   },
+   {
+    "b": "Phishing",
+    "keys": [
+     "phishing"
+    ],
+    "local": [
+     "phishing"
+    ]
+   },
+   {
+    "b": "Vishing",
+    "keys": [
+     "vishing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Smishing",
+    "keys": [
+     "smishing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Misinformation/disinformation",
+    "keys": [
+     "disinformation",
+     "misinformation",
+     "misinformation/disinformation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Impersonation",
+    "keys": [
+     "impersonation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Business email compromise",
+    "keys": [
+     "business email compromise"
+    ],
+    "local": []
+   },
+   {
+    "b": "Pretexting",
+    "keys": [
+     "pretexting"
+    ],
+    "local": []
+   },
+   {
+    "b": "Watering hole",
+    "keys": [
+     "watering hole"
+    ],
+    "local": []
+   },
+   {
+    "b": "Brand impersonation",
+    "keys": [
+     "brand impersonation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Typosquatting",
+    "keys": [
+     "typosquatting"
+    ],
+    "local": []
+   }
+  ],
+  "2.3": [
+   {
+    "b": "Memory injection",
+    "keys": [
+     "memory injection"
+    ],
+    "local": []
+   },
+   {
+    "b": "Buffer overflow",
+    "keys": [
+     "buffer overflow"
+    ],
+    "local": []
+   },
+   {
+    "b": "Time-of-check (TOC)",
+    "keys": [
+     "time-of-check",
+     "toc"
+    ],
+    "local": [
+     "toc"
+    ]
+   },
+   {
+    "b": "Time-of-use (TOU)",
+    "keys": [
+     "time-of-use",
+     "tou"
+    ],
+    "local": [
+     "tou"
+    ]
+   },
+   {
+    "b": "Malicious update",
+    "keys": [
+     "malicious update"
+    ],
+    "local": []
+   },
+   {
+    "b": "Operating system (OS)-based",
+    "keys": [
+     "operating system-based",
+     "os"
+    ],
+    "local": [
+     "os"
+    ]
+   },
+   {
+    "b": "Structured Query Language injection (SQLi)",
+    "keys": [
+     "sql injection",
+     "sqli",
+     "structured query language injection"
+    ],
+    "local": []
+   },
+   {
+    "b": "Cross-site scripting (XSS)",
+    "keys": [
+     "cross-site scripting",
+     "xss"
+    ],
+    "local": [
+     "xss"
+    ]
+   },
+   {
+    "b": "Firmware",
+    "keys": [
+     "firmware"
+    ],
+    "local": []
+   },
+   {
+    "b": "End-of-life",
+    "keys": [
+     "end-of-life"
+    ],
+    "local": []
+   },
+   {
+    "b": "Legacy",
+    "keys": [
+     "legacy"
+    ],
+    "local": [
+     "legacy"
+    ]
+   },
+   {
+    "b": "Virtual machine (VM) escape",
+    "keys": [
+     "virtual machine escape",
+     "vm"
+    ],
+    "local": [
+     "vm"
+    ]
+   },
+   {
+    "b": "Resource reuse",
+    "keys": [
+     "resource reuse"
+    ],
+    "local": []
+   },
+   {
+    "b": "Cloud-specific",
+    "keys": [
+     "cloud-specific"
+    ],
+    "local": []
+   },
+   {
+    "b": "Service provider",
+    "keys": [
+     "service provider"
+    ],
+    "local": []
+   },
+   {
+    "b": "Hardware provider",
+    "keys": [
+     "hardware provider"
+    ],
+    "local": []
+   },
+   {
+    "b": "Software provider",
+    "keys": [
+     "software provider"
+    ],
+    "local": []
+   },
+   {
+    "b": "Cryptographic",
+    "keys": [
+     "cryptographic"
+    ],
+    "local": []
+   },
+   {
+    "b": "Misconfiguration",
+    "keys": [
+     "misconfiguration"
+    ],
+    "local": []
+   },
+   {
+    "b": "Side loading",
+    "keys": [
+     "side loading"
+    ],
+    "local": []
+   },
+   {
+    "b": "Jailbreaking",
+    "keys": [
+     "jailbreaking"
+    ],
+    "local": []
+   },
+   {
+    "b": "Zero-day",
+    "keys": [
+     "zero-day"
+    ],
+    "local": []
+   }
+  ],
+  "2.4": [
+   {
+    "b": "Ransomware",
+    "keys": [
+     "ransomware"
+    ],
+    "local": [
+     "ransomware"
+    ]
+   },
+   {
+    "b": "Trojan",
+    "keys": [
+     "trojan"
+    ],
+    "local": [
+     "trojan"
+    ]
+   },
+   {
+    "b": "Worm",
+    "keys": [
+     "worm"
+    ],
+    "local": [
+     "worm"
+    ]
+   },
+   {
+    "b": "Spyware",
+    "keys": [
+     "spyware"
+    ],
+    "local": [
+     "spyware"
+    ]
+   },
+   {
+    "b": "Bloatware",
+    "keys": [
+     "bloatware"
+    ],
+    "local": [
+     "bloatware"
+    ]
+   },
+   {
+    "b": "Virus",
+    "keys": [
+     "virus"
+    ],
+    "local": [
+     "virus"
+    ]
+   },
+   {
+    "b": "Keylogger",
+    "keys": [
+     "keylogger"
+    ],
+    "local": [
+     "keylogger"
+    ]
+   },
+   {
+    "b": "Logic bomb",
+    "keys": [
+     "logic bomb"
+    ],
+    "local": [
+     "logic bomb"
+    ]
+   },
+   {
+    "b": "Rootkit",
+    "keys": [
+     "rootkit"
+    ],
+    "local": [
+     "rootkit"
+    ]
+   },
+   {
+    "b": "Brute force",
+    "keys": [
+     "brute force"
+    ],
+    "local": [
+     "brute force"
+    ]
+   },
+   {
+    "b": "Radio frequency identification (RFID) cloning",
+    "keys": [
+     "radio frequency identification cloning",
+     "rfid"
+    ],
+    "local": []
+   },
+   {
+    "b": "Environmental",
+    "keys": [
+     "environmental"
+    ],
+    "local": [
+     "environmental"
+    ]
+   },
+   {
+    "b": "Amplified",
+    "keys": [
+     "amplified"
+    ],
+    "local": []
+   },
+   {
+    "b": "Reflected",
+    "keys": [
+     "reflected"
+    ],
+    "local": []
+   },
+   {
+    "b": "Domain Name System (DNS) attacks",
+    "keys": [
+     "dns",
+     "domain name system attacks"
+    ],
+    "local": [
+     "dns"
+    ]
+   },
+   {
+    "b": "Wireless",
+    "keys": [
+     "wireless"
+    ],
+    "local": [
+     "wireless"
+    ]
+   },
+   {
+    "b": "On-path",
+    "keys": [
+     "on-path"
+    ],
+    "local": []
+   },
+   {
+    "b": "Credential replay",
+    "keys": [
+     "credential replay"
+    ],
+    "local": []
+   },
+   {
+    "b": "Malicious code",
+    "keys": [
+     "malicious code"
+    ],
+    "local": []
+   },
+   {
+    "b": "Injection",
+    "keys": [
+     "injection"
+    ],
+    "local": [
+     "injection"
+    ]
+   },
+   {
+    "b": "Buffer overflow",
+    "keys": [
+     "buffer overflow"
+    ],
+    "local": []
+   },
+   {
+    "b": "Replay",
+    "keys": [
+     "replay"
+    ],
+    "local": [
+     "replay"
+    ]
+   },
+   {
+    "b": "Privilege escalation",
+    "keys": [
+     "privilege escalation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Forgery",
+    "keys": [
+     "forgery"
+    ],
+    "local": [
+     "forgery"
+    ]
+   },
+   {
+    "b": "Directory traversal",
+    "keys": [
+     "directory traversal"
+    ],
+    "local": []
+   },
+   {
+    "b": "Downgrade",
+    "keys": [
+     "downgrade"
+    ],
+    "local": []
+   },
+   {
+    "b": "Collision",
+    "keys": [
+     "collision"
+    ],
+    "local": []
+   },
+   {
+    "b": "Birthday",
+    "keys": [
+     "birthday"
+    ],
+    "local": []
+   },
+   {
+    "b": "Spraying",
+    "keys": [
+     "spraying"
+    ],
+    "local": []
+   },
+   {
+    "b": "Brute force",
+    "keys": [
+     "brute force"
+    ],
+    "local": [
+     "brute force"
+    ]
+   },
+   {
+    "b": "Account lockout",
+    "keys": [
+     "account lockout",
+     "locked out",
+     "lockout"
+    ],
+    "local": []
+   },
+   {
+    "b": "Concurrent session usage",
+    "keys": [
+     "concurrent session",
+     "concurrent session usage",
+     "simultaneous session",
+     "two locations at the same time"
+    ],
+    "local": []
+   },
+   {
+    "b": "Blocked content",
+    "keys": [
+     "blocked content"
+    ],
+    "local": []
+   },
+   {
+    "b": "Impossible travel",
+    "keys": [
+     "impossible travel"
+    ],
+    "local": []
+   },
+   {
+    "b": "Resource consumption",
+    "keys": [
+     "bandwidth spike",
+     "cpu",
+     "disk filling",
+     "resource consumption"
+    ],
+    "local": [
+     "cpu"
+    ]
+   },
+   {
+    "b": "Resource inaccessibility",
+    "keys": [
+     "resource inaccessibility"
+    ],
+    "local": []
+   },
+   {
+    "b": "Out-of-cycle logging",
+    "keys": [
+     "out-of-cycle logging"
+    ],
+    "local": []
+   },
+   {
+    "b": "Published/documented",
+    "keys": [
+     "documented",
+     "published",
+     "published/documented"
+    ],
+    "local": []
+   },
+   {
+    "b": "Missing logs",
+    "keys": [
+     "missing logs"
+    ],
+    "local": []
+   }
+  ],
+  "2.5": [
+   {
+    "b": "Segmentation",
+    "keys": [
+     "segmentation"
+    ],
+    "local": [
+     "segmentation"
+    ]
+   },
+   {
+    "b": "Access control list (ACL)",
+    "keys": [
+     "access control list",
+     "access list",
+     "acl"
+    ],
+    "local": [
+     "acl"
+    ]
+   },
+   {
+    "b": "Permissions",
+    "keys": [
+     "permissions"
+    ],
+    "local": []
+   },
+   {
+    "b": "Application allow list",
+    "keys": [
+     "application allow list"
+    ],
+    "local": []
+   },
+   {
+    "b": "Isolation",
+    "keys": [
+     "isolation"
+    ],
+    "local": [
+     "isolation"
+    ]
+   },
+   {
+    "b": "Patching",
+    "keys": [
+     "patching"
+    ],
+    "local": [
+     "patching"
+    ]
+   },
+   {
+    "b": "Encryption",
+    "keys": [
+     "encryption"
+    ],
+    "local": [
+     "encryption"
+    ]
+   },
+   {
+    "b": "Monitoring",
+    "keys": [
+     "monitoring"
+    ],
+    "local": [
+     "monitoring"
+    ]
+   },
+   {
+    "b": "Least privilege",
+    "keys": [
+     "least privilege"
+    ],
+    "local": [
+     "least privilege"
+    ]
+   },
+   {
+    "b": "Configuration enforcement",
+    "keys": [
+     "configuration enforcement"
+    ],
+    "local": []
+   },
+   {
+    "b": "Decommissioning",
+    "keys": [
+     "decommissioning"
+    ],
+    "local": [
+     "decommissioning"
+    ]
+   },
+   {
+    "b": "Encryption",
+    "keys": [
+     "encryption"
+    ],
+    "local": [
+     "encryption"
+    ]
+   },
+   {
+    "b": "Installation of endpoint protection",
+    "keys": [
+     "antivirus",
+     "edr",
+     "endpoint protection",
+     "installation of endpoint protection"
+    ],
+    "local": [
+     "edr"
+    ]
+   },
+   {
+    "b": "Host-based firewall",
+    "keys": [
+     "host-based firewall"
+    ],
+    "local": []
+   },
+   {
+    "b": "Host-based intrusion prevention system (HIPS)",
+    "keys": [
+     "hips",
+     "host-based intrusion prevention system"
+    ],
+    "local": []
+   },
+   {
+    "b": "Disabling ports/protocols",
+    "keys": [
+     "disabling ports",
+     "disabling ports/protocols",
+     "protocols"
+    ],
+    "local": []
+   },
+   {
+    "b": "Default password changes",
+    "keys": [
+     "default credential",
+     "default password",
+     "default password changes"
+    ],
+    "local": []
+   },
+   {
+    "b": "Removal of unnecessary software",
+    "keys": [
+     "removal of unnecessary software",
+     "remove unused software",
+     "removes the sample",
+     "unnecessary software"
+    ],
+    "local": []
+   }
+  ],
+  "3.1": [
+   {
+    "b": "Responsibility matrix",
+    "keys": [
+     "responsibility matrix",
+     "responsibility model",
+     "shared responsibility"
+    ],
+    "local": []
+   },
+   {
+    "b": "Hybrid considerations",
+    "keys": [
+     "hybrid considerations"
+    ],
+    "local": []
+   },
+   {
+    "b": "Third-party vendors",
+    "keys": [
+     "third-party vendors"
+    ],
+    "local": []
+   },
+   {
+    "b": "Infrastructure as code (IaC)",
+    "keys": [
+     "iac",
+     "infrastructure as code"
+    ],
+    "local": [
+     "iac"
+    ]
+   },
+   {
+    "b": "Serverless",
+    "keys": [
+     "serverless"
+    ],
+    "local": []
+   },
+   {
+    "b": "Microservices",
+    "keys": [
+     "microservices"
+    ],
+    "local": []
+   },
+   {
+    "b": "Physical isolation",
+    "keys": [
+     "physical isolation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Air-gapped",
+    "keys": [
+     "air-gapped"
+    ],
+    "local": []
+   },
+   {
+    "b": "Logical segmentation",
+    "keys": [
+     "logical segmentation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Software-defined networking (SDN)",
+    "keys": [
+     "sdn",
+     "software-defined networking"
+    ],
+    "local": [
+     "sdn"
+    ]
+   },
+   {
+    "b": "On-premises",
+    "keys": [
+     "on-premises"
+    ],
+    "local": []
+   },
+   {
+    "b": "Centralized vs. decentralized",
+    "keys": [
+     "centralized",
+     "centralized vs. decentralized",
+     "decentralized"
+    ],
+    "local": []
+   },
+   {
+    "b": "Containerization",
+    "keys": [
+     "containerization"
+    ],
+    "local": []
+   },
+   {
+    "b": "Virtualization",
+    "keys": [
+     "virtualization"
+    ],
+    "local": []
+   },
+   {
+    "b": "IoT",
+    "keys": [
+     "iot",
+     "smart "
+    ],
+    "local": [
+     "iot"
+    ]
+   },
+   {
+    "b": "Industrial control systems (ICS)/ supervisory control and data acquisition (SCADA)",
+    "keys": [
+     "ics",
+     "industrial control systems",
+     "industrial control systems/ supervisory control and data acquisition",
+     "scada",
+     "supervisory control and data acquisition"
+    ],
+    "local": [
+     "ics"
+    ]
+   },
+   {
+    "b": "Real-time operating system (RTOS)",
+    "keys": [
+     "real-time operating system",
+     "rtos"
+    ],
+    "local": []
+   },
+   {
+    "b": "Embedded systems",
+    "keys": [
+     "embedded",
+     "embedded systems"
+    ],
+    "local": []
+   },
+   {
+    "b": "High availability",
+    "keys": [
+     "high availability"
+    ],
+    "local": []
+   },
+   {
+    "b": "Availability",
+    "keys": [
+     "availability"
+    ],
+    "local": []
+   },
+   {
+    "b": "Resilience",
+    "keys": [
+     "resilience"
+    ],
+    "local": []
+   },
+   {
+    "b": "Cost",
+    "keys": [
+     "cost"
+    ],
+    "local": [
+     "cost"
+    ]
+   },
+   {
+    "b": "Responsiveness",
+    "keys": [
+     "responsiveness"
+    ],
+    "local": []
+   },
+   {
+    "b": "Scalability",
+    "keys": [
+     "scalability"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ease of deployment",
+    "keys": [
+     "ease of deployment"
+    ],
+    "local": []
+   },
+   {
+    "b": "Risk transference",
+    "keys": [
+     "risk transference"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ease of recovery",
+    "keys": [
+     "ease of recovery"
+    ],
+    "local": []
+   },
+   {
+    "b": "Patch availability",
+    "keys": [
+     "patch availability"
+    ],
+    "local": []
+   },
+   {
+    "b": "Inability to patch",
+    "keys": [
+     "can never be patched",
+     "cannot be patched",
+     "inability to patch",
+     "limited ability to patch",
+     "unpatchable"
+    ],
+    "local": []
+   },
+   {
+    "b": "Power",
+    "keys": [
+     "power"
+    ],
+    "local": [
+     "power"
+    ]
+   },
+   {
+    "b": "Compute",
+    "keys": [
+     "compute"
+    ],
+    "local": [
+     "compute"
+    ]
+   }
+  ],
+  "3.2": [
+   {
+    "b": "Device placement",
+    "keys": [
+     "device placement",
+     "place the",
+     "placement",
+     "where should"
+    ],
+    "local": [
+     "place the",
+     "placement",
+     "where should"
+    ]
+   },
+   {
+    "b": "Security zones",
+    "keys": [
+     "screened subnet",
+     "security zones",
+     "zone"
+    ],
+    "local": [
+     "zone"
+    ]
+   },
+   {
+    "b": "Attack surface",
+    "keys": [
+     "attack surface"
+    ],
+    "local": []
+   },
+   {
+    "b": "Connectivity",
+    "keys": [
+     "connectivity"
+    ],
+    "local": [
+     "connectivity"
+    ]
+   },
+   {
+    "b": "Fail-open",
+    "keys": [
+     "fail-open"
+    ],
+    "local": []
+   },
+   {
+    "b": "Fail-closed",
+    "keys": [
+     "fail-closed"
+    ],
+    "local": []
+   },
+   {
+    "b": "Active vs. passive",
+    "keys": [
+     "active",
+     "active vs. passive",
+     "passive"
+    ],
+    "local": [
+     "active",
+     "passive"
+    ]
+   },
+   {
+    "b": "Inline vs. tap/monitor",
+    "keys": [
+     "inline",
+     "inline vs. tap/monitor",
+     "monitor",
+     "tap"
+    ],
+    "local": [
+     "tap"
+    ]
+   },
+   {
+    "b": "Jump server",
+    "keys": [
+     "jump server"
+    ],
+    "local": []
+   },
+   {
+    "b": "Proxy server",
+    "keys": [
+     "proxy server"
+    ],
+    "local": []
+   },
+   {
+    "b": "Intrusion prevention system (IPS)/intrusion detection system (IDS)",
+    "keys": [
+     "ids",
+     "intrusion detection system",
+     "intrusion prevention system",
+     "intrusion prevention system/intrusion detection system",
+     "ips"
+    ],
+    "local": [
+     "ids",
+     "ips"
+    ]
+   },
+   {
+    "b": "Load balancer",
+    "keys": [
+     "load balancer"
+    ],
+    "local": []
+   },
+   {
+    "b": "Sensors",
+    "keys": [
+     "sensors"
+    ],
+    "local": [
+     "sensors"
+    ]
+   },
+   {
+    "b": "802.1X",
+    "keys": [
+     "802.1x"
+    ],
+    "local": []
+   },
+   {
+    "b": "Extensible Authentication Protocol (EAP)",
+    "keys": [
+     "eap",
+     "extensible authentication protocol"
+    ],
+    "local": [
+     "eap"
+    ]
+   },
+   {
+    "b": "Web application firewall (WAF)",
+    "keys": [
+     "waf",
+     "web application firewall"
+    ],
+    "local": [
+     "waf"
+    ]
+   },
+   {
+    "b": "Unified threat management (UTM)",
+    "keys": [
+     "unified threat management",
+     "utm"
+    ],
+    "local": [
+     "utm"
+    ]
+   },
+   {
+    "b": "Next-generation firewall (NGFW)",
+    "keys": [
+     "next-generation firewall",
+     "ngfw"
+    ],
+    "local": []
+   },
+   {
+    "b": "Layer 4/Layer 7",
+    "keys": [
+     "layer 4",
+     "layer 4/layer 7",
+     "layer 7"
+    ],
+    "local": []
+   },
+   {
+    "b": "Virtual private network (VPN)",
+    "keys": [
+     "virtual private network",
+     "vpn"
+    ],
+    "local": [
+     "vpn"
+    ]
+   },
+   {
+    "b": "Remote access",
+    "keys": [
+     "remote access"
+    ],
+    "local": []
+   },
+   {
+    "b": "Transport Layer Security (TLS)",
+    "keys": [
+     "tls",
+     "transport layer security"
+    ],
+    "local": [
+     "tls"
+    ]
+   },
+   {
+    "b": "Internet protocol security (IPSec)",
+    "keys": [
+     "internet protocol security",
+     "ipsec"
+    ],
+    "local": []
+   },
+   {
+    "b": "Software-defined wide area network (SD-WAN)",
+    "keys": [
+     "sd-wan",
+     "software-defined wide area network"
+    ],
+    "local": []
+   },
+   {
+    "b": "Secure access service edge (SASE)",
+    "keys": [
+     "sase",
+     "secure access service edge"
+    ],
+    "local": []
+   },
+   {
+    "b": "Selection of effective controls",
+    "keys": [
+     "selection of effective controls"
+    ],
+    "local": []
+   }
+  ],
+  "3.3": [
+   {
+    "b": "Regulated",
+    "keys": [
+     "regulated"
+    ],
+    "local": [
+     "regulated"
+    ]
+   },
+   {
+    "b": "Trade secret",
+    "keys": [
+     "trade secret"
+    ],
+    "local": []
+   },
+   {
+    "b": "Intellectual property",
+    "keys": [
+     "intellectual property"
+    ],
+    "local": []
+   },
+   {
+    "b": "Legal information",
+    "keys": [
+     "legal information"
+    ],
+    "local": []
+   },
+   {
+    "b": "Financial information",
+    "keys": [
+     "financial information"
+    ],
+    "local": []
+   },
+   {
+    "b": "Human- and non-humanreadable",
+    "keys": [
+     "human readable",
+     "human- and non-humanreadable",
+     "human-readable"
+    ],
+    "local": []
+   },
+   {
+    "b": "Sensitive",
+    "keys": [
+     "sensitive"
+    ],
+    "local": [
+     "sensitive"
+    ]
+   },
+   {
+    "b": "Confidential",
+    "keys": [
+     "confidential"
+    ],
+    "local": [
+     "confidential"
+    ]
+   },
+   {
+    "b": "Public",
+    "keys": [
+     "public"
+    ],
+    "local": [
+     "public"
+    ]
+   },
+   {
+    "b": "Restricted",
+    "keys": [
+     "restricted"
+    ],
+    "local": [
+     "restricted"
+    ]
+   },
+   {
+    "b": "Private",
+    "keys": [
+     "private"
+    ],
+    "local": [
+     "private"
+    ]
+   },
+   {
+    "b": "Critical",
+    "keys": [
+     "critical"
+    ],
+    "local": [
+     "critical"
+    ]
+   },
+   {
+    "b": "Data at rest",
+    "keys": [
+     "data at rest"
+    ],
+    "local": []
+   },
+   {
+    "b": "Data in transit",
+    "keys": [
+     "data in transit"
+    ],
+    "local": []
+   },
+   {
+    "b": "Data in use",
+    "keys": [
+     "data in use"
+    ],
+    "local": []
+   },
+   {
+    "b": "Data sovereignty",
+    "keys": [
+     "data sovereignty"
+    ],
+    "local": []
+   },
+   {
+    "b": "Geolocation",
+    "keys": [
+     "geolocation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Geographic restrictions",
+    "keys": [
+     "geographic restrictions"
+    ],
+    "local": []
+   },
+   {
+    "b": "Encryption",
+    "keys": [
+     "encryption"
+    ],
+    "local": [
+     "encryption"
+    ]
+   },
+   {
+    "b": "Hashing",
+    "keys": [
+     "hashing"
+    ],
+    "local": [
+     "hashing"
+    ]
+   },
+   {
+    "b": "Masking",
+    "keys": [
+     "masking"
+    ],
+    "local": [
+     "masking"
+    ]
+   },
+   {
+    "b": "Tokenization",
+    "keys": [
+     "tokenization"
+    ],
+    "local": [
+     "tokenization"
+    ]
+   },
+   {
+    "b": "Obfuscation",
+    "keys": [
+     "obfuscation"
+    ],
+    "local": [
+     "obfuscation"
+    ]
+   },
+   {
+    "b": "Segmentation",
+    "keys": [
+     "segmentation"
+    ],
+    "local": [
+     "segmentation"
+    ]
+   },
+   {
+    "b": "Permission restrictions",
+    "keys": [
+     "permission restrictions"
+    ],
+    "local": []
+   }
+  ],
+  "3.4": [
+   {
+    "b": "Load balancing vs. clustering",
+    "keys": [
+     "clustering",
+     "load balancing",
+     "load balancing vs. clustering"
+    ],
+    "local": []
+   },
+   {
+    "b": "Hot",
+    "keys": [
+     "hot"
+    ],
+    "local": [
+     "hot"
+    ]
+   },
+   {
+    "b": "Cold",
+    "keys": [
+     "cold"
+    ],
+    "local": []
+   },
+   {
+    "b": "Warm",
+    "keys": [
+     "warm"
+    ],
+    "local": []
+   },
+   {
+    "b": "Geographic dispersion",
+    "keys": [
+     "geographic dispersion"
+    ],
+    "local": []
+   },
+   {
+    "b": "Platform diversity",
+    "keys": [
+     "platform diversity"
+    ],
+    "local": []
+   },
+   {
+    "b": "Multi-cloud systems",
+    "keys": [
+     "multi-cloud",
+     "multi-cloud systems",
+     "multiple cloud providers"
+    ],
+    "local": []
+   },
+   {
+    "b": "Continuity of operations",
+    "keys": [
+     "continuity of operations",
+     "coop"
+    ],
+    "local": []
+   },
+   {
+    "b": "People",
+    "keys": [
+     "people"
+    ],
+    "local": [
+     "people"
+    ]
+   },
+   {
+    "b": "Technology",
+    "keys": [
+     "technology"
+    ],
+    "local": [
+     "technology"
+    ]
+   },
+   {
+    "b": "Infrastructure",
+    "keys": [
+     "infrastructure"
+    ],
+    "local": [
+     "infrastructure"
+    ]
+   },
+   {
+    "b": "Tabletop exercises",
+    "keys": [
+     "tabletop",
+     "tabletop exercises"
+    ],
+    "local": []
+   },
+   {
+    "b": "Fail over",
+    "keys": [
+     "fail over",
+     "failover"
+    ],
+    "local": []
+   },
+   {
+    "b": "Simulation",
+    "keys": [
+     "simulation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Parallel processing",
+    "keys": [
+     "parallel processing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Onsite/offsite",
+    "keys": [
+     "offsite",
+     "onsite",
+     "onsite/offsite"
+    ],
+    "local": []
+   },
+   {
+    "b": "Frequency",
+    "keys": [
+     "frequency"
+    ],
+    "local": [
+     "frequency"
+    ]
+   },
+   {
+    "b": "Encryption",
+    "keys": [
+     "encryption"
+    ],
+    "local": [
+     "encryption"
+    ]
+   },
+   {
+    "b": "Snapshots",
+    "keys": [
+     "snapshots"
+    ],
+    "local": []
+   },
+   {
+    "b": "Recovery",
+    "keys": [
+     "recovery"
+    ],
+    "local": [
+     "recovery"
+    ]
+   },
+   {
+    "b": "Replication",
+    "keys": [
+     "replication"
+    ],
+    "local": []
+   },
+   {
+    "b": "Journaling",
+    "keys": [
+     "journaling"
+    ],
+    "local": []
+   },
+   {
+    "b": "Generators",
+    "keys": [
+     "generators"
+    ],
+    "local": []
+   },
+   {
+    "b": "Uninterruptible power supply (UPS)",
+    "keys": [
+     "uninterruptible power supply",
+     "ups"
+    ],
+    "local": [
+     "ups"
+    ]
+   }
+  ],
+  "4.1": [
+   {
+    "b": "Establish",
+    "keys": [
+     "establish"
+    ],
+    "local": [
+     "establish"
+    ]
+   },
+   {
+    "b": "Deploy",
+    "keys": [
+     "deploy"
+    ],
+    "local": [
+     "deploy"
+    ]
+   },
+   {
+    "b": "Maintain",
+    "keys": [
+     "maintain"
+    ],
+    "local": [
+     "maintain"
+    ]
+   },
+   {
+    "b": "Mobile devices",
+    "keys": [
+     "mobile devices"
+    ],
+    "local": [
+     "mobile devices"
+    ]
+   },
+   {
+    "b": "Workstations",
+    "keys": [
+     "workstations"
+    ],
+    "local": [
+     "workstations"
+    ]
+   },
+   {
+    "b": "Switches",
+    "keys": [
+     "switches"
+    ],
+    "local": [
+     "switches"
+    ]
+   },
+   {
+    "b": "Routers",
+    "keys": [
+     "routers"
+    ],
+    "local": [
+     "routers"
+    ]
+   },
+   {
+    "b": "Cloud infrastructure",
+    "keys": [
+     "cloud infrastructure"
+    ],
+    "local": []
+   },
+   {
+    "b": "Servers",
+    "keys": [
+     "servers"
+    ],
+    "local": [
+     "servers"
+    ]
+   },
+   {
+    "b": "ICS/SCADA",
+    "keys": [
+     "ics",
+     "ics/scada",
+     "scada"
+    ],
+    "local": [
+     "ics"
+    ]
+   },
+   {
+    "b": "Embedded systems",
+    "keys": [
+     "embedded",
+     "embedded systems"
+    ],
+    "local": []
+   },
+   {
+    "b": "RTOS",
+    "keys": [
+     "rtos"
+    ],
+    "local": []
+   },
+   {
+    "b": "IoT devices",
+    "keys": [
+     "iot",
+     "iot devices"
+    ],
+    "local": [
+     "iot"
+    ]
+   },
+   {
+    "b": "Site surveys",
+    "keys": [
+     "site survey",
+     "site surveys"
+    ],
+    "local": []
+   },
+   {
+    "b": "Heat maps",
+    "keys": [
+     "heat map",
+     "heat maps"
+    ],
+    "local": []
+   },
+   {
+    "b": "Mobile device management (MDM)",
+    "keys": [
+     "mdm",
+     "mobile device management"
+    ],
+    "local": [
+     "mdm"
+    ]
+   },
+   {
+    "b": "Bring your own device (BYOD)",
+    "keys": [
+     "bring your own device",
+     "byod"
+    ],
+    "local": []
+   },
+   {
+    "b": "Corporate-owned, personally enabled (COPE)",
+    "keys": [
+     "cope",
+     "corporate-owned",
+     "corporate-owned, personally enabled",
+     "personally enabled"
+    ],
+    "local": []
+   },
+   {
+    "b": "Choose your own device (CYOD)",
+    "keys": [
+     "choose your own device",
+     "cyod"
+    ],
+    "local": []
+   },
+   {
+    "b": "Cellular",
+    "keys": [
+     "cellular"
+    ],
+    "local": [
+     "cellular"
+    ]
+   },
+   {
+    "b": "Wi-Fi",
+    "keys": [
+     "wi-fi"
+    ],
+    "local": [
+     "wi-fi"
+    ]
+   },
+   {
+    "b": "Bluetooth",
+    "keys": [
+     "bluetooth"
+    ],
+    "local": [
+     "bluetooth"
+    ]
+   },
+   {
+    "b": "Wi-Fi Protected Access 3 (WPA3)",
+    "keys": [
+     "wi-fi protected access 3",
+     "wpa3"
+    ],
+    "local": []
+   },
+   {
+    "b": "AAA/Remote Authentication Dial-In User Service (RADIUS)",
+    "keys": [
+     "aaa",
+     "aaa/remote authentication dial-in user service",
+     "radius",
+     "remote authentication dial-in user service"
+    ],
+    "local": [
+     "aaa"
+    ]
+   },
+   {
+    "b": "Cryptographic protocols",
+    "keys": [
+     "cryptographic protocols"
+    ],
+    "local": []
+   },
+   {
+    "b": "Authentication protocols",
+    "keys": [
+     "authentication protocols"
+    ],
+    "local": []
+   },
+   {
+    "b": "Input validation",
+    "keys": [
+     "input validation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Secure cookies",
+    "keys": [
+     "httponly",
+     "secure cookie",
+     "secure cookies"
+    ],
+    "local": []
+   },
+   {
+    "b": "Static code analysis",
+    "keys": [
+     "sast",
+     "static analysis",
+     "static code",
+     "static code analysis"
+    ],
+    "local": []
+   },
+   {
+    "b": "Code signing",
+    "keys": [
+     "code signing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Sandboxing",
+    "keys": [
+     "sandboxing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Monitoring",
+    "keys": [
+     "monitoring"
+    ],
+    "local": [
+     "monitoring"
+    ]
+   }
+  ],
+  "4.2": [
+   {
+    "b": "Acquisition/procurement process",
+    "keys": [
+     "acquisition",
+     "acquisition/procurement process",
+     "procurement process"
+    ],
+    "local": [
+     "acquisition"
+    ]
+   },
+   {
+    "b": "Ownership",
+    "keys": [
+     "ownership"
+    ],
+    "local": [
+     "ownership"
+    ]
+   },
+   {
+    "b": "Classification",
+    "keys": [
+     "classification"
+    ],
+    "local": [
+     "classification"
+    ]
+   },
+   {
+    "b": "Inventory",
+    "keys": [
+     "inventory"
+    ],
+    "local": [
+     "inventory"
+    ]
+   },
+   {
+    "b": "Enumeration",
+    "keys": [
+     "enumeration"
+    ],
+    "local": [
+     "enumeration"
+    ]
+   },
+   {
+    "b": "Sanitization",
+    "keys": [
+     "sanitization"
+    ],
+    "local": [
+     "sanitization"
+    ]
+   },
+   {
+    "b": "Destruction",
+    "keys": [
+     "destruction"
+    ],
+    "local": [
+     "destruction"
+    ]
+   },
+   {
+    "b": "Certification",
+    "keys": [
+     "certification"
+    ],
+    "local": [
+     "certification"
+    ]
+   },
+   {
+    "b": "Data retention",
+    "keys": [
+     "data retention"
+    ],
+    "local": []
+   }
+  ],
+  "4.3": [
+   {
+    "b": "Vulnerability scan",
+    "keys": [
+     "vulnerability scan"
+    ],
+    "local": []
+   },
+   {
+    "b": "Static analysis",
+    "keys": [
+     "sast",
+     "static analysis",
+     "static code"
+    ],
+    "local": []
+   },
+   {
+    "b": "Dynamic analysis",
+    "keys": [
+     "dast",
+     "dynamic analysis",
+     "fuzz"
+    ],
+    "local": []
+   },
+   {
+    "b": "Package monitoring",
+    "keys": [
+     "package monitoring"
+    ],
+    "local": []
+   },
+   {
+    "b": "Open-source intelligence (OSINT)",
+    "keys": [
+     "open-source intelligence",
+     "osint"
+    ],
+    "local": []
+   },
+   {
+    "b": "Proprietary/third-party",
+    "keys": [
+     "proprietary",
+     "proprietary/third-party",
+     "third-party"
+    ],
+    "local": []
+   },
+   {
+    "b": "Information-sharing organization",
+    "keys": [
+     "information-sharing organization"
+    ],
+    "local": []
+   },
+   {
+    "b": "Dark web",
+    "keys": [
+     "dark web"
+    ],
+    "local": []
+   },
+   {
+    "b": "Penetration testing",
+    "keys": [
+     "penetration testing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Bug bounty program",
+    "keys": [
+     "bug bounty program"
+    ],
+    "local": []
+   },
+   {
+    "b": "System/process audit",
+    "keys": [
+     "process audit",
+     "system",
+     "system/process audit"
+    ],
+    "local": []
+   },
+   {
+    "b": "False positive",
+    "keys": [
+     "false positive"
+    ],
+    "local": []
+   },
+   {
+    "b": "False negative",
+    "keys": [
+     "false negative"
+    ],
+    "local": []
+   },
+   {
+    "b": "Prioritize",
+    "keys": [
+     "prioritize"
+    ],
+    "local": []
+   },
+   {
+    "b": "Common Vulnerability Scoring System (CVSS)",
+    "keys": [
+     "common vulnerability scoring system",
+     "cvss"
+    ],
+    "local": []
+   },
+   {
+    "b": "Common Vulnerability Enumeration (CVE)",
+    "keys": [
+     "common vulnerability enumeration",
+     "cve"
+    ],
+    "local": [
+     "cve"
+    ]
+   },
+   {
+    "b": "Vulnerability classification",
+    "keys": [
+     "vulnerability classification"
+    ],
+    "local": []
+   },
+   {
+    "b": "Exposure factor",
+    "keys": [
+     " ef ",
+     "exposure factor"
+    ],
+    "local": []
+   },
+   {
+    "b": "Environmental variables",
+    "keys": [
+     "environmental variables"
+    ],
+    "local": []
+   },
+   {
+    "b": "Industry/organizational impact",
+    "keys": [
+     "industry",
+     "industry/organizational impact",
+     "organizational impact"
+    ],
+    "local": [
+     "industry"
+    ]
+   },
+   {
+    "b": "Risk tolerance",
+    "keys": [
+     "risk tolerance"
+    ],
+    "local": []
+   },
+   {
+    "b": "Patching",
+    "keys": [
+     "patching"
+    ],
+    "local": [
+     "patching"
+    ]
+   },
+   {
+    "b": "Insurance",
+    "keys": [
+     "insurance"
+    ],
+    "local": []
+   },
+   {
+    "b": "Segmentation",
+    "keys": [
+     "segmentation"
+    ],
+    "local": [
+     "segmentation"
+    ]
+   },
+   {
+    "b": "Compensating controls",
+    "keys": [
+     "compensating controls"
+    ],
+    "local": []
+   },
+   {
+    "b": "Exceptions and exemptions",
+    "keys": [
+     "exceptions and exemptions"
+    ],
+    "local": []
+   },
+   {
+    "b": "Rescanning",
+    "keys": [
+     "rescanning"
+    ],
+    "local": []
+   },
+   {
+    "b": "Audit",
+    "keys": [
+     "audit"
+    ],
+    "local": []
+   },
+   {
+    "b": "Verification",
+    "keys": [
+     "verification"
+    ],
+    "local": []
+   },
+   {
+    "b": "Reporting",
+    "keys": [
+     "reporting"
+    ],
+    "local": [
+     "reporting"
+    ]
+   }
+  ],
+  "4.4": [
+   {
+    "b": "Systems",
+    "keys": [
+     "systems"
+    ],
+    "local": [
+     "systems"
+    ]
+   },
+   {
+    "b": "Applications",
+    "keys": [
+     "applications"
+    ],
+    "local": [
+     "applications"
+    ]
+   },
+   {
+    "b": "Infrastructure",
+    "keys": [
+     "infrastructure"
+    ],
+    "local": [
+     "infrastructure"
+    ]
+   },
+   {
+    "b": "Log aggregation",
+    "keys": [
+     "log aggregation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Alerting",
+    "keys": [
+     "alerting"
+    ],
+    "local": [
+     "alerting"
+    ]
+   },
+   {
+    "b": "Scanning",
+    "keys": [
+     "scanning"
+    ],
+    "local": [
+     "scanning"
+    ]
+   },
+   {
+    "b": "Reporting",
+    "keys": [
+     "reporting"
+    ],
+    "local": [
+     "reporting"
+    ]
+   },
+   {
+    "b": "Archiving",
+    "keys": [
+     "archiving"
+    ],
+    "local": [
+     "archiving"
+    ]
+   },
+   {
+    "b": "Quarantine",
+    "keys": [
+     "quarantine"
+    ],
+    "local": []
+   },
+   {
+    "b": "Alert tuning",
+    "keys": [
+     "alert tuning"
+    ],
+    "local": []
+   },
+   {
+    "b": "Security Content Automation Protocol (SCAP)",
+    "keys": [
+     "scap",
+     "security content automation protocol"
+    ],
+    "local": []
+   },
+   {
+    "b": "Benchmarks",
+    "keys": [
+     "benchmarks"
+    ],
+    "local": []
+   },
+   {
+    "b": "Agents/agentless",
+    "keys": [
+     "agentless",
+     "agents",
+     "agents/agentless"
+    ],
+    "local": []
+   },
+   {
+    "b": "Security information and event management (SIEM)",
+    "keys": [
+     "security information and event management",
+     "siem"
+    ],
+    "local": []
+   },
+   {
+    "b": "Antivirus",
+    "keys": [
+     "antivirus"
+    ],
+    "local": []
+   },
+   {
+    "b": "Data loss prevention (DLP)",
+    "keys": [
+     "data loss prevention",
+     "dlp"
+    ],
+    "local": [
+     "dlp"
+    ]
+   },
+   {
+    "b": "Simple Network Management Protocol (SNMP) traps",
+    "keys": [
+     "simple network management protocol traps",
+     "snmp"
+    ],
+    "local": []
+   },
+   {
+    "b": "NetFlow",
+    "keys": [
+     "netflow"
+    ],
+    "local": []
+   },
+   {
+    "b": "Vulnerability scanners",
+    "keys": [
+     "vulnerability scanners"
+    ],
+    "local": []
+   }
+  ],
+  "4.5": [
+   {
+    "b": "Rules",
+    "keys": [
+     "firewall rule",
+     "rule ",
+     "rules"
+    ],
+    "local": [
+     "rule ",
+     "rules"
+    ]
+   },
+   {
+    "b": "Access lists",
+    "keys": [
+     "access list",
+     "access lists",
+     "acl"
+    ],
+    "local": [
+     "acl"
+    ]
+   },
+   {
+    "b": "Ports/protocols",
+    "keys": [
+     "port ",
+     "ports",
+     "ports/protocols",
+     "protocols"
+    ],
+    "local": [
+     "port "
+    ]
+   },
+   {
+    "b": "Screened subnets",
+    "keys": [
+     "dmz",
+     "screened subnet",
+     "screened subnets"
+    ],
+    "local": [
+     "dmz"
+    ]
+   },
+   {
+    "b": "Trends",
+    "keys": [
+     "anomaly",
+     "baseline of normal",
+     "trends"
+    ],
+    "local": [
+     "anomaly",
+     "trends"
+    ]
+   },
+   {
+    "b": "Signatures",
+    "keys": [
+     "signature",
+     "signature-based",
+     "signatures"
+    ],
+    "local": [
+     "signature",
+     "signatures"
+    ]
+   },
+   {
+    "b": "Agent-based",
+    "keys": [
+     "agent-based"
+    ],
+    "local": []
+   },
+   {
+    "b": "Centralized proxy",
+    "keys": [
+     "centralized proxy"
+    ],
+    "local": []
+   },
+   {
+    "b": "Universal Resource Locator (URL) scanning",
+    "keys": [
+     "universal resource locator scanning",
+     "url"
+    ],
+    "local": [
+     "url"
+    ]
+   },
+   {
+    "b": "Content categorization",
+    "keys": [
+     "content categorization"
+    ],
+    "local": []
+   },
+   {
+    "b": "Block rules",
+    "keys": [
+     "block rules"
+    ],
+    "local": []
+   },
+   {
+    "b": "Reputation",
+    "keys": [
+     "reputation"
+    ],
+    "local": [
+     "reputation"
+    ]
+   },
+   {
+    "b": "Group Policy",
+    "keys": [
+     "group policy"
+    ],
+    "local": []
+   },
+   {
+    "b": "SELinux",
+    "keys": [
+     "selinux"
+    ],
+    "local": []
+   },
+   {
+    "b": "Protocol selection",
+    "keys": [
+     "protocol selection"
+    ],
+    "local": []
+   },
+   {
+    "b": "Port selection",
+    "keys": [
+     "port selection"
+    ],
+    "local": []
+   },
+   {
+    "b": "Transport method",
+    "keys": [
+     "transport method"
+    ],
+    "local": []
+   },
+   {
+    "b": "DNS filtering",
+    "keys": [
+     "dns filtering"
+    ],
+    "local": []
+   },
+   {
+    "b": "Domain-based Message Authentication Reporting and Conformance (DMARC)",
+    "keys": [
+     "dmarc",
+     "domain-based message authentication reporting and conformance"
+    ],
+    "local": []
+   },
+   {
+    "b": "DomainKeys Identified Mail (DKIM)",
+    "keys": [
+     "dkim",
+     "domainkeys identified mail"
+    ],
+    "local": []
+   },
+   {
+    "b": "Sender Policy Framework (SPF)",
+    "keys": [
+     "sender policy framework",
+     "spf"
+    ],
+    "local": [
+     "spf"
+    ]
+   },
+   {
+    "b": "Gateway",
+    "keys": [
+     "gateway"
+    ],
+    "local": [
+     "gateway"
+    ]
+   },
+   {
+    "b": "File integrity monitoring",
+    "keys": [
+     "file integrity monitoring"
+    ],
+    "local": []
+   },
+   {
+    "b": "DLP",
+    "keys": [
+     "dlp"
+    ],
+    "local": [
+     "dlp"
+    ]
+   },
+   {
+    "b": "Network access control (NAC)",
+    "keys": [
+     "nac",
+     "network access control"
+    ],
+    "local": [
+     "nac"
+    ]
+   },
+   {
+    "b": "Endpoint detection and response (EDR)/extended detection and response (XDR)",
+    "keys": [
+     "edr",
+     "endpoint detection and response",
+     "endpoint detection and response/extended detection and response",
+     "extended detection and response",
+     "xdr"
+    ],
+    "local": [
+     "edr",
+     "xdr"
+    ]
+   },
+   {
+    "b": "User behavior analytics",
+    "keys": [
+     "ueba",
+     "user behavior",
+     "user behavior analytics"
+    ],
+    "local": []
+   }
+  ],
+  "4.6": [
+   {
+    "b": "Provisioning/de-provisioning user accounts",
+    "keys": [
+     "de-provision",
+     "de-provisioning user accounts",
+     "deprovision",
+     "provision",
+     "provisioning",
+     "provisioning/de-provisioning user accounts"
+    ],
+    "local": [
+     "provision"
+    ]
+   },
+   {
+    "b": "Permission assignments and implications",
+    "keys": [
+     "permission",
+     "permission assignments and implications",
+     "privilege creep"
+    ],
+    "local": [
+     "permission"
+    ]
+   },
+   {
+    "b": "Identity proofing",
+    "keys": [
+     "identity proofing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Federation",
+    "keys": [
+     "federation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Lightweight Directory Access Protocol (LDAP)",
+    "keys": [
+     "ldap",
+     "lightweight directory access protocol"
+    ],
+    "local": []
+   },
+   {
+    "b": "Open authorization (OAuth)",
+    "keys": [
+     "oauth",
+     "open authorization"
+    ],
+    "local": []
+   },
+   {
+    "b": "Security Assertions Markup Language (SAML)",
+    "keys": [
+     "saml",
+     "security assertions markup language"
+    ],
+    "local": []
+   },
+   {
+    "b": "Interoperability",
+    "keys": [
+     "interoperability"
+    ],
+    "local": []
+   },
+   {
+    "b": "Attestation",
+    "keys": [
+     "attestation"
+    ],
+    "local": [
+     "attestation"
+    ]
+   },
+   {
+    "b": "Mandatory",
+    "keys": [
+     "mandatory"
+    ],
+    "local": []
+   },
+   {
+    "b": "Discretionary",
+    "keys": [
+     "discretionary"
+    ],
+    "local": []
+   },
+   {
+    "b": "Role-based",
+    "keys": [
+     "role-based"
+    ],
+    "local": []
+   },
+   {
+    "b": "Rule-based",
+    "keys": [
+     "rule-based"
+    ],
+    "local": []
+   },
+   {
+    "b": "Attribute-based",
+    "keys": [
+     "attribute-based"
+    ],
+    "local": []
+   },
+   {
+    "b": "Time-of-day restrictions",
+    "keys": [
+     "business hours",
+     "time-of-day",
+     "time-of-day restrictions"
+    ],
+    "local": []
+   },
+   {
+    "b": "Least privilege",
+    "keys": [
+     "least privilege"
+    ],
+    "local": [
+     "least privilege"
+    ]
+   },
+   {
+    "b": "Biometrics",
+    "keys": [
+     "biometric",
+     "biometrics",
+     "facial",
+     "fingerprint"
+    ],
+    "local": []
+   },
+   {
+    "b": "Hard/soft authentication tokens",
+    "keys": [
+     "hard",
+     "hard/soft authentication tokens",
+     "soft authentication tokens",
+     "token"
+    ],
+    "local": [
+     "token"
+    ]
+   },
+   {
+    "b": "Security keys",
+    "keys": [
+     "security keys"
+    ],
+    "local": []
+   },
+   {
+    "b": "Something you know",
+    "keys": [
+     "something you know"
+    ],
+    "local": []
+   },
+   {
+    "b": "Something you have",
+    "keys": [
+     "something you have"
+    ],
+    "local": []
+   },
+   {
+    "b": "Something you are",
+    "keys": [
+     "something you are"
+    ],
+    "local": []
+   },
+   {
+    "b": "Somewhere you are",
+    "keys": [
+     "somewhere you are"
+    ],
+    "local": []
+   },
+   {
+    "b": "Length",
+    "keys": [
+     "length"
+    ],
+    "local": [
+     "length"
+    ]
+   },
+   {
+    "b": "Complexity",
+    "keys": [
+     "complexity"
+    ],
+    "local": [
+     "complexity"
+    ]
+   },
+   {
+    "b": "Reuse",
+    "keys": [
+     "reuse"
+    ],
+    "local": [
+     "reuse"
+    ]
+   },
+   {
+    "b": "Expiration",
+    "keys": [
+     "expiration"
+    ],
+    "local": [
+     "expiration"
+    ]
+   },
+   {
+    "b": "Age",
+    "keys": [
+     "age"
+    ],
+    "local": [
+     "age"
+    ]
+   },
+   {
+    "b": "Password managers",
+    "keys": [
+     "password manager",
+     "password managers"
+    ],
+    "local": []
+   },
+   {
+    "b": "Passwordless",
+    "keys": [
+     "passkey",
+     "passwordless"
+    ],
+    "local": []
+   },
+   {
+    "b": "Just-in-time permissions",
+    "keys": [
+     "just-in-time permissions"
+    ],
+    "local": []
+   },
+   {
+    "b": "Password vaulting",
+    "keys": [
+     "password vaulting"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ephemeral credentials",
+    "keys": [
+     "ephemeral",
+     "ephemeral credentials"
+    ],
+    "local": []
+   }
+  ],
+  "4.7": [
+   {
+    "b": "User provisioning",
+    "keys": [
+     "user provisioning"
+    ],
+    "local": []
+   },
+   {
+    "b": "Resource provisioning",
+    "keys": [
+     "resource provisioning"
+    ],
+    "local": []
+   },
+   {
+    "b": "Guard rails",
+    "keys": [
+     "guard rails"
+    ],
+    "local": []
+   },
+   {
+    "b": "Security groups",
+    "keys": [
+     "security groups"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ticket creation",
+    "keys": [
+     "ticket creation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Escalation",
+    "keys": [
+     "escalation"
+    ],
+    "local": [
+     "escalation"
+    ]
+   },
+   {
+    "b": "Enabling/disabling services and access",
+    "keys": [
+     "disabling services and access",
+     "enabling",
+     "enabling/disabling services and access"
+    ],
+    "local": []
+   },
+   {
+    "b": "Continuous integration and testing",
+    "keys": [
+     "continuous integration and testing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Integrations and Application programming interfaces (APIs)",
+    "keys": [
+     "apis",
+     "integrations and application programming interfaces"
+    ],
+    "local": []
+   },
+   {
+    "b": "Efficiency/time saving",
+    "keys": [
+     "efficiency",
+     "efficiency/time saving",
+     "time saving"
+    ],
+    "local": []
+   },
+   {
+    "b": "Enforcing baselines",
+    "keys": [
+     "enforcing baselines"
+    ],
+    "local": []
+   },
+   {
+    "b": "Standard infrastructure configurations",
+    "keys": [
+     "standard infrastructure configurations"
+    ],
+    "local": []
+   },
+   {
+    "b": "Scaling in a secure manner",
+    "keys": [
+     "scaling in a secure manner"
+    ],
+    "local": []
+   },
+   {
+    "b": "Employee retention",
+    "keys": [
+     "employee retention"
+    ],
+    "local": []
+   },
+   {
+    "b": "Reaction time",
+    "keys": [
+     "reaction time"
+    ],
+    "local": []
+   },
+   {
+    "b": "Workforce multiplier",
+    "keys": [
+     "workforce multiplier"
+    ],
+    "local": []
+   },
+   {
+    "b": "Complexity",
+    "keys": [
+     "complexity"
+    ],
+    "local": [
+     "complexity"
+    ]
+   },
+   {
+    "b": "Cost",
+    "keys": [
+     "cost"
+    ],
+    "local": [
+     "cost"
+    ]
+   },
+   {
+    "b": "Single point of failure",
+    "keys": [
+     "single point of failure"
+    ],
+    "local": []
+   },
+   {
+    "b": "Technical debt",
+    "keys": [
+     "technical debt"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ongoing supportability",
+    "keys": [
+     "ongoing supportability"
+    ],
+    "local": []
+   }
+  ],
+  "4.8": [
+   {
+    "b": "Preparation",
+    "keys": [
+     "preparation"
+    ],
+    "local": [
+     "preparation"
+    ]
+   },
+   {
+    "b": "Detection",
+    "keys": [
+     "detection"
+    ],
+    "local": [
+     "detection"
+    ]
+   },
+   {
+    "b": "Analysis",
+    "keys": [
+     "analysis"
+    ],
+    "local": [
+     "analysis"
+    ]
+   },
+   {
+    "b": "Containment",
+    "keys": [
+     "containment"
+    ],
+    "local": [
+     "containment"
+    ]
+   },
+   {
+    "b": "Eradication",
+    "keys": [
+     "eradication"
+    ],
+    "local": [
+     "eradication"
+    ]
+   },
+   {
+    "b": "Recovery",
+    "keys": [
+     "recovery"
+    ],
+    "local": [
+     "recovery"
+    ]
+   },
+   {
+    "b": "Lessons learned",
+    "keys": [
+     "lessons learned"
+    ],
+    "local": [
+     "lessons learned"
+    ]
+   },
+   {
+    "b": "Training",
+    "keys": [
+     "training"
+    ],
+    "local": [
+     "training"
+    ]
+   },
+   {
+    "b": "Tabletop exercise",
+    "keys": [
+     "tabletop",
+     "tabletop exercise"
+    ],
+    "local": []
+   },
+   {
+    "b": "Simulation",
+    "keys": [
+     "simulation"
+    ],
+    "local": []
+   },
+   {
+    "b": "Root cause analysis",
+    "keys": [
+     "root cause analysis"
+    ],
+    "local": []
+   },
+   {
+    "b": "Threat hunting",
+    "keys": [
+     "threat hunting"
+    ],
+    "local": []
+   },
+   {
+    "b": "Legal hold",
+    "keys": [
+     "legal hold"
+    ],
+    "local": []
+   },
+   {
+    "b": "Chain of custody",
+    "keys": [
+     "chain of custody"
+    ],
+    "local": []
+   },
+   {
+    "b": "Acquisition",
+    "keys": [
+     "acquisition"
+    ],
+    "local": [
+     "acquisition"
+    ]
+   },
+   {
+    "b": "Reporting",
+    "keys": [
+     "reporting"
+    ],
+    "local": [
+     "reporting"
+    ]
+   },
+   {
+    "b": "Preservation",
+    "keys": [
+     "preservation"
+    ],
+    "local": [
+     "preservation"
+    ]
+   },
+   {
+    "b": "E-discovery",
+    "keys": [
+     "e-discovery"
+    ],
+    "local": []
+   }
+  ],
+  "4.9": [
+   {
+    "b": "Firewall logs",
+    "keys": [
+     "firewall logs"
+    ],
+    "local": []
+   },
+   {
+    "b": "Application logs",
+    "keys": [
+     "application logs"
+    ],
+    "local": []
+   },
+   {
+    "b": "Endpoint logs",
+    "keys": [
+     "endpoint logs"
+    ],
+    "local": []
+   },
+   {
+    "b": "OS-specific security logs",
+    "keys": [
+     "os security log",
+     "os-specific security logs",
+     "security event log",
+     "windows security"
+    ],
+    "local": []
+   },
+   {
+    "b": "IPS/IDS logs",
+    "keys": [
+     "ids alert",
+     "ids log",
+     "ids logs",
+     "ips",
+     "ips alert",
+     "ips log",
+     "ips/ids logs"
+    ],
+    "local": [
+     "ips"
+    ]
+   },
+   {
+    "b": "Network logs",
+    "keys": [
+     "netflow",
+     "network log",
+     "network logs",
+     "router log",
+     "switch log"
+    ],
+    "local": []
+   },
+   {
+    "b": "Metadata",
+    "keys": [
+     "metadata"
+    ],
+    "local": [
+     "metadata"
+    ]
+   },
+   {
+    "b": "Vulnerability scans",
+    "keys": [
+     "scan results",
+     "vulnerability scan",
+     "vulnerability scans"
+    ],
+    "local": []
+   },
+   {
+    "b": "Automated reports",
+    "keys": [
+     "automated reports"
+    ],
+    "local": []
+   },
+   {
+    "b": "Dashboards",
+    "keys": [
+     "dashboards"
+    ],
+    "local": [
+     "dashboards"
+    ]
+   },
+   {
+    "b": "Packet captures",
+    "keys": [
+     "packet captures"
+    ],
+    "local": []
+   }
+  ],
+  "5.1": [
+   {
+    "b": "Guidelines",
+    "keys": [
+     "guidelines"
+    ],
+    "local": [
+     "guidelines"
+    ]
+   },
+   {
+    "b": "Acceptable use policy (AUP)",
+    "keys": [
+     "acceptable use policy",
+     "aup"
+    ],
+    "local": [
+     "aup"
+    ]
+   },
+   {
+    "b": "Information security policies",
+    "keys": [
+     "information security policies"
+    ],
+    "local": []
+   },
+   {
+    "b": "Business continuity",
+    "keys": [
+     "business continuity"
+    ],
+    "local": []
+   },
+   {
+    "b": "Disaster recovery",
+    "keys": [
+     "disaster recovery"
+    ],
+    "local": []
+   },
+   {
+    "b": "Incident response",
+    "keys": [
+     "incident response"
+    ],
+    "local": []
+   },
+   {
+    "b": "Software development lifecycle (SDLC)",
+    "keys": [
+     "development lifecycle",
+     "sdlc",
+     "software development lifecycle"
+    ],
+    "local": []
+   },
+   {
+    "b": "Change management",
+    "keys": [
+     "change management"
+    ],
+    "local": []
+   },
+   {
+    "b": "Password",
+    "keys": [
+     "password"
+    ],
+    "local": []
+   },
+   {
+    "b": "Access control",
+    "keys": [
+     "access control"
+    ],
+    "local": []
+   },
+   {
+    "b": "Physical security",
+    "keys": [
+     "physical security"
+    ],
+    "local": []
+   },
+   {
+    "b": "Encryption",
+    "keys": [
+     "encryption"
+    ],
+    "local": [
+     "encryption"
+    ]
+   },
+   {
+    "b": "Change management",
+    "keys": [
+     "change management"
+    ],
+    "local": []
+   },
+   {
+    "b": "Onboarding/offboarding",
+    "keys": [
+     "offboarding",
+     "onboarding",
+     "onboarding/offboarding"
+    ],
+    "local": []
+   },
+   {
+    "b": "Playbooks",
+    "keys": [
+     "playbook",
+     "playbooks"
+    ],
+    "local": []
+   },
+   {
+    "b": "Regulatory",
+    "keys": [
+     "regulatory"
+    ],
+    "local": [
+     "regulatory"
+    ]
+   },
+   {
+    "b": "Legal",
+    "keys": [
+     "legal"
+    ],
+    "local": [
+     "legal"
+    ]
+   },
+   {
+    "b": "Industry",
+    "keys": [
+     "industry"
+    ],
+    "local": [
+     "industry"
+    ]
+   },
+   {
+    "b": "Local/regional",
+    "keys": [
+     "local",
+     "local/regional",
+     "regional"
+    ],
+    "local": [
+     "local/regional"
+    ]
+   },
+   {
+    "b": "National",
+    "keys": [
+     "national"
+    ],
+    "local": [
+     "national"
+    ]
+   },
+   {
+    "b": "Global",
+    "keys": [
+     "global"
+    ],
+    "local": [
+     "global"
+    ]
+   },
+   {
+    "b": "Monitoring and revision",
+    "keys": [
+     "monitoring and revision"
+    ],
+    "local": []
+   },
+   {
+    "b": "Boards",
+    "keys": [
+     "boards"
+    ],
+    "local": [
+     "boards"
+    ]
+   },
+   {
+    "b": "Committees",
+    "keys": [
+     "committees"
+    ],
+    "local": [
+     "committees"
+    ]
+   },
+   {
+    "b": "Government entities",
+    "keys": [
+     "government entities"
+    ],
+    "local": []
+   },
+   {
+    "b": "Centralized/decentralized",
+    "keys": [
+     "centralized",
+     "centralized/decentralized",
+     "decentralized"
+    ],
+    "local": []
+   },
+   {
+    "b": "Owners",
+    "keys": [
+     "owners"
+    ],
+    "local": [
+     "owners"
+    ]
+   },
+   {
+    "b": "Controllers",
+    "keys": [
+     "controllers"
+    ],
+    "local": [
+     "controllers"
+    ]
+   },
+   {
+    "b": "Processors",
+    "keys": [
+     "processors"
+    ],
+    "local": [
+     "processors"
+    ]
+   },
+   {
+    "b": "Custodians/stewards",
+    "keys": [
+     "custodians",
+     "custodians/stewards",
+     "stewards"
+    ],
+    "local": []
+   }
+  ],
+  "5.2": [
+   {
+    "b": "Risk identification",
+    "keys": [
+     "risk identification"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ad hoc",
+    "keys": [
+     "ad hoc"
+    ],
+    "local": []
+   },
+   {
+    "b": "Recurring",
+    "keys": [
+     "recurring"
+    ],
+    "local": [
+     "recurring"
+    ]
+   },
+   {
+    "b": "One-time",
+    "keys": [
+     "one-time"
+    ],
+    "local": []
+   },
+   {
+    "b": "Continuous",
+    "keys": [
+     "continuous"
+    ],
+    "local": []
+   },
+   {
+    "b": "Qualitative",
+    "keys": [
+     "qualitative"
+    ],
+    "local": []
+   },
+   {
+    "b": "Quantitative",
+    "keys": [
+     "quantitative"
+    ],
+    "local": []
+   },
+   {
+    "b": "Single loss expectancy (SLE)",
+    "keys": [
+     "single loss expectancy",
+     "sle"
+    ],
+    "local": [
+     "sle"
+    ]
+   },
+   {
+    "b": "Annualized loss expectancy (ALE)",
+    "keys": [
+     "ale",
+     "annualized loss expectancy"
+    ],
+    "local": [
+     "ale"
+    ]
+   },
+   {
+    "b": "Annualized rate of occurrence (ARO)",
+    "keys": [
+     "annualized rate of occurrence",
+     "aro"
+    ],
+    "local": [
+     "aro"
+    ]
+   },
+   {
+    "b": "Probability",
+    "keys": [
+     "probability"
+    ],
+    "local": [
+     "probability"
+    ]
+   },
+   {
+    "b": "Likelihood",
+    "keys": [
+     "likelihood"
+    ],
+    "local": [
+     "likelihood"
+    ]
+   },
+   {
+    "b": "Exposure factor",
+    "keys": [
+     " ef ",
+     "exposure factor"
+    ],
+    "local": []
+   },
+   {
+    "b": "Impact",
+    "keys": [
+     "impact"
+    ],
+    "local": [
+     "impact"
+    ]
+   },
+   {
+    "b": "Key risk indicators",
+    "keys": [
+     "key risk indicator",
+     "key risk indicators",
+     "kri"
+    ],
+    "local": [
+     "kri"
+    ]
+   },
+   {
+    "b": "Risk owners",
+    "keys": [
+     "risk owner",
+     "risk owners"
+    ],
+    "local": []
+   },
+   {
+    "b": "Risk threshold",
+    "keys": [
+     "risk threshold",
+     "threshold"
+    ],
+    "local": [
+     "threshold"
+    ]
+   },
+   {
+    "b": "Risk tolerance",
+    "keys": [
+     "risk tolerance"
+    ],
+    "local": []
+   },
+   {
+    "b": "Expansionary",
+    "keys": [
+     "expansionary"
+    ],
+    "local": []
+   },
+   {
+    "b": "Conservative",
+    "keys": [
+     "conservative"
+    ],
+    "local": []
+   },
+   {
+    "b": "Neutral",
+    "keys": [
+     "neutral"
+    ],
+    "local": []
+   },
+   {
+    "b": "Transfer",
+    "keys": [
+     "transfer"
+    ],
+    "local": [
+     "transfer"
+    ]
+   },
+   {
+    "b": "Exemption",
+    "keys": [
+     "exemption"
+    ],
+    "local": [
+     "exemption"
+    ]
+   },
+   {
+    "b": "Exception",
+    "keys": [
+     "exception"
+    ],
+    "local": [
+     "exception"
+    ]
+   },
+   {
+    "b": "Avoid",
+    "keys": [
+     "avoid"
+    ],
+    "local": [
+     "avoid"
+    ]
+   },
+   {
+    "b": "Mitigate",
+    "keys": [
+     "mitigate"
+    ],
+    "local": [
+     "mitigate"
+    ]
+   },
+   {
+    "b": "Risk reporting",
+    "keys": [
+     "risk reporting"
+    ],
+    "local": []
+   },
+   {
+    "b": "Recovery time objective (RTO)",
+    "keys": [
+     "recovery time objective",
+     "rto"
+    ],
+    "local": [
+     "rto"
+    ]
+   },
+   {
+    "b": "Recovery point objective (RPO)",
+    "keys": [
+     "recovery point objective",
+     "rpo"
+    ],
+    "local": [
+     "rpo"
+    ]
+   },
+   {
+    "b": "Mean time to repair (MTTR)",
+    "keys": [
+     "mean time to repair",
+     "mttr"
+    ],
+    "local": []
+   },
+   {
+    "b": "Mean time between failures (MTBF)",
+    "keys": [
+     "mean time between failures",
+     "mtbf"
+    ],
+    "local": []
+   }
+  ],
+  "5.3": [
+   {
+    "b": "Penetration testing",
+    "keys": [
+     "penetration testing"
+    ],
+    "local": []
+   },
+   {
+    "b": "Right-to-audit clause",
+    "keys": [
+     "right-to-audit clause"
+    ],
+    "local": []
+   },
+   {
+    "b": "Evidence of internal audits",
+    "keys": [
+     "evidence of internal audits",
+     "internal audit"
+    ],
+    "local": [
+     "internal audit"
+    ]
+   },
+   {
+    "b": "Independent assessments",
+    "keys": [
+     "independent",
+     "independent assessment",
+     "independent assessments"
+    ],
+    "local": [
+     "independent"
+    ]
+   },
+   {
+    "b": "Supply chain analysis",
+    "keys": [
+     "supply chain",
+     "supply chain analysis"
+    ],
+    "local": []
+   },
+   {
+    "b": "Due diligence",
+    "keys": [
+     "due diligence"
+    ],
+    "local": [
+     "due diligence"
+    ]
+   },
+   {
+    "b": "Conflict of interest",
+    "keys": [
+     "conflict of interest"
+    ],
+    "local": []
+   },
+   {
+    "b": "Service-level agreement (SLA)",
+    "keys": [
+     "service-level agreement",
+     "sla"
+    ],
+    "local": [
+     "sla"
+    ]
+   },
+   {
+    "b": "Memorandum of agreement (MOA)",
+    "keys": [
+     "memorandum of agreement",
+     "moa"
+    ],
+    "local": [
+     "moa"
+    ]
+   },
+   {
+    "b": "Memorandum of understanding (MOU)",
+    "keys": [
+     "memorandum of understanding",
+     "mou"
+    ],
+    "local": [
+     "mou"
+    ]
+   },
+   {
+    "b": "Master service agreement (MSA)",
+    "keys": [
+     "master service agreement",
+     "msa"
+    ],
+    "local": [
+     "msa"
+    ]
+   },
+   {
+    "b": "Work order (WO)/statement of work (SOW)",
+    "keys": [
+     "sow",
+     "statement of work",
+     "wo",
+     "work order",
+     "work order/statement of work"
+    ],
+    "local": [
+     "sow",
+     "wo"
+    ]
+   },
+   {
+    "b": "Non-disclosure agreement (NDA)",
+    "keys": [
+     "nda",
+     "non-disclosure agreement"
+    ],
+    "local": [
+     "nda"
+    ]
+   },
+   {
+    "b": "Business partners agreement (BPA)",
+    "keys": [
+     "bpa",
+     "business partners agreement"
+    ],
+    "local": [
+     "bpa"
+    ]
+   },
+   {
+    "b": "Vendor monitoring",
+    "keys": [
+     "vendor monitoring"
+    ],
+    "local": []
+   },
+   {
+    "b": "Questionnaires",
+    "keys": [
+     "questionnaires"
+    ],
+    "local": [
+     "questionnaires"
+    ]
+   },
+   {
+    "b": "Rules of engagement",
+    "keys": [
+     "rules of engagement"
+    ],
+    "local": []
+   }
+  ],
+  "5.4": [
+   {
+    "b": "Internal",
+    "keys": [
+     "internal"
+    ],
+    "local": [
+     "internal"
+    ]
+   },
+   {
+    "b": "External",
+    "keys": [
+     "external"
+    ],
+    "local": [
+     "external"
+    ]
+   },
+   {
+    "b": "Fines",
+    "keys": [
+     "fines"
+    ],
+    "local": []
+   },
+   {
+    "b": "Sanctions",
+    "keys": [
+     "sanctions"
+    ],
+    "local": []
+   },
+   {
+    "b": "Reputational damage",
+    "keys": [
+     "reputational damage"
+    ],
+    "local": []
+   },
+   {
+    "b": "Loss of license",
+    "keys": [
+     "loss of license"
+    ],
+    "local": []
+   },
+   {
+    "b": "Contractual impacts",
+    "keys": [
+     "contractual impacts"
+    ],
+    "local": []
+   },
+   {
+    "b": "Due diligence/care",
+    "keys": [
+     "care",
+     "due diligence",
+     "due diligence/care"
+    ],
+    "local": [
+     "due diligence"
+    ]
+   },
+   {
+    "b": "Attestation and acknowledgement",
+    "keys": [
+     "attestation and acknowledgement"
+    ],
+    "local": []
+   },
+   {
+    "b": "Internal and external",
+    "keys": [
+     "internal and external"
+    ],
+    "local": []
+   },
+   {
+    "b": "Automation",
+    "keys": [
+     "automation"
+    ],
+    "local": [
+     "automation"
+    ]
+   },
+   {
+    "b": "Local/regional",
+    "keys": [
+     "local",
+     "local/regional",
+     "regional"
+    ],
+    "local": [
+     "local/regional"
+    ]
+   },
+   {
+    "b": "National",
+    "keys": [
+     "national"
+    ],
+    "local": [
+     "national"
+    ]
+   },
+   {
+    "b": "Global",
+    "keys": [
+     "global"
+    ],
+    "local": [
+     "global"
+    ]
+   },
+   {
+    "b": "Data subject",
+    "keys": [
+     "data subject"
+    ],
+    "local": []
+   },
+   {
+    "b": "Controller vs. processor",
+    "keys": [
+     "controller",
+     "controller vs. processor",
+     "processor"
+    ],
+    "local": []
+   },
+   {
+    "b": "Ownership",
+    "keys": [
+     "ownership"
+    ],
+    "local": [
+     "ownership"
+    ]
+   },
+   {
+    "b": "Data inventory and retention",
+    "keys": [
+     "data inventory",
+     "data inventory and retention",
+     "retention"
+    ],
+    "local": [
+     "retention"
+    ]
+   },
+   {
+    "b": "Right to be forgotten",
+    "keys": [
+     "right to be forgotten"
+    ],
+    "local": []
+   }
+  ],
+  "5.5": [
+   {
+    "b": "Attestation",
+    "keys": [
+     "attestation"
+    ],
+    "local": [
+     "attestation"
+    ]
+   },
+   {
+    "b": "Compliance",
+    "keys": [
+     "compliance"
+    ],
+    "local": [
+     "compliance"
+    ]
+   },
+   {
+    "b": "Audit committee",
+    "keys": [
+     "audit committee"
+    ],
+    "local": []
+   },
+   {
+    "b": "Self-assessments",
+    "keys": [
+     "self-assessment",
+     "self-assessments"
+    ],
+    "local": []
+   },
+   {
+    "b": "Regulatory",
+    "keys": [
+     "regulatory"
+    ],
+    "local": [
+     "regulatory"
+    ]
+   },
+   {
+    "b": "Examinations",
+    "keys": [
+     "examinations"
+    ],
+    "local": [
+     "examinations"
+    ]
+   },
+   {
+    "b": "Assessment",
+    "keys": [
+     "assessment"
+    ],
+    "local": [
+     "assessment"
+    ]
+   },
+   {
+    "b": "Independent third-party audit",
+    "keys": [
+     "external auditor",
+     "independent",
+     "independent third-party audit",
+     "third-party audit"
+    ],
+    "local": [
+     "independent"
+    ]
+   },
+   {
+    "b": "Physical",
+    "keys": [
+     "physical"
+    ],
+    "local": [
+     "physical"
+    ]
+   },
+   {
+    "b": "Offensive",
+    "keys": [
+     "offensive"
+    ],
+    "local": [
+     "offensive"
+    ]
+   },
+   {
+    "b": "Defensive",
+    "keys": [
+     "defensive"
+    ],
+    "local": [
+     "defensive"
+    ]
+   },
+   {
+    "b": "Integrated",
+    "keys": [
+     "integrated"
+    ],
+    "local": [
+     "integrated"
+    ]
+   },
+   {
+    "b": "Known environment",
+    "keys": [
+     "known environment"
+    ],
+    "local": []
+   },
+   {
+    "b": "Partially known environment",
+    "keys": [
+     "partially known environment"
+    ],
+    "local": []
+   },
+   {
+    "b": "Unknown environment",
+    "keys": [
+     "unknown environment"
+    ],
+    "local": []
+   },
+   {
+    "b": "Passive",
+    "keys": [
+     "passive"
+    ],
+    "local": [
+     "passive"
+    ]
+   },
+   {
+    "b": "Active",
+    "keys": [
+     "active"
+    ],
+    "local": [
+     "active"
+    ]
+   }
+  ],
+  "5.6": [
+   {
+    "b": "Campaigns",
+    "keys": [
+     "campaigns"
+    ],
+    "local": []
+   },
+   {
+    "b": "Recognizing a phishing attempt",
+    "keys": [
+     "phishing",
+     "recognizing a phishing attempt"
+    ],
+    "local": [
+     "phishing"
+    ]
+   },
+   {
+    "b": "Responding to reported suspicious messages",
+    "keys": [
+     "report",
+     "reported",
+     "responding to reported suspicious messages",
+     "suspicious message"
+    ],
+    "local": [
+     "report",
+     "reported"
+    ]
+   },
+   {
+    "b": "Risky",
+    "keys": [
+     "risky"
+    ],
+    "local": [
+     "risky"
+    ]
+   },
+   {
+    "b": "Unexpected",
+    "keys": [
+     "unexpected"
+    ],
+    "local": [
+     "unexpected"
+    ]
+   },
+   {
+    "b": "Unintentional",
+    "keys": [
+     "unintentional"
+    ],
+    "local": [
+     "unintentional"
+    ]
+   },
+   {
+    "b": "Policy/handbooks",
+    "keys": [
+     "handbooks",
+     "policy",
+     "policy/handbooks"
+    ],
+    "local": []
+   },
+   {
+    "b": "Situational awareness",
+    "keys": [
+     "situational awareness"
+    ],
+    "local": []
+   },
+   {
+    "b": "Insider threat",
+    "keys": [
+     "insider",
+     "insider threat"
+    ],
+    "local": [
+     "insider"
+    ]
+   },
+   {
+    "b": "Password management",
+    "keys": [
+     "password management"
+    ],
+    "local": []
+   },
+   {
+    "b": "Removable media and cables",
+    "keys": [
+     "removable media and cables"
+    ],
+    "local": []
+   },
+   {
+    "b": "Social engineering",
+    "keys": [
+     "impersonat",
+     "pretext",
+     "social engineering"
+    ],
+    "local": []
+   },
+   {
+    "b": "Operational security",
+    "keys": [
+     "operational security"
+    ],
+    "local": []
+   },
+   {
+    "b": "Hybrid/remote work environments",
+    "keys": [
+     "hybrid",
+     "hybrid/remote work environments",
+     "remote work environments"
+    ],
+    "local": []
+   },
+   {
+    "b": "Initial",
+    "keys": [
+     "initial"
+    ],
+    "local": [
+     "initial"
+    ]
+   },
+   {
+    "b": "Recurring",
+    "keys": [
+     "recurring"
+    ],
+    "local": [
+     "recurring"
+    ]
+   },
+   {
+    "b": "Development",
+    "keys": [
+     "development"
+    ],
+    "local": [
+     "development"
+    ]
+   },
+   {
+    "b": "Execution",
+    "keys": [
+     "execution"
+    ],
+    "local": [
+     "execution"
+    ]
+   }
+  ]
+ }
+}
