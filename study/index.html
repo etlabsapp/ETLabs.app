@@ -1077,7 +1077,16 @@ const SCEN_ALL = [
 {"o":"5.6","q":"An employee disables the antivirus on their laptop because it \"slows down games,\" knowing it's against policy. Which type of behavior is this?","options":["Unintentional","Unexpected","Risky","Compliant"],"answer":2,"why":"Knowingly bypassing a security control is risky behavior."},
 {"o":"5.6","q":"An employee posts a photo of their desk on social media, and a whiteboard in the background shows server names and a Wi-Fi password. What training topic does this point to?","options":["Bug bounty","Operational security (OPSEC)","Risk transfer","Data sovereignty"],"answer":1,"why":"OPSEC training teaches people not to reveal sensitive details through everyday actions, like social posts."},
 {"o":"5.6","q":"Remote workers often work from coffee shops. Which practice should security training stress most for them?","options":["Turn off device encryption to save battery","Share hotspot passwords with strangers","Disable the screen lock","Use the company VPN and guard screens from shoulder surfing"],"answer":3,"why":"Hybrid/remote work training covers secure connections and physical awareness in public places."},
-{"o":"5.6","q":"A security team wants to know if its awareness program works. Which metric is the most useful to track over time?","options":["The number of training slides","How many posters were printed","The training video's length","The phishing simulation click rate and the report rate"],"answer":3,"why":"Falling click rates and rising report rates show behavior is actually changing, which is the goal of the program."}
+{"o":"5.6","q":"A security team wants to know if its awareness program works. Which metric is the most useful to track over time?","options":["The number of training slides","How many posters were printed","The training video's length","The phishing simulation click rate and the report rate"],"answer":3,"why":"Falling click rates and rising report rates show behavior is actually changing, which is the goal of the program."},
+/* red-clue drills from attack-visual-clues.pdf (payload + clue in red) */
+{"o":"2.4","q":"A login request sends the fields below. Spot the red clue: which attack is this?","payload":"username=admin&password=' OR '1'='1' --","clue":"' OR '1'='1' --","options":["CRLF / header injection","SQL injection (SQLi)","DLL injection","Directory traversal"],"answer":1,"why":"Red clue: ' OR '1'='1' creates an always-true SQL condition. -- commonly begins a SQL comment. Think SQL injection."},
+{"o":"2.4","q":"A user submits the comment below on a web page. Spot the red clue: which attack is this?","payload":"comment=<script>alert('XSS')<\/script>","clue":"<script>alert('XSS')<\/script>","options":["DLL injection","Cross-site scripting (XSS)","Directory traversal","Server-side template injection (SSTI)"],"answer":1,"why":"Red clue: <script>...<\/script> tells the browser to interpret JavaScript. Think XSS."},
+{"o":"2.4","q":"A network tool's host field receives the value below. Spot the red clue: which attack is this?","payload":"host=server01; whoami","clue":"; whoami","options":["Directory traversal","Command injection","Cross-site scripting (XSS)","Server-side include (SSI) injection"],"answer":1,"why":"Red clue: ; can separate commands, and whoami is an operating-system command. Think command injection."},
+{"o":"2.4","q":"A profile form's name field receives the value below. Spot the red clue: which attack is this?","payload":"name={{7*7}}","clue":"{{7*7}}","options":["CRLF / header injection","Server-side template injection (SSTI)","SQL injection (SQLi)","Buffer overflow"],"answer":1,"why":"Red clue: {{ ... }} is common template syntax. If user input is evaluated as a template expression, think server-side template injection."},
+{"o":"2.4","q":"A web request sets a parameter to the value below. Spot the red clue: which attack is this?","payload":"value=normal%0d%0aInjected-Header:test","clue":"%0d%0a","options":["DLL injection","XML injection","CRLF / header injection","SQL injection (SQLi)"],"answer":2,"why":"Red clue: %0d%0a represents carriage-return + line-feed in URL encoding. Think CRLF/header injection."},
+{"o":"2.4","q":"A directory search form receives the filter below. Spot the red clue: which attack is this?","payload":"filter=(uid=*)","clue":"(uid=*)","options":["Command injection","Cross-site scripting (XSS)","Server-side template injection (SSTI)","LDAP injection"],"answer":3,"why":"Red clue: (uid=*) looks like an LDAP search filter; the wildcard * can broaden a match. Think LDAP injection when LDAP filters are being manipulated."},
+{"o":"2.4","q":"An application's input field receives the data below. Spot the red clue: which attack is this?","payload":"input=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...","clue":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...","options":["LDAP injection","Command injection","Buffer overflow","Server-side template injection (SSTI)"],"answer":2,"why":"Red clue: An abnormally long or repeated input can be a visual clue that data is being pushed beyond an expected memory boundary. Think buffer overflow."},
+{"o":"2.4","q":"A program that prints user input receives the value below. Spot the red clue: which attack is this?","payload":"input=%x%x%x%x","clue":"%x%x%x%x","options":["Directory traversal","Buffer overflow","Server-side include (SSI) injection","Format string attack"],"answer":3,"why":"Red clue: Repeated format specifiers such as %x, %p, or %n are a strong clue for a format string attack."}
 ];
 /* round sizes (random draw from the selected pool each run). Must match STUDY_EXAM_DECK in workers/router.js */
 const ROUND = { terms: 30, scen: 20, mixed: 12, cert: 12 };
@@ -1270,6 +1279,8 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .card.scen .ring{width:44px;height:44px;right:10px;top:10px}
 .card.scen .ring svg{width:44px;height:44px}
 .card.scen .ring b{font-size:14px}
+.q .payload{display:block;margin-top:10px;padding:9px 11px;border-radius:10px;background:rgba(3,10,14,.92);border:1px solid var(--line);font-family:var(--mono);font-size:15px;font-weight:600;color:var(--green);white-space:pre-wrap;overflow-wrap:anywhere}
+.q .payload .clue{color:var(--red);text-shadow:0 0 8px rgba(255,56,96,.6)}
 .card.scen .q{font-size:clamp(15.5px,4.3vw,18px);font-weight:600;line-height:1.45;margin-top:6px}
 .opts.scen{gap:8px;margin-top:12px}
 .opts.scen .o{min-height:52px;font-size:15px;line-height:1.3;padding:10px 12px}
@@ -1994,6 +2005,10 @@ function question(){
     $("card").classList.remove("rev");
     $("qtag").textContent = "// SCENARIO " + s.o + " — PICK THE BEST ANSWER";
     $("q").textContent = s.q;
+    if(s.payload){ const pl = document.createElement("code"), k = s.clue ? s.payload.indexOf(s.clue) : -1;
+      pl.className = "payload"; pl.appendChild(document.createTextNode(k < 0 ? s.payload : s.payload.slice(0, k)));
+      if(k >= 0){ const r = document.createElement("span"); r.className = "clue"; r.textContent = s.clue; pl.appendChild(r); pl.appendChild(document.createTextNode(s.payload.slice(k + s.clue.length))); }
+      $("q").appendChild(pl); }
     rightText = s.options[s._a];
     opts = shuffle(s.options);
   } else {
@@ -2132,7 +2147,7 @@ function endGame(){
     const it = parseId(id), li = document.createElement("li");
     if(it.kind === "c"){ const f = CERT_FIELDS[it.i]; li.innerHTML = "<b>" + esc(f.label) + "</b><span>" + esc(f.why) + "</span>"; }
     else if(it.kind === "s"){ const s = SCEN[it.i]; li.className = "sc";
-      li.innerHTML = "<i>" + esc(s.o + " · " + shorten(s.q, 95)) + "</i><b>&#x2713; " + esc(s.options[s._a]) + "</b>"; }
+      li.innerHTML = "<i>" + esc(s.o + " · " + shorten(s.payload ? s.payload : s.q, 95)) + "</i><b>&#x2713; " + esc(s.options[s._a]) + "</b>"; }
     else li.innerHTML = "<b>" + esc(CARDS[it.i].term) + "</b><span>" + esc(CARDS[it.i].meaning) + "</span>";
     ul.appendChild(li);
   });
