@@ -1398,6 +1398,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .ring .bgc{stroke:#12242e}
 .ring .fg{stroke:var(--cyan);stroke-linecap:round;filter:drop-shadow(0 0 4px var(--cyan))}
 .ring.low .fg{stroke:var(--red);filter:drop-shadow(0 0 5px var(--red))}
+.ring.low b{color:var(--red);text-shadow:0 0 8px var(--red)}
 .ring.low{animation:pulse .5s infinite alternate}
 @keyframes pulse{to{transform:scale(1.08)}}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:16px}
@@ -1576,7 +1577,7 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
         <div class="seg" id="modeSeg"><span data-v="terms">TERMS</span><span data-v="scen">SCENARIOS</span><span data-v="mixed">MIXED</span><span data-v="cert" class="certopt">CERT ANATOMY</span><span data-v="pbq">PBQ</span></div></div>
       <button class="tog" id="togMode"><span class="lbl">Show first<small>For term cards (Terms &amp; Mixed)</small></span>
         <span class="seg"><span data-v="0">WORD</span><span data-v="1">MEANING</span></span></button>
-      <button class="tog" id="togTimer"><span class="lbl">Countdown<small>15s terms · 30s scenarios · 20s cert · faster = bonus</small></span><span class="pill"></span></button>
+      <button class="tog on" id="togTimer" aria-disabled="true"><span class="lbl">Countdown: always on<small>30s minimum per question · longer questions and PBQs get more · faster = bonus</small></span><span class="pill"></span></button>
       <button class="tog" id="togSound"><span class="lbl">Sound FX<small>Retro beeps</small></span><span class="pill"></span></button>
     </div>
     <div class="spacer"></div>
@@ -1651,7 +1652,17 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
 (function(){
 "use strict";
 const $ = id => document.getElementById(id);
-const TIME_TERM = 15, TIME_SCEN = 30;   // seconds per question when timer is on
+const TIME_MIN = 30, TIME_PBQ_MAX = 180;   // every question gets its own countdown, never under 30s
+/* per-question limit: terms/cert 30s; scenarios +1s per 15 words past 45 (question + options) and +10s with a payload;
+   PBQ 30s + 15s per dropdown item, capped at 3 min */
+const words = s => (String(s || "").match(/\S+/g) || []).length;
+function limitFor(id){
+  const it = parseId(id);
+  if(it.kind === "p") return Math.min(TIME_PBQ_MAX, Math.max(TIME_MIN, 30 + 15 * PBQ[it.i].items.length));
+  if(it.kind === "s"){ const s = SCEN[it.i], w = words(s.q) + s.options.reduce((n, o) => n + words(o), 0);
+    return Math.max(TIME_MIN, 30 + Math.ceil(Math.max(0, w - 45) / 15) + (s.payload ? 10 : 0)); }
+  return TIME_MIN;
+}
 const MIXED_EACH = ROUND.mixed;          // Mixed round = 12 terms + 12 scenarios
 const BASE_POINTS = 100;
 const STORE = "hackquiz:study-site";
@@ -1660,7 +1671,6 @@ const domLabel = d => d === "all" ? "Full exam" : "Domain " + d;
 const domOf = x => x.o.split(".")[0];
 let CARDS = [], SCEN = [], PBQ = [], DECK_SUBTITLE = "";
 const MODES = { terms:"Terms", scen:"Scenarios", mixed:"Mixed", cert:"Cert Anatomy", pbq:"PBQ" };
-const TIME_CERT = 20;
 
 /* normalize scenario answers: index (0-3) or exact option text */
 SCEN_ALL.forEach((s, i) => {
@@ -1682,6 +1692,7 @@ function load(){ try{ return JSON.parse(localStorage.getItem(STORE)) || {}; }cat
 function save(o){ try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){} }
 const saved = load();
 const settings = Object.assign({ rev:false, timer:true, sound:true, mode:"terms" }, saved.settings || {});
+settings.timer = true;   // countdown is mandatory now (older saved "off" settings are ignored)
 delete settings.day;                       // old class-day setting (Day 1/Day 2) is retired
 // The whole exam is the default on every visit; only a ?domain= link narrows it.
 // Legacy ?day=day1|day2|all links (and /study/day1 redirects) open the whole exam.
@@ -2147,7 +2158,7 @@ const parseId = id => ({ kind: id[0], i: +id.slice(2) });
 
 /* ---------- state ---------- */
 let runDom = {}, order = [], idx = 0, score = 0, streak = 0, bestStreak = 0, correct = 0, missed = [], locked = false, review = false, runMode = "terms";
-let tStart = 0, raf = 0, lastTick = -1, advanceTO = 0, limit = TIME_TERM;
+let tStart = 0, raf = 0, lastTick = -1, advanceTO = 0, limit = TIME_MIN;
 const RING_C = 2 * Math.PI * 24;
 $("ringFg").style.strokeDasharray = RING_C;
 
@@ -2198,7 +2209,7 @@ $("modeSeg").querySelectorAll("span").forEach(s => s.onclick = e => {
   settings.mode = s.dataset.v; sfx.click(); syncToggles(); persist(); bootLog(); syncUrl();
 });
 $("togMode").onclick = () => { if(settings.mode === "scen" || settings.mode === "cert" || settings.mode === "pbq") return; settings.rev = !settings.rev; sfx.click(); syncToggles(); persist(); };
-$("togTimer").onclick = () => { settings.timer = !settings.timer; sfx.click(); syncToggles(); persist(); };
+$("togTimer").onclick = () => {};
 $("togSound").onclick = () => { settings.sound = !settings.sound; syncToggles(); persist(); sfx.click(); };
 $("bMute").onclick = () => { settings.sound = !settings.sound; syncToggles(); persist(); sfx.click(); };
 
@@ -2262,7 +2273,7 @@ function question(){
     b.onclick = () => answer(b);
     box.appendChild(b);
   });
-  limit = cert ? TIME_CERT : scen ? TIME_SCEN : TIME_TERM;
+  limit = limitFor(order[idx]);
   if(cert){
     certFocus(CERT_FIELDS[it.i].id);
     const r = $("card").getBoundingClientRect(); if(r.top < 0) window.scrollTo(0, window.scrollY + r.top - 8);
@@ -2275,9 +2286,9 @@ function tickRing(){
   const left = timeLeft(), secs = Math.ceil(left);
   $("ringFg").style.strokeDashoffset = RING_C * (1 - left / limit);
   $("ringT").textContent = secs;
-  $("ring").classList.toggle("low", left <= 5);
+  $("ring").classList.toggle("low", left <= 10);
   if(secs <= 3 && secs !== lastTick && secs > 0){ lastTick = secs; sfx.tick(); }
-  if(left <= 0){ answer(null); return; }
+  if(left <= 0){ const it = parseId(order[idx]); if(it.kind === "p") pbqSubmit(PBQ[it.i], true); else answer(null); return; }
   raf = requestAnimationFrame(tickRing);
 }
 function answer(btn){
@@ -2372,13 +2383,14 @@ function pbqQuestion(p){
   });
   const sub = document.createElement("button"); sub.className = "btn"; sub.id = "pbqSubmit"; sub.innerHTML = "&gt; Submit answers";
   sub.onclick = () => pbqSubmit(p); box.appendChild(sub);
-  $("ring").style.display = "none"; $("next").style.display = "none";
+  $("next").style.display = "none";
+  limit = limitFor(order[idx]); $("ring").style.display = ""; tStart = performance.now(); lastTick = -1; tickRing();
 }
-function pbqSubmit(p){
+function pbqSubmit(p, timedOut){
   if(locked) return;
   const rows = [...$("opts").querySelectorAll(".pbqrow")];
-  if(rows.some(r => !r.querySelector("select").value)){ $("fb").className = "feedback bad"; $("fb").textContent = "> answer every item before submitting"; return; }
-  locked = true;
+  if(!timedOut && rows.some(r => !r.querySelector("select").value)){ $("fb").className = "feedback bad"; $("fb").textContent = "> answer every item before submitting"; return; }
+  locked = true; cancelAnimationFrame(raf);
   let right = 0;
   rows.forEach((r, k) => { const sel = r.querySelector("select"), want = p.items[k][1], ok = sel.value === want;
     sel.disabled = true; r.classList.add(ok ? "ok" : "bad");
@@ -2390,7 +2402,7 @@ function pbqSubmit(p){
     score += pts; bumpScore(pts, m); flash("g"); sfx.right(); $("fb").className = "feedback ok"; $("fb").textContent = "> TASK COMPLETE " + right + "/" + rows.length + "  +" + pts;
     if(LEVELS[streak]) levelUp(LEVELS[streak]); }
   else { streak = 0; missed.push(order[idx]); const pts = Math.round(BASE_POINTS * 2 * frac); score += pts; if(pts) bumpScore(pts, 1);
-    flash("r"); sfx.wrong(); $("fb").className = "feedback bad"; $("fb").textContent = "> PARTIAL " + right + "/" + rows.length + (pts ? "  +" + pts : ""); }
+    flash("r"); sfx.wrong(); $("fb").className = "feedback bad"; $("fb").textContent = (timedOut ? "> TIMEOUT " : "> PARTIAL ") + right + "/" + rows.length + (pts ? "  +" + pts : ""); }
   $("why").innerHTML = "<b>" + (all ? "&#x2713; WHY" : "&#x2717; WHY") + "</b>" + esc(p.why);
   $("why").className = "why " + (all ? "ok" : "bad"); $("why").style.display = "block";
   $("next").style.display = "block"; updateStreak();
