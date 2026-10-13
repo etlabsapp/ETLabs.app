@@ -5,6 +5,7 @@
 import catalog from "../apps/totalcross/api/themes-catalog.json";
 import { cleanNick } from "./study-nick.mjs";
 import { rateKeyForIp, isBlockedPath } from "./security.mjs";
+import { withSecurityHeaders } from "./headers.mjs";
 import { canonicalHostRedirect, legacyRedirect, permanentRedirect, wantsNoindex } from "./seo.mjs";
 import { cutoverNumber, puzzleIndexForNumber } from "./totalcross-rotation.mjs";
 
@@ -331,8 +332,8 @@ function redirect301(location) {
 
 /* Preview deployments (workers.dev / SEO_NOINDEX=1) must never be indexed. */
 function finalize(response, url, env) {
-  if (!wantsNoindex(url.hostname, env)) return response;
-  const r = new Response(response.body, response);
+  const r = withSecurityHeaders(response);
+  if (!wantsNoindex(url.hostname, env)) return r;
   r.headers.set("x-robots-tag", "noindex");
   return r;
 }
