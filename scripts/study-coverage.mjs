@@ -13,7 +13,7 @@ const html = fs.readFileSync(path.join(root, "study/index.html"), "utf8");
 const a = html.indexOf("/* ==== DECK START"), b = html.indexOf("/* ============================ END DECK");
 if (a < 0 || b < 0) { console.error("deck markers not found"); process.exit(1); }
 const ctx = {};
-vm.runInNewContext(html.slice(a, b) + "\n;this.D={DOMAINS,OBJECTIVES,CARDS_ALL,SCEN_ALL,ROUND};", ctx);
+vm.runInNewContext(html.slice(a, b) + "\n;this.D={DOMAINS,OBJECTIVES,CARDS_ALL,SCEN_ALL,ROUND};this.PBQ=typeof PBQ_ALL==='undefined'?[]:PBQ_ALL;", ctx);
 const { DOMAINS, OBJECTIVES, CARDS_ALL, SCEN_ALL, ROUND } = ctx.D;
 
 const MIN_TERMS = 5, MIN_SCEN = 3;          // hard minimums per objective
@@ -95,6 +95,21 @@ if (!process.argv.includes("--quiet")) {
   console.log(`  ALL ${"".padEnd(43)}${String(CARDS_ALL.length).padStart(4)} terms ${String(SCEN_ALL.length).padStart(4)} scenarios`);
   const ans = [0, 1, 2, 3].map(k => SCEN_ALL.filter(s => s.answer === k).length);
   console.log(`  answer index spread A/B/C/D: ${ans.join("/")} (options are shuffled on screen anyway)`);
+}
+// PBQ validation: objective exists, 2+ items, every answer is one of the choices, unique titles (titles key the seen/missed stores)
+{
+  const P = ctx.PBQ || [], titles = new Set(), per = {};
+  P.forEach((p, i) => {
+    const tag = `pbq[${i}] (${p.o}) "${p.title}"`;
+    if (!OBJECTIVES[p.o]) errors.push(`${tag}: unknown objective`);
+    if (!Array.isArray(p.items) || p.items.length < 2) errors.push(`${tag}: needs 2+ items`);
+    if (!Array.isArray(p.choices) || new Set(p.choices).size !== p.choices.length) errors.push(`${tag}: choices missing or duplicated`);
+    (p.items || []).forEach(([label, ans]) => { if (!(p.choices || []).includes(ans)) errors.push(`${tag}: answer "${ans}" for "${label}" is not a choice`); });
+    if (!p.prompt || !p.exhibit || !p.why) errors.push(`${tag}: prompt, exhibit and why are required`);
+    if (titles.has(p.title)) errors.push(`${tag}: duplicate title`); titles.add(p.title);
+    const d = p.o.split(".")[0]; per[d] = (per[d] || 0) + 1;
+  });
+  console.log(`\nPBQs: ${P.length} total, per domain ` + Object.keys(DOMAINS).map(d => d + ":" + (per[d] || 0)).join(" "));
 }
 warns.forEach(w => console.log("WARN  " + w));
 errors.forEach(e => console.log("ERROR " + e));
