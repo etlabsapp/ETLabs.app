@@ -36,5 +36,6 @@
     }
     function skip() { land(true); }
     ['pointerdown', 'keydown', 'touchstart'].forEach(function (t) { window.addEventListener(t, skip, true); });
-    timer = setTimeout(function () { land(false); }, HOLD);
+    // ~3s from navigation start, but always at least 1.5s of logo on screen.
+    timer = setTimeout(function () { land(false); }, Math.max(1500, HOLD - (window.performance ? performance.now() : 0)));
 })();
