@@ -1727,16 +1727,9 @@ html, body { overflow-x: visible; }
 .brand-logo .brand-wordmark { display: block; width: auto; height: 46px; }
 .site-header .brand-logo--home .brand-wordmark { height: 58px; }
 .site-footer .brand-logo .brand-wordmark { height: 42px; }
+/* Keep the taller wordmark fully inside the header (old -4px optical nudge clipped it). */
+.site-header .brand-mark { transform: none; padding: 6px 0; }
 @media (max-width: 640px) {
     .brand-logo .brand-wordmark { height: 38px; }
     .site-header .brand-logo--home .brand-wordmark { height: 44px; }
 }
-
-/* ----- Splash (home only, once per session, JS-gated) ----- */
-html.et-splash::after { content: ""; position: fixed; inset: 0; z-index: 9998; background: var(--bg, #faf9f6); }
-html.et-splash-run .site-header .brand-wordmark { visibility: hidden; }
-.et-splash-layer { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: var(--bg, #faf9f6); cursor: pointer; transition: background-color 600ms var(--ease-in-out, ease); }
-.et-splash-layer.is-landing { background-color: rgba(250,249,246,0); }
-.et-splash-logo { width: min(78vw, 560px); height: auto; transform-origin: 0 0; will-change: transform; }
-.et-splash-layer.is-landing .et-splash-logo { transition: transform 600ms var(--ease-in-out, ease); }
-.et-splash-layer.is-fast, .et-splash-layer.is-fast .et-splash-logo { transition-duration: 220ms; }
