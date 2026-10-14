@@ -1733,3 +1733,10 @@ html, body { overflow-x: visible; }
     .brand-logo .brand-wordmark { height: 38px; }
     .site-header .brand-logo--home .brand-wordmark { height: 44px; }
 }
+/* Portfolio fixes preview */
+.client-shot{width:100%;height:auto;border-radius:12px;display:block}
+.client-card .portfolio-media{align-items:center}
+.client-note{font-size:.92rem;opacity:.8;margin:4px 0 16px}
+.contact-prompts{margin:0 0 16px 1.2em;line-height:1.7}
+.contact-card .primary-button{margin-bottom:16px;display:inline-flex}
+.contact-other{padding-top:0}
