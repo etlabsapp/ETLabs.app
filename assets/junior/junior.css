@@ -2,7 +2,7 @@
    Design's motion files drop into /assets/junior/ (see docs/JUNIOR-ASSETS.md):
      junior-coming-soon-wide.webm / .mp4 / -poster.png    -> /junior/ hero
      junior-coming-soon-square.webm / .mp4 / -poster.png  -> home + products cards
-   Until they exist, the CSS placeholder below stays visible (typed "Junior" lockup
+   If they fail to load, the CSS placeholder below stays visible (typed "Junior" lockup
    from Design's Oct 14 logo work + a CSS "Coming soon" stamp). Light theme only. */
 @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:700;font-display:swap;src:url(/assets/fonts/jetbrains-mono-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
 
@@ -30,6 +30,7 @@
 /* Real motion / poster, hidden until it actually loads so missing files never show a broken box */
 .jr-video,.jr-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity var(--dur-3,420ms) ease;z-index:1;background:#FBF4E4;pointer-events:none}
 .jr-media.is-ready .jr-video,.jr-media.is-ready .jr-poster{opacity:1}
+.jr-media.is-ready .jr-placeholder{visibility:hidden} /* fallback only: stays when the media fails */
 
 @media (prefers-reduced-motion:reduce){
   .jr-type .t{animation:none;width:6ch}.jr-type .c{animation:none;opacity:1}
@@ -44,3 +45,22 @@
 .junior-teaser .junior-body{max-width:60ch;font-size:1.12rem;line-height:1.65;color:var(--muted,#5b5853);margin:0 0 22px}
 .junior-teaser .junior-note{max-width:60ch;font-size:.98rem;line-height:1.6;color:var(--text,#191817);background:rgba(255,255,255,.72);border:1px solid rgba(25,24,23,.10);border-radius:16px;padding:16px 20px;margin:0 0 28px}
 @media(max-width:600px){.junior-teaser{padding:40px 0 64px}.jr-media--wide{border-radius:20px}}
+
+/* Home hero pill -> /products/junior/ (keeps the work order untouched) */
+.jr-pill{display:inline-flex;align-items:center;gap:.5em;margin-top:18px;min-height:44px;padding:10px 18px;border-radius:999px;background:#FBF4E4;border:1px solid rgba(194,85,58,.35);color:#191817;font-size:.95rem;font-weight:600;text-decoration:none;line-height:1.2;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.jr-pill:hover,.jr-pill:focus-visible{border-color:#C2553A;box-shadow:0 6px 18px rgba(194,85,58,.16);transform:translateY(-1px)}
+.jr-pill-arrow{color:#C2553A;transition:transform .2s ease}
+.jr-pill:hover .jr-pill-arrow{transform:translateX(3px)}
+@media (prefers-reduced-motion:reduce){.jr-pill,.jr-pill-arrow{transition:none}.jr-pill:hover{transform:none}.jr-pill:hover .jr-pill-arrow{transform:none}}
+
+/* Card "Coming:" list */
+.jr-coming-label{margin:14px 0 6px;font-weight:600;font-size:.95rem}
+.jr-coming{margin:0 0 18px;padding-left:1.2em;line-height:1.6;color:var(--muted,#5b5853)}
+.jr-coming li::marker{color:#C2553A}
+
+/* /products/junior/ feature blocks */
+.jr-features{list-style:none;margin:6px 0 28px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(100%,880px);text-align:left}
+.jr-feature{padding:20px 22px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid rgba(25,24,23,.10)}
+.jr-feature h2{font-size:1.1rem;margin:0 0 8px;letter-spacing:-.01em}
+.jr-feature p{margin:0;line-height:1.6;color:var(--muted,#5b5853)}
+@media(max-width:640px){.jr-features{grid-template-columns:1fr}}

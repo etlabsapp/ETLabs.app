@@ -30,6 +30,7 @@ export const LEGACY_REDIRECTS = {
   "/privacy": "/apps/sleeptight/privacy",
   "/apps/flipfeed": "/",
   "/apps/flipfeed/index": "/",
+  "/junior": "/products/junior/",          // Junior teaser moved under /products (2026-10-16)
 };
 
 export function legacyRedirect(pathname) {
