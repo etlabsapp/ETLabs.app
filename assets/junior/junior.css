@@ -67,3 +67,5 @@
 
 /* iOS Safari: never let the media box or video paint black/transparent while loading (2026-10-16) */
 .portfolio-media.jr-media,.jr-media,.jr-media video.jr-video,.jr-media .jr-poster{background-color:#FBF4E4}
+/* Square cards (home + products): match the decoded MP4 cream so the letterbox band below the video disappears (2026-10-16) */
+.portfolio-media.jr-media.jr-media--square,.jr-media--square video.jr-video,.jr-media--square .jr-poster{background-color:#F9F0E3}
