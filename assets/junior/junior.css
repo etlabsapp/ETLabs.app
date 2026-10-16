@@ -64,3 +64,6 @@
 .jr-feature h2{font-size:1.1rem;margin:0 0 8px;letter-spacing:-.01em}
 .jr-feature p{margin:0;line-height:1.6;color:var(--muted,#5b5853)}
 @media(max-width:640px){.jr-features{grid-template-columns:1fr}}
+
+/* iOS Safari: never let the media box or video paint black/transparent while loading (2026-10-16) */
+.portfolio-media.jr-media,.jr-media,.jr-media video.jr-video,.jr-media .jr-poster{background-color:#FBF4E4}
