@@ -7,6 +7,7 @@ import { cleanNick } from "./study-nick.mjs";
 import { rateKeyForIp, isBlockedPath } from "./security.mjs";
 import { withSecurityHeaders } from "./headers.mjs";
 import { canonicalHostRedirect, legacyRedirect, permanentRedirect, wantsNoindex } from "./seo.mjs";
+import { withByteRanges } from "./range.mjs";
 import { cutoverNumber, puzzleIndexForNumber } from "./totalcross-rotation.mjs";
 
 const LAUNCH = catalog.launchDate; // YYYY-MM-DD
@@ -404,6 +405,6 @@ async function route(request, env, url) {
     const res = await env.ASSETS.fetch(request);
     const perm = permanentRedirect(res.status, res.headers.get("location"));
     if (perm) return redirect301(perm.location);
-    return res;
+    return withByteRanges(request, res); // iOS Safari needs 206 for <video>
   }
 }
