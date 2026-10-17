@@ -5,7 +5,7 @@ Branch `preview/myhq-2026-10-17`, from `live-snapshot-2026-10-17` (b166c25, Trav
 ## What changed
 - `products.html`, `index.html`: one new product card (same `card portfolio-card` markup as the others),
   before Lattice³. Icon (no label under it), title = short name, tagline from Writing; primary button opens
-  https://preview.hq-template.pages.dev/ (new tab), secondary button goes to `/apps/myhq/`.
+  https://templates.hq-template.pages.dev/ (new tab), secondary button goes to `/apps/myhq/`.
 - `apps/myhq/index.html`: product page (same header/footer/classes as the site).
 - `apps/myhq/images/myhq-icon.svg`: current HQ icon (Design, product-icons-2026-10-16/hq/icon.svg).
 - `assets/js/product-names.js`: the name swap point.
