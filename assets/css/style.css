@@ -1722,3 +1722,16 @@ html, body { overflow-x: visible; }
 .study-preview strong { font-size:clamp(2rem,4vw,3rem);line-height:1.1;font-weight:500; }
 .founder-note { padding:32px;margin:0 0 32px; }
 @media(max-width:720px){.portfolio-card{grid-template-columns:minmax(0,1fr);padding:22px;gap:28px}.portfolio-copy{padding:0}.portfolio-copy .split-actions{padding-top:8px}.portfolio-copy .section-title{font-size:2.2rem}.portfolio-card .sfv-button{margin-top:0}.hero{padding-top:44px}.founder-note{padding:22px}}
+
+/* MyHQ product icon: the ONLY reference to the icon file (ICON-SWAP). Replace
+   /apps/myhq/images/myhq-icon.svg, or change this one URL, to swap the icon. */
+.product-icon--myhq { background:url(/apps/myhq/images/myhq-icon.svg) center/contain no-repeat; }
+.product-icon { display:block;width:min(46%,200px);aspect-ratio:1/1; }
+.portfolio-myhq .portfolio-media { background:#f5f1e8;grid-template-rows:auto auto;align-content:center;gap:18px; }
+.product-icon-label { font-weight:600;font-size:1.25rem;color:#1b1f3b;letter-spacing:.01em; }
+.myhq-hero { display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center; }
+.myhq-hero .product-icon { width:132px; }
+.myhq-page .card { padding:28px;margin-bottom:24px; }
+.myhq-page .card .section-title { font-size:clamp(1.6rem,2.6vw,2.2rem);margin-bottom:12px; }
+.myhq-page .card ol, .myhq-page .card ul { margin:12px 0 0 1.2em;line-height:1.7; }
+@media(max-width:720px){ .myhq-hero{grid-template-columns:minmax(0,1fr);gap:18px}.myhq-hero .product-icon{width:96px} }
