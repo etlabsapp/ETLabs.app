@@ -8,6 +8,7 @@ import { rateKeyForIp, isBlockedPath } from "./security.mjs";
 import { withSecurityHeaders } from "./headers.mjs";
 import { canonicalHostRedirect, legacyRedirect, permanentRedirect, wantsNoindex } from "./seo.mjs";
 import { cutoverNumber, puzzleIndexForNumber } from "./totalcross-rotation.mjs";
+import { withByteRanges } from "./range.mjs";
 
 const LAUNCH = catalog.launchDate; // YYYY-MM-DD
 const THEMES = catalog.themes;
@@ -404,6 +405,8 @@ async function route(request, env, url) {
     const res = await env.ASSETS.fetch(request);
     const perm = permanentRedirect(res.status, res.headers.get("location"));
     if (perm) return redirect301(perm.location);
+    // Junior teaser MP4s: the asset layer ignores Range; iOS Safari needs 206 to play <video>.
+    if (url.pathname.startsWith("/assets/junior/")) return withByteRanges(request, res);
     return res;
   }
 }
