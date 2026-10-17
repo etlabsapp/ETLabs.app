@@ -24,3 +24,12 @@
   @keyframes myhq-stamp-in{0%{opacity:0;transform:rotate(-8deg) scale(1.35)}60%{opacity:1;transform:rotate(8deg) scale(.96)}100%{opacity:1;transform:rotate(6deg) scale(1)}}
 }
 @media print{.myhq-stamp{display:none}}
+
+/* /myhq phone shot (Oct 17, ETLabs fix): the Example data pill sat on the ETLabs wordmark/header inside the
+   screenshot. It now sits in its own strip under the screenshot, bottom-left, clear of the stamp (top-right). */
+.myhq-shot--phone{display:flex;flex-direction:column}
+.myhq-shot--phone>.myhq-example{position:static;order:2;align-self:flex-start;margin:10px 12px 12px}
+
+/* Home + /products: keep "ETLabs MyHQ" on one line at narrow widths (icon + name), no sideways scroll. */
+.myhq-card-title .section-title{white-space:nowrap}
+@media(max-width:720px){.portfolio-copy .myhq-card-title .section-title{font-size:min(2.2rem,8.2vw)}}
