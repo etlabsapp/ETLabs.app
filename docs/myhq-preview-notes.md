@@ -29,7 +29,7 @@ canonical/og:url, and moves `myhq.html` → `fieldbook.html` (git mv). Tested bo
 round trip is byte-identical. Not renamed: internal hook ids (`data-product-name="myhq"`, CSS `.myhq-*`) and the images folder.
 
 ## Swap the icon
-One file, one reference: `assets/images/hq-product/hq-icon.svg`, referenced only by `.product-icon--myhq`
+One file, one reference: `.product-icon--myhq` now points at `assets/images/hq-product/myhq-icon-clay.svg` (Clay ETL Badge, Oct 17); the old indigo `hq-icon.svg` is unreferenced
 in style.css (`ICON-SWAP`). Same format: overwrite. Other format: change that one URL.
 
 ## Sources and what the build actually has (Oct 17)

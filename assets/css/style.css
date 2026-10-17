@@ -1723,9 +1723,9 @@ html, body { overflow-x: visible; }
 .founder-note { padding:32px;margin:0 0 32px; }
 @media(max-width:720px){.portfolio-card{grid-template-columns:minmax(0,1fr);padding:22px;gap:28px}.portfolio-copy{padding:0}.portfolio-copy .split-actions{padding-top:8px}.portfolio-copy .section-title{font-size:2.2rem}.portfolio-card .sfv-button{margin-top:0}.hero{padding-top:44px}.founder-note{padding:22px}}
 
-/* MyHQ product icon: the ONLY reference to the icon file (ICON-SWAP). Replace
-   /assets/images/hq-product/hq-icon.svg, or change this one URL, to swap the icon. */
-.product-icon--myhq { background:url(/assets/images/hq-product/hq-icon.svg) center/contain no-repeat; }
+/* MyHQ product icon (/myhq hero lockup): the Clay ETL Badge, same art as the card icon (myhq-icon-clay.svg).
+   The old indigo hq-icon.svg is no longer referenced anywhere (Oct 17). */
+.product-icon--myhq { background:url(/assets/images/hq-product/myhq-icon-clay.svg) center/contain no-repeat; }
 .product-icon { display:block;width:min(46%,200px);aspect-ratio:1/1; }
 .portfolio-myhq .portfolio-media { background:#f5f1e8; }
 /* "Example data" badge on every sample visual */
