@@ -22,3 +22,7 @@
 @keyframes orbit-cube { from{transform:rotateX(-22deg) rotateY(34deg) rotateZ(-3deg)}to{transform:rotateX(-22deg) rotateY(394deg) rotateZ(-3deg)} }
 @media(prefers-reduced-motion:reduce) { .lattice-cube{animation:none}.motion-toggle{display:none} }
 @supports not (transform-style:preserve-3d) { .lattice-cube{animation:none;transform:rotate(-12deg)}.lattice-cube .face:not(.front){display:none}.lattice-cube .front{transform:none}.motion-toggle{display:none} }
+/* Lattice³ card "COMING SOON" stamp (Oct 17): top-left corner of the cube scene, clear of the pause button
+   (card top-right) and the heading. Decorative (alt=""); the visible "Coming soon" label stays. */
+.lattice-card .glass-scene>.lattice-stamp{position:absolute;z-index:2;left:-34px;top:-14px;width:92px;height:auto;aspect-ratio:250/252;transform:rotate(-8deg);pointer-events:none;user-select:none}
+@media print{.lattice-stamp{display:none}}

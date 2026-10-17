@@ -72,3 +72,9 @@
 /* MyHQ preview (2026-10-17): square card frame on home + products; cream fills the whole box so no band shows */
 .portfolio-media.jr-media.jr-media--square{aspect-ratio:1/1;width:min(100%,410px);align-self:center}
 .jr-media--square video.jr-video,.jr-media--square .jr-poster{object-fit:cover}
+
+/* Junior card sticker (Design's junior-sticker.svg, Legal's words "Built parent-first", Oct 17): bottom-right of
+   the square media, clear of the lockup and the video's "Coming soon" stamp; sits above the video/poster. */
+.jr-media>.jr-sticker{position:absolute;z-index:2;right:4%;bottom:4%;width:27%;min-width:96px;max-width:120px;height:auto;aspect-ratio:250/252;transform:rotate(6deg);pointer-events:none;user-select:none}
+.jr-smallprint{margin:-12px 0 18px;font-size:.9rem;line-height:1.5;color:var(--muted,#5b5853)}
+@media print{.jr-sticker{display:none}}
