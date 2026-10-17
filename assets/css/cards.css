@@ -43,3 +43,18 @@
 @media(max-width:720px){.lattice-card .portfolio-media>img.lat-stamp{width:131px;transform:translate(-50%,-50%) translate(34px,38px) rotate(-6deg)}}
 
 @media print{.card-sticker,.lat-stamp{display:none}}
+
+/* --- (1) Real screenshots (Design, Oct 17 2026; captured from the live apps, crop/resize only, no edits).
+   Total Cross + Security+: one phone screen (440x956 CSS px @3x, same size/aspect as SleepTight's hero-phone.webp), shown like SleepTight's.
+   drop-shadow follows the image itself (not the 18px padding), so the cream Total Cross screen still reads on the cream panel. --- */
+.portfolio-media>img.card-shot{filter:drop-shadow(0 0 .5px rgba(23,23,26,.35)) drop-shadow(0 8px 18px rgba(23,23,26,.14))}
+/* Skills for Vets: desktop (1280x800) behind + phone in front, same CSS device frames/geometry as the MyHQ card (no device art). */
+.sfv-preview.sfv-devices{position:relative;display:block;background:linear-gradient(145deg,#f1f0f6,#faf9f6);container-type:inline-size}
+.card-device{position:absolute;background:#17171a;box-shadow:0 2px 4px rgba(0,0,0,.08),0 14px 30px rgba(23,23,26,.18)}
+.card-device img{display:block;width:100%;height:auto;border-radius:inherit;background:#102937}
+.card-device--desktop{top:20%;left:5%;width:86%;padding:2.2cqi 2.2cqi 4.6cqi;border-radius:3.2cqi;z-index:1}
+.card-device--desktop img{border-radius:1.2cqi}
+.card-device--desktop::after{content:"";position:absolute;left:50%;bottom:-5.5cqi;width:26%;height:5.5cqi;transform:translateX(-50%);background:#2b2b30;clip-path:polygon(18% 0,82% 0,100% 100%,0 100%);border-radius:0 0 1cqi 1cqi}
+.card-device--phone{right:6%;bottom:5%;width:34%;padding:5cqi 1.8cqi 2.6cqi;border-radius:6.2cqi;z-index:2;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 4px 8px rgba(0,0,0,.12),0 18px 36px rgba(23,23,26,.28)}
+.card-device--phone img{border-radius:4.6cqi}
+.card-device--phone::before{content:"";position:absolute;top:1.6cqi;left:50%;width:28%;height:1.9cqi;transform:translateX(-50%);background:#3a3a40;border-radius:999px;z-index:1}
