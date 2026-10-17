@@ -1791,3 +1791,11 @@ html, body { overflow-x: visible; }
 /* 404 page (moved from inline style attributes for the CSP) */
 .notfound-actions { margin-top:18px; }
 .notfound-links { list-style:none;margin:0;padding:0;display:grid;gap:12px; }
+
+/* Standalone /privacy page (Oct 17): site card + type, readable measure. */
+.privacy-card { max-width:760px;padding:32px 36px; }
+.privacy-card h2 { font-size:1.35rem;letter-spacing:-.01em;margin:28px 0 10px; }
+.privacy-card h2:first-child { margin-top:0; }
+.privacy-card p { margin:0 0 14px;line-height:1.7;color:var(--muted,#5b5853); }
+.privacy-card a { color:inherit;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere; }
+@media(max-width:720px){ .privacy-card { padding:22px; } }

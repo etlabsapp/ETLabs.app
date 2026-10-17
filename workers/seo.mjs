@@ -27,7 +27,7 @@ export const LEGACY_REDIRECTS = {
   "/apps/sleeptight/sleeptight": "/apps/sleeptight/",
   "/apps/sleeptight/products": "/products",
   "/apps/sleeptight/contact": "/contact",
-  "/privacy": "/apps/sleeptight/privacy",
+  // "/privacy" now serves the standalone etlabs.app privacy page (Oct 17); the SleepTight policy stays at /apps/sleeptight/privacy.
   "/apps/flipfeed": "/",
   "/apps/flipfeed/index": "/",
 };

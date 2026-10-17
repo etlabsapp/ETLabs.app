@@ -23,8 +23,8 @@ assert.equal(legacyRedirect("/apps/sleeptight/about/"), "/apps/sleeptight/");
 assert.equal(legacyRedirect("/apps/sleeptight/sleeptight.html"), "/apps/sleeptight/");
 assert.equal(legacyRedirect("/apps/sleeptight/products"), "/products");
 assert.equal(legacyRedirect("/apps/sleeptight/contact.html"), "/contact");
-assert.equal(legacyRedirect("/privacy.html"), "/apps/sleeptight/privacy");
-assert.equal(legacyRedirect("/privacy"), "/apps/sleeptight/privacy");
+assert.equal(legacyRedirect("/privacy.html"), null);  // standalone /privacy page (Oct 17)
+assert.equal(legacyRedirect("/privacy"), null);
 assert.equal(legacyRedirect("/apps/flipfeed/"), "/");
 assert.equal(legacyRedirect("/apps/flipfeed/index.html"), "/");
 assert.equal(legacyRedirect("/apps/sleeptight/"), null);
