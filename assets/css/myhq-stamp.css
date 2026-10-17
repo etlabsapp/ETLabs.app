@@ -10,10 +10,14 @@
 @media(max-width:900px){.myhq-stamp--page{width:132px;top:-28px;right:-18px}}
 @media(max-width:600px){.myhq-stamp--page{width:112px;top:-24px;right:-6px}}
 
-/* Home + /products MyHQ card: top-right of the device-mockup panel (Example data pill is top-left).
-   Beats the generic .portfolio-media>img rule (100% size + padding). */
-.portfolio-myhq-devices .portfolio-media>img.myhq-stamp--card{width:128px;height:auto;max-height:none;padding:0;object-fit:fill;top:14px;right:14px;left:auto;z-index:4}
-@media(max-width:720px){.portfolio-myhq-devices .portfolio-media>img.myhq-stamp--card{width:108px;top:10px;right:10px}}
+/* Home + /products MyHQ card (Design, etlabs-cards, Oct 17): sticker on the PHONE mockup's top-right corner,
+   rotated 6deg like the hero stamp. The <img class="myhq-stamp myhq-stamp--card"> is the LAST child of
+   .myhq-device--phone (after <picture>), so it tracks the phone at every width. This selector beats
+   .myhq-device img / .myhq-device--phone img (width:100%, radius, background). .portfolio-media clips
+   (overflow:hidden), so the offsets keep the rotated rosette >=7px inside the panel. */
+.myhq-device--phone>img.myhq-stamp--card{width:124px;max-width:none;height:auto;padding:0;border-radius:0;background:none;object-fit:fill;top:-66px;right:-18px;left:auto;z-index:4}
+@media(max-width:720px){.myhq-device--phone>img.myhq-stamp--card{width:108px;top:-54px;right:-10px}}
+@media(max-width:360px){.myhq-device--phone>img.myhq-stamp--card{top:-42px;right:-8px}}
 
 /* Legal's small print (exact): under the card description, and under the /myhq phone shot */
 .myhq-smallprint{margin:-12px 0 24px;font-size:.9rem;line-height:1.5;color:#5a5650}
