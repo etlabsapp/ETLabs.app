@@ -1,48 +1,43 @@
-# MyHQ preview — PR notes (LOCAL ONLY, not pushed, not deployed)
+# MyHQ preview: PR notes (local branch preview/myhq-2026-10-17)
 
-Branch `preview/myhq-2026-10-17`, from `live-snapshot-2026-10-17` (b166c25, Travis's live code).
+From `live-snapshot-2026-10-17` (b166c25, Travis's live code). Not pushed.
 
-## What changed
-- `products.html`, `index.html`: one new product card (same `card portfolio-card` markup as the others),
-  before Lattice³. Icon (no label under it), title = short name, tagline from Writing; primary button opens
-  https://templates.hq-template.pages.dev/ (new tab), secondary button goes to `/apps/myhq/`.
-- `apps/myhq/index.html`: product page (same header/footer/classes as the site).
-- `apps/myhq/images/myhq-icon.svg`: current HQ icon (Design, product-icons-2026-10-16/hq/icon.svg).
-- `assets/js/product-names.js`: the name swap point.
-- `assets/css/style.css`: small appended block (icon rule + card/page layout).
-- `scripts/rename-myhq.sh`: one-command rename.
-- `sitemap.xml`: unchanged (preview; /apps/myhq/ is not listed). `apps/myhq/index.html` has `<meta name="robots" content="noindex, nofollow">`.
-- Not changed: nav dropdown, footer links, products.html JSON-LD ItemList (left alone for a preview).
+## Files
+- `myhq.html`: the product page, served at **/myhq** (root `*.html` pages are served at clean URLs by
+  the Workers asset layer's default html_handling, same as /products and /philosophy; /myhq.html 301s to /myhq).
+  `noindex, nofollow`; not in sitemap.xml.
+- `products.html`: MyHQ card (icon, "Preview", title, tagline; Open the preview → templates.hq-template.pages.dev, Learn more → /myhq).
+- `index.html`: MyHQ card with an "Example data" board screenshot linking to /myhq.
+- `assets/images/hq-product/`: `hq-icon.svg` (Design product-icons-2026-10-16/hq), `board-phone.webp`
+  (Design myhq-visual-1017/shots/after-board-375.png, cropped), `layout-{list,week,cards}.webp`
+  (Design myhq-layouts-colors-2026-10-17/mocks/shots/shot-*-1280.png, cropped), `schemes.webp`
+  (light cards from preview-schemes.png, side by side). Folder name is slug-neutral on purpose.
+- `assets/js/product-names.js`: name + slug swap point. `scripts/rename-myhq.sh`: one-command rename.
+- `assets/css/style.css`: MyHQ block at the end.
 
-## How to rename the product (Legal is still checking the name)
-Single swap point: `assets/js/product-names.js` (marked `PRODUCT-NAME-SWAP`):
+## Rename the product and/or slug (Legal still checking)
+One constant in `assets/js/product-names.js` (`PRODUCT-NAME-SWAP`):
 
-    var MYHQ_NAME = { short: 'MyHQ', full: 'MyHQ by ETLabs' };
+    var MYHQ_NAME = { short: 'MyHQ', full: 'MyHQ by ETLabs', slug: 'myhq' };
 
-`short` is the card title; `full` is the product page name and title.
-Every place the name shows has `data-product-name="myhq"` (+ `data-name-form="short|full"`), and the
-script fills it in. The literal names are also in the HTML as the no-JS / SEO fallback, so rename with:
+Run:
 
-    scripts/rename-myhq.sh "NewName" "NewName by ETLabs"
+    scripts/rename-myhq.sh "Fieldbook" "ETLabs Fieldbook" fieldbook   # slug optional
 
-That updates the constant and every fallback (products.html, index.html, apps/myhq/index.html,
-page <title>/og:title) in one go. Manual equivalent: edit the constant, then find-replace the full name
-first (`MyHQ by ETLabs`), then `>MyHQ<` (the short name is a substring of the full name).
-Folder/URL `/apps/myhq/` and the CSS class names are not renamed by the script.
+It updates the constant, the no-JS fallbacks (text, image alt, <title>, og:title), every `href="/myhq"`,
+canonical/og:url, and moves `myhq.html` → `fieldbook.html` (git mv). Tested both ways on a throwaway copy:
+round trip is byte-identical. Not renamed: internal hook ids (`data-product-name="myhq"`, CSS `.myhq-*`) and the images folder.
 
-## How to swap the icon (final icon not picked yet)
-One file, one reference. File: `apps/myhq/images/myhq-icon.svg`. The only reference is the
-`.product-icon--myhq` rule at the end of `assets/css/style.css` (marked `ICON-SWAP`).
-- Same format (SVG): overwrite the file, keep the name. No code edits.
-- Different format (e.g. PNG): add the file and change that one URL in style.css.
+## Swap the icon
+One file, one reference: `assets/images/hq-product/hq-icon.svg`, referenced only by `.product-icon--myhq`
+in style.css (`ICON-SWAP`). Same format: overwrite. Other format: change that one URL.
 
-## Copy
-Trimmed from Writing's `self-host-guide.md` (sections 1, 3, 4, 5) and `privacy-line.md` (main + backup line).
-"HQ Sheet" did not appear in the copy used. Claims checked against hq-template source
-(`/workspace/hq-for-others/app`, commit afc0386 = repo etlabsapp/hq-template).
-
-Final copy (Oct 17): Writing's `myhq-card-copy.md`. Card + page meta description = tagline
-"Your deadlines, week and to-dos on one page." Self-host steps are not on the page; one link line
-"Want to host your own copy? Read the setup guide →" points to placeholder `#setup-guide`
-(TODO in apps/myhq/index.html) until the guide has a public URL. Templates line left out: the
-hq-template build the card points to (`/workspace/hq-for-others/app`, afc0386) has no templates/.
+## Sources and what the build actually has (Oct 17)
+- Starter templates: names/blurbs verbatim from `hq-for-others/app-templates/public/templates/*.json`
+  (templates-preview @ d41c685, 7 starters). The live demo templates.hq-template.pages.dev still serves 4
+  (business, student, transition, jobseeker; sw v0.2.0-templates-4).
+- Layouts (List/Week/Cards) and 5 color schemes (Paper, Harbor, Fern, Clay, Ink): Design spec + mocks only.
+  No build has a layout or scheme switcher yet (templates-preview ships schemes.css tokens, Paper only).
+  The page labels both sections "Coming soon" (placeholder) and every sample visual "Example data".
+- "Tell us" card links to the existing /contact page.
+- Copy: Writing's myhq-card-copy.md, self-host guide, privacy line. WRITING-PLACEHOLDER comments mark new labels.

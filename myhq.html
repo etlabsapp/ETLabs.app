@@ -7,8 +7,8 @@
     <title>MyHQ by ETLabs | ET Labs</title>
     <meta name="description" content="Your deadlines, week and to-dos on one page.">
     <meta name="robots" content="noindex, nofollow">
-    <link rel="canonical" href="https://etlabs.app/apps/myhq/">
-    <meta property="og:url" content="https://etlabs.app/apps/myhq/">
+    <link rel="canonical" href="https://etlabs.app/myhq">
+    <meta property="og:url" content="https://etlabs.app/myhq">
     <meta property="og:type" content="website">
     <meta property="og:title" content="MyHQ by ETLabs | ET Labs">
     <meta property="og:description" content="Your deadlines, week and to-dos on one page.">
@@ -59,26 +59,61 @@
     </header>
 
     <main id="main-content" tabindex="-1" class="myhq-page">
-        <!-- Copy: trimmed from Writing's self-host guide + privacy line (Oct 16-17). "HQ Sheet" replaced with the product name. -->
+        <!-- Copy: Writing's self-host guide, privacy line and myhq-card-copy.md; template names/blurbs from hq-template templates/*.json.
+             Headings/labels marked WRITING-PLACEHOLDER are minimal placeholders for Writing. -->
         <section class="section">
             <div class="container">
-                <div class="myhq-hero section-header">
-                    <span class="product-icon product-icon--myhq" aria-hidden="true"></span>
-                    <div>
+                <div class="myhq-hero">
+                    <div class="myhq-hero-copy">
+                        <div class="myhq-lockup"><span class="product-icon product-icon--myhq" aria-hidden="true"></span><span class="brand-logo" role="img" aria-label="ET Labs"><img src="/assets/images/etlabs-logo-etl.svg" alt="" class="logo-etl"><img src="/assets/images/etlabs-logo-abs.svg" alt=""></span></div>
                         <p class="eyebrow">Preview</p>
                         <h1 class="section-title" data-product-name="myhq" data-name-form="full">MyHQ by ETLabs</h1>
-                        <p class="section-text">A one-page dashboard for your deadlines, this week, to-dos, calendar and links. It runs in your web browser, and your data is saved there, on your device.</p>
+                        <p class="section-text">Your deadlines, week and to-dos on one page.</p>
                         <p class="section-text"><strong>No account, no tracking: what you type stays on your device, and ET Labs never sees it.</strong></p>
                         <div class="split-actions"><a href="https://templates.hq-template.pages.dev/" class="primary-button" target="_blank" rel="noopener noreferrer">Open the preview <span aria-hidden="true">↗</span></a></div>
                     </div>
+                    <figure class="myhq-shot myhq-shot--phone"><span class="myhq-example">Example data</span><img src="/assets/images/hq-product/board-phone.webp" width="600" height="1120" alt="MyHQ on a phone, showing deadlines, this week and to-dos on one page." data-product-alt="myhq"></figure>
                 </div>
+
+                <section class="myhq-block" aria-labelledby="myhq-tpl-h">
+                    <h2 class="section-title" id="myhq-tpl-h">Starter templates</h2><!-- WRITING-PLACEHOLDER -->
+                    <p class="section-text">Start blank or pick a template for your situation.</p>
+                    <ul class="myhq-tpls">
+                        <li class="myhq-tpl"><h3>Small Business / Freelancer</h3><p>Client deadlines, launches, growth work and studio admin.</p></li>
+                        <li class="myhq-tpl"><h3>Student</h3><p>Classes, exams, assignments, study sessions and clubs.</p></li>
+                        <li class="myhq-tpl"><h3>Veteran / Career Transition</h3><p>Resume, networking, certifications and interviews for your next career.</p></li>
+                        <li class="myhq-tpl"><h3>Job Seeker</h3><p>Applications, interviews, follow-ups and portfolio work.</p></li>
+                        <li class="myhq-tpl"><h3>Parents</h3><p>Custody and handoff days, school events, appointments and a shared calendar.</p></li>
+                        <li class="myhq-tpl"><h3>Stay-at-Home Parent</h3><p>Household, meal plan, kids&#x27; activities and appointments.</p></li>
+                        <li class="myhq-tpl"><h3>Homeschool</h3><p>Weekly classes by subject and kid, lesson plans, co-op days and field trips.</p></li>
+                    </ul>
+                </section>
+
+                <section class="myhq-block" aria-labelledby="myhq-lay-h">
+                    <p class="card-label">Coming soon</p><!-- WRITING-PLACEHOLDER: layouts are Design-spec only, not in the live demo yet -->
+                    <h2 class="section-title" id="myhq-lay-h">Layouts</h2><!-- WRITING-PLACEHOLDER -->
+                    <div class="myhq-layouts">
+                        <figure class="myhq-shot"><span class="myhq-example">Example data</span><img src="/assets/images/hq-product/layout-list.webp" width="1100" height="756" loading="lazy" alt="List layout with example data: everything on one page."><figcaption><strong>List</strong> Everything on one page</figcaption></figure>
+                        <figure class="myhq-shot"><span class="myhq-example">Example data</span><img src="/assets/images/hq-product/layout-week.webp" width="1100" height="756" loading="lazy" alt="Week layout with example data: a Monday to Sunday planner."><figcaption><strong>Week</strong> Mon–Sun planner</figcaption></figure>
+                        <figure class="myhq-shot"><span class="myhq-example">Example data</span><img src="/assets/images/hq-product/layout-cards.webp" width="1100" height="756" loading="lazy" alt="Cards layout with example data: every open item as a tile."><figcaption><strong>Cards</strong> Every open item as a tile</figcaption></figure>
+                    </div><!-- WRITING-PLACEHOLDER: captions are Design's spec labels -->
+                </section>
+
+                <section class="myhq-block" aria-labelledby="myhq-col-h">
+                    <p class="card-label">Coming soon</p><!-- WRITING-PLACEHOLDER: color schemes are Design-spec only, not in the live demo yet -->
+                    <h2 class="section-title" id="myhq-col-h">Color schemes</h2><!-- WRITING-PLACEHOLDER -->
+                    <ul class="myhq-schemes"><li>Paper</li><li>Harbor</li><li>Fern</li><li>Clay</li><li>Ink</li></ul>
+                    <figure class="myhq-shot myhq-shot--wide"><span class="myhq-example">Example data</span><div class="myhq-scroll"><img src="/assets/images/hq-product/schemes.webp" width="1600" height="327" loading="lazy" alt="The five color schemes, Paper, Harbor, Fern, Clay and Ink, each shown with the same example data."></div></figure>
+                </section>
+
+                <a class="card myhq-tellus" href="/contact"><strong>Don't see a format you like? Tell us</strong> <span aria-hidden="true">→</span></a>
 
                 <article class="card">
                     <h2 class="section-title">Set up your phone</h2>
                     <ol>
                         <li><strong>Open the link</strong> on your phone.</li>
                         <li><strong>Add it to your Home Screen.</strong> iPhone (Safari): tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Android (Chrome): tap the <strong>⋮</strong> menu, then <strong>Add to Home screen</strong> or <strong>Install app</strong>.</li>
-                        <li><strong>Add your items.</strong> Open it from your Home Screen and tap <strong>Start blank</strong>, or <strong>Start with example data</strong> to look around first. Then tap <strong>+</strong> and choose <strong>New deadline</strong> or <strong>New to-do</strong>. To give your page its own name, tap <strong>⚙ Settings</strong>.</li>
+                        <li><strong>Add your items.</strong> Open it from your Home Screen. Start blank or pick a template for your situation. Then tap <strong>+</strong> and choose <strong>New deadline</strong> or <strong>New to-do</strong>. To give your page its own name, tap <strong>Settings</strong>.</li>
                     </ol>
                     <p class="section-text">After your first visit, it works without internet too.</p>
                     <p class="section-text">You can add your own deadlines and to-dos.</p>
