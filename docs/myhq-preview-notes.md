@@ -11,7 +11,7 @@ Branch `preview/myhq-2026-10-17`, from `live-snapshot-2026-10-17` (b166c25, Trav
 - `assets/js/product-names.js`: the name swap point.
 - `assets/css/style.css`: small appended block (icon rule + card/page layout).
 - `scripts/rename-myhq.sh`: one-command rename.
-- `sitemap.xml`: `/apps/myhq/` added (other product pages are listed there).
+- `sitemap.xml`: unchanged (preview; /apps/myhq/ is not listed). `apps/myhq/index.html` has `<meta name="robots" content="noindex, nofollow">`.
 - Not changed: nav dropdown, footer links, products.html JSON-LD ItemList (left alone for a preview).
 
 ## How to rename the product (Legal is still checking the name)
