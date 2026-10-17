@@ -15,8 +15,9 @@
 .portfolio-myhq-devices .portfolio-media>img.myhq-stamp--card{width:128px;height:auto;max-height:none;padding:0;object-fit:fill;top:14px;right:14px;left:auto;z-index:4}
 @media(max-width:720px){.portfolio-myhq-devices .portfolio-media>img.myhq-stamp--card{width:108px;top:10px;right:10px}}
 
-/* Small print under the card description */
+/* Legal's small print (exact): under the card description, and under the /myhq phone shot */
 .myhq-smallprint{margin:-12px 0 24px;font-size:.9rem;line-height:1.5;color:#5a5650}
+.myhq-smallprint--page{margin:12px 0 0;text-align:center}
 
 @media (prefers-reduced-motion:no-preference){
   .myhq-stamp--animate{animation:myhq-stamp-in .5s cubic-bezier(.2,.9,.25,1.25) .3s both}
