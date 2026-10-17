@@ -58,3 +58,25 @@
 .card-device--phone{right:6%;bottom:5%;width:34%;padding:5cqi 1.8cqi 2.6cqi;border-radius:6.2cqi;z-index:2;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 4px 8px rgba(0,0,0,.12),0 18px 36px rgba(23,23,26,.28)}
 .card-device--phone img{border-radius:4.6cqi}
 .card-device--phone::before{content:"";position:absolute;top:1.6cqi;left:50%;width:28%;height:1.9cqi;transform:translateX(-50%);background:#3a3a40;border-radius:999px;z-index:1}
+
+/* --- ET Labs Junior card (production, Oct 17): Design's typing-cursor lockup (logo/junior-type.css: ETLabs wordmark + typed
+   "Junior" + coral cursor, 4.8s loop, static under prefers-reduced-motion) with the Lattice-style COMING SOON stamp under it,
+   plus Design's "Built parent-first." sticker (Legal's words). No video, no JS, no link, no Junior page. --- */
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:700;font-display:swap;src:url(/assets/fonts/jetbrains-mono-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+.portfolio-media.jr-media{position:relative;overflow:hidden;display:grid;place-items:center;isolation:isolate;background:#FBF4E4}
+.portfolio-media.jr-media.jr-media--square{aspect-ratio:1/1;width:min(100%,410px);align-self:center}
+.jr-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9em;padding:8%;text-align:center;font-size:clamp(30px,8vw,46px)}
+.jr-lockup{display:inline-flex;flex-direction:column;align-items:center;gap:.35em;line-height:1}
+.jr-lockup img{height:1.3em;width:auto;display:block}
+.jr-type{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;display:inline-flex;align-items:center;font-size:.8em;color:#0B0B0C}
+.jr-type .t{display:inline-block;overflow:hidden;white-space:nowrap;width:6ch;animation:jr-type 4.8s steps(6,end) infinite}
+.jr-type .c{display:inline-block;width:.14em;height:1.05em;margin-left:.06em;background:#E8896B;animation:jr-blink .8s steps(1) infinite}
+@keyframes jr-type{0%{width:0}36%{width:6ch}72%{width:6ch}90%{width:0}100%{width:0}}
+@keyframes jr-blink{0%{opacity:1}50%{opacity:0}}
+.jr-placeholder>img.jr-cs-stamp{display:block;width:149px;height:auto;max-height:none;object-fit:fill;margin:0;padding:0;transform:rotate(-6deg);pointer-events:none;user-select:none}
+@media(max-width:720px){.jr-placeholder>img.jr-cs-stamp{width:131px}}
+@media (prefers-reduced-motion:reduce){.jr-type .t{animation:none;width:6ch}.jr-type .c{animation:none;opacity:1}}
+.jr-coming-label{margin:14px 0 6px;font-weight:600;font-size:.95rem}
+.jr-coming{margin:0 0 18px;padding-left:1.2em;line-height:1.6;color:var(--muted,#5b5853)}
+.jr-coming li::marker{color:#C2553A}
+@media print{.jr-cs-stamp{display:none}}
