@@ -1,0 +1,25 @@
+/* etlabs.app: MyHQ "Your data, your device" stamp (Design, Oct 17 2026; HANDOFF.md section B).
+   Image: /assets/images/hq-product/myhq-stamp.svg (light stamp only; the site has no dark mode).
+   Accessible name lives on the <img alt>; one stamp per placement; MyHQ elements only. */
+.myhq-stamp{position:absolute;z-index:2;display:block;height:auto;aspect-ratio:250/252;transform:rotate(6deg);pointer-events:none;user-select:none}
+
+/* /myhq page: hangs off the phone screenshot's top-right corner (Example data pill is top-left). */
+.myhq-shot-anchor{position:relative;justify-self:center;width:100%;max-width:340px}
+.myhq-shot-anchor>.myhq-shot--phone{max-width:none}
+.myhq-stamp--page{width:156px;top:-34px;right:-52px}
+@media(max-width:900px){.myhq-stamp--page{width:132px;top:-28px;right:-18px}}
+@media(max-width:600px){.myhq-stamp--page{width:112px;top:-24px;right:-6px}}
+
+/* Home + /products MyHQ card: top-right of the device-mockup panel (Example data pill is top-left).
+   Beats the generic .portfolio-media>img rule (100% size + padding). */
+.portfolio-myhq-devices .portfolio-media>img.myhq-stamp--card{width:128px;height:auto;max-height:none;padding:0;object-fit:fill;top:14px;right:14px;left:auto;z-index:4}
+@media(max-width:720px){.portfolio-myhq-devices .portfolio-media>img.myhq-stamp--card{width:108px;top:10px;right:10px}}
+
+/* Small print under the card description */
+.myhq-smallprint{margin:-12px 0 24px;font-size:.9rem;line-height:1.5;color:#5a5650}
+
+@media (prefers-reduced-motion:no-preference){
+  .myhq-stamp--animate{animation:myhq-stamp-in .5s cubic-bezier(.2,.9,.25,1.25) .3s both}
+  @keyframes myhq-stamp-in{0%{opacity:0;transform:rotate(-8deg) scale(1.35)}60%{opacity:1;transform:rotate(8deg) scale(.96)}100%{opacity:1;transform:rotate(6deg) scale(1)}}
+}
+@media print{.myhq-stamp{display:none}}
