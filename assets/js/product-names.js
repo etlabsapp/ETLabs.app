@@ -8,8 +8,8 @@
    ===================================================================== */
 (function () {
   var MYHQ_NAME = {
-    short: 'MyHQ',            // card label under the icon
-    full: 'MyHQ by ETLabs'    // product page name
+    short: 'MyHQ',            // product card title
+    full: 'MyHQ by ETLabs'    // product page name (first mention)
   };
   document.querySelectorAll('[data-product-name="myhq"]').forEach(function (el) {
     var form = el.getAttribute('data-name-form') === 'short' ? 'short' : 'full';

@@ -4,7 +4,7 @@ Branch `preview/myhq-2026-10-17`, from `live-snapshot-2026-10-17` (b166c25, Trav
 
 ## What changed
 - `products.html`, `index.html`: one new product card (same `card portfolio-card` markup as the others),
-  before Lattice³. Icon with the short name "MyHQ" under it; primary button opens
+  before Lattice³. Icon (no label under it), title = short name, tagline from Writing; primary button opens
   https://preview.hq-template.pages.dev/ (new tab), secondary button goes to `/apps/myhq/`.
 - `apps/myhq/index.html`: product page (same header/footer/classes as the site).
 - `apps/myhq/images/myhq-icon.svg`: current HQ icon (Design, product-icons-2026-10-16/hq/icon.svg).
@@ -19,7 +19,7 @@ Single swap point: `assets/js/product-names.js` (marked `PRODUCT-NAME-SWAP`):
 
     var MYHQ_NAME = { short: 'MyHQ', full: 'MyHQ by ETLabs' };
 
-`short` is the card label under the icon and the card title; `full` is the product page name and title.
+`short` is the card title; `full` is the product page name and title.
 Every place the name shows has `data-product-name="myhq"` (+ `data-name-form="short|full"`), and the
 script fills it in. The literal names are also in the HTML as the no-JS / SEO fallback, so rename with:
 
@@ -40,3 +40,9 @@ One file, one reference. File: `apps/myhq/images/myhq-icon.svg`. The only refere
 Trimmed from Writing's `self-host-guide.md` (sections 1, 3, 4, 5) and `privacy-line.md` (main + backup line).
 "HQ Sheet" did not appear in the copy used. Claims checked against hq-template source
 (`/workspace/hq-for-others/app`, commit afc0386 = repo etlabsapp/hq-template).
+
+Final copy (Oct 17): Writing's `myhq-card-copy.md`. Card + page meta description = tagline
+"Your deadlines, week and to-dos on one page." Self-host steps are not on the page; one link line
+"Want to host your own copy? Read the setup guide →" points to placeholder `#setup-guide`
+(TODO in apps/myhq/index.html) until the guide has a public URL. Templates line left out: the
+hq-template build the card points to (`/workspace/hq-for-others/app`, afc0386) has no templates/.
