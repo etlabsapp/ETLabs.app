@@ -37,3 +37,8 @@
 /* Home + /products: keep "ETLabs MyHQ" on one line at narrow widths (icon + name), no sideways scroll. */
 .myhq-card-title .section-title{white-space:nowrap}
 @media(max-width:720px){.portfolio-copy .myhq-card-title .section-title{font-size:min(2.2rem,8.2vw)}}
+/* /myhq layout + color-scheme figures: same fix as the phone shot. The Example data pill sat on each screenshot's
+   header (ETL badge / "by ETLabs"); it now sits in its own strip under the image, above any caption. */
+.myhq-page .myhq-shot{display:flex;flex-direction:column}
+.myhq-page .myhq-shot>.myhq-example{position:static;order:2;align-self:flex-start;margin:10px 12px}
+.myhq-page .myhq-shot>figcaption{order:3}
