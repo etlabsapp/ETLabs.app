@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149.24 41.19" width="149.24" height="41.19" role="img" aria-label="Coming soon">
 <title>Coming soon</title>
+<rect aria-hidden="true" x="1.5" y="1.5" width="146.24" height="38.19" rx="6.5" fill="#0F0F11"/>
 <g opacity="0.92" aria-hidden="true">
 <rect x="1.5" y="1.5" width="146.24" height="38.19" rx="6.5" fill="none" stroke="#F08A6E" stroke-width="3"/>
 <rect x="6" y="6" width="137.24" height="29.189999999999998" rx="2" fill="none" stroke="rgba(240,138,110,.40)" stroke-width="2"/>
