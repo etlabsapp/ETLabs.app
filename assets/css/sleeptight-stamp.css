@@ -1,0 +1,22 @@
+/* PREVIEW ONLY (Design, Oct 17 2026): ETLabs privacy stamp on the SleepTight: DreamWrite card and /apps/sleeptight/ hero.
+   Artwork = Design's original stamp, unchanged (same file as /assets/images/hq-product/myhq-stamp.svg).
+   Load after style.css (home, /products) and after apps/sleeptight/style.css (app page). The site has no dark mode: light stamp only. */
+.st-stamp{position:absolute;z-index:4;display:block;height:auto;aspect-ratio:250/252;transform:rotate(6deg);pointer-events:none;user-select:none}
+/* Card: (1) icon + screenshot  (2) status  (3) name + pitch  (4) lines + small print  (5) stamp on the mockup corner  (6) buttons */
+.portfolio-sleeptight .portfolio-media{position:relative}
+.portfolio-sleeptight .portfolio-media>img.st-stamp--card{width:128px;height:auto;max-height:none;padding:0;object-fit:fill;top:14px;right:14px;left:auto}
+@media(max-width:720px){.portfolio-sleeptight .portfolio-media>img.st-stamp--card{width:108px;top:10px;right:10px}}
+.st-card-title{display:flex;align-items:center;gap:12px}
+.st-card-title .section-title{margin:0}
+.st-card-icon{width:44px;height:44px;border-radius:11px;flex:none;box-shadow:0 2px 6px rgba(16,12,40,.18)}
+.st-smallprint{margin:-12px 0 24px;font-size:.9rem;line-height:1.5;color:#5a5650}
+/* App page hero: hangs off the phone shell's top-right; small print centred under the phone */
+.hero-device-shell{position:relative}
+.hero-visual:has(.st-smallprint--hero){flex-direction:column}
+.st-stamp--hero{width:150px;top:-14px;right:-8px}
+.st-smallprint--hero{margin:18px auto 0;text-align:center;max-width:420px;font-size:.85rem}
+@media(max-width:900px){.st-stamp--hero{width:128px;top:-18px;right:-10px}}
+@media(max-width:600px){.st-stamp--hero{width:108px;top:-16px;right:-4px}}
+@media (prefers-reduced-motion:no-preference){.st-stamp--animate{animation:st-stamp-in .5s cubic-bezier(.2,.9,.25,1.25) .3s both}
+  @keyframes st-stamp-in{0%{opacity:0;transform:rotate(-8deg) scale(1.35)}60%{opacity:1;transform:rotate(8deg) scale(.96)}100%{opacity:1;transform:rotate(6deg) scale(1)}}}
+@media print{.st-stamp{display:none}}

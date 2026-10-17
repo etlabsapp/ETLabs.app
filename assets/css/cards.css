@@ -1,0 +1,60 @@
+/* etlabs.app standard product card (Design, Oct 17 2026; spec: design/etlabs-cards-1017/CARD-SPEC.md). PREVIEW ONLY.
+   Load after style.css, myhq-stamp.css, sleeptight-stamp.css, lattice-glass.css and junior.css.
+   Anatomy: (1) icon + real screenshots / logo animation  (2) status stamp  (3) name + pitch  (4) 2-3 lines
+            (5) trust sticker (Legal-verified only) + small print  (6) primary + Learn more.
+   CSP: no inline styles or scripts anywhere; everything is in this file. */
+
+/* --- (2) Status stamp family: static outlined SVGs (assets/images/stamps/status-{live,beta}.svg, coming-soon-stamp.svg),
+   same geometry/type as the Junior card's .jr-stamp and the Lattice³ stamp (JetBrains Mono 700 13.8px, .18em tracking,
+   3px border, 8px radius, double ring, .92 opacity); -6deg in CSS. Accessible name is the <img alt> ("Status: Live").
+   Dark surfaces use the *-dark.svg file (etlabs.app has no dark mode today; the light files are what ships).
+   Live #1F6B44 / Beta #3F4FBF pass AA (>=4.8:1) on every card background. --- */
+.status-stamp{display:block;width:74px;height:auto;aspect-ratio:73.9/41.19;transform:rotate(-6deg);transform-origin:left center;margin:0 0 16px 2px;pointer-events:none;user-select:none}
+.sfv-copy .status-stamp{margin-bottom:12px}
+@media(max-width:720px){.status-stamp{width:64px}}
+
+/* --- (3) Name row with app icon. Fix: "SleepTight: DreamWrite" wrapped with a 44px icon at 1280.
+   Card headings with an icon use a 40px icon (36px <=720) and the card title scale below, so every name fits one line at 1280. --- */
+.portfolio-copy .section-title{font-size:clamp(2rem,3.2vw,2.625rem)}
+.myhq-card-icon,.st-card-icon{width:40px;height:40px}
+.st-card-title,.myhq-card-title{gap:12px}
+.st-card-title{margin-bottom:16px;min-width:0}
+.st-card-title .section-title{min-width:0}
+@media(max-width:720px){.portfolio-copy .section-title{font-size:2.1rem}.myhq-card-icon,.st-card-icon{width:36px;height:36px}}
+
+/* --- (5) Small print next to a trust sticker (one shared style; MyHQ/SleepTight keep their own class names) --- */
+.card-smallprint,.jr-smallprint{margin:-12px 0 24px;font-size:.9rem;line-height:1.5;color:#5a5650}
+
+/* --- (5) Junior trust sticker "Built parent-first" (Legal, Oct 17). The visual is wrapped so the sticker can hang off the
+   media's top-right corner (the media itself clips). Opposite corner/rotation to the video's centred -6deg COMING SOON stamp. --- */
+.card-visual{position:relative;width:min(100%,410px);margin-inline:auto;align-self:center}
+.card-visual>.portfolio-media.jr-media--square{width:100%}
+.card-sticker{position:absolute;z-index:4;display:block;height:auto;aspect-ratio:250/252;transform:rotate(6deg);pointer-events:none;user-select:none}
+.card-sticker--junior{width:120px;top:-14px;right:-14px}
+@media(max-width:720px){.card-sticker--junior{width:108px;top:-12px;right:-6px}}
+@media(max-width:360px){.card-sticker--junior{top:-22px;right:-16px}}
+@media (prefers-reduced-motion:no-preference){.card-sticker--animate{animation:card-sticker-in .5s cubic-bezier(.2,.9,.25,1.25) .3s both}
+  @keyframes card-sticker-in{0%{opacity:0;transform:rotate(-8deg) scale(1.35)}60%{opacity:1;transform:rotate(8deg) scale(.96)}100%{opacity:1;transform:rotate(6deg) scale(1)}}}
+
+/* --- Lattice³: COMING SOON stamp only (static SVG of the Junior stamp; decorative alt="", the visible "Coming soon" label stays), on the cube's lower-right corner.
+   The pause button sits at the card's top-right; the stamp stays in the lower half of the media. --- */
+.lattice-card .portfolio-media{position:relative}
+.lattice-card .portfolio-media>img.lat-stamp{position:absolute;z-index:3;left:50%;top:50%;width:149px;height:auto;max-height:none;padding:0;object-fit:fill;transform:translate(-50%,-50%) translate(40px,40px) rotate(-6deg);pointer-events:none;user-select:none}
+@media(max-width:720px){.lattice-card .portfolio-media>img.lat-stamp{width:131px;transform:translate(-50%,-50%) translate(34px,38px) rotate(-6deg)}}
+
+@media print{.card-sticker,.lat-stamp{display:none}}
+
+/* --- (1) Real screenshots (Design, Oct 17 2026; captured from the live apps, crop/resize only, no edits).
+   Total Cross + Security+: one phone screen (440x956 CSS px @3x, same size/aspect as SleepTight's hero-phone.webp), shown like SleepTight's.
+   drop-shadow follows the image itself (not the 18px padding), so the cream Total Cross screen still reads on the cream panel. --- */
+.portfolio-media>img.card-shot{filter:drop-shadow(0 0 .5px rgba(23,23,26,.35)) drop-shadow(0 8px 18px rgba(23,23,26,.14))}
+/* Skills for Vets: desktop (1280x800) behind + phone in front, same CSS device frames/geometry as the MyHQ card (no device art). */
+.sfv-preview.sfv-devices{position:relative;display:block;background:linear-gradient(145deg,#f1f0f6,#faf9f6);container-type:inline-size}
+.card-device{position:absolute;background:#17171a;box-shadow:0 2px 4px rgba(0,0,0,.08),0 14px 30px rgba(23,23,26,.18)}
+.card-device img{display:block;width:100%;height:auto;border-radius:inherit;background:#102937}
+.card-device--desktop{top:20%;left:5%;width:86%;padding:2.2cqi 2.2cqi 4.6cqi;border-radius:3.2cqi;z-index:1}
+.card-device--desktop img{border-radius:1.2cqi}
+.card-device--desktop::after{content:"";position:absolute;left:50%;bottom:-5.5cqi;width:26%;height:5.5cqi;transform:translateX(-50%);background:#2b2b30;clip-path:polygon(18% 0,82% 0,100% 100%,0 100%);border-radius:0 0 1cqi 1cqi}
+.card-device--phone{right:6%;bottom:5%;width:34%;padding:5cqi 1.8cqi 2.6cqi;border-radius:6.2cqi;z-index:2;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 4px 8px rgba(0,0,0,.12),0 18px 36px rgba(23,23,26,.28)}
+.card-device--phone img{border-radius:4.6cqi}
+.card-device--phone::before{content:"";position:absolute;top:1.6cqi;left:50%;width:28%;height:1.9cqi;transform:translateX(-50%);background:#3a3a40;border-radius:999px;z-index:1}
