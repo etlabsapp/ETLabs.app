@@ -1,0 +1,27 @@
+/*
+  X-Robots-Tag: noindex, nofollow
+  Content-Security-Policy: default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+
+/study/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; connect-src 'self'; script-src 'self' 'sha256-3pUjRc/T5ekji0VdTjd3xY7jmC70WLPL/H9CBX+bCVg=' 'sha256-zkXp6RpZfOPRKYiAcXslPgCQ1HIKdCKUav95dyAJ+w8='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+
+/apps/totalcross/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; connect-src 'self' https://ygfnplpkztkcxmofkyci.supabase.co wss://ygfnplpkztkcxmofkyci.supabase.co; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+
+/apps/sleeptight/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+
+/apps/flipfeed/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; connect-src 'self'; script-src 'self' 'sha256-Zx/miLLUk/QDN2N7sBhNTFVA9Zi7WSsnA4tyY/1f47E='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+
+/thank-you
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+
+/thank-you.html
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'

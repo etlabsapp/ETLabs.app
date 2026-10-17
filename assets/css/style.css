@@ -1777,3 +1777,7 @@ html, body { overflow-x: visible; }
 .myhq-card-icon { flex:none;width:44px;height:44px;border-radius:10px; }
 .portfolio-myhq-devices .portfolio-copy .myhq-card-title { margin-bottom:16px; }
 @media(max-width:720px){ .myhq-card-icon{width:40px;height:40px} .myhq-card-title{gap:12px} }
+
+/* 404 page (moved from inline style attributes for the CSP) */
+.notfound-actions { margin-top:18px; }
+.notfound-links { list-style:none;margin:0;padding:0;display:grid;gap:12px; }
