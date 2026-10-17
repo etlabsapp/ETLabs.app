@@ -1,6 +1,6 @@
 /* =====================================================================
    PRODUCT NAME + SLUG SWAP POINT  (PRODUCT-NAME-SWAP)
-   The MyHQ name (and its /myhq URL) are still being checked by Legal.
+   The product name is final: "ETLabs MyHQ" (short "MyHQ", URL /myhq).
    This constant is the one place they are defined. With JavaScript on,
    it fills every [data-product-name], [data-product-alt] and
    [data-product-link] element. The HTML also carries the literal values
