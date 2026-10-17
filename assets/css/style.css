@@ -1758,3 +1758,22 @@ html, body { overflow-x: visible; }
 .myhq-page .card .section-title { font-size:clamp(1.6rem,2.6vw,2.2rem);margin-bottom:12px; }
 .myhq-page .card ol, .myhq-page .card ul { margin:12px 0 0 1.2em;line-height:1.7; }
 @media(max-width:900px){ .myhq-page .myhq-hero{grid-template-columns:minmax(0,1fr)} .myhq-layouts{grid-template-columns:minmax(0,1fr)} }
+
+/* MyHQ card: CSS device frames (desktop behind, phone in front) with real
+   example-data screens. No third-party device art. */
+.portfolio-myhq-devices .portfolio-media { position:relative;display:block;background:#f6f4ef;container-type:inline-size; }
+.portfolio-myhq-devices .myhq-example { z-index:3; }
+.myhq-device { position:absolute;background:#17171a;box-shadow:0 2px 4px rgba(0,0,0,.08),0 14px 30px rgba(23,23,26,.18); }
+.myhq-device picture, .myhq-device img { display:block;width:100%;height:auto; }
+.myhq-device img { border-radius:inherit;background:#f6f4ef; }
+.myhq-device--desktop { top:20%;left:5%;width:86%;padding:2.2cqi 2.2cqi 4.6cqi;border-radius:3.2cqi;z-index:1; }
+.myhq-device--desktop img { border-radius:1.2cqi; }
+.myhq-device--desktop::after { content:"";position:absolute;left:50%;bottom:-5.5cqi;width:26%;height:5.5cqi;transform:translateX(-50%);background:#2b2b30;clip-path:polygon(18% 0,82% 0,100% 100%,0 100%);border-radius:0 0 1cqi 1cqi; }
+.myhq-device--phone { right:6%;bottom:5%;width:34%;padding:5cqi 1.8cqi 2.6cqi;border-radius:6.2cqi;z-index:2;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 4px 8px rgba(0,0,0,.12),0 18px 36px rgba(23,23,26,.28); }
+.myhq-device--phone img { border-radius:4.6cqi; }
+.myhq-device--phone::before { content:"";position:absolute;top:1.6cqi;left:50%;width:28%;height:1.9cqi;transform:translateX(-50%);background:#3a3a40;border-radius:999px;z-index:1; }
+.myhq-card-title { display:flex;align-items:center;gap:14px;min-width:0; }
+.myhq-card-title .section-title { margin:0;min-width:0; }
+.myhq-card-icon { flex:none;width:44px;height:44px;border-radius:10px; }
+.portfolio-myhq-devices .portfolio-copy .myhq-card-title { margin-bottom:16px; }
+@media(max-width:720px){ .myhq-card-icon{width:40px;height:40px} .myhq-card-title{gap:12px} }
