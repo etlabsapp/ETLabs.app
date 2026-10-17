@@ -18,11 +18,11 @@ From `live-snapshot-2026-10-17` (b166c25, Travis's live code). Not pushed.
 ## Rename the product and/or slug (Legal still checking)
 One constant in `assets/js/product-names.js` (`PRODUCT-NAME-SWAP`):
 
-    var MYHQ_NAME = { short: 'MyHQ', full: 'MyHQ by ETLabs', slug: 'myhq' };
+    var MYHQ_NAME = { short: 'MyHQ', full: 'ETLabs MyHQ', slug: 'myhq' };
 
 Run:
 
-    scripts/rename-myhq.sh "Fieldbook" "ETLabs Fieldbook" fieldbook   # slug optional
+    scripts/rename-myhq.sh "NewName" "ETLabs NewName" newslug   # slug optional
 
 It updates the constant, the no-JS fallbacks (text, image alt, <title>, og:title), every `href="/myhq"`,
 canonical/og:url, and moves `myhq.html` → `fieldbook.html` (git mv). Tested both ways on a throwaway copy:

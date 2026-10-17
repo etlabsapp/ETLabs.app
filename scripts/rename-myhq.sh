@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Rename the MyHQ product (and optionally its URL slug) everywhere in one step (PRODUCT-NAME-SWAP).
-# Usage: scripts/rename-myhq.sh "NewShort" "NewShort by ETLabs" [new-slug]
-#   e.g. scripts/rename-myhq.sh "Fieldbook" "ETLabs Fieldbook" fieldbook
+# Usage: scripts/rename-myhq.sh "NewShort" "ETLabs NewShort" [new-slug]
+#   e.g. scripts/rename-myhq.sh "NewName" "ETLabs NewName" newslug
 # - Updates the constant in assets/js/product-names.js (short, full, slug).
 # - Rewrites the literal no-JS fallbacks (text, image alt, <title>, og:title) in the HTML.
 # - With a slug: moves <old-slug>.html -> <new-slug>.html (git mv if in a repo) and rewrites

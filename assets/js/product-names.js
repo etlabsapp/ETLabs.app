@@ -12,7 +12,7 @@
 (function () {
   var MYHQ_NAME = {
     short: 'MyHQ',            // product card title
-    full: 'MyHQ by ETLabs',   // product page name (first mention)
+    full: 'ETLabs MyHQ',   // product page name (first mention)
     slug: 'myhq'              // page URL: /myhq  (file: myhq.html)
   };
   document.querySelectorAll('[data-product-name="myhq"]').forEach(function (el) {
