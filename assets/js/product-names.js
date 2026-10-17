@@ -20,7 +20,8 @@
     el.textContent = MYHQ_NAME[form];
   });
   document.querySelectorAll('[data-product-alt="myhq"]').forEach(function (el) {
-    el.setAttribute('alt', MYHQ_NAME.short + ' on a phone, showing deadlines, this week and to-dos on one page.');
+    var alt = el.getAttribute('alt') || '', i = alt.indexOf(' on a phone');
+    if (i >= 0) el.setAttribute('alt', MYHQ_NAME.short + alt.slice(i));
   });
   document.querySelectorAll('[data-product-link="myhq"]').forEach(function (el) {
     el.setAttribute('href', '/' + MYHQ_NAME.slug);
