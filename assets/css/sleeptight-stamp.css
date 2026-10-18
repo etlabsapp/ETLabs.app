@@ -3,9 +3,9 @@
    Load after style.css (home, /products) and after apps/sleeptight/style.css (app page). The site has no dark mode: light stamp only. */
 .st-stamp{position:absolute;z-index:4;display:block;height:auto;aspect-ratio:250/252;transform:rotate(6deg);pointer-events:none;user-select:none}
 /* Card: (1) icon + screenshot  (2) status  (3) name + pitch  (4) lines + small print  (5) stamp on the mockup corner  (6) buttons */
-.portfolio-sleeptight .portfolio-media{position:relative}
-.portfolio-sleeptight .portfolio-media>img.st-stamp--card{width:128px;height:auto;max-height:none;padding:0;object-fit:fill;top:14px;right:14px;left:auto}
-@media(max-width:720px){.portfolio-sleeptight .portfolio-media>img.st-stamp--card{width:108px;top:10px;right:10px}}
+.portfolio-sleeptight .portfolio-media,.portfolio-freeqr .portfolio-media{position:relative}
+.portfolio-sleeptight .portfolio-media>img.st-stamp--card,.portfolio-freeqr .portfolio-media>img.st-stamp--card{width:128px;height:auto;max-height:none;padding:0;object-fit:fill;top:14px;right:14px;left:auto}
+@media(max-width:720px){.portfolio-sleeptight .portfolio-media>img.st-stamp--card,.portfolio-freeqr .portfolio-media>img.st-stamp--card{width:108px;top:10px;right:10px}}
 .st-card-title{display:flex;align-items:center;gap:12px}
 .st-card-title .section-title{margin:0}
 .st-card-icon{width:44px;height:44px;border-radius:11px;flex:none;box-shadow:0 2px 6px rgba(16,12,40,.18)}

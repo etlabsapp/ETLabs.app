@@ -1,0 +1,115 @@
+/* Free QR app identity (Design, Oct 18, 2026). Load AFTER /qr/qr.css. No inline styles. Preview only.
+   Palette: ink #0B1F17, lime #C5F04A (on ink only), green #0C6B45 (text/buttons on light), paper #F3F6EE.
+   Type: Inter Tight 800 for display, JetBrains Mono for labels and the payload (both already self-hosted). */
+.qr-page{
+  --ink:#0B1F17;--lime:#C5F04A;--green:#0C6B45;--green-dark:#09543A;--paper:#F3F6EE;
+  --accent:var(--green);--glow:rgba(12,107,69,.10);--text:#0B1F17;--muted:#3F5148;--soft:#6B7C72;
+  --border:rgba(11,31,23,.12);--card-strong:#fff;--shadow:0 18px 40px rgba(11,31,23,.10);
+  --display:"Inter Tight","Inter",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  background:var(--paper);color:var(--text)}
+.qr-page .bg-orb,.qr-page .bg-grid{display:none}
+
+/* App bar: own brand, small ET Labs credit */
+.qa-bar{background:var(--ink);color:#fff}
+.qa-bar-in{max-width:var(--container);margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.qa-brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
+.qa-brand img{width:36px;height:36px;border-radius:9px;box-shadow:0 0 0 1px rgba(197,240,74,.35)}
+.qa-name{font:800 21px/1 var(--display);letter-spacing:-.02em}
+.qa-by{font:500 13px var(--mono);color:#C9D6CE;text-decoration:none;border-bottom:1px solid rgba(201,214,206,.35);padding:10px 0 2px}
+.qa-by:hover{color:var(--lime);border-color:var(--lime)}
+
+/* Hero band */
+.qr-hero{max-width:none;margin:0;padding:56px 24px 140px;background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.qr-hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(197,240,74,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(197,240,74,.06) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.qr-hero>*{position:relative}
+.qr-eyebrow{color:var(--ink);background:var(--lime);border:0;font-family:var(--mono);font-weight:700}
+.qr-hero h1{font:800 clamp(40px,7vw,76px)/1 var(--display);letter-spacing:-.035em;color:#fff;margin:20px 0 14px}
+.qr-sub{color:#C9D6CE}
+.qr-chips li{background:transparent;color:#E6EEE9;border:1px solid rgba(197,240,74,.45);font-family:var(--mono);font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.qr-chips li::before{content:"";width:12px;height:12px;background:var(--lime);-webkit-mask:url(/qr/icons/ui/check.svg) center/contain no-repeat;mask:url(/qr/icons/ui/check.svg) center/contain no-repeat}
+
+/* Tool overlaps the band */
+.qr-tool{margin-top:-104px;position:relative}
+.qr-panel{border-radius:20px}
+.qr-tabs{background:var(--paper)}
+.qr-tab{display:inline-flex;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-weight:600}
+.qr-tab[aria-selected="true"]{background:var(--ink);color:#fff;box-shadow:none}
+.qr-tab::before,.qr-btn::before,.qr-info h2::before{content:"";flex:none;width:17px;height:17px;background:currentColor;-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}
+.qr-tab[data-mode="url"]{--ico:url(/qr/icons/ui/link.svg)}
+.qr-tab[data-mode="text"]{--ico:url(/qr/icons/ui/text.svg)}
+.qr-tab[data-mode="wifi"]{--ico:url(/qr/icons/ui/wifi.svg)}
+.qr-tab[data-mode="email"]{--ico:url(/qr/icons/ui/mail.svg)}
+.qr-tab[aria-selected="true"]::before{background:var(--lime)}
+.qr-label{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.qr-input,.qr-textarea{border-color:rgba(11,31,23,.22);border-radius:12px}
+.qr-input:focus,.qr-textarea:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 3px rgba(12,107,69,.18)}
+
+/* Buttons with icons (the Show/Hide icon follows aria-pressed, so qr-app.js stays unchanged) */
+.qr-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-color:var(--green);color:var(--green)}
+.qr-btn::before{content:none}
+#btn-png::before,#btn-svg::before,#btn-print::before,#btn-showpass::before,#opt-swap::before{content:""}
+#btn-png,#btn-svg{--ico:url(/qr/icons/ui/download.svg)}
+#btn-print{--ico:url(/qr/icons/ui/print.svg)}
+#opt-swap{--ico:url(/qr/icons/ui/swap.svg)}
+#btn-showpass{--ico:url(/qr/icons/ui/eye.svg)}
+#btn-showpass[aria-pressed="true"]{--ico:url(/qr/icons/ui/eye-off.svg)}
+.qr-btn--primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.qr-btn--primary::before{background:var(--lime)}
+.qr-btn--primary:not(:disabled):hover{background:#163627}
+.qr-btn--ghost{border-color:var(--border);color:var(--text)}
+
+/* Preview + trust sticker (Legal-gated: shown on the preview only until Legal clears it for Free QR) */
+.qr-preview{position:sticky}
+.qr-tile{border-radius:16px;border:2px solid var(--ink)}
+.qr-opens-label{font-family:var(--mono);color:var(--muted)}
+.qr-opens-value{color:var(--ink)}
+.qa-sticker-wrap{position:absolute;top:-34px;right:-22px;width:124px;pointer-events:none;z-index:2}
+.qa-sticker{width:124px;height:auto;transform:rotate(6deg);filter:drop-shadow(0 6px 10px rgba(11,31,23,.18))}
+.qa-smallprint{font:500 12px/1.4 var(--mono);color:var(--muted);margin:10px auto 0;max-width:360px;text-align:center}
+
+/* Info cards */
+.qr-info h2{font:800 24px/1.1 var(--display);letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.qr-info h2::before{width:22px;height:22px;background:var(--green)}
+.qr-why h2{--ico:url(/qr/icons/ui/check.svg)}
+.qr-privacy h2{--ico:url(/qr/icons/ui/lock.svg)}
+.qr-privacy h2::before{-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat;margin:0;vertical-align:0}
+.qr-info p{color:var(--muted)}
+
+/* App footer */
+.qa-foot{border-top:1px solid var(--border);background:var(--paper)}
+.qa-foot-in{max-width:var(--container);margin:0 auto;padding:22px 24px 32px;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.qa-foot a{color:var(--green)}
+.qa-foot-brand{display:flex;align-items:center;gap:8px;font:800 15px var(--display);color:var(--ink)}
+.qa-foot-brand img{width:22px;height:22px;border-radius:6px}
+.qr-credit{color:var(--muted)}
+.qr-credit a{color:var(--green)}
+
+.qr-page :focus-visible{outline-color:var(--green)}
+.qa-bar :focus-visible,.qr-hero :focus-visible{outline-color:var(--lime)}
+
+@media (max-width:900px){
+  .qr-hero{padding:40px 20px 112px}
+  .qr-tool{margin-top:-84px}
+  .qa-bar-in{padding:12px 16px}
+  .qa-sticker-wrap{top:-26px;right:-8px;width:108px}
+  .qa-sticker{width:108px}
+}
+@media (max-width:380px){.qr-tab{gap:4px;font-size:13px}.qr-tab::before{width:14px;height:14px}}
+@media print{.qa-sticker-wrap,.qa-smallprint{display:none}}
+.qr-page input[type="range"],.qr-page input[type="checkbox"],.qr-page input[type="radio"]{accent-color:var(--green)}
+
+/* v2.1 (Oct 18, 4:10 PM): tagline eyebrow + longer SEO H1 + FAQ */
+.qr-eyebrow{font-size:13px;letter-spacing:.04em;padding:9px 14px;text-transform:none}
+.qr-hero h1{font-size:clamp(34px,5.4vw,66px);line-height:1.02;max-width:15ch;margin-left:auto;margin-right:auto}
+.qa-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* FAQ markup: <section class="qr-faq" aria-labelledby="faq-title"><h2 id="faq-title">…</h2><details><summary>Q</summary><p>A</p></details>…</section> */
+.qr-faq{max-width:860px;margin:0 auto;padding:8px 24px 72px}
+.qr-faq h2{font:800 clamp(26px,3.4vw,34px)/1.1 var(--display);letter-spacing:-.02em;margin:0 0 18px;color:var(--ink)}
+.qr-faq details{background:#fff;border:1px solid var(--border);border-radius:14px;margin:0 0 10px}
+.qr-faq summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;padding:12px 18px;font:700 17px/1.3 var(--font-sans);color:var(--ink)}
+.qr-faq summary::-webkit-details-marker{display:none}
+.qr-faq summary::after{content:"+";flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--paper);color:var(--green);font:700 18px/1 var(--mono)}
+.qr-faq details[open] summary::after{content:"\2212";background:var(--ink);color:var(--lime)}
+.qr-faq details p{margin:0;padding:0 18px 18px;color:var(--muted);font-size:16px;line-height:1.6}
+@media (max-width:900px){.qr-faq{padding:0 16px 56px}.qr-faq summary{font-size:16px}}
+@media print{.qr-faq{display:none}}

@@ -6,61 +6,151 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
     <meta name="referrer" content="no-referrer">
     <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16.png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <title>Free QR Code Generator | ET Labs</title>
-    <meta name="description" content="Free QR codes. Forever. No sign-up, no paywall, no expiration. Made right in your browser.">
+    <link rel="icon" href="/qr/icons/favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="/qr/icons/favicon.svg"><link rel="icon" type="image/png" sizes="48x48" href="/qr/icons/favicon-48.png"><link rel="icon" type="image/png" sizes="32x32" href="/qr/icons/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/qr/icons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/qr/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/qr/manifest.webmanifest">
+    <meta name="theme-color" content="#0B1F17">
+    <meta name="apple-mobile-web-app-title" content="Free QR">
+    <meta name="application-name" content="Free QR">
+    <!-- SEO/AEO: Research spec /workspace/search/free-qr-seo-spec-2026-10-18.md (preview keeps noindex). -->
+    <title>Free QR Code Generator That Never Expires | ET Labs</title>
+    <meta name="description" content="Make free QR codes that never expire. No sign-up, no watermark. URL, text, Wi-Fi and email. Download PNG or SVG, made right in your browser.">
     <link rel="canonical" href="https://etlabs.app/qr/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ET Labs">
+    <meta property="og:url" content="https://etlabs.app/qr/">
+    <meta property="og:title" content="Free QR Code Generator That Never Expires | ET Labs">
+    <meta property="og:description" content="Real. Free. QR code. Forever. Static codes for links, text, Wi-Fi and email. No sign-up, no watermark. PNG or SVG.">
+    <meta property="og:image" content="https://etlabs.app/qr/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="ET Labs Free QR: Real. Free. QR code. Forever.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Free QR Code Generator That Never Expires | ET Labs">
+    <meta name="twitter:description" content="Real. Free. QR code. Forever. No sign-up, no watermark. PNG or SVG, made in your browser.">
+    <meta name="twitter:image" content="https://etlabs.app/qr/og-image.png">
+    <meta name="twitter:image:alt" content="ET Labs Free QR: Real. Free. QR code. Forever.">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://etlabs.app/qr/#app",
+      "name": "ET Labs Free QR",
+      "alternateName": "Free QR Code Generator",
+      "url": "https://etlabs.app/qr/",
+      "description": "Free QR code generator that never expires. Make static QR codes for links, text, Wi-Fi and email in your browser. No sign-up, no watermark. Download PNG or SVG.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "URL, text, Wi-Fi and email QR codes",
+        "Static codes with no redirect",
+        "PNG (256-2048 px) and SVG download",
+        "Custom colors, error correction and margin",
+        "Made in your browser, no sign-up"
+      ],
+      "publisher": {
+        "@type": "Organization",
+        "name": "ET Labs",
+        "url": "https://etlabs.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://etlabs.app/qr/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Do free QR codes expire?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Codes made here don't expire. They're static: your link or text goes straight into the code with no redirect, so the code keeps working as long as the link it points to does."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this really free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. There's no sign-up, no paywall and no watermark, and PNG and SVG downloads are free."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What's the difference between a static and a dynamic QR code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A static QR code stores your content directly in the pattern, so it doesn't depend on any service, but it can't be changed after it's printed. A dynamic QR code stores a short link that redirects through a service, so the destination can be edited later, but the code works only while that service keeps the link active."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What can I put in a QR code here?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A website link, plain text, Wi-Fi network details, or an email address with an optional subject and message."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I make a Wi-Fi QR code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Choose Wi-Fi, then enter the network name, security type and password. Phones that support Wi-Fi QR codes can join the network by scanning it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What file formats can I download?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "PNG from 256 to 2048 pixels, or SVG, which scales to any size. You can also print the code directly."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is what I type private?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "What you type never leaves your device. The code is made right in your browser."
+          }
+        }
+      ]
+    }
+  ]
+}
+    </script>
     <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/qr/qr.css">
+    <link rel="stylesheet" href="/qr/qr-fonts.css">
+    <link rel="stylesheet" href="/qr/qr-theme.css">
 </head>
 <body class="qr-page">
 <a class="skip-link" href="#main-content">Skip to content</a>
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-grid"></div>
 
-    <header class="site-header">
-        <div class="container">
-            <div class="nav-shell">
-                <a href="/" class="brand-mark" aria-label="ET Labs home">
-                    <span class="brand-logo"><img src="/assets/images/etlabs-wordmark-animated.svg" alt="ET Labs" class="brand-wordmark" width="1064" height="289"></span>
-                </a>
-
-                <button class="mobile-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-menu">
-                    <span></span>
-                    <span></span>
-                </button>
-
-                <nav class="site-nav" id="site-menu">
-                    <a href="/philosophy">Philosophy</a>
-                    <div class="nav-dropdown">
-                        <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-controls="products-dropdown" id="products-dropdown-trigger">Products</button>
-                        <div class="nav-dropdown-menu" id="products-dropdown">
-<a href="/products">All products</a>
-<a href="https://skillsforvets.org/">Skills for Vets</a>
-<a href="/study/">Security+ Study</a>
-                            <a href="/apps/sleeptight/">SleepTight: DreamWrite</a>
-                            <a href="/apps/lattice3/">Lattice³ <span class="nav-badge">Soon</span></a>
-                            <a href="/apps/totalcross/">Total Cross</a>
-                        </div>
-                    </div>
-                    <a href="/studio">Studio</a>
-                    <a href="/apps/sleeptight/support">Support</a>
-<a href="/contact">Contact</a>
-                </nav>
-            </div>
+    <header class="qa-bar">
+        <div class="qa-bar-in">
+            <a href="/qr/" class="qa-brand" aria-label="Free QR home"><img src="/qr/icons/app-icon.svg" width="36" height="36" alt=""><span class="qa-name">Free QR</span></a>
+            <a href="/" class="qa-by">by ET Labs</a>
         </div>
     </header>
 
     <main id="main-content" tabindex="-1">
         <!-- COPY: every user-facing string on this page lives in this file (Writing FINAL, Oct 18). Status/error messages are in qr-app.js / qr-core.js. -->
         <section class="qr-hero" aria-labelledby="qr-title">
-            <p class="qr-eyebrow" data-copy-slot="eyebrow">FREE TOOL</p>
-            <h1 id="qr-title" data-copy-slot="h1">Free QR codes. Forever.</h1>
+            <p class="qr-eyebrow" data-copy-slot="eyebrow">Real. Free. QR code. Forever.</p>
+            <h1 id="qr-title" data-copy-slot="h1">Free QR Code Generator That Never Expires</h1>
             <p class="qr-sub" data-copy-slot="sub">No sign-up, no paywall, no expiration. Nobody should have to pay for a QR code.</p>
             <ul class="qr-chips" aria-label="What you get" data-copy-slot="chips">
                 <li>No account</li>
@@ -69,7 +159,8 @@
             </ul>
         </section>
 
-        <section class="qr-tool" aria-label="QR code generator">
+        <section class="qr-tool" aria-labelledby="qr-tool-title">
+            <h2 class="qr-vh" id="qr-tool-title">Make your QR code: link, text, Wi-Fi or email</h2>
             <div class="qr-panel qr-inputs">
                 <div class="qr-tabs" role="tablist" aria-label="What to put in the code">
                     <button type="button" class="qr-tab" role="tab" id="tab-url" aria-controls="pane-url" aria-selected="true" data-mode="url">URL</button>
@@ -163,6 +254,8 @@
             </div>
 
             <div class="qr-panel qr-preview" aria-label="Preview">
+                <!-- LEGAL-GATE: cleared by Legal Oct 18 with conditions (exact small print; zero requests; no dynamic codes, shortener, scan stats, uploads, history or CDN scripts). -->
+                <div class="qa-sticker-wrap" data-legal-gate="freeqr-sticker"><img class="qa-sticker" src="/assets/images/hq-product/myhq-stamp.svg" width="250" height="252" alt="Your data, your device. Codes are made right in your browser. What you type never leaves your device."></div>
                 <div class="qr-tile" id="qr-tile">
                     <div class="qr-empty" id="qr-empty">Type a link to make your code.</div>
                     <canvas id="qr-canvas" role="img" aria-label="QR code" hidden></canvas>
@@ -176,6 +269,7 @@
                     <button type="button" class="qr-btn" id="btn-svg" disabled>Download SVG</button>
                     <button type="button" class="qr-btn qr-btn--ghost" id="btn-print" disabled>Print</button>
                 </div>
+                <p class="qa-smallprint" data-legal-gate="freeqr-sticker">Your data, your device. Codes are made right in your browser. What you type never leaves your device.</p>
                 <p class="qr-help" id="qr-status" aria-live="polite"></p>
             </div>
         </section>
@@ -190,26 +284,24 @@
                 <p data-copy-slot="privacy">What you type never leaves your device. The code is made right in your browser.</p>
             </div>
         </section>
+        <!-- FAQ: must match the FAQPage JSON-LD in <head> word for word (Research spec section 5). -->
+        <section class="qr-faq" aria-labelledby="faq-title">
+            <h2 id="faq-title" data-copy-slot="faq-title">Questions about free QR codes</h2>
+            <details><summary>Do free QR codes expire?</summary><p>Codes made here don't expire. They're static: your link or text goes straight into the code with no redirect, so the code keeps working as long as the link it points to does.</p></details>
+            <details><summary>Is this really free?</summary><p>Yes. There's no sign-up, no paywall and no watermark, and PNG and SVG downloads are free.</p></details>
+            <details><summary>What's the difference between a static and a dynamic QR code?</summary><p>A static QR code stores your content directly in the pattern, so it doesn't depend on any service, but it can't be changed after it's printed. A dynamic QR code stores a short link that redirects through a service, so the destination can be edited later, but the code works only while that service keeps the link active.</p></details>
+            <details><summary>What can I put in a QR code here?</summary><p>A website link, plain text, Wi-Fi network details, or an email address with an optional subject and message.</p></details>
+            <details><summary>How do I make a Wi-Fi QR code?</summary><p>Choose Wi-Fi, then enter the network name, security type and password. Phones that support Wi-Fi QR codes can join the network by scanning it.</p></details>
+            <details><summary>What file formats can I download?</summary><p>PNG from 256 to 2048 pixels, or SVG, which scales to any size. You can also print the code directly.</p></details>
+            <details><summary>Is what I type private?</summary><p>What you type never leaves your device. The code is made right in your browser.</p></details>
+        </section>
         <div class="container"><p class="qr-help qr-credit">QR encoding by <a href="https://github.com/kazuhikoarase/qrcode-generator">qrcode-generator</a> by Kazuhiko Arase, used under the <a href="/qr/vendor/qrcode-generator/LICENSE">MIT License</a>. QR Code is a registered trademark of DENSO WAVE INCORPORATED.</p></div>
     </main>
 
-    <footer class="site-footer">
-        <div class="container footer-shell">
-            <div>
-                <div class="footer-brand">
-                    <span class="brand-logo"><img src="/assets/images/etlabs-wordmark.svg" alt="ET Labs" class="brand-wordmark" width="1064" height="289"></span>
-                </div>
-                <p class="footer-copy">Software should support life, not consume it.</p>
-            </div>
-            <div class="footer-links">
-                <a href="/philosophy">Philosophy</a>
-                <a href="/products">Products</a>
-                <a href="/studio">Studio</a>
-                <a href="/apps/sleeptight/">SleepTight</a>
-                <a href="/apps/lattice3/">Lattice³</a>
-                <a href="/apps/totalcross/">Total Cross</a>
-                <a href="/contact">Contact</a>
-            </div>
+    <footer class="qa-foot">
+        <div class="qa-foot-in">
+            <span class="qa-foot-brand"><img src="/qr/icons/app-icon.svg" width="22" height="22" alt="">Free QR</span>
+            <span>An <a href="/">ET Labs</a> app. Free forever.</span>
         </div>
     </footer>
     <script src="/assets/js/script.js"></script>
