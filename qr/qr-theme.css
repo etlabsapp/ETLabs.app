@@ -115,3 +115,32 @@
 .qr-tab{white-space:nowrap}
 @media (max-width:380px){.qr-tab{flex:1 1 auto;min-width:0;padding:0 6px}}
 @media (max-width:380px){.qr-result .qa-sticker-wrap,.qa-sticker-wrap{right:6px!important;width:96px!important;top:-24px!important}}
+/* Free QR palette layer (Design, Oct 18 2026). Load AFTER qr-theme.css, plus ONE palette-*.css that sets the variables. */
+.qr-page{--ink:var(--p-ink);--green:var(--p-accent);--green-dark:var(--p-accent);--accent:var(--p-accent);--text:var(--p-ink);--muted:var(--p-muted);--paper:var(--p-paper);--border:var(--p-border);--shadow:0 18px 40px var(--p-shadow)}
+.qa-bar{background:var(--p-bar);color:var(--p-bar-fg)}
+.qa-brand{color:var(--p-bar-fg)}
+.qa-brand img{box-shadow:0 0 0 1px var(--p-bar-line)}
+.qa-by{color:var(--p-bar-sub);border-bottom-color:var(--p-bar-line)}
+.qa-by:hover{color:var(--p-bar-fg);border-color:var(--p-bar-fg)}
+.qr-hero{background:var(--p-hero);color:var(--p-hero-fg)}
+.qr-hero::before{background-image:linear-gradient(var(--p-grid) 1px,transparent 1px),linear-gradient(90deg,var(--p-grid) 1px,transparent 1px)}
+.qr-eyebrow{background:var(--p-pop);color:var(--p-pop-fg)}
+.qr-hero h1{color:var(--p-hero-fg)}
+.qr-sub{color:var(--p-hero-sub)}
+.qr-chips li{color:var(--p-hero-fg);border-color:var(--p-chip-line);background:var(--p-chip-bg)}
+.qr-chips li::before{background:var(--p-chip-ico)}
+.qr-tab[aria-selected="true"]{background:var(--p-btn);color:var(--p-btn-fg)}
+.qr-tab[aria-selected="true"]::before{background:var(--p-btn-ico)}
+.qr-input,.qr-textarea{border-color:var(--p-field)}
+.qr-input:focus,.qr-textarea:focus{border-color:var(--p-accent);box-shadow:0 0 0 3px var(--p-ring)}
+.qr-btn--primary{background:var(--p-btn);border-color:var(--p-btn);color:var(--p-btn-fg)}
+.qr-btn--primary::before{background:var(--p-btn-ico)}
+.qr-btn--primary:not(:disabled):hover{background:var(--p-btn-hover)}
+.qa-sticker{filter:drop-shadow(0 6px 10px var(--p-shadow))}
+.qr-faq-item::before{background:var(--p-btn);color:var(--p-btn-ico)}
+.qa-bar :focus-visible,.qr-hero :focus-visible{outline-color:var(--p-hero-fg)}
+.qr-page{--p-ink:#161513;--p-accent:#161513;--p-muted:#4A463C;--p-paper:#FFFBEA;--p-border:rgba(22,21,19,.14);--p-shadow:rgba(22,21,19,.14);
+--p-bar:#161513;--p-bar-fg:#FFFFFF;--p-bar-sub:#E9E4D2;--p-bar-line:rgba(255,210,63,.45);
+--p-hero:#FFD23F;--p-hero-fg:#161513;--p-hero-sub:#3A3424;--p-grid:rgba(22,21,19,.07);
+--p-pop:#161513;--p-pop-fg:#FFD23F;--p-chip-line:rgba(22,21,19,.35);--p-chip-bg:rgba(255,255,255,.35);--p-chip-ico:#161513;
+--p-btn:#161513;--p-btn-fg:#FFFFFF;--p-btn-ico:#FFD23F;--p-btn-hover:#2E2B25;--p-field:rgba(22,21,19,.24);--p-ring:rgba(255,190,0,.45)}
