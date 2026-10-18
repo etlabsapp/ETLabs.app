@@ -75,3 +75,11 @@
 /* Engineering additions (Oct 18): keep [hidden] working on elements the rules above give display:flex/grid. */
 .qr-page [hidden]{display:none!important}
 .qr-credit{text-align:center;padding-bottom:24px}
+/* Engineering addition (Oct 18): Wi-Fi password field + Show/Hide toggle on one row. */
+.qr-pass-wrap .qr-input{flex:1;min-width:0}
+.qr-pass-wrap .qr-btn{flex:none;padding:0 14px}
+/* Design print fix (Oct 18): no positioned ancestors, so the code + payload line sit at the top of page 1. */
+@media print{
+  .qr-tool,.qr-panel,.qr-preview{position:static!important;box-shadow:none}
+  body{background:#fff}
+}

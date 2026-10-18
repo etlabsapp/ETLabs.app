@@ -71,10 +71,12 @@
     var px = Math.max(640, total * 4);
     cv.width = px; cv.height = px;
     Q.drawToContext(cv.getContext("2d"), m, { size: px, margin: o.margin, fg: o.fg, bg: o.bg });
-    cv.setAttribute("aria-label", "QR code for " + b.payload);
+    // On screen (and in print) a Wi-Fi password shows as bullets unless "Show" is on; the code itself holds the real one.
+    var shown = Q.displayPayload(mode, fields(), showPass()).payload;
+    cv.setAttribute("aria-label", "QR code for " + shown);
     var v = $("qr-opens-value");
-    v.textContent = b.payload;          // text only, never HTML
-    v.title = b.payload;
+    v.textContent = shown;              // text only, never HTML
+    v.title = shown;
     setReady(true);
     setStatus("");
   }
@@ -105,6 +107,15 @@
   $("btn-print").addEventListener("click", function () { render(); if (current) window.print(); });
   $("opt-swap").addEventListener("click", function () {
     var f = $("opt-fg").value; $("opt-fg").value = $("opt-bg").value; $("opt-bg").value = f; render();
+  });
+  function showPass() { return $("btn-showpass").getAttribute("aria-pressed") === "true"; }
+  $("btn-showpass").addEventListener("click", function () {
+    var on = !showPass();
+    this.setAttribute("aria-pressed", on ? "true" : "false");
+    this.setAttribute("aria-label", on ? "Hide password" : "Show password");
+    this.textContent = on ? "Hide" : "Show";
+    $("in-pass").type = on ? "text" : "password";
+    render();
   });
   $("in-sec").addEventListener("change", function () { $("row-pass").hidden = this.value === "nopass"; });
 

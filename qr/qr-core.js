@@ -63,6 +63,16 @@
     return ok("mailto:" + to + (q.length ? "?" + q.join("&") : ""));
   }
 
+  /* What the page shows under the code: same as the payload, except a Wi-Fi password is replaced by bullets
+     unless showPassword is true. The QR code and downloads always use buildPayload (the real password). */
+  var MASK = "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022";
+  function displayPayload(mode, fields, showPassword) {
+    if (mode !== "wifi" || showPassword || !fields.password || fields.security === "nopass") return buildPayload(mode, fields);
+    var masked = {}; for (var k in fields) masked[k] = fields[k];
+    masked.password = MASK;
+    return buildWifi(masked);
+  }
+
   function buildPayload(mode, fields) {
     switch (mode) {
       case "text": return buildText(fields.text);
@@ -144,6 +154,6 @@
   }
 
   return { buildPayload: buildPayload, buildUrl: buildUrl, buildText: buildText, buildWifi: buildWifi,
-    buildEmail: buildEmail, wifiEscape: wifiEscape, makeMatrix: makeMatrix, drawToContext: drawToContext,
+    buildEmail: buildEmail, displayPayload: displayPayload, MASK: MASK, wifiEscape: wifiEscape, makeMatrix: makeMatrix, drawToContext: drawToContext,
     toSvg: toSvg, contrast: contrast, EC_NAMES: EC_NAMES };
 }));

@@ -104,7 +104,10 @@
                     </div>
                     <div class="qr-row" id="row-pass">
                         <label class="qr-label" for="in-pass">Password</label>
-                        <input class="qr-input" id="in-pass" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                        <div class="qr-colors qr-pass-wrap">
+                            <input class="qr-input" id="in-pass" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                            <button type="button" class="qr-btn" id="btn-showpass" aria-pressed="false" aria-controls="in-pass" aria-label="Show password">Show</button>
+                        </div>
                     </div>
                     <div class="qr-row">
                         <span class="qr-label" id="lbl-hidden">Hidden network</span>
