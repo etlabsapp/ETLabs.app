@@ -82,4 +82,8 @@
 @media print{
   .qr-tool,.qr-panel,.qr-preview{position:static!important;box-shadow:none}
   body{background:#fff}
+  html,body{height:auto!important;max-height:10.5in;overflow:hidden!important}
 }
+/* Engineering addition (Oct 18, Design polish): 20px checkbox, whole line toggles it, 44px tap height. */
+.qr-check{display:flex;align-items:center;gap:10px;min-height:44px;margin:0;cursor:pointer}
+.qr-check input[type="checkbox"]{width:20px;height:20px;margin:0;flex:none;accent-color:var(--accent);cursor:pointer}
