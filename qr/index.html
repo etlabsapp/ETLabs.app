@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <meta name="referrer" content="no-referrer">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Free QR Code Generator | ET Labs</title>
+    <meta name="description" content="Free QR codes. Forever. No sign-up, no paywall, no expiration. Made right in your browser.">
+    <link rel="canonical" href="https://etlabs.app/qr/">
+    <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/qr/qr.css">
+</head>
+<body class="qr-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-grid"></div>
+
+    <header class="site-header">
+        <div class="container">
+            <div class="nav-shell">
+                <a href="/" class="brand-mark" aria-label="ET Labs home">
+                    <span class="brand-logo"><img src="/assets/images/etlabs-wordmark-animated.svg" alt="ET Labs" class="brand-wordmark" width="1064" height="289"></span>
+                </a>
+
+                <button class="mobile-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-menu">
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <nav class="site-nav" id="site-menu">
+                    <a href="/philosophy">Philosophy</a>
+                    <div class="nav-dropdown">
+                        <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-controls="products-dropdown" id="products-dropdown-trigger">Products</button>
+                        <div class="nav-dropdown-menu" id="products-dropdown">
+<a href="/products">All products</a>
+<a href="https://skillsforvets.org/">Skills for Vets</a>
+<a href="/study/">Security+ Study</a>
+                            <a href="/apps/sleeptight/">SleepTight: DreamWrite</a>
+                            <a href="/apps/lattice3/">Lattice³ <span class="nav-badge">Soon</span></a>
+                            <a href="/apps/totalcross/">Total Cross</a>
+                        </div>
+                    </div>
+                    <a href="/studio">Studio</a>
+                    <a href="/apps/sleeptight/support">Support</a>
+<a href="/contact">Contact</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+        <!-- COPY: every user-facing string on this page lives in this file (Writing FINAL, Oct 18). Status/error messages are in qr-app.js / qr-core.js. -->
+        <section class="qr-hero" aria-labelledby="qr-title">
+            <p class="qr-eyebrow" data-copy-slot="eyebrow">FREE TOOL</p>
+            <h1 id="qr-title" data-copy-slot="h1">Free QR codes. Forever.</h1>
+            <p class="qr-sub" data-copy-slot="sub">No sign-up, no paywall, no expiration. Nobody should have to pay for a QR code.</p>
+            <ul class="qr-chips" aria-label="What you get" data-copy-slot="chips">
+                <li>No account</li>
+                <li>Never expires</li>
+                <li>Made in your browser</li>
+            </ul>
+        </section>
+
+        <section class="qr-tool" aria-label="QR code generator">
+            <div class="qr-panel qr-inputs">
+                <div class="qr-tabs" role="tablist" aria-label="What to put in the code">
+                    <button type="button" class="qr-tab" role="tab" id="tab-url" aria-controls="pane-url" aria-selected="true" data-mode="url">URL</button>
+                    <button type="button" class="qr-tab" role="tab" id="tab-text" aria-controls="pane-text" aria-selected="false" tabindex="-1" data-mode="text">Text</button>
+                    <button type="button" class="qr-tab" role="tab" id="tab-wifi" aria-controls="pane-wifi" aria-selected="false" tabindex="-1" data-mode="wifi">Wi-Fi</button>
+                    <button type="button" class="qr-tab" role="tab" id="tab-email" aria-controls="pane-email" aria-selected="false" tabindex="-1" data-mode="email">Email</button>
+                </div>
+
+                <div class="qr-pane" role="tabpanel" id="pane-url" aria-labelledby="tab-url">
+                    <label class="qr-label" for="in-url">Link</label>
+                    <input class="qr-input" id="in-url" type="text" inputmode="url" placeholder="example.com" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="help-url err-url">
+                    <p class="qr-help" id="help-url">We'll add https:// if it's missing.</p>
+                    <p class="qr-error" id="err-url" hidden></p>
+                </div>
+
+                <div class="qr-pane" role="tabpanel" id="pane-text" aria-labelledby="tab-text" hidden>
+                    <label class="qr-label" for="in-text">Text</label>
+                    <textarea class="qr-textarea" id="in-text" autocomplete="off" spellcheck="false" aria-describedby="err-text"></textarea>
+                    <p class="qr-error" id="err-text" hidden></p>
+                </div>
+
+                <div class="qr-pane" role="tabpanel" id="pane-wifi" aria-labelledby="tab-wifi" hidden>
+                    <label class="qr-label" for="in-ssid">Network name (SSID)</label>
+                    <input class="qr-input" id="in-ssid" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                    <div class="qr-row">
+                        <label class="qr-label" for="in-sec">Security</label>
+                        <select class="qr-input" id="in-sec">
+                            <option value="WPA" selected>WPA / WPA2 / WPA3</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass">No password</option>
+                        </select>
+                    </div>
+                    <div class="qr-row" id="row-pass">
+                        <label class="qr-label" for="in-pass">Password</label>
+                        <input class="qr-input" id="in-pass" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                    </div>
+                    <div class="qr-row">
+                        <span class="qr-label" id="lbl-hidden">Hidden network</span>
+                        <label class="qr-help"><input type="checkbox" id="in-hidden" aria-labelledby="lbl-hidden"> The network doesn't broadcast its name</label>
+                    </div>
+                    <p class="qr-error" id="err-wifi" hidden></p>
+                </div>
+
+                <div class="qr-pane" role="tabpanel" id="pane-email" aria-labelledby="tab-email" hidden>
+                    <label class="qr-label" for="in-to">Email address</label>
+                    <input class="qr-input" id="in-to" type="email" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="err-email">
+                    <p class="qr-error" id="err-email" hidden></p>
+                    <div class="qr-row">
+                        <label class="qr-label" for="in-subject">Subject (optional)</label>
+                        <input class="qr-input" id="in-subject" type="text" autocomplete="off" spellcheck="false">
+                    </div>
+                    <div class="qr-row">
+                        <label class="qr-label" for="in-body">Message (optional)</label>
+                        <textarea class="qr-textarea" id="in-body" autocomplete="off" spellcheck="false"></textarea>
+                    </div>
+                </div>
+
+                <details class="qr-options" id="qr-options" open>
+                    <summary>Options</summary>
+                    <div class="qr-row">
+                        <label class="qr-label" for="opt-size">Download size</label>
+                        <div><input type="range" id="opt-size" min="256" max="2048" step="64" value="1024" aria-describedby="out-size"> <output id="out-size" for="opt-size">1024 px</output></div>
+                    </div>
+                    <div class="qr-row">
+                        <span class="qr-label" id="lbl-colors">Colors</span>
+                        <div class="qr-colors" role="group" aria-labelledby="lbl-colors">
+                            <label class="qr-help" for="opt-fg">Code</label><input type="color" id="opt-fg" value="#000000">
+                            <label class="qr-help" for="opt-bg">Background</label><input type="color" id="opt-bg" value="#ffffff">
+                            <button type="button" class="qr-btn qr-swap" id="opt-swap" aria-label="Swap code and background colors">Swap</button>
+                        </div>
+                    </div>
+                    <p class="qr-warn" id="warn-contrast" role="status" hidden>Low contrast. Some phones may not scan this.</p>
+                    <div class="qr-row">
+                        <span class="qr-label" id="lbl-ec">Error correction</span>
+                        <div class="qr-pills" role="radiogroup" aria-labelledby="lbl-ec">
+                            <label><input type="radio" name="ec" value="L"><span>L · Low</span></label>
+                            <label><input type="radio" name="ec" value="M" checked><span>M · Medium</span></label>
+                            <label><input type="radio" name="ec" value="Q"><span>Q · Quartile</span></label>
+                            <label><input type="radio" name="ec" value="H"><span>H · High</span></label>
+                        </div>
+                    </div>
+                    <div class="qr-row">
+                        <label class="qr-label" for="opt-margin">Margin</label>
+                        <div><input type="range" id="opt-margin" min="0" max="8" step="1" value="4"> <output id="out-margin" for="opt-margin">4 modules</output></div>
+                    </div>
+                    <p class="qr-warn" id="warn-margin" role="status" hidden>Margins under 4 can make some scanners miss the code.</p>
+                </details>
+            </div>
+
+            <div class="qr-panel qr-preview" aria-label="Preview">
+                <div class="qr-tile" id="qr-tile">
+                    <div class="qr-empty" id="qr-empty">Type a link to make your code.</div>
+                    <canvas id="qr-canvas" role="img" aria-label="QR code" hidden></canvas>
+                </div>
+                <div class="qr-opens" id="qr-opens" hidden>
+                    <div class="qr-opens-label">This code opens:</div>
+                    <div class="qr-opens-value" id="qr-opens-value"></div>
+                </div>
+                <div class="qr-actions">
+                    <button type="button" class="qr-btn qr-btn--primary" id="btn-png" disabled>Download PNG</button>
+                    <button type="button" class="qr-btn" id="btn-svg" disabled>Download SVG</button>
+                    <button type="button" class="qr-btn qr-btn--ghost" id="btn-print" disabled>Print</button>
+                </div>
+                <p class="qr-help" id="qr-status" aria-live="polite"></p>
+            </div>
+        </section>
+
+        <section class="qr-info" aria-label="About this tool">
+            <div class="qr-panel qr-why">
+                <h2 data-copy-slot="why-title">Why free?</h2>
+                <p data-copy-slot="why">Your link goes straight into the code. There's no redirect in between. So your code keeps working as long as your link does, with nothing to renew. Free to make, free to download, no catch.</p>
+            </div>
+            <div class="qr-panel qr-privacy">
+                <h2 data-copy-slot="privacy-title">Privacy</h2>
+                <p data-copy-slot="privacy">What you type never leaves your device. The code is made right in your browser.</p>
+            </div>
+        </section>
+        <div class="container"><p class="qr-help qr-credit">QR encoding by <a href="https://github.com/kazuhikoarase/qrcode-generator">qrcode-generator</a> by Kazuhiko Arase, used under the <a href="/qr/vendor/qrcode-generator/LICENSE">MIT License</a>. QR Code is a registered trademark of DENSO WAVE INCORPORATED.</p></div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-shell">
+            <div>
+                <div class="footer-brand">
+                    <span class="brand-logo"><img src="/assets/images/etlabs-wordmark.svg" alt="ET Labs" class="brand-wordmark" width="1064" height="289"></span>
+                </div>
+                <p class="footer-copy">Software should support life, not consume it.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/philosophy">Philosophy</a>
+                <a href="/products">Products</a>
+                <a href="/studio">Studio</a>
+                <a href="/apps/sleeptight/">SleepTight</a>
+                <a href="/apps/lattice3/">Lattice³</a>
+                <a href="/apps/totalcross/">Total Cross</a>
+                <a href="/contact">Contact</a>
+            </div>
+        </div>
+    </footer>
+    <script src="/assets/js/script.js"></script>
+    <script src="/qr/vendor/qrcode-generator/qrcode.js"></script>
+    <script src="/qr/qr-core.js"></script>
+    <script src="/qr/qr-app.js"></script>
+</body>
+</html>
