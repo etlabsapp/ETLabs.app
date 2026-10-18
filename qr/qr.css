@@ -92,3 +92,6 @@
 /* Engineering addition (Oct 18, v2): load the Show/Hide eye icons with the page (on the visually hidden tool heading),
    so switching to Wi-Fi or pressing Show fetches nothing after load (Legal: zero requests after load). */
 #qr-tool-title::before{content:"";display:block;width:1px;height:1px;-webkit-mask:url(/qr/icons/ui/eye.svg),url(/qr/icons/ui/eye-off.svg);mask:url(/qr/icons/ui/eye.svg),url(/qr/icons/ui/eye-off.svg)}
+
+/* ENGINEERING: stop the sticker overhang from causing sideways scroll at 320px */
+html,body{overflow-x:clip}
