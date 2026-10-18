@@ -114,3 +114,4 @@
 @media (min-width:901px){.qr-hero h1{max-width:20ch}}
 .qr-tab{white-space:nowrap}
 @media (max-width:380px){.qr-tab{flex:1 1 auto;min-width:0;padding:0 6px}}
+@media (max-width:380px){.qr-result .qa-sticker-wrap,.qa-sticker-wrap{right:6px!important;width:96px!important;top:-24px!important}}
