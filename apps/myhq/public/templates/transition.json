@@ -1,0 +1,51 @@
+{
+  "format": 1,
+  "id": "transition",
+  "name": "Veteran / Career Transition",
+  "blurb": "Resume, networking, certifications and interviews for your next career.",
+  "icon": "★",
+  "title": "Next Mission HQ",
+  "subtitle": "Career transition · sample plan",
+  "areas": [
+    { "key": "resume", "label": "Resume & profile", "c": "#2D6A9F", "d": "#7DB4E6" },
+    { "key": "network", "label": "Networking", "c": "#7A3E8E", "d": "#C08AD4" },
+    { "key": "skills", "label": "Certifications", "c": "#2F7A5B", "d": "#6CC69E" },
+    { "key": "interviews", "label": "Interviews", "c": "#A86A12", "d": "#E0A44A" }
+  ],
+  "deadlines": [
+    { "title": "Resume final draft", "note": "Civilian wording, one page", "in": 4, "time": "17:00", "area": "resume" },
+    { "title": "Regional hiring event", "note": "Bring printed resumes", "in": 9, "time": "10:00", "area": "network" },
+    { "title": "IT certification exam", "note": "Booked at the local test center", "in": 24, "time": "08:30", "area": "skills" },
+    { "title": "Apply to five target roles", "note": "Operations and project coordinator roles", "in": 30, "time": "23:59", "area": "interviews", "tag": "goal" }
+  ],
+  "todos": [
+    { "title": "Translate past duties into plain resume bullets", "in": -1, "status": "open", "area": "resume" },
+    { "title": "Update LinkedIn headline and summary", "in": 0, "status": "open", "area": "resume" },
+    { "title": "Ask a mentor to review the resume", "in": 1, "status": "waiting", "area": "resume" },
+    { "title": "Practice answers for a mock interview", "in": 2, "time": "18:00", "status": "open", "area": "interviews" },
+    { "title": "Reach out to three people in target fields", "in": 5, "status": "open", "area": "network" },
+    { "title": "Finish practice test, domain 2", "in": 7, "status": "open", "area": "skills" },
+    { "title": "Research companies hiring near home", "in": null, "status": "planned", "area": "interviews" },
+    { "title": "Pick a target career field", "in": -6, "status": "done", "area": "resume" }
+  ],
+  "events": [
+    { "title": "Mentor call", "in": 0, "time": "12:00", "area": "network" },
+    { "title": "Study block: certification", "in": 1, "time": "19:00", "area": "skills" },
+    { "title": "Mock interview", "in": 3, "time": "15:00", "area": "interviews" },
+    { "title": "Resume final draft due", "in": 4, "time": "17:00", "area": "resume", "big": true },
+    { "title": "Online networking meetup", "in": 6, "time": "18:30", "area": "network" },
+    { "title": "Regional hiring event", "in": 9, "time": "10:00", "area": "network", "big": true },
+    { "title": "Informational interview", "in": 13, "time": "11:00", "area": "interviews" },
+    { "title": "Certification exam", "in": 24, "time": "08:30", "area": "skills", "big": true }
+  ],
+  "repeat": [ { "title": "Weekly job search review", "from": 2, "every": 7, "until": 45, "time": "09:00", "area": "interviews" } ],
+  "journey": [
+    { "in": -6, "type": "Decision", "area": "resume", "what": "Chose operations management as the target field", "why": "Best match for leadership and logistics experience." },
+    { "in": -14, "type": "Milestone", "area": "skills", "what": "Started certification study plan" },
+    { "in": -25, "type": "Launch", "area": "network", "what": "Created a LinkedIn profile" }
+  ],
+  "links": [
+    { "label": "Job board", "url": "https://jobs.example/", "desc": "Saved searches", "area": "interviews" },
+    { "label": "Practice tests", "url": "https://practice.example/", "desc": "Certification prep", "area": "skills" }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "format": 1,
+  "id": "stayhome",
+  "name": "Stay-at-Home Parent",
+  "blurb": "Household, meal plan, kids' activities and appointments.",
+  "icon": "⌂",
+  "title": "Home Base HQ",
+  "subtitle": "Week at home · sample plan",
+  "areas": [
+    { "key": "home", "label": "Household", "c": "#2D6A9F", "d": "#7DB4E6" },
+    { "key": "meals", "label": "Meal plan", "c": "#A86A12", "d": "#E0A44A" },
+    { "key": "activities", "label": "Kids' activities", "c": "#7A3E8E", "d": "#C08AD4" },
+    { "key": "appts", "label": "Appointments", "c": "#2F7A5B", "d": "#6CC69E" },
+    { "key": "me", "label": "Just for me", "c": "#6E675D", "d": "#B3AA9C" }
+  ],
+  "deadlines": [
+    { "title": "Dance costume ready", "note": "Hemmed and labeled", "in": 4, "time": "18:00", "area": "activities" },
+    { "title": "Soccer snack turn", "note": "Bring team snacks to the game", "in": 6, "time": "09:00", "area": "activities" },
+    { "title": "Dentist visit", "note": "Younger kid", "in": 8, "time": "10:30", "area": "appts" },
+    { "title": "Library books due", "note": "Return or renew online", "in": 11, "time": "17:00", "area": "home", "tag": "soft" },
+    { "title": "Dance recital", "note": "Arrive early for warm-up", "in": 25, "time": "14:00", "area": "activities" }
+  ],
+  "todos": [
+    { "title": "Plan this week's dinners", "in": -1, "status": "open", "area": "meals", "notes": "Quick meals on practice nights." },
+    { "title": "Write the grocery list", "in": 0, "status": "open", "area": "meals" },
+    { "title": "Laundry: sort and start a load", "in": 0, "time": "10:00", "status": "open", "area": "home" },
+    { "title": "Pick up the dry cleaning", "in": 1, "status": "open", "area": "home" },
+    { "title": "Confirm the soccer carpool", "in": 1, "status": "waiting", "area": "activities", "notes": "Waiting to hear back from another family." },
+    { "title": "Prep lunches for the week", "in": 2, "status": "open", "area": "meals" },
+    { "title": "Book a checkup for the older kid", "in": 3, "status": "open", "area": "appts" },
+    { "title": "Wash the soccer uniforms", "in": 5, "status": "open", "area": "activities" },
+    { "title": "Swap closets over for the season", "in": 9, "status": "planned", "area": "home" },
+    { "title": "Try one new recipe", "in": null, "status": "planned", "area": "meals" },
+    { "title": "Clean out the fridge", "in": -2, "status": "done", "area": "home" },
+    { "title": "Sign up for dance class", "in": -5, "status": "done", "area": "activities" }
+  ],
+  "events": [
+    { "title": "Morning drop-off", "in": 0, "time": "08:00", "area": "home" },
+    { "title": "Grocery run", "in": 0, "time": "11:00", "area": "meals" },
+    { "title": "Dance class", "in": 1, "time": "16:30", "area": "activities" },
+    { "title": "Soccer practice", "in": 2, "time": "17:30", "area": "activities" },
+    { "title": "Errands: post office and hardware store", "in": 3, "time": "10:00", "area": "home" },
+    { "title": "Dance costume ready", "in": 4, "time": "18:00", "area": "activities", "big": true },
+    { "title": "Coffee with a friend", "in": 5, "time": "09:30", "area": "me" },
+    { "title": "Soccer game: snack turn", "in": 6, "time": "09:00", "area": "activities", "big": true },
+    { "title": "Dentist visit", "in": 8, "time": "10:30", "area": "appts", "big": true },
+    { "title": "Library books due", "in": 11, "time": "17:00", "area": "home", "big": true },
+    { "title": "Soccer game", "in": 13, "time": "10:00", "area": "activities" },
+    { "title": "Checkup", "in": 17, "time": "09:00", "area": "appts" },
+    { "title": "Dance recital", "in": 25, "time": "14:00", "area": "activities", "big": true },
+    { "title": "Deep clean day", "in": 30, "area": "home" }
+  ],
+  "repeat": [ { "title": "Plan next week's meals", "from": 6, "every": 7, "until": 45, "time": "19:00", "area": "meals" } ],
+  "journey": [
+    { "in": -2, "type": "Decision", "area": "meals", "what": "Started planning dinners a week at a time", "why": "Fewer last-minute store runs." },
+    { "in": -5, "type": "Launch", "area": "activities", "what": "Signed up for dance class" },
+    { "in": -9, "type": "Milestone", "area": "home", "what": "Set up a weekly chore chart" },
+    { "in": -18, "type": "Decision", "area": "activities", "what": "Joined a soccer carpool", "why": "Shares the driving across families." },
+    { "in": -40, "type": "Milestone", "area": "me", "what": "Kept one morning a week just for me" }
+  ],
+  "links": [
+    { "label": "Family calendar", "url": "https://calendar.example/home", "desc": "Activities and appointments", "area": "home" },
+    { "label": "Recipe box", "url": "https://recipes.example/", "desc": "Saved dinner ideas", "area": "meals" },
+    { "label": "Team schedule", "url": "https://league.example/schedule", "desc": "Practices and games", "area": "activities" }
+  ]
+}

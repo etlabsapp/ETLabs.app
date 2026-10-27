@@ -1,0 +1,67 @@
+{
+  "format": 1,
+  "id": "homeschool",
+  "name": "Homeschool",
+  "blurb": "Weekly classes by subject and kid, lesson plans, co-op days and field trips.",
+  "icon": "✐",
+  "title": "Homeschool HQ",
+  "subtitle": "School at home · sample plan",
+  "areas": [
+    { "key": "classes", "label": "Classes", "c": "#2D6A9F", "d": "#7DB4E6" },
+    { "key": "lessons", "label": "Lesson plans", "c": "#A86A12", "d": "#E0A44A" },
+    { "key": "coop", "label": "Co-op", "c": "#7A3E8E", "d": "#C08AD4" },
+    { "key": "trips", "label": "Field trips", "c": "#2F7A5B", "d": "#6CC69E" },
+    { "key": "activities", "label": "Activities", "c": "#6E675D", "d": "#B3AA9C" }
+  ],
+  "deadlines": [
+    { "title": "Next week's lesson plans", "note": "Math, reading and science for both kids", "in": 3, "time": "20:00", "area": "lessons" },
+    { "title": "Co-op project day", "note": "Older kid shares the science project", "in": 5, "time": "10:00", "area": "coop" },
+    { "title": "Museum field trip", "note": "Pack lunches and a notebook", "in": 9, "time": "09:00", "area": "trips" },
+    { "title": "History unit review", "note": "Wrap up the unit with a short project", "in": 15, "time": "13:00", "area": "lessons", "tag": "soft" },
+    { "title": "Nature center field trip", "note": "With the co-op group", "in": 26, "time": "09:30", "area": "trips", "tag": "if confirmed" }
+  ],
+  "todos": [
+    { "title": "Print the reading worksheets", "in": -1, "status": "open", "area": "lessons" },
+    { "title": "Plan this week's math lessons", "in": 0, "status": "open", "area": "lessons", "notes": "One plan per kid, same subject block." },
+    { "title": "Gather supplies for the science experiment", "in": 0, "time": "15:00", "status": "open", "area": "lessons" },
+    { "title": "Sign up for a co-op class slot", "in": 1, "status": "waiting", "area": "coop", "notes": "The sign-up sheet is shared by the co-op." },
+    { "title": "Choose this month's read-aloud book", "in": 2, "status": "open", "area": "classes" },
+    { "title": "Book the museum field trip", "in": 3, "status": "open", "area": "trips" },
+    { "title": "Update the attendance log", "in": 4, "status": "open", "area": "classes" },
+    { "title": "Pick the next unit topics", "in": 7, "status": "planned", "area": "lessons" },
+    { "title": "Plan a nature walk", "in": 10, "status": "planned", "area": "activities" },
+    { "title": "Swap books with another co-op family", "in": null, "status": "planned", "area": "coop" },
+    { "title": "Finish the first math unit", "in": -3, "status": "done", "area": "classes" },
+    { "title": "Set up the weekly class schedule", "in": -6, "status": "done", "area": "classes" }
+  ],
+  "events": [
+    { "title": "Older kid: Math", "in": 0, "time": "09:00", "area": "classes" },
+    { "title": "Younger kid: Reading", "in": 0, "time": "09:00", "area": "classes" },
+    { "title": "Both kids: Science", "in": 0, "time": "13:00", "area": "classes" },
+    { "title": "Older kid: Writing", "in": 1, "time": "09:00", "area": "classes" },
+    { "title": "Younger kid: Math", "in": 1, "time": "09:00", "area": "classes" },
+    { "title": "Art and music", "in": 1, "time": "14:00", "area": "activities" },
+    { "title": "Co-op day", "in": 2, "time": "10:00", "area": "coop" },
+    { "title": "Older kid: History", "in": 3, "time": "09:00", "area": "classes" },
+    { "title": "Younger kid: Science", "in": 3, "time": "09:00", "area": "classes" },
+    { "title": "Lesson plans due", "in": 3, "time": "20:00", "area": "lessons", "big": true },
+    { "title": "Park day: outdoor play", "in": 4, "time": "10:00", "area": "activities" },
+    { "title": "Co-op project day", "in": 5, "time": "10:00", "area": "coop", "big": true },
+    { "title": "Museum field trip", "in": 9, "time": "09:00", "area": "trips", "big": true },
+    { "title": "History unit review", "in": 15, "time": "13:00", "area": "lessons", "big": true },
+    { "title": "Nature center field trip", "in": 26, "time": "09:30", "area": "trips", "big": true }
+  ],
+  "repeat": [ { "title": "Co-op day", "from": 9, "every": 7, "until": 45, "time": "10:00", "area": "coop" } ],
+  "journey": [
+    { "in": -3, "type": "Milestone", "area": "classes", "what": "Finished the first math unit" },
+    { "in": -6, "type": "Decision", "area": "classes", "what": "Set a weekly class schedule by subject and kid", "why": "Mornings for core subjects, afternoons for projects." },
+    { "in": -14, "type": "Launch", "area": "coop", "what": "Joined a local homeschool co-op" },
+    { "in": -21, "type": "Milestone", "area": "trips", "what": "First field trip of the term: the apple orchard" },
+    { "in": -40, "type": "Decision", "area": "lessons", "what": "Switched to weekly lesson plans", "why": "Easier to adjust than a full-term plan." }
+  ],
+  "links": [
+    { "label": "Lesson planner", "url": "https://planner.example/", "desc": "Weekly plans by kid", "area": "lessons" },
+    { "label": "Co-op calendar", "url": "https://coop.example/calendar", "desc": "Co-op days and sign-ups", "area": "coop" },
+    { "label": "Field trip ideas", "url": "https://trips.example/", "desc": "Saved places to visit", "area": "trips" }
+  ]
+}

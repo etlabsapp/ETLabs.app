@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "id": "jobseeker",
+  "name": "Job Seeker",
+  "blurb": "Applications, interviews, follow-ups and portfolio work.",
+  "icon": "➜",
+  "title": "Job Search HQ",
+  "subtitle": "Active search · sample plan",
+  "areas": [
+    { "key": "apply", "label": "Applications", "c": "#2D6A9F", "d": "#7DB4E6" },
+    { "key": "interviews", "label": "Interviews", "c": "#A86A12", "d": "#E0A44A" },
+    { "key": "followup", "label": "Follow-ups", "c": "#7A3E8E", "d": "#C08AD4" },
+    { "key": "portfolio", "label": "Portfolio", "c": "#2F7A5B", "d": "#6CC69E" }
+  ],
+  "deadlines": [
+    { "title": "Phone screen: design role", "note": "30 minutes with the recruiter", "in": 1, "time": "14:00", "area": "interviews" },
+    { "title": "Take-home exercise", "note": "Send back by end of day", "in": 5, "time": "17:00", "area": "interviews" },
+    { "title": "Portfolio site update", "note": "Add two recent projects", "in": 8, "time": "12:00", "area": "portfolio", "tag": "soft" },
+    { "title": "Application window closes", "note": "Analyst role at a fictional company", "in": 15, "time": "23:59", "area": "apply" }
+  ],
+  "todos": [
+    { "title": "Tailor resume for the analyst role", "in": -1, "status": "open", "area": "apply" },
+    { "title": "Send a thank-you note after yesterday's chat", "in": 0, "status": "open", "area": "followup" },
+    { "title": "Prepare three stories for behavioral questions", "in": 0, "time": "20:00", "status": "open", "area": "interviews" },
+    { "title": "Waiting to hear back on the first interview", "in": 3, "status": "waiting", "area": "followup" },
+    { "title": "Ask a former teammate for a reference", "in": 4, "status": "open", "area": "followup" },
+    { "title": "Write a short case study", "in": 7, "status": "open", "area": "portfolio" },
+    { "title": "Set up job alerts", "in": null, "status": "planned", "area": "apply" },
+    { "title": "Send three applications", "in": -3, "status": "done", "area": "apply" }
+  ],
+  "events": [
+    { "title": "Application block", "in": 0, "time": "09:00", "area": "apply" },
+    { "title": "Phone screen", "in": 1, "time": "14:00", "area": "interviews", "big": true },
+    { "title": "Networking coffee", "in": 2, "time": "10:30", "area": "followup" },
+    { "title": "Take-home due", "in": 5, "time": "17:00", "area": "interviews", "big": true },
+    { "title": "Panel interview", "in": 10, "time": "13:00", "area": "interviews" },
+    { "title": "Application window closes", "in": 15, "time": "23:59", "area": "apply", "big": true },
+    { "title": "Career workshop", "in": 20, "time": "18:00", "area": "portfolio" }
+  ],
+  "repeat": [ { "title": "Weekly pipeline review", "from": 3, "every": 7, "until": 45, "time": "16:00", "area": "followup" } ],
+  "journey": [
+    { "in": -3, "type": "Milestone", "area": "apply", "what": "First ten applications sent" },
+    { "in": -9, "type": "Decision", "area": "apply", "what": "Focused on analyst and coordinator roles", "why": "Best fit for recent projects." },
+    { "in": -18, "type": "Launch", "area": "portfolio", "what": "Portfolio site went live" }
+  ],
+  "links": [
+    { "label": "Job board", "url": "https://jobs.example/", "desc": "Saved searches", "area": "apply" },
+    { "label": "Portfolio", "url": "https://portfolio.example/", "desc": "Case studies", "area": "portfolio" }
+  ]
+}

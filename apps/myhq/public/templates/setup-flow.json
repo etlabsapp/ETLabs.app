@@ -1,0 +1,85 @@
+{
+  "format": 1,
+  "id": "setup-flow",
+  "note": "Rule-based setup questions. Choices map to sections, layout, colors and a few sample to-dos. Everything runs on the device.",
+  "questions": [
+    { "id": "who", "type": "one", "text": "Who is this MyHQ mostly for?",
+      "options": [
+        { "id": "me", "label": "Just me" },
+        { "id": "family", "label": "My family" },
+        { "id": "work", "label": "My work or small business" },
+        { "id": "study", "label": "My studies" }
+      ] },
+    { "id": "track", "type": "many", "max": 3, "text": "What do you want to keep track of?", "hint": "Pick up to 3.",
+      "options": [
+        { "id": "kids", "label": "Kids and school" },
+        { "id": "home", "label": "Home and errands" },
+        { "id": "work", "label": "Work and clients" },
+        { "id": "study", "label": "Classes and homework" },
+        { "id": "jobs", "label": "Job search" },
+        { "id": "fitness", "label": "Fitness and habits" },
+        { "id": "community", "label": "Community and volunteering" },
+        { "id": "creative", "label": "Creative projects" },
+        { "id": "trips", "label": "Trips and plans" }
+      ] },
+    { "id": "tags", "type": "tags", "optional": true, "maxlength": 80, "text": "Anything else? (optional)",
+      "hint": "A few words, like \"piano, garden\". It stays in this window and is not saved." },
+    { "id": "layout", "type": "one", "text": "How do you like to see your plans?",
+      "options": [
+        { "id": "auto", "label": "Pick for me" },
+        { "id": "list", "label": "One page, top to bottom" },
+        { "id": "week", "label": "Day by day, Monday to Sunday" },
+        { "id": "cards", "label": "Everything as tiles" }
+      ] },
+    { "id": "scheme", "type": "one", "text": "Pick your colors",
+      "options": [
+        { "id": "auto", "label": "Pick for me" },
+        { "id": "paper", "label": "Paper" },
+        { "id": "harbor", "label": "Harbor" },
+        { "id": "fern", "label": "Fern" },
+        { "id": "clay", "label": "Clay" },
+        { "id": "ink", "label": "Ink (high contrast)" }
+      ] }
+  ],
+  "who": {
+    "me": { "title": "My HQ", "section": "Personal", "layout": "list", "scheme": "paper" },
+    "family": { "title": "Family HQ", "section": "Home", "layout": "week", "scheme": "clay" },
+    "work": { "title": "Work HQ", "section": "Admin", "layout": "cards", "scheme": "harbor" },
+    "study": { "title": "Study HQ", "section": "Classes", "layout": "week", "scheme": "harbor" }
+  },
+  "tracks": {
+    "kids": { "sections": ["Kids", "School", "Activities"], "layout": "week", "scheme": "clay",
+      "items": [{ "title": "Add this week's school events", "section": "School", "in": 1 }, { "title": "Write down practice and lesson times", "section": "Activities", "in": 2 }] },
+    "home": { "sections": ["Home", "Meals", "Errands"], "layout": "list", "scheme": "clay",
+      "items": [{ "title": "Plan this week's dinners", "section": "Meals", "in": 0 }, { "title": "Make the errand list", "section": "Errands", "in": 2 }] },
+    "work": { "sections": ["Clients", "Projects", "Admin"], "layout": "cards", "scheme": "harbor",
+      "items": [{ "title": "List open projects and their next step", "section": "Projects", "in": 1 }, { "title": "Follow up with one client", "section": "Clients", "in": 3 }] },
+    "study": { "sections": ["Classes", "Assignments", "Exams"], "layout": "week", "scheme": "harbor",
+      "items": [{ "title": "Add this week's assignment due dates", "section": "Assignments", "in": 1 }, { "title": "Block two study sessions", "section": "Classes", "in": 2 }] },
+    "jobs": { "sections": ["Applications", "Interviews", "Follow-ups"], "layout": "cards", "scheme": "harbor",
+      "items": [{ "title": "Pick three openings to apply to", "section": "Applications", "in": 1 }, { "title": "Send one follow-up note", "section": "Follow-ups", "in": 4 }] },
+    "fitness": { "sections": ["Fitness", "Habits"], "layout": "week", "scheme": "fern",
+      "items": [{ "title": "Plan three workouts this week", "section": "Fitness", "in": 0 }, { "title": "Choose one habit to track", "section": "Habits", "in": 1 }] },
+    "community": { "sections": ["Community", "Meetings"], "layout": "list", "scheme": "paper",
+      "items": [{ "title": "Add the next meeting date", "section": "Meetings", "in": 5 }] },
+    "creative": { "sections": ["Creative", "Ideas"], "layout": "cards", "scheme": "paper",
+      "items": [{ "title": "Write down one project idea", "section": "Ideas", "in": 0 }, { "title": "Set a small goal for this week", "section": "Creative", "in": 3 }] },
+    "trips": { "sections": ["Plans", "Bookings"], "layout": "list", "scheme": "fern",
+      "items": [{ "title": "List the dates you need to book", "section": "Bookings", "in": 2 }] }
+  },
+  "tags": [
+    { "words": ["piano", "guitar", "music", "band", "choir", "singing"], "section": "Music" },
+    { "words": ["garden", "gardening", "plants", "yard"], "section": "Garden" },
+    { "words": ["pet", "pets", "dog", "dogs", "cat", "cats"], "section": "Pets" },
+    { "words": ["reading", "books", "book"], "section": "Reading" },
+    { "words": ["sports", "soccer", "baseball", "basketball", "swim", "swimming", "hockey"], "section": "Sports" },
+    { "words": ["church", "faith", "worship"], "section": "Faith" },
+    { "words": ["car", "cars", "repairs", "maintenance"], "section": "Car and repairs" },
+    { "words": ["friends", "birthdays", "birthday", "parties"], "section": "Friends" },
+    { "words": ["moving", "move", "boxes", "packing"], "section": "Moving" },
+    { "words": ["side", "hustle", "etsy", "shop"], "section": "Side project" }
+  ],
+  "fallback": { "sections": ["Work", "Home", "Personal"], "layout": "list", "scheme": "paper" },
+  "maxSections": 6,
+  "maxItems": 8
+}

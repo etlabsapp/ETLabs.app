@@ -24,7 +24,7 @@
     if (i >= 0) el.setAttribute('alt', MYHQ_NAME.short + alt.slice(i));
   });
   document.querySelectorAll('[data-product-link="myhq"]').forEach(function (el) {
-    el.setAttribute('href', '/' + MYHQ_NAME.slug);
+    el.setAttribute('href', '/' + MYHQ_NAME.slug + '/');
   });
   if (document.body && document.body.hasAttribute('data-product-title')) {
     document.title = document.title.replace(/^.*?(?= \| ET Labs$)/, MYHQ_NAME.full);

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<base href="/myhq/">
+<link rel="canonical" href="https://etlabs.app/myhq/setup-guide/">
+<meta name="referrer" content="no-referrer"><meta name="color-scheme" content="light dark">
+<title>ETLabs MyHQ: put it online and on your phone</title>
+<link rel="icon" href="/myhq/icons/badge/clay.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/myhq/styles.css">
+</head>
+<body>
+<div class="wrap guide-wrap">
+<header class="top"><div class="brand"><img class="mark" src="/myhq/icons/badge/clay.svg" alt="" width="48" height="48"><div><p class="guide-back"><a href="/myhq/">← Back to MyHQ</a></p></div></div></header>
+<main class="card guide">
+<h1>ETLabs MyHQ: put it online and on your phone</h1>
+<h2>1. What it is</h2>
+<p>ETLabs MyHQ is a one-page dashboard for your deadlines, this week, to-dos, calendar and links. It runs in your web browser, and your data is saved there, on your device.</p>
+<p>The whole site is one folder called <strong>public</strong>. There's nothing to build or install. You just put that folder online as it is.</p>
+<h2>2. Put it online</h2>
+<p>You need a free "static host." That's a service that shows your files as a website. Cloudflare Pages is one.</p>
+<ol>
+<li>On your host, pick the option to upload files yourself, often by dragging and dropping.</li>
+<li>Drag in the <strong>public</strong> folder. Don't add, remove or rename anything in it.</li>
+<li>Make sure the file named <strong>_headers</strong> goes up with it. It tells browsers to only load MyHQ's own files and never send anything to other sites. It also keeps the page out of search results and makes sure phones get updates.</li>
+<li>When it finishes, the host gives you a link. Save it for your phone.</li>
+</ol>
+<p><strong>Uploading a new version?</strong> Open <strong>sw.js</strong> in the public folder and change the number after <code>VERSION</code> near the top first (any new value works, as long as it's different). If you don't, phones that already added MyHQ won't update.</p>
+<h2>3. Set up your phone</h2>
+<ol>
+<li><strong>Open the link</strong> on your phone.</li>
+<li><strong>Add it to your Home Screen.</strong><ul>
+<li>iPhone (Safari): tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</li>
+<li>Android (Chrome): tap the <strong>⋮</strong> menu, then <strong>Add to Home screen</strong> or <strong>Install app</strong>.</li>
+</ul>
+</li>
+<li><strong>Add your items.</strong> Open MyHQ from your Home Screen. Under <strong>Pick a starter</strong>, choose the one that fits you: Small Business / Freelancer, Student, Veteran / Career Transition, Job Seeker, Parents, Stay-at-Home Parent or Homeschool. Or tap <strong>Start blank</strong>. A starter fills in sample items; tap <strong>Remove sample items</strong> to clear them when you're ready. Then tap <strong>+</strong> and choose <strong>New deadline</strong> or <strong>New to-do</strong>.</li>
+<li><strong>Make it yours.</strong> Tap <strong>Settings</strong>. Under <strong>Layout</strong>, pick <strong>List</strong> (everything on one page), <strong>Week</strong> (a Mon–Sun planner) or <strong>Cards</strong> (every open item as a tile). Under <strong>Colors</strong>, pick <strong>Paper</strong>, <strong>Harbor</strong>, <strong>Fern</strong>, <strong>Clay</strong> or <strong>Ink</strong>. Your choice applies right away. You can also give your page its own name there.</li>
+</ol>
+<p>Don't see a format you like? The last card under <strong>Pick a starter</strong> is <strong>Don't see a format you like? Tell us</strong>. Describe what you keep track of, tap <strong>Suggest a format</strong>, then <strong>Use this format</strong> to start with it.</p>
+<p>After your first visit, it works without internet too.</p>
+<p>You can add your own deadlines and to-dos.</p>
+<h2>4. Back up and restore</h2>
+<p><strong>To back up:</strong></p>
+<ol>
+<li>In the <strong>Your data</strong> box, tap <strong>Export backup</strong>.</li>
+<li>A file named like <strong>hq-backup-(date).json</strong> saves to your device. Keep it safe.</li>
+</ol>
+<p>The page tells you when your last backup was. After 14 days, it reminds you to make a new one.</p>
+<p><strong>To restore</strong> (for example, on a new phone):</p>
+<ol>
+<li>Open your link and tap <strong>Restore from file</strong>. On a brand-new phone, you'll find it under "Have a backup file?"</li>
+<li>Pick your backup file.</li>
+<li>If that device already has MyHQ data, it asks before replacing everything. Confirm to go ahead.</li>
+</ol>
+<h2>5. Our privacy promise</h2>
+<p><strong>No account, no tracking: what you type stays on your device, and ET Labs never sees it.</strong></p>
+<p>Backups save as a file on your device. Delete the app without one, and your data is gone.</p>
+</main>
+</div>
+</body></html>

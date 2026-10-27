@@ -1,12 +1,14 @@
 # MyHQ preview: PR notes (local branch preview/myhq-2026-10-17)
 
+**Update (2026-10-27):** MyHQ is live at https://etlabs.app/myhq/. Marketing CTAs use that same-origin path. Engineering serves the app there (Worker deploy and the analytics beacon exclude). The notes below describe the October 17 preview and are not current.
+
 From `live-snapshot-2026-10-17` (b166c25, Travis's live code). Not pushed.
 
 ## Files
 - `myhq.html`: the product page, served at **/myhq** (root `*.html` pages are served at clean URLs by
   the Workers asset layer's default html_handling, same as /products and /philosophy; /myhq.html 301s to /myhq).
   `noindex, nofollow`; not in sitemap.xml.
-- `products.html`: MyHQ card (icon, "Preview", title, tagline; Open the preview → templates.hq-template.pages.dev, Learn more → /myhq).
+- `products.html`: MyHQ card (icon, "Preview", title, tagline; Open the preview → the retired Pages preview host, Learn more → /myhq).
 - `index.html`: MyHQ card with an "Example data" board screenshot linking to /myhq.
 - `assets/images/hq-product/`: `hq-icon.svg` (Design product-icons-2026-10-16/hq), `board-phone.webp`
   (Design myhq-visual-1017/shots/after-board-375.png, cropped), `layout-{list,week,cards}.webp`
@@ -24,7 +26,7 @@ Run:
 
     scripts/rename-myhq.sh "NewName" "ETLabs NewName" newslug   # slug optional
 
-It updates the constant, the no-JS fallbacks (text, image alt, <title>, og:title), every `href="/myhq"`,
+It updates the constant, the no-JS fallbacks (text, image alt, <title>, og:title), every `href="/myhq/"`,
 canonical/og:url, and moves `myhq.html` → `fieldbook.html` (git mv). Tested both ways on a throwaway copy:
 round trip is byte-identical. Not renamed: internal hook ids (`data-product-name="myhq"`, CSS `.myhq-*`) and the images folder.
 
@@ -34,7 +36,7 @@ in style.css (`ICON-SWAP`). Same format: overwrite. Other format: change that on
 
 ## Sources and what the build actually has (Oct 17)
 - Starter templates: names/blurbs verbatim from `hq-for-others/app-templates/public/templates/*.json`
-  (templates-preview @ d41c685, 7 starters). The live demo templates.hq-template.pages.dev still serves 4
+  (templates-preview @ d41c685, 7 starters). The retired Pages preview host still served 4
   (business, student, transition, jobseeker; sw v0.2.0-templates-4).
 - Layouts (List/Week/Cards) and 5 color schemes (Paper, Harbor, Fern, Clay, Ink): Design spec + mocks only.
   No build has a layout or scheme switcher yet (templates-preview ships schemes.css tokens, Paper only).
