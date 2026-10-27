@@ -2,6 +2,24 @@
 
 Checklist for production at **etlabs.app**.
 
+## MyHQ (`/myhq/`) — Worker `etlabsapp`
+
+The live app is this Worker's static assets, not myhq.etlabs.app and not a pages.dev host.
+
+1. From the repo root, deploy the existing Worker (do not create a second Worker):
+
+   ```bash
+   npx wrangler deploy
+   ```
+
+   `wrangler.jsonc` name is `etlabsapp`. `main` is `workers/router.js`. Assets are the repo root (`assets.directory: "."`) with `run_worker_first`. The dashboard files are `apps/myhq/public/` and are only served under `/myhq/`.
+
+2. After deploy, check `https://etlabs.app/myhq/` is the MyHQ dashboard (title ETLabs MyHQ, starter templates, not the marketing page) and `https://etlabs.app/myhq/setup-guide/` is the setup guide. `/myhq` redirects to `/myhq/`.
+
+3. Web Analytics: responses under `/myhq` and `/myhq/*` send `Cache-Control: public, no-transform` and a Content-Security-Policy that does not allow `beacon.min.js` or `cloudflareinsights.com`. Confirm a `/myhq/` document contains neither `beacon.min.js` nor `/cdn-cgi/rum`. In the Cloudflare dashboard, also exclude `/myhq` and `/myhq/*` from the etlabs.app Web Analytics site before production traffic. Leave analytics on the marketing pages; `/privacy` says the app path is excluded.
+
+Marketing CTAs already point at same-origin `/myhq/` (PR #48). Do not point them at pages.dev or myhq.etlabs.app.
+
 ---
 
 ## What’s in the repo

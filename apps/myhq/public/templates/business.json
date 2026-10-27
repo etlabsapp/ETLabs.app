@@ -1,0 +1,66 @@
+{
+  "format": 1,
+  "id": "business",
+  "name": "Small Business / Freelancer",
+  "blurb": "Client deadlines, launches, growth work and studio admin.",
+  "icon": "◆",
+  "title": "Studio HQ",
+  "subtitle": "Solo studio · sample plan",
+  "areas": [
+    { "key": "clients", "label": "Clients", "c": "#A86A12", "d": "#E0A44A" },
+    { "key": "product", "label": "Product", "c": "#2D6A9F", "d": "#7DB4E6" },
+    { "key": "growth", "label": "Growth", "c": "#7A3E8E", "d": "#C08AD4" },
+    { "key": "learning", "label": "Learning", "c": "#2F7A5B", "d": "#6CC69E" },
+    { "key": "studio", "label": "Studio ops", "c": "#6E675D", "d": "#B3AA9C" }
+  ],
+  "deadlines": [
+    { "title": "Bakery site launch", "note": "Client website goes live", "in": 2, "time": "17:00", "area": "clients" },
+    { "title": "Meetup talk proposal", "note": "Submit a 20-minute talk on small-studio design", "in": 5, "time": "23:59", "area": "growth" },
+    { "title": "Portfolio refresh", "note": "Three new case studies on the studio site", "in": 12, "time": "12:00", "area": "growth", "tag": "soft" },
+    { "title": "App beta to testers", "note": "First 20 testers", "in": 19, "time": "09:00", "area": "product" },
+    { "title": "Workshop day", "note": "Half-day design workshop at a local maker space", "in": 33, "time": "10:00", "area": "clients", "tag": "if confirmed" }
+  ],
+  "todos": [
+    { "title": "Send the bakery the final homepage copy", "in": -1, "status": "open", "area": "clients", "notes": "They asked for it before the launch rehearsal." },
+    { "title": "Pick a color palette for the app beta", "in": 0, "status": "waiting", "area": "product", "notes": "Two options are in the design file." },
+    { "title": "Reply to the client about logo feedback", "in": 0, "time": "16:00", "status": "open", "area": "clients" },
+    { "title": "Back up the project files", "in": 1, "status": "open", "area": "studio" },
+    { "title": "Write the talk abstract", "in": 3, "status": "open", "area": "growth" },
+    { "title": "Approve the beta onboarding screens", "in": 4, "status": "waiting", "area": "product" },
+    { "title": "Record a 60-second demo video", "in": 6, "status": "planned", "area": "growth" },
+    { "title": "Finish online design course, module 4", "in": 8, "status": "open", "area": "learning" },
+    { "title": "Update the studio contact page", "in": 10, "status": "open", "area": "studio" },
+    { "title": "Plan next quarter goals", "in": null, "status": "planned", "area": "studio" },
+    { "title": "Sketch onboarding screens", "in": -3, "status": "done", "area": "product" },
+    { "title": "Set up a project board for the bakery site", "in": -5, "status": "done", "area": "clients" }
+  ],
+  "events": [
+    { "title": "Design review with the bakery", "in": 0, "time": "10:00", "area": "clients" },
+    { "title": "Deep work: app beta", "in": 0, "time": "14:00", "area": "product" },
+    { "title": "Coffee chat with a fellow freelancer", "in": 1, "time": "09:30", "area": "growth" },
+    { "title": "Focus day: no meetings", "in": 1, "area": "studio" },
+    { "title": "Bakery site launch", "in": 2, "time": "17:00", "area": "clients", "big": true },
+    { "title": "Design course live session", "in": 3, "time": "11:00", "area": "learning" },
+    { "title": "Meetup talk proposal due", "in": 5, "time": "23:59", "area": "growth", "big": true },
+    { "title": "Client kickoff: bike shop", "in": 7, "time": "10:00", "area": "clients" },
+    { "title": "User test session", "in": 9, "time": "13:00", "area": "product" },
+    { "title": "Portfolio refresh due", "in": 12, "time": "12:00", "area": "growth", "big": true },
+    { "title": "App beta goes to testers", "in": 19, "time": "09:00", "area": "product", "big": true },
+    { "title": "Bike shop check-in", "in": 26, "time": "15:00", "area": "clients" },
+    { "title": "Workshop day", "in": 33, "time": "10:00", "area": "clients", "big": true },
+    { "title": "Quarterly review", "in": 40, "area": "studio" }
+  ],
+  "repeat": [ { "title": "Weekly planning", "from": 4, "every": 7, "until": 45, "time": "16:00", "area": "studio" } ],
+  "journey": [
+    { "in": -2, "type": "Milestone", "area": "product", "what": "App beta feature list frozen", "why": "Fewer features, ship sooner." },
+    { "in": -6, "type": "Launch", "area": "clients", "what": "A local bike shop signed on as a new client" },
+    { "in": -10, "type": "Decision", "area": "studio", "what": "Moved to two focus days a week", "why": "Meetings were eating every afternoon." },
+    { "in": -21, "type": "Launch", "area": "product", "what": "Landing page for the app went live" },
+    { "in": -45, "type": "Milestone", "area": "studio", "what": "The studio's first full year" }
+  ],
+  "links": [
+    { "label": "Studio site", "url": "https://studio.example/", "desc": "Portfolio and contact", "area": "growth" },
+    { "label": "Project board", "url": "https://board.example/", "desc": "Client projects", "area": "clients" },
+    { "label": "App beta", "url": "https://beta.studio.example/", "desc": "Tester build", "area": "product" }
+  ]
+}

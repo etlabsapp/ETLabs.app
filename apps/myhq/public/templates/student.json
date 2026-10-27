@@ -1,0 +1,53 @@
+{
+  "format": 1,
+  "id": "student",
+  "name": "Student",
+  "blurb": "Classes, exams, assignments, study sessions and clubs.",
+  "icon": "✎",
+  "title": "Semester HQ",
+  "subtitle": "Fall classes · sample plan",
+  "areas": [
+    { "key": "classes", "label": "Classes", "c": "#2D6A9F", "d": "#7DB4E6" },
+    { "key": "exams", "label": "Exams", "c": "#A8341F", "d": "#E58A72" },
+    { "key": "projects", "label": "Projects", "c": "#7A3E8E", "d": "#C08AD4" },
+    { "key": "clubs", "label": "Clubs & life", "c": "#2F7A5B", "d": "#6CC69E" }
+  ],
+  "deadlines": [
+    { "title": "Biology lab report", "note": "Upload to the course portal", "in": 3, "time": "23:59", "area": "classes" },
+    { "title": "History midterm", "note": "Chapters 1 to 6", "in": 6, "time": "09:00", "area": "exams" },
+    { "title": "Group project draft", "note": "Shared outline plus first slides", "in": 11, "time": "17:00", "area": "projects" },
+    { "title": "Statistics final", "note": "Cumulative", "in": 38, "time": "13:00", "area": "exams" }
+  ],
+  "todos": [
+    { "title": "Finish reading chapter 5", "in": -1, "status": "open", "area": "classes" },
+    { "title": "Email the study group about the meeting room", "in": 0, "status": "open", "area": "projects" },
+    { "title": "Make flashcards for the midterm", "in": 0, "time": "19:00", "status": "open", "area": "exams" },
+    { "title": "Ask the professor about the essay topic", "in": 2, "status": "waiting", "area": "classes", "notes": "Office hours are on the syllabus." },
+    { "title": "Practice problems, set 3", "in": 4, "status": "open", "area": "classes" },
+    { "title": "Sign up for next term's classes", "in": 14, "status": "planned", "area": "classes" },
+    { "title": "Plan the club bake sale table", "in": null, "status": "planned", "area": "clubs" },
+    { "title": "Pick a group project topic", "in": -4, "status": "done", "area": "projects" }
+  ],
+  "events": [
+    { "title": "Biology lecture", "in": 0, "time": "10:00", "area": "classes" },
+    { "title": "Study group", "in": 1, "time": "18:00", "area": "projects" },
+    { "title": "Statistics lab", "in": 2, "time": "13:00", "area": "classes" },
+    { "title": "Lab report due", "in": 3, "time": "23:59", "area": "classes", "big": true },
+    { "title": "Club meeting", "in": 4, "time": "17:30", "area": "clubs" },
+    { "title": "History midterm", "in": 6, "time": "09:00", "area": "exams", "big": true },
+    { "title": "Advisor meeting", "in": 9, "time": "11:00", "area": "classes" },
+    { "title": "Group project draft due", "in": 11, "time": "17:00", "area": "projects", "big": true },
+    { "title": "Campus career fair", "in": 17, "time": "12:00", "area": "clubs" },
+    { "title": "Statistics final", "in": 38, "time": "13:00", "area": "exams", "big": true }
+  ],
+  "repeat": [ { "title": "Weekly review", "from": 5, "every": 7, "until": 45, "time": "20:00", "area": "classes" } ],
+  "journey": [
+    { "in": -4, "type": "Decision", "area": "projects", "what": "Group picked a topic for the final project" },
+    { "in": -12, "type": "Milestone", "area": "exams", "what": "First quiz of the term done" },
+    { "in": -20, "type": "Launch", "area": "clubs", "what": "Joined the robotics club" }
+  ],
+  "links": [
+    { "label": "Course portal", "url": "https://courses.example/", "desc": "Assignments and grades", "area": "classes" },
+    { "label": "Shared notes", "url": "https://notes.example/", "desc": "Study group folder", "area": "projects" }
+  ]
+}

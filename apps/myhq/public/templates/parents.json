@@ -1,0 +1,67 @@
+{
+  "format": 1,
+  "id": "parents",
+  "name": "Parents",
+  "blurb": "Custody and handoff days, school events, appointments and a shared calendar.",
+  "icon": "♥",
+  "title": "Family HQ",
+  "subtitle": "Family schedule · sample plan",
+  "areas": [
+    { "key": "schedule", "label": "Custody & handoffs", "c": "#2D6A9F", "d": "#7DB4E6" },
+    { "key": "school", "label": "School", "c": "#A86A12", "d": "#E0A44A" },
+    { "key": "appts", "label": "Appointments", "c": "#7A3E8E", "d": "#C08AD4" },
+    { "key": "kids", "label": "Kids' activities", "c": "#2F7A5B", "d": "#6CC69E" },
+    { "key": "home", "label": "Home", "c": "#6E675D", "d": "#B3AA9C" }
+  ],
+  "deadlines": [
+    { "title": "School form due", "note": "Sign and return the field trip form", "in": 3, "time": "17:00", "area": "school" },
+    { "title": "Holiday schedule agreed", "note": "Confirm who has which days over the break", "in": 6, "time": "20:00", "area": "schedule", "tag": "shared" },
+    { "title": "Picture day", "note": "Pick outfits the night before", "in": 9, "time": "08:00", "area": "school" },
+    { "title": "Dentist visit", "note": "Both kids, back to back", "in": 14, "time": "15:30", "area": "appts" },
+    { "title": "Winter concert", "note": "Add the details to the shared calendar", "in": 30, "time": "18:30", "area": "school", "tag": "if confirmed" }
+  ],
+  "todos": [
+    { "title": "Add this month's custody days to the shared calendar", "in": -1, "status": "open", "area": "schedule", "notes": "So everyone sees the same plan." },
+    { "title": "Pack the handoff bag", "in": 0, "status": "open", "area": "schedule", "notes": "School bag, chargers and any homework." },
+    { "title": "Confirm the weekend handoff time", "in": 0, "time": "18:00", "status": "waiting", "area": "schedule" },
+    { "title": "Book checkups for both kids", "in": 1, "status": "open", "area": "appts" },
+    { "title": "Sign the field trip form", "in": 1, "status": "open", "area": "school" },
+    { "title": "Forward the school newsletter to everyone who needs it", "in": 2, "status": "open", "area": "school" },
+    { "title": "Update the emergency contact list", "in": 4, "status": "planned", "area": "home" },
+    { "title": "Check whether a weekend swap works for everyone", "in": 5, "status": "waiting", "area": "schedule" },
+    { "title": "Sign up to help at the class party", "in": 7, "status": "planned", "area": "school" },
+    { "title": "Restock school supplies", "in": 10, "status": "open", "area": "home", "notes": "A set for each home, if the kids split time." },
+    { "title": "Add the school-year calendar to the shared calendar", "in": null, "status": "planned", "area": "school" },
+    { "title": "Agree on a handoff spot", "in": -6, "status": "done", "area": "schedule" }
+  ],
+  "events": [
+    { "title": "Custody day: kids with you", "in": 0, "area": "schedule" },
+    { "title": "School drop-off", "in": 0, "time": "08:00", "area": "school" },
+    { "title": "Soccer practice", "in": 1, "time": "17:30", "area": "kids" },
+    { "title": "Handoff day: drop-off at the agreed place", "in": 2, "time": "18:00", "area": "schedule", "big": true },
+    { "title": "School form due", "in": 3, "time": "17:00", "area": "school", "big": true },
+    { "title": "Parent-teacher conference", "in": 4, "time": "16:00", "area": "school" },
+    { "title": "Custody day: kids with the co-parent", "in": 5, "area": "schedule" },
+    { "title": "Holiday schedule agreed", "in": 6, "time": "20:00", "area": "schedule", "big": true },
+    { "title": "Family movie night", "in": 7, "time": "19:00", "area": "home" },
+    { "title": "Handoff day: pickup after school", "in": 9, "time": "15:00", "area": "schedule" },
+    { "title": "Picture day", "in": 9, "time": "08:00", "area": "school", "big": true },
+    { "title": "Dentist visit", "in": 14, "time": "15:30", "area": "appts", "big": true },
+    { "title": "School early release", "in": 16, "time": "12:00", "area": "school" },
+    { "title": "Checkup", "in": 21, "time": "10:00", "area": "appts" },
+    { "title": "Winter concert", "in": 30, "time": "18:30", "area": "school", "big": true }
+  ],
+  "repeat": [ { "title": "Weekly calendar check-in", "from": 3, "every": 7, "until": 45, "time": "19:30", "area": "schedule" } ],
+  "journey": [
+    { "in": -4, "type": "Decision", "area": "schedule", "what": "Moved custody and handoff days into one shared calendar", "why": "One place to check, fewer mix-ups." },
+    { "in": -6, "type": "Decision", "area": "schedule", "what": "Picked a regular handoff spot", "why": "Same place, same time, less to plan." },
+    { "in": -12, "type": "Milestone", "area": "school", "what": "First week of the school term done" },
+    { "in": -20, "type": "Launch", "area": "kids", "what": "Signed up for fall soccer" },
+    { "in": -40, "type": "Milestone", "area": "home", "what": "Put a family whiteboard by the door" }
+  ],
+  "links": [
+    { "label": "Shared co-parent calendar", "url": "https://calendar.example/family", "desc": "Custody, handoffs and plans", "area": "schedule" },
+    { "label": "School calendar", "url": "https://school.example/calendar", "desc": "Events and early release days", "area": "school" },
+    { "label": "Activity schedule", "url": "https://league.example/schedule", "desc": "Practices and games", "area": "kids" }
+  ]
+}

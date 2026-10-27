@@ -1,0 +1,38 @@
+{
+  "name": "ETLabs MyHQ",
+  "short_name": "MyHQ",
+  "description": "A one-page dashboard that keeps everything on your device.",
+  "id": "/myhq/",
+  "start_url": "/myhq/",
+  "scope": "/myhq/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#7A2F1E",
+  "theme_color": "#7A2F1E",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

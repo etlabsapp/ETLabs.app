@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "note": "Starter templates shown on first open, in this order. To add one, drop a new <id>.json file in this folder and add its id here. No code changes needed.",
+  "templates": [
+    "business",
+    "student",
+    "transition",
+    "jobseeker",
+    "parents",
+    "stayhome",
+    "homeschool"
+  ]
+}

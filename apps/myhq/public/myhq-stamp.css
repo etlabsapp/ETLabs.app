@@ -1,0 +1,38 @@
+/* MyHQ "Your data, your device" stamp (Design, Oct 17 2026). External stylesheet: CSP style-src 'self', no inline styles.
+   Markup: wrap the hero so the stamp can hang over its corner (.fr-hero keeps overflow:hidden for its rounded grid):
+     <div class="fr-hero-wrap">
+       <div class="fr-hero">…unchanged…</div>
+       <div class="myhq-stamp myhq-stamp--animate" role="img" aria-label="(the stamp alt text, see HANDOFF.md)">
+       <img class="stamp-onlight" src="brand/stamp.svg" alt="" width="250" height="252">
+       <img class="stamp-ondark"  src="brand/stamp-dark.svg" alt="" width="250" height="252">
+       </div>
+     </div>
+   The two <img>s are decorative (alt=""); the wrapper carries the one accessible name. Light/dark swap uses the
+   same rules as the header wordmark (.wm-onlight/.wm-ondark): manual data-theme wins, otherwise the system setting. */
+.fr-hero-wrap{position:relative}
+.myhq-stamp{position:absolute;z-index:3;top:-22px;right:-18px;width:150px;aspect-ratio:250/252;transform:rotate(6deg);transform-origin:50% 50%;pointer-events:none;user-select:none}
+.myhq-stamp img{display:block;width:100%;height:auto}
+.myhq-stamp .stamp-ondark{display:none}
+html[data-theme=dark] .myhq-stamp .stamp-onlight{display:none}
+html[data-theme=dark] .myhq-stamp .stamp-ondark{display:block}
+@media (prefers-color-scheme:dark){
+  html:not([data-theme=light]) .myhq-stamp .stamp-onlight{display:none}
+  html:not([data-theme=light]) .myhq-stamp .stamp-ondark{display:block}
+}
+/* Tablet: a little smaller, still on the hero's top-right corner (over the decorative mini board). */
+@media (max-width:900px){.myhq-stamp{width:128px;top:-18px;right:-10px}}
+/* Phone (<=600px, designed at 375): same top-right corner, 108px (the smallest size where the ring line stays
+   readable, ring caps ~5px). The headline gets 64px of right padding so a long app name never runs under the stamp. */
+@media (max-width:600px){.myhq-stamp{width:108px;top:-20px;right:-8px}
+  .fr-hero-wrap .fr-copy h2{padding-right:64px}}
+/* Optional stamp-in (one 0.5 s "press" on first paint). Only runs when the user has not asked for reduced motion;
+   with reduced motion (or without this class) the stamp is simply there, already rotated. */
+@media (prefers-reduced-motion:no-preference){
+  .myhq-stamp--animate{animation:myhq-stamp-in .5s cubic-bezier(.2,.9,.25,1.25) .35s both}
+  @keyframes myhq-stamp-in{
+    0%{opacity:0;transform:rotate(-8deg) scale(1.35)}
+    60%{opacity:1;transform:rotate(8deg) scale(.96)}
+    100%{opacity:1;transform:rotate(6deg) scale(1)}
+  }
+}
+@media print{.myhq-stamp{display:none}}

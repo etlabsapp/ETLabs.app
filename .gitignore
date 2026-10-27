@@ -13,6 +13,7 @@ out/
 
 # Build / cache
 .vercel
+.wrangler/
 dist/
 *.tsbuildinfo
 

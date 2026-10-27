@@ -9,6 +9,7 @@ import { withSecurityHeaders } from "./headers.mjs";
 import { canonicalHostRedirect, legacyRedirect, permanentRedirect, wantsNoindex } from "./seo.mjs";
 import { cutoverNumber, puzzleIndexForNumber } from "./totalcross-rotation.mjs";
 import { withByteRanges } from "./range.mjs";
+import { handleMyhq } from "./myhq.mjs";
 
 const LAUNCH = catalog.launchDate; // YYYY-MM-DD
 const THEMES = catalog.themes;
@@ -354,6 +355,10 @@ async function route(request, env, url) {
     if (isBlockedPath(url.pathname)) {
       return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
     }
+
+    // MyHQ dashboard. Must run before the asset layer: myhq.html would otherwise own /myhq and /myhq/.
+    const myhq = await handleMyhq(request, env, url);
+    if (myhq) return myhq;
     if (url.pathname === "/apps/totalcross/api/themes.json") {
       if (request.method === "OPTIONS") {
         return new Response(null, {
