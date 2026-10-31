@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "etlabsapp-edge-preview",
+  "main": "workers/router.js",
+  "compatibility_date": "2025-09-27",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    // Unknown paths get /404.html with status 404 (instead of an empty 404 body)
+    "not_found_handling": "404-page"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  // Study leaderboard (/study/api/*). No database_id on purpose: wrangler v4 auto-provisions
+  // the D1 database "etlabs-study" on first build/deploy. Pin the id here once it exists.
+  "vars": {"SEO_NOINDEX": "1"}
+}

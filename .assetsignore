@@ -33,3 +33,4 @@ apps/totalcross/worker/
 apps/flipfeed/*
 !apps/flipfeed/index.html
 supabase/
+wrangler.preview.jsonc
