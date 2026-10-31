@@ -297,7 +297,7 @@ setInterval(tick, 1000);
 /* ------------------------------------------------------------------ render */
 function render() {
   tickers = [];
-  var main = $('#main'); main.textContent = '';
+  var main = $('#main'); main.textContent = ''; main.removeAttribute('aria-busy');
   applyTheme();
   var on = !!state;
   $('#fab').hidden = !on; $('#settings').hidden = !on;
@@ -1065,6 +1065,7 @@ loadAll().then(function (o) {
   if (o.settings) { var s = blankState(); KEYS.forEach(function (k) { if (o[k] !== undefined) s[k] = o[k]; }); state = s; }
   render();
 }).catch(function () {
+  var sk = document.querySelector('#main .edge-skel'); if (sk) sk.remove(); $('#main').removeAttribute('aria-busy');
   $('#main').append(h('section', { class: 'card first' }, h('h2', { text: 'Storage is turned off' }),
     h('p', { text: APP_NAME + ' keeps everything in this browser. Private browsing or blocked site data stops it from saving. Open ' + APP_NAME + ' in a normal window to use it.' })));
 });

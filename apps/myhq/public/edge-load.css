@@ -1,0 +1,8 @@
+/* Edge-state fix 4 (2026-10-31): app-shell skeleton + thin top progress bar. Uses MyHQ's own scheme variables. */
+#edge-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:2147483000;pointer-events:none;background:var(--accent,#4b59c9);transform-origin:0 50%;transform:scaleX(.08);transition:transform .25s ease-out,opacity .3s ease-out .2s}
+#edge-progress.done{opacity:0}
+.edge-skel{display:grid;gap:14px;margin-top:8px}
+.edge-skel .card{height:120px;background:linear-gradient(90deg,var(--paper,#fff) 0,var(--line,#e6e3dc) 50%,var(--paper,#fff) 100%);background-size:200% 100%;animation:edge-shimmer 1.4s linear infinite}
+.edge-skel .card.tall{height:220px}
+@keyframes edge-shimmer{to{background-position:-200% 0}}
+@media (prefers-reduced-motion: reduce){#edge-progress{transition:none}.edge-skel .card{animation:none}}

@@ -1,9 +1,9 @@
 /* MyHQ service worker: caches this app's own shell files so MyHQ opens offline.
    It never touches user data and never contacts any other site: requests to other origins and
    anything that is not a GET are left alone. A new version waits until the user taps Reload. */
-var VERSION = 'v0.3.0-combined-5';
+var VERSION = 'v0.3.0-combined-5-edge1';
 var CACHE = 'hq-shell-' + VERSION;
-var SHELL = ['./', 'app.js', 'look.js', 'styles.css', 'schemes.css', 'visual.css', 'layouts.css', 'myhq-stamp.css', 'brand/stamp.svg', 'brand/stamp-dark.svg', 'brand/wordmark-motion.css', 'brand/wordmark-on-light.svg', 'brand/wordmark-on-dark.svg', 'manifest.webmanifest', 'robots.txt',
+var SHELL = ['./', 'app.js', 'look.js', 'styles.css', 'schemes.css', 'visual.css', 'layouts.css', 'myhq-stamp.css', 'edge-load.css', 'edge-progress.js', 'brand/stamp.svg', 'brand/stamp-dark.svg', 'brand/wordmark-motion.css', 'brand/wordmark-on-light.svg', 'brand/wordmark-on-dark.svg', 'manifest.webmanifest', 'robots.txt',
   'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png',
   'icons/icon-maskable-192.png', 'icons/favicon-32.png', 'icons/badge/indigo.svg', 'icons/badge/indigo-32.png', 'icons/badge/harbor.svg', 'icons/badge/harbor-32.png', 'icons/badge/fern.svg', 'icons/badge/fern-32.png', 'icons/badge/clay.svg', 'icons/badge/clay-32.png', 'icons/badge/light.svg', 'icons/badge/light-32.png', 'templates/index.json', 'templates/setup-flow.json'];
 self.addEventListener('install', function (e) {

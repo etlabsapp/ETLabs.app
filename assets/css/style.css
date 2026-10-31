@@ -1799,3 +1799,13 @@ html, body { overflow-x: visible; }
 .privacy-card p { margin:0 0 14px;line-height:1.7;color:var(--muted,#5b5853); }
 .privacy-card a { color:inherit;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere; }
 @media(max-width:720px){ .privacy-card { padding:22px; } }
+
+/* ---- Edge-state fixes 2026-10-31 ---- */
+/* 7: Products menu grows from its trigger: scale .96 -> 1 plus fade, 160ms ease-out, named properties */
+.nav-dropdown-menu{transform-origin:50% 0;transform:translateX(-50%) translateY(12px) scale(.96);transition:opacity .16s ease-out,transform .16s ease-out}
+.nav-dropdown.is-open .nav-dropdown-menu{transform:translateX(-50%) translateY(12px) scale(1)}
+/* 6: one global reduced-motion rule; the one-time logo/splash animation shows its last frame */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition-duration:.01ms!important;transition-delay:0s!important;animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+  html .etl-splash .seg,html .etl-splash.is-short [class^="s"],html .etl-splash .skip-hint,html .lm .seg{animation:none!important;opacity:1!important}
+}
