@@ -5,3 +5,6 @@
 .edge-skel .card.tall{height:220px}
 @keyframes edge-shimmer{to{background-position:-200% 0}}
 @media (prefers-reduced-motion: reduce){.edge-skel .card{animation:none}}
+
+/* perf-1101: reserve the scrollbar gutter so the page does not shift sideways when the first-run view grows past the viewport (CLS). */
+html{scrollbar-gutter:stable}
