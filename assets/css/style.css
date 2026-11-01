@@ -1707,6 +1707,8 @@ html, body { overflow-x: visible; }
 .portfolio-card { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px 40px;padding:32px;margin:0;align-items:stretch; }
 .portfolio-media { aspect-ratio:390/475;width:min(100%,410px);margin-inline:auto;border-radius:22px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(145deg,#f1f0f6,#faf9f6); }
 .portfolio-media>img { width:100%;height:100%;max-height:500px;object-fit:contain;padding:18px; }
+.portfolio-media>picture { display:block;width:100%;height:100%;min-height:0; }
+.portfolio-media>picture>img { width:100%;height:100%;object-fit:contain;object-position:50% 50%;padding:18px; }
 .portfolio-media>svg { width:72%;height:auto;max-height:80%; }
 .portfolio-copy { display:flex;flex-direction:column;justify-content:center;min-width:0;padding:12px 0; }
 .portfolio-copy .section-title { font-size:clamp(2rem,3.7vw,3rem); }

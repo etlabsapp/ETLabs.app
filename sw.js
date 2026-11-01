@@ -1,7 +1,7 @@
 /* Offline fallback service worker (edge-state fix 2026-10-31, pattern from MyHQ sw.js).
    Same-origin GETs only. Pages: network first, keep a copy of what the visitor opened, fall back to that
    copy or /offline.html. Static files: cache first, refreshed in the background. Nothing else is touched. */
-var VERSION = 'offline-20261101-perf1';
+var VERSION = 'offline-20261101-imgs1';
 var CACHE = 'site-' + VERSION;
 var OFFLINE = '/offline.html';
 var PRECACHE = ["/offline.html", "/assets/images/etlabs-wordmark.svg", "/favicon.svg", "/"];
