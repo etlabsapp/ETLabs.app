@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "esbuild src/main.tsx --bundle --format=iife --jsx=automatic --outfile=lab.js --minify --legal-comments=none",
-    "test": "esbuild ../scripts/linux-plus-playthrough.mjs --bundle --platform=node --format=cjs --jsx=automatic --outfile=/tmp/lx-play.cjs && node /tmp/lx-play.cjs && esbuild ../scripts/linux-plus-practice-test.mjs --bundle --platform=node --format=esm --jsx=automatic --outfile=/tmp/lx-practice.mjs && node /tmp/lx-practice.mjs",
+    "test": "esbuild ../scripts/linux-plus-playthrough.mjs --bundle --platform=node --format=cjs --jsx=automatic --outfile=/tmp/lx-play.cjs && node /tmp/lx-play.cjs && esbuild ../scripts/linux-plus-practice-test.mjs --bundle --platform=node --format=esm --jsx=automatic --outfile=/tmp/lx-practice.mjs && node /tmp/lx-practice.mjs && esbuild ../scripts/linux-plus-voice-test.mjs --bundle --platform=node --format=esm --outfile=/tmp/lx-voice.mjs && node /tmp/lx-voice.mjs",
     "build:practice": "node ../scripts/linux-plus-practice-build.mjs"
   },
   "dependencies": {

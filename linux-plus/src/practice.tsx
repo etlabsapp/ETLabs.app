@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { PRESETS, clampCount, drawExam, formatClock, missedIds, optionOrder, recordExam, timeLimitSeconds } from "./exam";
 import type { Seen } from "./exam";
+import { useVoice } from "./handsfree";
+import { RATE_MAX, RATE_MIN, clampRate, feedbackScript, parseHeard, questionScript, speakable } from "./voice";
+import type { Heard } from "./voice";
 
 export type Block = { t: "p" | "code"; v: string };
 export type PQ = { id: string; stem: Block[]; options: { text: string; why: string }[]; answer: number[] };
@@ -67,6 +70,7 @@ export default function PracticeTests() {
   const [custom, setCustom] = useState("");
   const [now, setNow] = useState(() => Date.now());
   const topRef = useRef<HTMLDivElement>(null);
+  const vcRef = useRef<ReturnType<typeof useVoice> | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -107,6 +111,7 @@ export default function PracticeTests() {
   }, [remaining <= 0, !!store.current, !!data]);
 
   const start = (ids: string[], review: boolean) => {
+    if (vcRef.current?.settings.on) vcRef.current.engine.unlock();
     const no = store.examNo + 1;
     setStore((st) => ({ ...st, examNo: no, current: { no, ids, answers: {}, idx: 0, startedAt: Date.now(), limit: timeLimitSeconds(ids.length), review } }));
     setNow(Date.now()); setDraft([]); setShowResult(false); toTop();
@@ -153,6 +158,93 @@ export default function PracticeTests() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+
+
+  // ---------- Hands-free: read aloud, listen for answers ----------
+  const vc = useVoice();
+  vcRef.current = vc;
+  const hf = vc.settings.on && vc.synth;
+  const [hfStatus, setHfStatus] = useState<"idle" | "speaking" | "listening" | "waiting" | "paused" | "blocked">("idle");
+  const [hfPaused, setHfPaused] = useState(false);
+  const [heard, setHeard] = useState<{ text: string; meaning: string } | null>(null);
+  const [nonce, setNonce] = useState(0);
+  const silence = useRef(0);
+  const autoNext = useRef(0);
+  const qOrder = q && exam ? optionOrder(`${exam.no}:${q.id}`, q.options.length) : [];
+  const live = useRef<{ q: PQ | null; exam: typeof exam; answered: Ans | undefined; order: number[]; submit: (p: number[]) => void; next: () => void }>(null as any);
+  live.current = { q, exam, answered, order: qOrder, submit, next };
+
+  const hfSay = (parts: string[], then?: () => void) => { setHfStatus("speaking"); vc.engine.speak(parts, () => { if (then) then(); else setHfStatus("idle"); }); };
+  const hfListen = () => {
+    if (!vc.listenable) { setHfStatus("waiting"); return; }
+    setHfStatus("listening");
+    const ok = vc.engine.listen((alts) => onHeard(alts), (why) => {
+      if (why === "result") return;
+      if (why === "blocked") { setHfStatus("blocked"); return; }
+      if (why === "silence" && silence.current < 2) { silence.current++; hfListen(); return; }
+      setHfStatus("waiting");
+    });
+    if (!ok) setHfStatus("waiting");
+  };
+  const letterList = (n: number) => { const l = LETTERS.slice(0, n).split(""); return `${l.slice(0, -1).join(", ")} or ${l[l.length - 1]}`; };
+  const onHeard = (alts: string[]) => {
+    const L = live.current;
+    if (!L.q) return;
+    const need = L.q.answer.length;
+    let h: Heard = { kind: "unknown" }, text = alts[0] || "";
+    for (const a of alts) { const r = parseHeard(a, L.q.options.length, need); if (r.kind !== "unknown") { h = r; text = a; break; } }
+    silence.current = 0;
+    if (h.kind === "answer") {
+      setHeard({ text, meaning: h.picks.map((p) => LETTERS[p]).join(" and ") });
+      if (L.answered) { hfSay(["That one is already answered. Say next to continue."], hfListen); return; }
+      if (h.picks.length !== need) { hfSay([`This question needs ${need === 2 ? "two" : "three"} answers, for example A and C.`], hfListen); return; }
+      L.submit(h.picks.map((p) => L.order[p]));
+      return;
+    }
+    if (h.kind === "command") {
+      setHeard({ text, meaning: h.command });
+      if (h.command === "repeat") setNonce((n) => n + 1);
+      else if (h.command === "next" || h.command === "skip") L.next();
+      else if (h.command === "pause") { vc.engine.cancel(); setHfPaused(true); }
+      else { vc.engine.cancel(); vc.setSettings((st) => ({ ...st, on: false })); }
+      return;
+    }
+    setHeard({ text, meaning: "not understood" });
+    hfSay([`Sorry, I didn't catch that. Say ${letterList(L.q.options.length)}, or say repeat.`], hfListen);
+  };
+  const hfKey = hf && !hfPaused && q && exam && !showResult ? `${exam.no}:${exam.idx}:${answered ? "a" : "q"}:${nonce}` : "";
+  useEffect(() => {
+    clearTimeout(autoNext.current);
+    if (!hfKey) { vc.engine.cancel(); setHfStatus(hf && hfPaused ? "paused" : "idle"); return; }
+    const L = live.current;
+    if (!L.q || !L.exam) return;
+    const lq = L.q, lex = L.exam;
+    if (!L.answered) {
+      silence.current = 0;
+      setHeard(null);
+      hfSay(questionScript(lq.stem, L.order.map((i) => lq.options[i].text), lq.answer.length), hfListen);
+    } else {
+      const letters = L.order.map((o, pos) => (lq.answer.includes(o) ? LETTERS[pos] : "")).join("");
+      const why = L.order.filter((o) => lq.answer.includes(o)).map((o) => lq.options[o].why).join(" ");
+      hfSay([feedbackScript(L.answered.ok, letters, why)], () => {
+        setHfStatus("idle");
+        autoNext.current = window.setTimeout(() => { const c = live.current; if (c.exam && c.exam.no === lex.no && c.exam.idx === lex.idx) c.next(); }, 900);
+      });
+    }
+    return () => clearTimeout(autoNext.current);
+  }, [hfKey]);
+  const resultKey = hf && showResult && store.last && !store.current ? `r:${store.last.finishedAt}` : "";
+  useEffect(() => {
+    if (!resultKey || !store.last) return;
+    const r = store.last, ok = r.ids.filter((id) => r.answers[id]?.ok).length;
+    hfSay([`Exam finished. You got ${ok} of ${r.ids.length} correct${r.timedOut ? ", and time ran out" : ""}.`]);
+  }, [resultKey]);
+  const hfToggle = (on: boolean) => { if (on) vc.engine.unlock(); else vc.engine.cancel(); setHfPaused(false); vc.setSettings((st) => ({ ...st, on })); };
+  const micTap = () => {
+    if (hfStatus === "paused" || hfPaused) { vc.engine.unlock(); setHfPaused(false); return; }
+    if (hfStatus === "listening") { vc.engine.stopListening(); setHfStatus("waiting"); return; }
+    if (!live.current.answered) { vc.engine.cancel(); silence.current = 0; hfListen(); }
+  };
 
   if (err) return <div ref={topRef} style={{ ...card, color: C.amber }}>{err}</div>;
   if (!data) return <div ref={topRef} style={{ ...card, color: C.soft }} aria-live="polite">Loading practice questions…</div>;
@@ -259,6 +351,7 @@ export default function PracticeTests() {
           <button style={{ ...bigBtn, opacity: chosen ? 1 : 0.45 }} disabled={!chosen || !!cur} onClick={() => startNew(chosen)}>{cur ? "Finish or end the current exam first" : `Start ${chosen || ""}-question exam`}</button>
           <div style={{ fontSize: 13, color: C.faint, marginTop: 10, lineHeight: 1.5 }}>The clock keeps running if you leave the page. When it hits 0:00 the exam is submitted automatically.</div>
         </div>
+        <HandsFreeCard vc={vc} onToggle={hfToggle} test={() => { vc.engine.unlock(); hfSay(["This is how questions will sound.", `For example: ${speakable("usermod -aG docker dev3")}.`]); }} />
         <div style={card}>
           <div style={{ ...kicker, marginBottom: 8 }}>YOUR PROGRESS</div>
           <div style={{ fontSize: 15, color: C.soft, marginBottom: 8 }}>{seenCount} of {total} questions seen. New exams favor questions you have not seen yet, and ones you missed.</div>
@@ -293,9 +386,13 @@ export default function PracticeTests() {
     <div ref={topRef} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       <div className="px-timerbar" style={{ position: "sticky", top: 0, zIndex: 6, display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", borderRadius: 14, background: "rgba(13,17,30,0.96)", border: `1px solid ${low ? "rgba(248,113,113,0.6)" : C.edge}` }}>
         <div role="timer" aria-live="off" aria-label={`Time left ${formatClock(remaining)}`} style={{ fontFamily: mono, fontWeight: 800, fontSize: 24, color: low ? C.red : C.cyan, minWidth: 0 }}>{"\u23f1"} {formatClock(remaining)}</div>
-        <div style={{ flex: 1, minWidth: 0, textAlign: "right", fontFamily: mono, fontSize: 14, color: C.soft }}>{exam.idx + 1}/{exam.ids.length} · {right}{"\u2713"} {done - right}{"\u2717"}</div>
+        <div style={{ flex: 1, minWidth: 0, textAlign: "right", fontFamily: mono, fontSize: 14, color: C.soft, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{exam.idx + 1}/{exam.ids.length} · {right}{"\u2713"} {done - right}{"\u2717"}</div>
+        {vc.synth && <button style={{ ...ghost, padding: "0 10px", fontSize: 18, minWidth: 44, color: hf ? C.cyan : C.soft, borderColor: hf ? "rgba(34,211,238,0.5)" : C.edge }} aria-pressed={hf} aria-label={hf ? "Turn hands-free off" : "Turn hands-free on"} onClick={() => hfToggle(!hf)}>{hf ? "\ud83d\udd0a" : "\ud83d\udd07"}</button>}
         <button style={{ ...ghost, padding: "0 12px", fontSize: 14 }} onClick={endEarly}>End</button>
       </div>
+      {hf && <MicPanel status={hfStatus} heard={heard} listenable={vc.listenable} count={q.options.length} need={q.answer.length} answered={!!answered}
+        onMic={micTap} onPause={() => { if (hfPaused) { vc.engine.unlock(); setHfPaused(false); } else { vc.engine.cancel(); setHfPaused(true); } }} paused={hfPaused}
+        onRepeat={() => { vc.engine.unlock(); setHfPaused(false); setNonce((n) => n + 1); }} />}
       <div style={{ height: 6, borderRadius: 3, background: "#1b2440", overflow: "hidden" }}><div style={{ width: `${Math.round((exam.idx / exam.ids.length) * 100)}%`, height: "100%", background: `linear-gradient(90deg, ${C.cyan}, ${C.violet})`, transition: "width 300ms" }} /></div>
       <div style={{ ...card, padding: "16px 14px" }}>
         <div style={{ ...kicker, marginBottom: 8 }}>QUESTION {exam.idx + 1}{multi ? ` · PICK ${q.answer.length}` : ""}</div>
@@ -341,6 +438,101 @@ export default function PracticeTests() {
           <div style={{ textAlign: "center", fontSize: 14, color: C.faint, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>Tap an answer{" \u00b7 "}or press A–{LETTERS[q.options.length - 1]}</div>
         )}
       </Sticky>
+    </div>
+  );
+}
+
+type VC = ReturnType<typeof useVoice>;
+
+function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {
+  return (
+    <button role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)}
+      style={{ flexShrink: 0, width: 64, height: 44, borderRadius: 22, border: `2px solid ${on ? C.cyan : C.edge}`, background: on ? "rgba(34,211,238,0.25)" : "rgba(255,255,255,0.04)", position: "relative", cursor: "pointer", padding: 0 }}>
+      <span style={{ position: "absolute", top: 5, left: on ? 25 : 5, width: 30, height: 30, borderRadius: 15, background: on ? C.cyan : C.soft, transition: "left 150ms" }} />
+    </button>
+  );
+}
+
+function HandsFreeCard({ vc, onToggle, test }: { vc: VC; onToggle: (on: boolean) => void; test: () => void }) {
+  const { settings, setSettings, voices, chosen } = vc;
+  const on = settings.on && vc.synth;
+  return (
+    <div style={card}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={kicker}>HANDS-FREE</div>
+          <div style={{ fontSize: 17, fontWeight: 800, marginTop: 4 }}>{vc.listenable ? "Read aloud and answer by voice" : "Read questions aloud"}</div>
+        </div>
+        {vc.synth && <Switch on={on} onChange={onToggle} label="Hands-free mode" />}
+      </div>
+      {!vc.synth ? (
+        <p style={{ fontSize: 15, color: C.soft, margin: "10px 0 0", lineHeight: 1.5 }}>Read-aloud is not available in this browser.</p>
+      ) : (
+        <>
+          <p style={{ fontSize: 15, color: C.soft, margin: "10px 0 0", lineHeight: 1.5 }}>
+            {vc.listenable
+              ? <>Each question and its options are read out. Say <b style={{ color: C.ink }}>A, B, C or D</b> (or "A and C" when two answers are needed), or say <b style={{ color: C.ink }}>repeat, next, skip, pause</b> or <b style={{ color: C.ink }}>stop</b>. Taps still work.</>
+              : <>Each question and its options are read out. This browser cannot listen for spoken answers, so tap your answer.</>}
+          </p>
+          {on && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 14 }}>
+              <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14, color: C.soft }}>
+                Voice
+                <select value={settings.voiceURI} onChange={(e) => setSettings((st) => ({ ...st, voiceURI: e.target.value }))}
+                  style={{ minHeight: 48, borderRadius: 12, border: `1px solid ${C.edge}`, background: C.bg, color: C.text, fontSize: 16, padding: "0 12px", maxWidth: "100%" }}>
+                  <option value="">{voices[0] ? `Auto: ${voices[0].name}` : "Device default voice"}</option>
+                  {voices.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name} ({v.lang})</option>)}
+                </select>
+              </label>
+              <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14, color: C.soft }}>
+                <span>Speed <b style={{ color: C.ink, fontFamily: mono }}>{settings.rate.toFixed(2)}x</b></span>
+                <input type="range" min={RATE_MIN} max={RATE_MAX} step={0.05} value={settings.rate} aria-label="Speech speed"
+                  onChange={(e) => setSettings((st) => ({ ...st, rate: clampRate(Number(e.target.value)) }))} style={{ width: "100%", height: 44, accentColor: C.cyan }} />
+              </label>
+              <button style={ghost} onClick={test}>{"\u25b6"} Test voice{chosen ? `: ${chosen.name}` : ""}</button>
+            </div>
+          )}
+          <p style={{ fontSize: 13, color: C.faint, margin: "12px 0 0", lineHeight: 1.5 }}>Tip: Websites can't use Siri's voice. For a more natural voice on iPhone/Mac download a Premium voice in Settings &gt; Accessibility &gt; Spoken Content &gt; Voices; on Android install Speech Services by Google.</p>
+          {vc.listenable && <p style={{ fontSize: 13, color: C.faint, margin: "6px 0 0", lineHeight: 1.5 }}>Voice answers use your browser's built-in speech recognition. Some browsers, such as Chrome, send the audio to their own online service to turn it into text.</p>}
+        </>
+      )}
+    </div>
+  );
+}
+
+const MIC_STYLE: Record<string, { color: string; icon: string; label: string }> = {
+  speaking: { color: C.violet, icon: "\ud83d\udd0a", label: "Reading aloud\u2026" },
+  listening: { color: C.green, icon: "\ud83c\udfa4", label: "Listening\u2026" },
+  waiting: { color: C.cyan, icon: "\ud83c\udfa4", label: "Tap the mic to answer by voice" },
+  paused: { color: C.amber, icon: "\u23f8", label: "Paused" },
+  blocked: { color: C.faint, icon: "\ud83d\udeab", label: "Microphone blocked" },
+  idle: { color: C.soft, icon: "\ud83d\udd0a", label: "Hands-free on" },
+  unsupported: { color: C.soft, icon: "\ud83d\udd07", label: "Voice answers not supported here" },
+};
+
+function MicPanel(p: { status: string; heard: { text: string; meaning: string } | null; listenable: boolean; count: number; need: number; answered: boolean; paused: boolean; onMic: () => void; onPause: () => void; onRepeat: () => void }) {
+  const key = p.paused ? "paused" : !p.listenable && p.status === "waiting" ? "unsupported" : p.status;
+  const st = MIC_STYLE[key] ?? MIC_STYLE.idle;
+  const letters = LETTERS.slice(0, p.count).split("");
+  const hint = key === "listening" ? (p.need > 1 ? `Say ${p.need} letters, like "A and C"` : `Say ${letters.slice(0, -1).join(", ")} or ${letters[letters.length - 1]}`)
+    : key === "blocked" ? "Allow the microphone in site settings, or tap an answer."
+    : key === "unsupported" ? "Questions are read aloud. Tap your answer."
+    : key === "paused" ? "Tap \u25b6 to carry on." : key === "speaking" ? "Tap the mic to stop and answer now." : p.answered ? "Moving to the next question." : "";
+  return (
+    <div className="px-hf" style={{ ...card, padding: 12, display: "flex", alignItems: "center", gap: 12, borderColor: `${st.color}66` }}>
+      <style>{"@keyframes pxpulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}70%{box-shadow:0 0 0 16px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}"}</style>
+      <button onClick={p.onMic} aria-label={`${st.label}. Tap the microphone.`}
+        style={{ flexShrink: 0, width: 64, height: 64, borderRadius: 32, border: `3px solid ${st.color}`, background: `${st.color}22`, fontSize: 28, cursor: "pointer", animation: key === "listening" ? "pxpulse 1.4s infinite" : "none", padding: 0 }}>{st.icon}</button>
+      <div style={{ flex: 1, minWidth: 0 }} aria-live="polite">
+        <div style={{ fontWeight: 800, fontSize: 17, color: st.color }}>{st.label}</div>
+        {p.heard ? (
+          <div style={{ fontSize: 14, color: C.ink, marginTop: 2, overflowWrap: "anywhere" }}>Heard "{p.heard.text}" {"\u2192"} <b style={{ color: p.heard.meaning === "not understood" ? C.amber : C.green }}>{p.heard.meaning}</b></div>
+        ) : hint ? <div style={{ fontSize: 14, color: C.soft, marginTop: 2 }}>{hint}</div> : null}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <button style={{ ...ghost, padding: 0, width: 48, fontSize: 18 }} onClick={p.onPause} aria-label={p.paused ? "Resume reading" : "Pause reading"}>{p.paused ? "\u25b6" : "\u23f8"}</button>
+        <button style={{ ...ghost, padding: 0, width: 48, fontSize: 18 }} onClick={p.onRepeat} aria-label="Repeat">{"\u21bb"}</button>
+      </div>
     </div>
   );
 }
