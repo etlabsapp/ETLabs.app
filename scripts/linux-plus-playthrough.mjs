@@ -3,7 +3,7 @@
  * Mission 0 must pass in full. Every later mission gets a spot check on its home server.
  * Run from linux-plus/: npm test
  */
-import { SERVERS, MISSIONS, makeWorld, execute, passesTask, passesAnswer } from "../linux-plus/src/lab.tsx";
+import { SERVERS, MISSIONS, makeWorld, execute, passesTask, passesAnswer, isValidLabUser, homeOf, promptFor } from "../linux-plus/src/lab.tsx";
 
 const failures = [];
 function check(name, ok, detail) {
@@ -28,9 +28,10 @@ function stepNamed(mission, short) {
 const n = MISSIONS.reduce((t, m) => t + m.tasks.length, 0);
 check("128 tasks", n === 128, String(n));
 check("10 missions", MISSIONS.length === 10, String(MISSIONS.length));
-check("five servers", SERVERS.length === 5 && SERVERS.every((s) => s.user === "student" && /^203\.0\.113\.(10|20|30|40|50)$/.test(s.ip)));
+check("five servers", SERVERS.length === 5 && SERVERS.every((s) => /^203\.0\.113\.(10|20|30|40|50)$/.test(s.ip)));
 check("server names", SERVERS.map((s) => s.name).join(",") === "NewYork,Chicago,Charlotte,LosAngeles,Miami");
 check("city labels", SERVERS.map((s) => s.city).join(",") === "NY,CHI,CLT,LA,MIA");
+check("valid names", isValidLabUser("student") && isValidLabUser("alice") && isValidLabUser("ann-marie") && !isValidLabUser("root") && !isValidLabUser("Alice") && !isValidLabUser("travis@host") && !isValidLabUser(""));
 
 const homes = {};
 SERVERS.forEach((s) => { homes[s.name] = makeWorld().servers[s.name]; });
@@ -98,6 +99,63 @@ const wrong = makeWorld();
 const logged = attempt(wrong, 0, 0, "ssh student@203.0.113.20");
 const off = attempt(logged.world, 1, stepNamed(1, "Kernel"), "uname -r");
 check("mission 1 rejects Chicago", !off.ok);
+
+// Custom usernames must work end-to-end; the lab must not require "student".
+let alice = makeWorld("alice");
+check("alice home is /home/alice", !!alice.servers.NewYork.fs[homeOf("alice") + "/notes.txt"] && !alice.servers.NewYork.fs["/home/student"]);
+check("alice laptop prompt", promptFor(alice) === "alice@laptop ~ %");
+const aLogin = attempt(alice, 0, 0, "ssh alice@203.0.113.10");
+alice = aLogin.world;
+check("ssh alice@NewYork", aLogin.ok && alice.host === "NewYork" && alice.user === "alice" && alice.cwd === homeOf("alice"), (aLogin.lines || []).map((l) => l.text).join(" | "));
+check("alice remote prompt", promptFor(alice) === "[alice@NewYork ~]$");
+const who = execute(structuredClone(alice), "whoami", []);
+check("alice whoami", who.lines.some((l) => l.text === "alice"));
+
+alice = attempt(alice, 0, 1, "whoami").world;
+alice = attempt(alice, 0, 2, "pwd").world;
+alice = attempt(alice, 0, 3, "ls -la").world;
+alice = attempt(alice, 0, 4, "cd /etc").world;
+const back = attempt(alice, 0, 5, "cd");
+check("alice cd home", back.ok && back.world.cwd === homeOf("alice"));
+alice = back.world;
+const wrote = attempt(alice, 0, 6, 'echo "study ssh" > todo.txt');
+check("alice todo.txt", wrote.ok && wrote.world.servers.NewYork.fs[homeOf("alice") + "/todo.txt"]?.content === "study ssh\n" && !wrote.world.servers.NewYork.fs["/home/student/todo.txt"]);
+
+const bare = attempt(makeWorld("jordan"), 0, 0, "ssh 203.0.113.10");
+check("ssh IP uses default username", bare.ok && bare.world.user === "jordan" && bare.world.host === "NewYork");
+
+const provision = attempt(makeWorld(), 0, 0, "ssh mia@203.0.113.10");
+check("ssh provisions a new user on a student world", provision.ok && provision.world.user === "mia" && provision.world.cwd === homeOf("mia") && !!provision.world.servers.NewYork.fs[homeOf("mia") + "/notes.txt"]);
+
+const customSpots = [
+  { mission: 2, home: "203.0.113.40", short: "rsync", cmd: "rsync -az projects/ alice@203.0.113.50:/backup/", login: true },
+  { mission: 3, home: "203.0.113.50", short: "ps -u", cmd: "ps -u alice", login: true },
+  { mission: 5, home: "203.0.113.20", short: "id", cmd: "id", login: true },
+  { mission: 6, home: "203.0.113.30", short: "Key", cmd: "ssh-keygen -t rsa -b 4096", login: true },
+  { mission: 6, home: "203.0.113.30", short: "Copy key", cmd: "ssh-copy-id alice@203.0.113.40", afterKey: true },
+];
+let aliceKey = null;
+for (const spot of customSpots) {
+  let w = spot.afterKey && aliceKey ? aliceKey : makeWorld("alice");
+  if (spot.login) {
+    const login = attempt(w, 0, 0, "ssh alice@" + spot.home);
+    if (login.world.host == null) {
+      check(`alice login for ${spot.short}`, false, "ssh failed");
+      continue;
+    }
+    w = login.world;
+  }
+  const step = stepNamed(spot.mission, spot.short);
+  const r = attempt(w, spot.mission, step, spot.cmd);
+  const detail = r.ok ? "" : (r.lines || []).map((l) => l.text).join(" | ");
+  check(`alice m${spot.mission} ${spot.short}: ${spot.cmd}`, r.ok, detail);
+  if (spot.short === "Key") aliceKey = r.world;
+}
+
+const deniedRoot = attempt(makeWorld("alice"), 0, 0, "ssh root@203.0.113.10");
+check("root is refused", !deniedRoot.ok && deniedRoot.world.host === null);
+const deniedBad = attempt(makeWorld("alice"), 0, 0, "ssh Alice@203.0.113.10");
+check("invalid username is refused", !deniedBad.ok && deniedBad.world.host === null);
 
 if (failures.length) {
   console.error("\nFAILED");
