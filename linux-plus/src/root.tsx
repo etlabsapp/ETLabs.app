@@ -28,10 +28,10 @@ export default function Root() {
     );
   };
   return (
-    <div style={{ minHeight: "100vh", background: `radial-gradient(1000px 500px at 10% -10%, rgba(34,211,238,0.12), transparent), radial-gradient(900px 500px at 100% 0%, rgba(167,139,250,0.12), transparent), ${P.page}`, color: P.ink, fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", background: `radial-gradient(1000px 500px at 10% -10%, rgba(34,211,238,0.12), transparent), radial-gradient(900px 500px at 100% 0%, rgba(167,139,250,0.12), transparent), ${P.page}`, color: P.ink, fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif", overflowX: "clip" }}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box}
-        html,body{margin:0;background:${P.page};overflow-x:hidden;-webkit-text-size-adjust:100%}
+        html,body{margin:0;background:${P.page};overflow-x:clip;-webkit-text-size-adjust:100%}
         .rt-wrap{max-width:1100px;margin:0 auto;padding:12px 14px 28px}
         .rt-narrow{max-width:720px;margin:0 auto}
         .rt-h1{font-size:26px}
