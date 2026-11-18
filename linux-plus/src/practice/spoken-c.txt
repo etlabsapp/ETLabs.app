@@ -1,0 +1,841 @@
+# Spoken scripts for bank c. Format: see spoken-a.txt.
+
+@ c1
+S: On a Kubernetes cluster, which resource do you create to make an app's port reachable from the internet?
+O: Pod.
+O: Deployment.
+O: Service.
+O: Network.
+R: A service gives a set of pods one stable address and port, and a load balancer service makes it reachable from outside.
+
+@ c2
+S: A bash script should ping a list of hosts in a for loop, but bash reports unexpected end of file. The loop has for, do, an echo and a ping, and then the file ends. What is missing?
+O: done.
+O: F I.
+O: while.
+O: else.
+R: A for loop has the shape for, do, done, and this loop is never closed with done.
+
+@ c3
+S: An admin is writing a docker file to build a custom nginx image with changed default settings. What should the first instruction be?
+O: Base nginx.
+O: Inherit nginx.
+O: From nginx.
+O: Use nginx.
+R: From picks the base image to build on, and a docker file must start with it.
+
+@ c4
+S: What is a main benefit of a Python virtual environment?
+O: It saves disk space.
+O: It stops projects needing different versions of a package from conflicting.
+O: It makes its packages available to the whole system.
+O: It keeps one identical environment across all projects.
+R: Each virtual environment has its own packages, so two projects can use different versions of the same library.
+
+@ c5
+S: What is required to set up passwordless, key-based S S H login?
+O: Make the public and private keys on the remote server.
+O: Copy your public key to the remote server.
+O: Copy your private key to the remote server.
+O: Copy both keys to the remote server.
+R: Your public key goes into the server's authorized keys file, and the private key never leaves your machine.
+C: The command is: S S H dash copy dash I D, followed by user at server.
+
+@ c6
+S: An admin suspects S E Linux is behind some app errors. Which command shows whether S E Linux is on and which mode it is in?
+O: get S E bool, listing every boolean.
+O: L S with dash capital Z, showing file labels.
+O: get enforce.
+O: S E manage port, listing port labels.
+R: Get enforce prints one word, enforcing, permissive or disabled.
+C: The command is: get enforce.
+
+@ c7
+S: A variable called new users holds three names, Rita, Sven and Tomas. Which command creates an account for each name?
+O: A for loop over the unquoted variable, running user add for each name.
+O: echo piped into a while loop with no read command.
+O: A select menu over the quoted variable.
+O: echo piped into an until loop with no read command.
+R: Unquoted, the variable splits into three words, and the for loop runs user add once for each name.
+C: The command is: for U in, dollar new underscore users, then, do, user add, dash M, dollar U, then, done.
+
+@ c8
+S: Which virtual machine network mode puts the V M directly on the physical network, with its own address, as if it were a separate computer?
+O: Host only.
+O: NAT.
+O: Bridged.
+O: Internal.
+R: Bridged mode connects the V M to the physical network, so it gets its own address there.
+
+@ c9
+S: What are Ansible playbooks used for?
+O: Holding security settings for a container.
+O: Setting up version control on a repository.
+O: Describing storage volumes for a pod.
+O: Listing the tasks and settings to deploy and configure an app.
+R: A playbook is a YAML file of ordered tasks that Ansible runs on target hosts.
+
+@ c10
+S: What is the term for watching and recording which processes run and which files are read or changed on a Linux system?
+O: Tuning.
+O: Logging.
+O: Auditing.
+O: Journaling.
+R: Auditing records who ran what and who touched which files, for security review.
+
+@ c11
+S: Which of these is a sensible use of A I in a Linux environment?
+O: Uploading internal company chat logs to check users.
+O: Handing full control of a production server to an A I agent.
+O: Generating a sample Apache config to try in a test environment.
+O: Outsourcing proprietary code to a public L L M.
+R: Getting a draft config and testing it safely before use is a good, low-risk use, and you still review it.
+
+@ c12
+S: A bash script should copy an export file if it exists and print an error if it does not. Inside the if, the copy line is followed straight away by the error message, and then F I. Which keyword is missing?
+O: done.
+O: for.
+O: while.
+O: else.
+R: Else marks the code to run when the test is false, so it belongs before the error line.
+
+@ c13
+S: What is the main purpose of monitoring thresholds?
+O: To send alerts when a value goes past a set limit.
+O: To restart services automatically.
+O: To run health checks on devices.
+O: To work out service availability.
+R: A threshold is a limit, and when a metric crosses it the monitoring tool raises an alert.
+
+@ c14
+S: An admin sees code that sets up a web server using a role, a run list, and an apache 2 recipe, written in a Ruby-style syntax. Which tool is this written for?
+O: Terraform.
+O: Puppet.
+O: Ansible.
+O: Chef.
+R: Roles, run lists and recipes are Chef terms, written in Chef's Ruby-based syntax.
+
+@ c15
+S: A user needs S S H access to a server that uses firewall D. Which command opens the standard S S H port permanently?
+O: I P tables, with S S H D as the port name, which isn't valid.
+O: firewall C M D, removing the S S H service.
+O: firewall C M D, permanently adding port 22 T C P.
+O: I P tables save piped into grep, which changes nothing.
+R: This adds T C P port 22 to the permanent firewall config, and a reload applies it.
+C: The command is: firewall dash C M D, dash dash permanent, dash dash add dash port equals 22 slash T C P.
+
+@ c16
+S: A developer's uncommitted changes in a local git repo broke the app, and they want to throw them away and go back to the last commit. Which command is best?
+O: git rebase.
+O: git pull.
+O: git reset.
+O: git stash.
+R: Git reset moves back to a commit, and a hard reset discards the uncommitted changes.
+C: The command is: git reset, dash dash hard, HEAD.
+
+@ c17
+S: An H T T P S server won't start. The log says permission denied, could not bind to port 8444. S E Linux is enforcing, and the H T T P port label list doesn't include 8444. Which command fixes this the secure way?
+O: set enforce 0, turning S E Linux off.
+O: system C T L unmask, for H T T P D.
+O: S E manage port, adding 8444 to the H T T P port label.
+O: set S E bool, with a port label instead of a boolean.
+R: S E Linux only lets Apache bind to ports with the H T T P port label, and adding 8444 keeps S E Linux enforcing.
+C: The command is: S E manage, port, dash A, dash T, H T T P underscore port underscore T, dash P, T C P, 8444.
+
+@ c18
+S: A security manager reports open vulnerabilities. Today is September 2024, S E Linux is enforcing, and the package history shows the last update was in September 2023. What is the most likely security concern?
+O: The server uses U T C and should use local time.
+O: S E Linux is enforcing and should be disabled.
+O: The server hasn't been updated in a year and needs patching.
+O: Nginx is installed and must be removed.
+R: A year of missing patches leaves known flaws open.
+
+@ c19
+S: In Python, which keyword lets a script use a module's code?
+O: def.
+O: dunder name.
+O: import.
+O: dunder init.
+R: Import loads a module so the script can use its functions and classes.
+
+@ c20
+S: A workstation cannot open the site W W W dot example dot org. D N S returns the right address, but ping goes to a different, unreachable address, the one listed for that name in the hosts file. What is the most likely cause?
+O: An old static entry in the hosts file needs removing.
+O: The firewall must allow outbound H T T P and H T T P S.
+O: The site lacks I P V 6, and the workstation needs it.
+O: The name server should be changed to Google's.
+R: The hosts file is checked before D N S, so its stale entry sends traffic to the wrong address.
+
+@ c21
+S: A new app cannot reach its A P I. W get connects through the corporate proxy, then says the certificate is not trusted and doesn't have a known issuer. What is the best fix?
+O: Add the no check certificate option to W get.
+O: Replace the remote certificate with a self-signed one.
+O: Confirm the issuer is trustworthy, then add that C A locally.
+O: Replace the expired C A certificate.
+R: No known issuer means this system doesn't trust the signing C A, so once it's verified, add it to the trusted certificates.
+C: The command is: update dash C A dash trust, after copying the C A file into the anchors folder.
+
+@ c22
+S: A test machine needs S E Linux turned off, and it must stay off after reboots for the duration of testing. What should the admin do?
+O: Set S E Linux to disabled in its config file, and reboot.
+O: Run set enforce 1.
+O: Run set enforce disabled, and reboot.
+O: Run system C T L disable S E Linux.
+R: The S E Linux config file sets the mode used at boot, so the change lasts across reboots.
+
+@ c23
+S: Which Ansible component lists the managed hosts and groups, and can hold variables for each host or group?
+O: Modules.
+O: Playbooks.
+O: Inventory.
+O: Handlers.
+R: The inventory lists hosts, puts them into groups, and can set variables for each.
+
+@ c24
+S: An admin wants to use A I to help write infrastructure as code. What is a best practice?
+O: Copy and paste the output straight in.
+O: Ask for one huge monolithic file.
+O: Merge C I C D pipelines together.
+O: Lint and review the generated code.
+R: A I can produce code that looks fine but has mistakes, so linting and reviewing it before use is key.
+
+@ c25
+S: A file server should easily beat 12 and a half megabytes per second, but never does. E T H tool shows the card supports 1000 megabits, but the link is running at 100 megabits, full duplex. What is causing the limit?
+O: The interface has the wrong M T U.
+O: The interface negotiated a link speed that is too low.
+O: The interface is not using an F E C mode.
+O: The interface has the wrong queue length.
+R: 100 megabits divided by 8 is exactly 12 and a half megabytes per second, so the slow link speed is the ceiling.
+
+@ c26
+S: Which protocol is used to query directory services that hold a hierarchy of users, groups, computers and organizational units?
+O: T L S.
+O: L dap.
+O: S M B.
+O: Kerberos 5.
+R: L dap is the protocol for reading and searching directory services such as Active Directory.
+
+@ c27
+S: An S F T P server must only be reachable from the 192 dot 168 dot 30 dot 0 slash 24 network. Which U F W command does this best?
+O: U F W allow, with an invalid port range and no network size.
+O: U F W allow from the network, to every port.
+O: U F W allow from the network, to port 22 only.
+O: U F W allow port 22 on E T H 0, from anywhere.
+R: S F T P runs over S S H on port 22, and this allows only that port, only from that network.
+C: The command is: sue doo, U F W, allow, from, 192 dot 168 dot 30 dot 0 slash 24, to any, port 22.
+
+@ c28
+S: An admin edited a file in a local branch named fix typo and committed it. What is the last git command needed to get the change onto the remote repository?
+O: git pull, from origin main.
+O: git push, sending fix typo to origin.
+O: git commit, with a message.
+O: git checkout, creating the fix typo branch.
+R: Push uploads the branch's commits to the remote, after the edit, add and commit.
+C: The command is: git push, origin, fix dash typo.
+
+@ c29
+S: Which of these is true about Python 3?
+O: It is closed source.
+O: It is fully backward compatible with Python 2.
+O: It is binary compatible with Java.
+O: It can be extended with modules.
+R: Python gains features through modules you import, from its standard library or from pip packages.
+
+@ c30
+S: After a restart, nobody can reach a server. Network manager shows the office LAN connection is set to automatic, D H C P, but the interface only has a 169 dot 254 link-local address. What is the most likely reason?
+O: The N I C has failed and must be replaced.
+O: The cable is in the wrong port.
+O: The server cannot get an I P address from the D H C P server.
+O: Nothing is wrong, and another restart will fix it.
+R: Systems give themselves a 169 dot 254 address when no D H C P server answers.
+
+@ c31
+S: What is a webhook?
+O: An S N M P based A P I for monitoring network devices.
+O: An H T T P callback one system sends another when an event happens.
+O: A login method for web servers.
+O: A way to send secret data between systems.
+R: A webhook is an H T T P request that a service sends to a U R L you give it when something happens.
+
+@ c32
+S: An admin wants to see all log entries for the system D unit billing dot service. Which command does this?
+O: system C T L status, which shows only recent lines.
+O: system D analyze, with an option that doesn't exist.
+O: cat on the messages log, which mixes everything.
+O: journal C T L with dash U, for the billing service.
+R: Journal C T L dash U filters the journal to that one unit and shows all of its entries.
+C: The command is: journal C T L, dash U, billing dot service.
+
+@ c33
+S: A database container must do different jobs depending on the argument given at start, such as init, start or recover. The admin wrote a D B C T L script for this. Which docker file instruction should run the script and pass it those arguments?
+O: Expose, with the script.
+O: Run, with the script.
+O: C M D, with the script in shell form.
+O: Entry point, with the script in exec form.
+R: Entry point sets the program that always runs at start, and arguments given to docker run are added after it.
+C: The instruction is: entry point, open bracket, quote, slash user, slash local, slash bin, slash D B C T L dot S H, quote, close bracket.
+
+@ c34
+S: Users can reach hosts only by full name, like D B 1 dot corp dot example, and not by short name, like D B 1. The short name fails to resolve, and resolve C T L shows a D N S server but an empty D N S domain. What should be done?
+O: Add another D N S server to the resolv conf file.
+O: Add an A record for each host.
+O: Add the search domain to the network configuration.
+O: Add the full name to the hosts allow file.
+R: With no search domain, short names are never expanded to the full name, so setting one fixes them.
+
+@ c35
+S: Which tool can check whether a T C P port is open on a remote host?
+O: ping.
+O: N C, netcat.
+O: I P.
+O: netstat.
+R: N C with dash Z V tries to connect to the port and reports whether it is open.
+C: The command is: N C, dash Z V, followed by the host and port.
+
+@ c36
+S: Which widely used reference gives step-by-step secure configuration guidance for operating systems and applications?
+O: C I S Benchmarks.
+O: G D P R.
+O: I S O 27001.
+O: C V E entries.
+R: The Center for Internet Security publishes detailed hardening guides for Linux and many applications.
+
+@ c37
+S: What should usually be the first step when starting a new Python project on Linux?
+O: pip install from a requirements file, pointed at a folder.
+O: export a Python path variable, with a colon instead of equals.
+O: Python 3 with dash M source, which isn't a module.
+O: Python 3 with dash M V env, creating a virtual environment.
+R: Create a virtual environment first so the project's packages stay isolated, then activate it and install packages.
+C: The command is: Python 3, dash M, V env, slash srv, slash apps, slash inventory, slash dot V env.
+
+@ c38
+S: Users keep getting disconnected from a server. Ping to the local gateway loses 93 percent of packets, and the interface shows huge receive and transmit error counts. The route to the gateway looks normal. What should the admin do?
+O: Assign a proper gateway.
+O: Raise the M T U.
+O: Increase ping's T T L.
+O: Replace the network card.
+R: Huge interface error counts with heavy loss to a local gateway point to faulty hardware, so after ruling out the cable, replace the card.
+
+@ c39
+S: A user always forgets the extra options needed to S S H from a jump host to a remote server. What is the best lasting fix?
+O: Put the options in the system-wide S S H config.
+O: Write a connection script in their home folder.
+O: Have the user add the options to their own S S H config file.
+O: Make a shell alias with all the options.
+R: A host block in the user's own S S H config sets those options for that host, so a plain S S H command just works.
+
+@ c41
+S: A developer wants to use an A I tool to speed up code in a product the company sells. What should they do first?
+O: Install a private L L M on the internal network.
+O: Check whether the company has a policy on using A I in development.
+O: Research which A I chatbots are best at optimizing code.
+O: Use open-source L L Ms that the community reviews.
+R: Proprietary code and licensing are at stake, so the company's A I policy comes before anything else.
+
+@ c42
+S: A user needs the latest Alpine Linux image from a docker registry. Which command gets it?
+O: docker image save alpine.
+O: docker image import alpine.
+O: docker image init alpine.
+O: docker image pull alpine.
+R: Pull downloads the image from the registry, and with no tag you get the latest one.
+C: The command is: docker, image, pull, alpine.
+
+@ c43
+S: Which Ansible component holds the list of hosts and host groups to manage?
+O: Collection.
+O: A fact.
+O: Playbook.
+O: Inventory.
+R: The inventory lists the managed hosts and organizes them into groups.
+
+@ c44
+S: An admin gets permission denied when logging in over S S H as root with the right password. Root login at the console works. The S S H D config permits root login but prohibits passwords for it. What will let the admin log in as root over S S H?
+O: Turn PAM on and set up the S S H module.
+O: Move S S H to port 2222.
+O: Log in as root with an S S H key.
+O: Log out other sessions, because only a few are allowed.
+R: Prohibit password lets root log in over S S H, but only with a key, never with a password.
+
+@ c45
+S: An admin manages many Linux servers and needs a reliable, secure way to handle the flood of O S and app log events. What should they do?
+O: Rotate logs on each server.
+O: Set up central log aggregation.
+O: Back up logs to remote storage each day.
+O: Pull logs from each server by hand when needed.
+R: Sending every server's logs to one central system makes them searchable in one place and keeps copies off each host.
+
+@ c46
+S: What is YAML?
+O: A container orchestration engine.
+O: An open-source configuration management tool.
+O: A data format widely used for configuration files.
+O: A package that launches cloud instances.
+R: YAML is a human-readable data format that uses indentation, and tools like Ansible and Kubernetes use it for config.
+
+@ c47
+S: Pick the strongest, most complex password from this list. Each one is a version of rocky road.
+O: Rocky road with zeros for the O's and a 5, no symbols.
+O: Lowercase rocky road with two dollar signs.
+O: Rocky road with a zero, three different symbols and a 5.
+O: Rocky road five, spelled out in letters only.
+R: It mixes upper and lower case, numbers and several symbols, and it's the longest, so it has the most combinations.
+
+@ c48
+S: An admin wants a Debian shell inside a new container. Which command does this?
+O: docker run, interactive with a terminal, from the Debian image.
+O: podman pull, which only downloads the image.
+O: run C exec, which needs a running container.
+O: container D, with arguments it doesn't take.
+R: Docker run creates and starts the container, and dash I T keeps input open with a terminal, so you land in its shell.
+C: The command is: docker, run, dash I T, Debian.
+
+@ c49
+S: An admin is testing a web app in a lab and needs to allow D N S, H T T P and H T T P S from the internal zone, for now only. Which command does this?
+O: I P tables, with an enable service option that doesn't exist.
+O: firewall D itself, which isn't the command to add rules.
+O: firewall C M D, adding the three services to the internal zone, not permanently.
+O: system C T L mask, which would block firewall D.
+R: Firewall C M D adds the services, and without the permanent option they vanish at reload, which suits a test.
+C: The command is: firewall dash C M D, dash dash zone equals internal, dash dash add dash service equals, open brace, D N S comma H T T P comma H T T P S, close brace.
+
+@ c50
+S: Which is an example of a best practice when using A I tools?
+O: Removing sensitive data before sharing it with the tool.
+O: Pasting A I output straight into a root terminal.
+O: Always linting proprietary code with an outside A I service.
+O: Sampling a group of similar users when building a model.
+R: Taking out passwords, personal data and secrets before sending anything to an A I tool keeps them from leaking.
+
+@ c51
+S: A technician wants to use a Linux V M as a temporary router and NAT gateway for the 172 dot 20 dot 8 dot 0 slash 24 network. Which three commands are needed? Pick three answers.
+O: Writing 1 into the proc net T C P file.
+O: I P tables, accepting everything in the forward chain.
+O: I P tables, masquerading in the NAT pre-routing chain.
+O: Writing 1 into the kernel's I P forward setting.
+O: I P tables, masquerading the network in pre-routing.
+O: Writing 0 into the I P forward setting.
+O: I P tables, accepting in a pre-routing chain of the filter table.
+O: I P tables, masquerading the network in the NAT post-routing chain.
+R: The kernel must forward packets, the forward chain must allow them, and post-routing masquerade rewrites the source address.
+C: The commands are: echo 1 into slash proc slash sys slash net slash I P V 4 slash I P underscore forward, I P tables, dash capital A, forward, dash J, accept, and, I P tables, dash T, NAT, dash S, the network, dash capital A, post routing, dash J, masquerade.
+
+@ c52
+S: Which of these helps reduce the attack surface when hardening Linux?
+O: Creating fewer folders.
+O: Making the S S H startup timeout longer.
+O: Enforcing strong, complex passwords.
+O: Customizing the login banner.
+R: Strong password rules make guessing and brute-force attacks much harder, closing off a common way in.
+
+@ c53
+S: What format are Ansible playbooks written in?
+O: X M L.
+O: J SON.
+O: C S V.
+O: YAML.
+R: Playbooks are YAML files, because they are easy for people to read and write.
+
+@ c54
+S: Package installs fail on a Red Hat server with an S S L C A cert error. Updating the C A trust says permission denied writing into the P E M folder. That folder has the E T C label, while the folders next to it have the cert label, and S E Linux is enforcing. What is the best fix?
+O: set enforce 0, turning off S E Linux.
+O: D N F reinstall C A certificates.
+O: restore con, resetting the label on the P E M folder.
+O: touch a C A bundle file in another folder.
+R: The P E M folder has the wrong S E Linux label, so restore con resets it, and then updating the trust works.
+C: The command is: restore con, dash R, slash E T C, slash P K I, slash C A dash trust, slash extracted, slash P E M.
+
+@ c55
+S: A new admin must create a passphrase-protected 4096 bit R S A S S H key. Which command does this?
+O: S S H keygen, making a D S A key.
+O: S S H keygen, with mixed-up options that don't make a key.
+O: S S H keygen, type R S A, 4096 bits.
+O: S S H keygen, with options it doesn't have.
+R: Dash T sets the type and dash B the size, and keygen asks for a passphrase as it makes the key.
+C: The command is: S S H dash keygen, dash T, R S A, dash B, 4096.
+
+@ c56
+S: An admin has uncommitted changes in a git repo, but needs to pull the latest remote changes first. Which command saves the local changes aside for later?
+O: git merge.
+O: git fetch.
+O: git stash.
+O: git pull.
+R: Stash saves the uncommitted changes and cleans the folder, and stash pop brings them back after pulling.
+C: The command is: git stash.
+
+@ c57
+S: In I T infrastructure, what is Ansible mainly used for?
+O: Managing databases.
+O: Configuration management.
+O: Managing processes.
+O: Managing assets.
+R: Ansible sets up servers and keeps them in the desired state from playbooks, over S S H, without agents.
+
+@ c58
+S: An admin needs to check whether port 8443 is open on the local server. Which command does this?
+O: trace path to local host, which traces a route.
+O: dig local host, which looks up names.
+O: I P link, which shows interfaces.
+O: S S with dash A N, piped into grep for 8443.
+R: S S lists sockets, including listening ones, so grep shows any socket using port 8443.
+C: The command is: S S, dash A N, pipe, grep, 8443.
+
+@ c59
+S: A script echoes a file name built from the word file, a number variable called num, and a name variable, joined with underscores. But the number never shows up. Which change makes num expand correctly?
+O: Single quotes, so nothing expands at all.
+O: Parentheses around num, which run it as a command.
+O: Braces around num, so the shell knows where the name ends.
+O: Mixed quotes, so the name is left unexpanded.
+R: The shell reads num underscore as one empty variable name, and braces mark where the name ends.
+C: The command is: echo, quote, file underscore, dollar, open brace, num, close brace, underscore, dollar name, quote.
+
+@ c60
+S: Which protocol is used to monitor network devices like switches and routers?
+O: S M T P.
+O: D H C P.
+O: S N M P.
+O: D N S.
+R: The simple network management protocol lets monitoring tools read device stats and receive alerts.
+
+@ c61
+S: New D N S servers were added to the network. Which file on a Linux client lists the D N S servers to use?
+O: The host conf file.
+O: The sys C T L conf file.
+O: The N S switch conf file.
+O: The resolv conf file.
+R: The resolv conf file holds the name server lines for the D N S servers to query.
+
+@ c62
+S: While testing a new web app, an admin runs curl with the insecure option. The output shows a valid certificate from a corp internal C A, but the check says unable to get local issuer certificate, continuing anyway. What do the results show?
+O: It is a wildcard certificate and is insecure.
+O: It isn't signed by a trusted C A, and the check was skipped on purpose.
+O: It uses an outdated algorithm.
+O: It is expired and must be replaced.
+R: The signing C A isn't in the trusted store, and continuing anyway is the insecure option skipping the check.
+
+@ c63
+S: What is PEP 8?
+O: The Python package installer.
+O: The style guide for Python code.
+O: A Python variable that holds octal values.
+O: Python virtual environments.
+R: PEP 8 sets out conventions like indents, naming and line length, so Python code is consistent.
+
+@ c64
+S: An admin updated the D N S zone for corp dot example, but the app name still resolves to its old address. The zone file has the new address, while N S lookup gets a non-authoritative answer with the old one from the local stub resolver. Which command gets the updated address?
+O: resolve C T L status.
+O: resolve C T L query, for the app name.
+O: service N S L C D reload.
+O: resolve C T L flush caches.
+R: The old answer comes from the local resolver's cache, so flushing it makes the next lookup ask again.
+C: The command is: resolve C T L, flush dash caches.
+
+@ c65
+S: A dev ops engineer needs to start a brand new local git repository. Which command does this?
+O: git init.
+O: git config.
+O: git clone.
+O: git add.
+R: Git init creates the hidden git folder, turning the current folder into a new repository.
+C: The command is: git init.
+
+@ c66
+S: What is the name for gathering system events from many machines into one central place?
+O: Webhooks.
+O: Log aggregation.
+O: Threshold monitoring.
+O: Health checks.
+R: Log aggregation collects logs from many systems into one place for searching and alerts.
+
+@ c67
+S: What is the role of init R D, or init ram F S?
+O: It is needed to connect over S S H.
+O: It holds the system's trusted certificates and secret keys.
+O: It is needed to set up a random device.
+O: It holds the basic modules and drivers needed to start the system.
+R: It's a small temporary root file system with the drivers needed to find and mount the real root file system.
+
+@ c68
+S: An admin must rename a server to edge 01, and the name must survive reboots. Which command does this?
+O: system C T L daemon reload, with a host option.
+O: echo, appending the name to resolv conf.
+O: host name C T L, set host name, edge 01.
+O: export a host name variable, which is gone after logout.
+R: Host name C T L writes the name to the host name file so it lasts, and applies it right away.
+C: The command is: host name C T L, set dash host name, edge 01.
+
+@ c69
+S: An admin troubleshoots a network error. Ping says name or service not known. The resolv conf file contains only a comment, and the routes, including the default route, look fine. What causes the error?
+O: The network adapter is down.
+O: The default route is missing.
+O: No D N S resolver is configured.
+O: The netmask is wrong.
+R: Resolv conf has no name server lines, so names cannot be looked up.
+
+@ c70
+S: How would you sum up what Ansible is?
+O: A tool for monitoring cloud infrastructure.
+O: A configuration tool with its own Ruby-based language.
+O: A C I C D tool that automates with pipelines.
+O: An automation tool that uses playbooks written in YAML.
+R: Ansible runs YAML playbooks against hosts from its inventory, over S S H, with no agent needed.
+
+@ c71
+S: Which best describes PEP 8?
+O: A list of built-in Python modules.
+O: A data structure in Python.
+O: A set of coding conventions for Python code.
+O: A name for the standard Python libraries.
+R: PEP 8 is Python's official style guide, covering layout, naming and other conventions.
+
+@ c72
+S: An admin adds a web service on port 80. Which command lets other systems reach it, and keeps working after the server restarts?
+O: firewall C M D, adding a port named H T T P with a full reload.
+O: firewall C M D, adding the H T T P service for now only.
+O: firewall C M D, adding H T T P together with reload.
+O: firewall C M D, adding the H T T P service permanently.
+R: The permanent option saves the rule in the config so it loads at every boot, and one reload applies it now.
+C: The command is: firewall dash C M D, dash dash add dash service equals H T T P, dash dash permanent.
+
+@ c73
+S: Network throughput on a server is poor. The interface uses jumbo frames, with an M T U of 9000, but a 1500 byte ping with don't fragment set is refused, because the path only allows 1400. What is the cause?
+O: A duplex setting problem.
+O: A driver problem.
+O: An M T U mismatch.
+O: Hardware limits.
+R: Packets too big for the path get dropped or broken up, so the M T U must match along the path.
+
+@ c74
+S: What is J SON?
+O: A text format for exchanging data between systems.
+O: A platform for creating isolated environments.
+O: A programming language for building dynamic websites.
+O: A technique for simulating whole computers.
+R: J SON stores data as key value pairs and lists in plain text, and A P Is and config files use it widely.
+
+@ c75
+S: A port scan during hardening shows telnet open on port 23, along with H T T P, H T T P S and an H T T P proxy port. What is the best way to deal with the security issue?
+O: Close port 80 on the network switch.
+O: Block port 23 with a firewall.
+O: Disable and remove the telnet service.
+O: Change the admin's password.
+R: Telnet sends everything, passwords included, as plain text, so removing it takes away the risk entirely.
+
+@ c76
+S: An app cannot reach a remote Postgres server. Which command checks that the database port is reachable?
+O: S S, which lists local sockets only.
+O: N C with dash V, connecting to the server on port 5432.
+O: dig for an M X record, which looks up mail servers.
+O: A R P, which lists local hardware addresses.
+R: N C dash V tries a T C P connection to that host and port, and reports whether it worked.
+C: The command is: N C, dash V, P G dot corp dot example, 5432.
+
+@ c77
+S: Users cannot reach an app that runs in containers. How can the admin check which containers are running?
+O: docker images.
+O: docker start.
+O: docker P S.
+O: docker run.
+R: Docker P S lists the running containers with their status, ports and names.
+C: The command is: docker, P S.
+
+@ c78
+S: A print server running CUPS on T C P port 631 should accept connections only from the local network, 10 dot 12 dot 0 dot 0 slash 24. Which I P tables rule does this?
+O: Input chain, accepting T C P to port 631 from that source network.
+O: Output chain, matching outgoing replies instead of incoming connections.
+O: Dash capital D, which deletes a rule instead of adding one.
+O: Output chain, with the network as the source.
+R: Incoming traffic uses the input chain, and the rule accepts T C P to port 631 only from that network.
+C: The command is: I P tables, dash capital A, input, dash S, 10 dot 12 dot 0 dot 0 slash 24, dash P, T C P, dash dash D port, 631, dash J, accept.
+
+@ c79
+S: How is a user's public key used during S S H key login?
+O: It is used to hash the password.
+O: It encrypts all traffic between client and server.
+O: It is simply used instead of a password.
+O: The server checks it against its authorized keys, and a match allows login.
+R: The server finds the key in authorized keys, the client proves it has the matching private key, and login is allowed.
+
+@ c80
+S: Which tool securely deletes a file holding secrets by overwriting its data, so it cannot be recovered?
+O: unlink.
+O: D D.
+O: R M.
+O: shred.
+R: Shred overwrites a file's data several times, and with dash U it then deletes it.
+C: The command is: shred, dash U, followed by the file name.
+
+@ c81
+S: What keeps a disk encrypted while it is not in use?
+O: L U K S.
+O: G P G.
+O: Open S S L.
+O: P K I certificates.
+R: LUKS is the standard Linux disk encryption format, and the disk stays encrypted until it's unlocked.
+
+@ c82
+S: An admin checks a host on the local network. Ping gets no replies at all, but curl to its web status page gets a real H T T P 403 forbidden reply. What can the admin conclude?
+O: The web server must be restarted.
+O: The host is denying T C P on port 80.
+O: The host only uses I P V 6.
+O: The host is blocking I C M P requests.
+R: The web server answers over T C P, so the host is up, and ping getting nothing back means I C M P is blocked.
+
+@ c83
+S: A server will not boot because files in slash boot are corrupted. After the grub menu it shows decompressing Linux, C R C error, system halted. Which two steps recover it without wiping the existing install? Pick two answers.
+O: Reinstall the O S.
+O: Boot the system from rescue media.
+O: Replace the hard drive.
+O: Add more swap.
+O: Reinstall the kernel packages.
+O: Boot into single user mode.
+R: The kernel can't unpack, so boot from rescue media, then reinstall the kernel to rewrite the damaged boot files.
+
+@ c84
+S: An engineer wants to record staged changes as a new snapshot in a local git repository. Which command does this?
+O: git clone.
+O: git add.
+O: git commit.
+O: git push.
+R: Commit saves the staged changes as a new commit with a message.
+C: The command is: git commit, dash M, followed by a message.
+
+@ c85
+S: Which tool helps automate security compliance checks and vulnerability management against standard profiles?
+O: AIDE.
+O: Open SCAP.
+O: S E Linux.
+O: N map.
+R: Open SCAP scans systems against security profiles, reports what fails, and can generate fixes.
+
+@ c86
+S: Users cannot log in through a directory server. An N map scan shows S S H filtered, R P C bind open, the secure L dap port 636 closed, and the plain L dap port among the closed ports. What is the cause of the login problem?
+O: S S H packets are being dropped.
+O: A firewall is blocking the L dap server.
+O: The L dap service is not running on the server.
+O: The L dap S certificate is not trusted.
+R: Closed means the host is reachable but nothing is listening, so the L dap service isn't running.
+
+@ c87
+S: A web server will not start. Nginx says it cannot load the key file in the private folder, no such file. The listing shows the key is in the nginx P K I folder itself, and the private folder is empty. Why won't the service start?
+O: The key must be renamed from server dot C R T to server dot key.
+O: The private key is in the wrong place and must move into the private folder.
+O: The private key's permissions should be 0 7 5 5.
+O: The private key does not match the certificate.
+R: Nginx looks for the key inside the private folder, but it sits one folder up, and the private folder is empty.
+C: The command is: M V, slash E T C, slash P K I, slash nginx, slash server dot key, into the private folder.
+
+@ c88
+S: Users report that an N F S share keeps dropping. The share is 78 percent full, and the network interface shows thousands of receive and transmit errors and dropped packets. What best explains the symptoms?
+O: The interface shows a high number of errors and dropped packets.
+O: The N F S server's I P address is wrong.
+O: The file system is nearly full.
+O: The mount point is wrong.
+R: Thousands of errors and drops mean the network link is unreliable, so N F S traffic gets lost.
+
+@ c89
+S: An admin wants to keep a secure, up-to-date mirror of the app folder on a staging server. Which command does this?
+O: S C P with dash S, which copies everything every time.
+O: R sync with dash A V Z, to deploy at the staging server.
+O: R sync with dry run and a mangled S S H option.
+O: S C P with dash P S, which still copies everything.
+R: R sync copies only what changed, keeps permissions and times, and the user at host form makes it go over S S H.
+C: The command is: R sync, dash A V Z, slash srv, slash app, deploy at stage 01 dot corp dot example, colon, slash srv.
+
+@ c90
+S: Which docker file instruction makes the worker program in user bin run whenever a new container starts?
+O: On build.
+O: Expose.
+O: From.
+O: Entry point.
+R: Entry point sets the main program the container runs every time it starts.
+C: The instruction is: entry point, open bracket, quote, slash user, slash bin, slash worker, quote, close bracket.
+
+@ c91
+S: An admin needs to create a container from the billing image and get an interactive shell in it. Which command does this?
+O: docker exec, which needs a running container.
+O: docker build, which builds images.
+O: docker run, interactive with a terminal, from the billing image.
+O: docker start, which only starts existing containers.
+R: Docker run creates and starts a new container, and dash I T connects you to an interactive terminal.
+C: The command is: docker, run, dash I T, billing dash image.
+
+@ c92
+S: Which is a responsible use of a public generative A I service by a systems admin?
+O: Fixing typos in medical records.
+O: Linting proprietary source code from the company's git repo.
+O: Building a regular expression from anonymized sample data.
+O: Reviewing the security of production server config files.
+R: With names and secrets removed nothing sensitive is shared, and help with a regular expression is low risk.
+
+@ c93
+S: For a live migration of a V M between two hosts, which two things must match on both hosts? Pick two answers.
+O: Network speed.
+O: Available memory.
+O: C P U architecture.
+O: Available swap.
+O: Disk storage path.
+O: U S B ports.
+R: The running V M already uses the C P U's instructions and keeps using its disk, so both must match on the new host.
+
+@ c94
+S: An admin must check, from another machine, whether an app on 10 dot 44 dot 7 dot 21 answers on T C P port 9090. Which command does this?
+O: S S H to that port, which expects an S S H server.
+O: trace route, with the port joined to the address.
+O: T C P dump, which only watches traffic.
+O: N C with dash V, to that address and port.
+R: N C dash V tries a T C P connection to that address and port, and reports success or failure.
+C: The command is: N C, dash V, 10 dot 44 dot 7 dot 21, 9090.
+
+@ c95
+S: Which command converts a K V M disk image from one format to another, such as raw to Q cow 2?
+O: Q emu image.
+O: Q emu I O.
+O: Q emu K V M.
+O: Q emu N B D.
+R: Q emu image convert changes image formats, and it also creates, resizes and inspects images.
+C: The command is: Q emu dash image, convert, dash F, raw, dash capital O, Q cow 2, followed by the input and output files.
+
+@ c96
+S: An admin is setting up two new servers and wants passwordless login from this one to server 2, as user Maya. Which command does this?
+O: S S H agent with a made-up option, then copy I D.
+O: S S H keygen, then copy I D with the new public key to Maya.
+O: S S H keyscan, which only collects host keys.
+O: S S H add, then copying the whole S S H folder.
+R: Keygen makes the key pair, and copy I D adds the public key to Maya's authorized keys on server 2.
+C: The command is: S S H dash keygen, dash T, R S A, and then, S S H dash copy dash I D, dash I, tilde, slash dot S S H, slash I D underscore R S A dot pub, Maya at server 2.
+
+@ c97
+S: An admin needs to securely wipe everything on the S D C disk. Which command is best?
+O: D D from dev null, which writes nothing.
+O: R M on the partition's device file, which only deletes the file.
+O: parted, removing partition 1, which leaves the data.
+O: shred, on the whole disk.
+R: Shred overwrites the whole device several times with random data, so the old contents can't be recovered.
+C: The command is: sue doo, shred, slash dev, slash S D C.
+
+@ c98
+S: A script should print clean only when the word error appears zero times in a log. It tests the count from grep dash C against 0, with a blank for the operator. Which operator belongs in the blank?
+O: Greater than.
+O: Equal to.
+O: Not equal to.
+O: Less than.
+R: Grep dash C prints how many lines contain error, and the equal test is true only when that count is 0.
+C: The operator is: dash E Q.
+
+@ c99
+S: What is journal D?
+O: A service that creates crash dumps when the kernel fails.
+O: The service that keeps the file system journal.
+O: A service that writes audit records to disk.
+O: A system service that collects and stores logs.
+R: Journal D gathers messages from the kernel, services and programs, and stores them in a journal you read with journal C T L.
+
+@ c100
+S: Which PAM module can be used to spot and block repeated password guessing, or dictionary, attacks?
+O: PAM Unix.
+O: PAM tally 2.
+O: PAM L dap.
+O: PAM limits.
+R: PAM tally 2 counts failed logins and locks the account after a set number, and newer systems use PAM fail lock instead.

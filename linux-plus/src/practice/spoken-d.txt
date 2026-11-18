@@ -1,0 +1,203 @@
+# Spoken scripts for bank d. Format: see spoken-a.txt.
+
+@ d1
+S: Last night a patch run installed a new kernel on a database node, but nobody has rebooted it yet. Before scheduling the maintenance window, the admin wants to confirm which kernel release is running right now. Which command shows this?
+O: R P M query for kernel, which lists installed kernels.
+O: cat on the O S release file, which shows the distribution.
+O: you name with dash R, showing the running kernel release.
+O: L S on slash boot, which lists installed kernel files.
+R: You name dash R prints the release of the kernel running in memory, which stays the old one until a reboot.
+C: The command is: you name, dash R.
+
+@ d2
+S: A file server needs to share the projects folder with the 10 dot 20 dot 30 dot 0 slash 24 network as read-write over N F S. The admin adds a line for it to the exports file, but clients still can't see the share. What should the admin run next so the N F S server picks up the change without a reboot?
+O: mount dash A, which mounts the F S tab entries.
+O: export F S with dash R A, re-exporting everything.
+O: show mount, which only lists exports.
+O: system C T L daemon reload, which rereads unit files.
+R: Export F S dash R A rereads the exports file and re-exports every folder in it, so the new share appears right away.
+C: The command is: export F S, dash R A.
+
+@ d3
+S: The name shop dot example dot net has three A records, each pointing to a different web server. The site loads fine most of the time, but roughly one visit in three fails. What is the most likely cause?
+O: The D N S cache on every client has expired.
+O: The domain has too many A records, so lookups time out.
+O: D N S rotates the three addresses, and one server behind them is down.
+O: The clients are sending their lookups to the wrong port.
+R: With round robin, clients that get the dead server's address first fail, so a share of visits fail.
+
+@ d4
+S: The admin added dev 3 to the docker group with user mod while dev 3 was logged in. Right away, I D in dev 3's terminal shows no docker group, but I D for the account shows docker. Without logging out, which command lets dev 3 start using the docker group in the current terminal?
+O: source the group file, which isn't a script.
+O: new group docker.
+O: user mod with capital G only, which replaces the groups.
+O: groups docker, which only lists groups.
+R: New group starts a new shell with docker as the active group, so that shell gets the membership right away.
+C: The command is: new group, docker.
+
+@ d5
+S: A desktop app running as a normal user asks a system service to mount a U S B drive, and the system decides based on a set of authorization rules. P K exec uses the same framework to run a command as another user. What is this framework?
+O: S E Linux.
+O: Sudoers.
+O: Pol kit.
+O: PAM.
+R: Pol kit holds the rules for normal processes asking privileged services to act, and P K exec is its command line tool.
+
+@ d6
+S: An admin wrote a script, made it executable, and runs it as dot slash rotate logs. It must always run in bash, whatever the user's login shell is. What should the first line of the file be?
+O: A hash and the word bash, which is just a comment.
+O: Bang then hash, the wrong way round, then slash bin slash bash.
+O: Hash bang, slash bin slash bash.
+O: Export shell equals slash bin slash bash.
+R: The shebang line tells the kernel to run the file with bash, no matter which shell the user is in.
+C: The line is: hash, bang, slash bin, slash bash.
+
+@ d7
+S: A container named checkout A P I keeps returning errors. The admin wants to watch its log output live as new lines arrive. Which command does this?
+O: docker P S dash A, which lists containers.
+O: docker container logs, following with dash F.
+O: docker exec, running tail with no file.
+O: docker inspect, which shows settings.
+R: Docker container logs prints the container's output, and dash F keeps following new lines.
+C: The command is: docker, container, logs, dash F, checkout dash A P I.
+
+@ d8
+S: Reports are taking much longer than usual on an analytics server. N proc shows 4 C P Us, the load average is about 11, and M P stat shows 93 percent user time with no idle time and no I O wait. What is the problem?
+O: The disks are too slow, so processes wait on storage.
+O: The C P Us are saturated, with load far above 4 and no idle time.
+O: The server is low on memory and is swapping.
+O: The kernel is using too much C P U time.
+R: A load of about 11 on 4 C P Us means work is queuing for the processors, and there's no idle time left.
+
+@ d9
+S: Copies to a file server never go faster than about 12 megabytes per second, even though it has a gigabit card. E T H tool shows the link at 100 megabits, full duplex, with auto-negotiation off. Which command fixes the link speed?
+O: I P link, setting the M T U to 9000.
+O: E T H tool with dash I, which shows driver info.
+O: E T H tool, setting speed 1000, full duplex, with auto-negotiation on.
+O: I P link set up, which only brings the link up.
+R: The link is stuck at 100 megabits, and setting gigabit with auto-negotiation on lets it run at full speed.
+C: The command is: E T H tool, dash S, E N O 1, speed 1000, duplex full, auto neg on.
+
+@ d10
+S: A help desk tech needs the home folder and login shell of the account R Morales. The account may come from local files or from L dap. Which command gives both in one line?
+O: cat the password file, piped into grep.
+O: I D, which shows only I Ds and groups.
+O: get ent password, for R Morales.
+O: finger dash S, which lists logged-in users.
+R: Get ent asks every account source, local or L dap, and its line ends with the home folder and shell.
+C: The command is: get ent, password, R Morales.
+
+@ d11
+S: A new server should be known as web east 07. The change must take effect right away and still be there after a reboot. Which command does this?
+O: host name, which only changes it until reboot.
+O: host name C T L, set host name.
+O: echo into the kernel's host name file, which is lost at reboot.
+O: time date C T L, which has no host name option.
+R: Host name C T L writes the new name to the host name file and applies it right away.
+C: The command is: host name C T L, set dash host name, web dash east dash 07.
+
+@ d12
+S: On an Ubuntu server, an accounting app only works with the exact version of lib P Q 5 installed now. The admin wants normal apt upgrades to keep running but skip that one package. Which command does this?
+O: apt remove, which deletes the package.
+O: apt get upgrade, with an option that doesn't exist.
+O: apt mark hold, for lib P Q 5.
+O: apt mark auto, which only marks it as a dependency.
+R: A held package is skipped during upgrades, so it stays at its current version while everything else updates.
+C: The command is: apt dash mark, hold, lib P Q 5.
+
+@ d13
+S: A vendor sent a file called logs dot bin with no clear format. The file command says it is a 7 zip archive. Which command extracts it?
+O: tar, extracting as a gzip tarball.
+O: C P I O, extracting as a C P I O archive.
+O: gunzip, for gzip files.
+O: 7 Z A with E, extracting the 7 zip archive.
+R: The file command reads the signature and says 7 zip, and 7 Z A E extracts a 7 zip archive.
+C: The command is: 7 Z A, E, logs dot bin.
+
+@ d14
+S: A contractor's account, P Kline, is being disabled, and the contractor still has several programs running on the server. Which command stops every process owned by P Kline at once?
+O: kill dash 9, given a user name instead of a process number.
+O: P kill with dash U, for the user P Kline.
+O: kill all with the hang up signal, given a user name.
+O: P S with dash U, which only lists the processes.
+R: P kill dash U matches every process owned by that user and signals them all together.
+C: The command is: P kill, dash U, P Kline.
+
+@ d15
+S: An admin started a long report in the background with an ampersand, then ran other commands. Now they want the report back in the foreground of the same terminal. Which commands do this? Pick two answers.
+O: jobs.
+O: no hup.
+O: F G, percent 1.
+O: B G, percent 1.
+O: disown, percent 1.
+R: Jobs lists this shell's background jobs with their numbers, and F G percent 1 brings job 1 to the foreground.
+C: The commands are: jobs, then, F G, percent 1.
+
+@ d16
+S: When a server boots, the catalog app service sometimes starts before the Postgres database is ready, then crashes. Both start at boot. Which change in the catalog service makes system D start it after the database?
+O: Add requires Postgres in the install section.
+O: Add after Postgres in the unit section.
+O: Add before Postgres in the unit section.
+O: Add wanted by Postgres in the install section.
+R: An after setting in the unit section sets the start order, so system D starts Postgres first.
+C: The line is: after equals Postgres Q L dot service, in the unit section.
+
+@ d17
+S: Before rebooting a shared jump host, the admin wants to see who is logged in, what each person is running, and which I P address each session came from. Which command shows all of this?
+O: who am I.
+O: last with dash X.
+O: W with dash I.
+O: I D with dash A.
+R: W lists logged-in users with what each is running, and dash I shows each session's I P address.
+C: The command is: W, dash I.
+
+@ d18
+S: The D N S record for the intranet site moved to a new address an hour ago, but one Linux workstation still connects to the old server. N S lookup gets a non-authoritative answer with the old address from the local stub resolver. The workstation uses system D resolved. Which command makes it fetch the new address?
+O: system C T L restart S S H D.
+O: resolve C T L flush caches.
+O: echo a name server line into the hosts file.
+O: I P route flush cache.
+R: The old answer came from a cache, so flushing system D resolved's cache forces a fresh lookup.
+C: The command is: resolve C T L, flush dash caches.
+
+@ d19
+S: A new server must match an old one. The group finance must have group I D 4100, and the user Ana must have user I D 4100, with finance as her primary group and a home folder. Which commands do this, in order?
+O: User add first, with wrong options, then group add.
+O: Group add without a G I D, then user add with no home folder.
+O: Group add with 4100, then user add with matching numbers and a home folder.
+O: User add first, before the group exists, then group add.
+R: The group must exist first with its G I D, then user add sets the U I D, primary group and home folder.
+C: The commands are: group add, dash G, 4100, finance, then, user add, dash U, 4100, dash G, 4100, dash M, Ana.
+
+@ d20
+S: After a website moved to a new server, everything in the var www shop folder is still owned by the old account. It should be owned by the user web ops and the group nginx, including every file and subfolder. Which command does this?
+O: C H mod, recursively, which changes permissions not owners.
+O: C H group, recursively, given a user and group.
+O: C H own, with no recursive option.
+O: C H own, recursively, to web ops and nginx.
+R: C H own sets owner and group together, and dash R applies it to everything inside the folder.
+C: The command is: C H own, dash R, web ops colon nginx, slash var, slash www, slash shop.
+
+@ d21
+S: An admin often connects to the build server as user C I, on S S H port 2202. They want to type just S S H build and get the same connection. Where and how should this be set up?
+O: Add an alias line for build to the hosts file.
+O: A host build block in their own S S H config, with name, user and port.
+O: Set the port and user in the S S H D config on the laptop.
+O: Add build to the authorized keys file.
+R: The S S H client applies the settings in the matching host block of the user's config, so S S H build just works.
+
+@ d22
+S: An admin compares two versions of a config file. Diff says lines 2 to 3 were deleted, showing cache off and debug true from the old file, then a line was added after line 4, workers equals 8, from the new file. What does this output mean?
+O: Lines 2 and 3 were added to the new file, and line 4 was deleted.
+O: The files are the same except for the order of the lines.
+O: Old lines 2 and 3 are gone from the new file, and workers 8 was added.
+O: Workers 8 replaced debug true on line 3.
+R: The D means old lines 2 to 3 were deleted, and the A means a line was added after old line 4.
+
+@ d23
+S: A web app runs in a Kubernetes deployment with several pods. Pods are replaced often and get new I P addresses each time. Other apps in the cluster need one address and port that always reaches the web pods. What should the admin create?
+O: A config map that lists the current pod I P addresses.
+O: A service, such as a cluster I P service, that selects the web pods.
+O: A persistent volume.
+O: A new namespace for the web app.
+R: A service gives the matching pods one stable address and port, and sends traffic to whichever pods are running.

@@ -15,4 +15,11 @@ assert.equal(red.headers.get("x-frame-options"), "SAMEORIGIN");
 // route-set header is not overridden
 const keep = withSecurityHeaders(new Response("", { headers: { "x-frame-options": "DENY" } }));
 assert.equal(keep.headers.get("x-frame-options"), "DENY");
+// microphone: only the Linux+ practice pages may use it, and only for this site
+assert.match(r.headers.get("permissions-policy"), /microphone=\(\)/);
+const lp = withSecurityHeaders(new Response("ok"), "/linux-plus/practice/");
+assert.match(lp.headers.get("permissions-policy"), /microphone=\(self\)/);
+assert.match(lp.headers.get("permissions-policy"), /camera=\(\)/);
+assert.match(withSecurityHeaders(new Response("ok"), "/study/").headers.get("permissions-policy"), /microphone=\(\)/);
+assert.match(withSecurityHeaders(new Response("ok"), "/linux-plusx").headers.get("permissions-policy"), /microphone=\(\)/);
 console.log("headers tests ok");

@@ -3,12 +3,15 @@ import type { CSSProperties, ReactNode } from "react";
 import { PRESETS, clampCount, drawExam, formatClock, missedIds, optionOrder, recordExam, timeLimitSeconds } from "./exam";
 import type { Seen } from "./exam";
 import { useVoice } from "./handsfree";
-import { RATE_MAX, RATE_MIN, clampRate, feedbackScript, parseHeard, questionScript, speakable } from "./voice";
-import type { Heard } from "./voice";
+import { RATE_MAX, RATE_MIN, clampRate, feedbackScript, questionScript, speakable } from "./voice";
+import { HandsFreeFlow } from "./flow";
+import type { FlowHost } from "./flow";
+import { clipUrls, feedbackParts, promptParts, questionParts, shownAnswer, textOnly } from "./spoken";
+import type { Part, Spoken, VoicePack } from "./spoken";
 
 export type Block = { t: "p" | "code"; v: string };
-export type PQ = { id: string; stem: Block[]; options: { text: string; why: string }[]; answer: number[] };
-type Data = { version: number; total: number; questions: PQ[] };
+export type PQ = { id: string; stem: Block[]; options: { text: string; why: string }[]; answer: number[]; spoken?: Spoken };
+type Data = { version: number; total: number; questions: PQ[]; voice?: VoicePack };
 type Ans = { picked: number[]; ok: boolean };
 type Exam = { no: number; ids: string[]; answers: Record<string, Ans>; idx: number; startedAt: number; limit: number; review: boolean };
 type Result = Exam & { finishedAt: number; timedOut: boolean };
@@ -160,90 +163,88 @@ export default function PracticeTests() {
   });
 
 
-  // ---------- Hands-free: read aloud, listen for answers ----------
+  // ---------- Hands-free: read aloud (recorded voice, device voice as fallback), listen for answers ----------
   const vc = useVoice();
   vcRef.current = vc;
-  const hf = vc.settings.on && vc.synth;
+  const hf = vc.settings.on && (vc.synth || vc.audio);
+  const pack = data?.voice ?? null;
   const [hfStatus, setHfStatus] = useState<"idle" | "speaking" | "listening" | "waiting" | "paused" | "blocked">("idle");
   const [hfPaused, setHfPaused] = useState(false);
   const [heard, setHeard] = useState<{ text: string; meaning: string } | null>(null);
   const [nonce, setNonce] = useState(0);
-  const silence = useRef(0);
-  const autoNext = useRef(0);
   const qOrder = q && exam ? optionOrder(`${exam.no}:${q.id}`, q.options.length) : [];
   const live = useRef<{ q: PQ | null; exam: typeof exam; answered: Ans | undefined; order: number[]; submit: (p: number[]) => void; next: () => void }>(null as any);
   live.current = { q, exam, answered, order: qOrder, submit, next };
 
-  const hfSay = (parts: string[], then?: () => void) => { setHfStatus("speaking"); vc.engine.speak(parts, () => { if (then) then(); else setHfStatus("idle"); }); };
-  const hfListen = () => {
-    if (!vc.listenable) { setHfStatus("waiting"); return; }
-    setHfStatus("listening");
-    const ok = vc.engine.listen((alts) => onHeard(alts), (why) => {
-      if (why === "result") return;
-      if (why === "blocked") { setHfStatus("blocked"); return; }
-      if (why === "silence" && silence.current < 2) { silence.current++; hfListen(); return; }
-      setHfStatus("waiting");
-    });
-    if (!ok) setHfStatus("waiting");
+  /** Recorded clips when the recorded voice is on, otherwise the same words read by the device voice. */
+  const voiced = (parts: Part[]) => (vc.settings.recorded && pack ? parts : textOnly(parts));
+  const qParts = (lq: PQ, order: number[]): Part[] => lq.spoken && pack
+    ? voiced(questionParts(lq.spoken, order, pack))
+    : questionScript(lq.stem, order.map((i) => lq.options[i].text), lq.answer.length).map((text) => ({ text }));
+  const fParts = (lq: PQ, order: number[], ok: boolean): Part[] => {
+    if (lq.spoken && pack) return voiced(feedbackParts(lq.spoken, order, lq.answer, ok, pack));
+    const why = order.filter((o) => lq.answer.includes(o)).map((o) => lq.options[o].why).join(" ");
+    return [{ text: feedbackScript(ok, shownAnswer(order, lq.answer), why) }];
   };
-  const letterList = (n: number) => { const l = LETTERS.slice(0, n).split(""); return `${l.slice(0, -1).join(", ")} or ${l[l.length - 1]}`; };
-  const onHeard = (alts: string[]) => {
-    const L = live.current;
-    if (!L.q) return;
-    const need = L.q.answer.length;
-    let h: Heard = { kind: "unknown" }, text = alts[0] || "";
-    for (const a of alts) { const r = parseHeard(a, L.q.options.length, need); if (r.kind !== "unknown") { h = r; text = a; break; } }
-    silence.current = 0;
-    if (h.kind === "answer") {
-      setHeard({ text, meaning: h.picks.map((p) => LETTERS[p]).join(" and ") });
-      if (L.answered) { hfSay(["That one is already answered. Say next to continue."], hfListen); return; }
-      if (h.picks.length !== need) { hfSay([`This question needs ${need === 2 ? "two" : "three"} answers, for example A and C.`], hfListen); return; }
-      L.submit(h.picks.map((p) => L.order[p]));
-      return;
-    }
-    if (h.kind === "command") {
-      setHeard({ text, meaning: h.command });
-      if (h.command === "repeat") setNonce((n) => n + 1);
-      else if (h.command === "next" || h.command === "skip") L.next();
-      else if (h.command === "pause") { vc.engine.cancel(); setHfPaused(true); }
-      else { vc.engine.cancel(); vc.setSettings((st) => ({ ...st, on: false })); }
-      return;
-    }
-    setHeard({ text, meaning: "not understood" });
-    hfSay([`Sorry, I didn't catch that. Say ${letterList(L.q.options.length)}, or say repeat.`], hfListen);
+  const flowRef = useRef<HandsFreeFlow | null>(null);
+  const hostRef = useRef<FlowHost>(null as any);
+  hostRef.current = {
+    canListen: vc.listenable,
+    optionCount: () => live.current.q?.options.length ?? 4,
+    need: () => live.current.q?.answer.length ?? 1,
+    questionParts: () => { const L = live.current; return L.q ? qParts(L.q, L.order) : []; },
+    feedbackParts: () => { const L = live.current; return L.q && L.answered ? fParts(L.q, L.order, L.answered.ok) : []; },
+    prompt: (key) => voiced(promptParts(pack, key, live.current.q?.options.length ?? 4)),
+    submit: (picks) => { const L = live.current; L.submit(picks.map((p) => L.order[p])); },
+    next: () => live.current.next(),
+    pause: () => setHfPaused(true),
+    stop: () => vc.setSettings((st) => ({ ...st, on: false })),
+    status: (st) => setHfStatus(st),
+    heard: (text, meaning) => setHeard({ text, meaning }),
   };
+  if (!flowRef.current) {
+    const host = new Proxy({} as FlowHost, { get: (_t, k) => (hostRef.current as any)[k] });
+    flowRef.current = new HandsFreeFlow(vc.engine, host, { set: (fn, ms) => window.setTimeout(fn, ms), clear: (t) => window.clearTimeout(t), now: () => Date.now() });
+  }
+  const flow = flowRef.current;
   const hfKey = hf && !hfPaused && q && exam && !showResult ? `${exam.no}:${exam.idx}:${answered ? "a" : "q"}:${nonce}` : "";
   useEffect(() => {
-    clearTimeout(autoNext.current);
-    if (!hfKey) { vc.engine.cancel(); setHfStatus(hf && hfPaused ? "paused" : "idle"); return; }
+    if (!hfKey) { flow.cancel(); setHfStatus(hf && hfPaused ? "paused" : "idle"); return; }
     const L = live.current;
     if (!L.q || !L.exam) return;
-    const lq = L.q, lex = L.exam;
     if (!L.answered) {
-      silence.current = 0;
       setHeard(null);
-      hfSay(questionScript(lq.stem, L.order.map((i) => lq.options[i].text), lq.answer.length), hfListen);
-    } else {
-      const letters = L.order.map((o, pos) => (lq.answer.includes(o) ? LETTERS[pos] : "")).join("");
-      const why = L.order.filter((o) => lq.answer.includes(o)).map((o) => lq.options[o].why).join(" ");
-      hfSay([feedbackScript(L.answered.ok, letters, why)], () => {
-        setHfStatus("idle");
-        autoNext.current = window.setTimeout(() => { const c = live.current; if (c.exam && c.exam.no === lex.no && c.exam.idx === lex.idx) c.next(); }, 900);
-      });
-    }
-    return () => clearTimeout(autoNext.current);
+      flow.ask();
+      // Fetch this question's feedback and the next question while this one is read.
+      if (vc.settings.recorded && pack) {
+        const urls = [...clipUrls(qParts(L.q, L.order)), ...clipUrls(fParts(L.q, L.order, true)), ...clipUrls(fParts(L.q, L.order, false))];
+        const nid = L.exam.ids[L.exam.idx + 1], nq = nid ? byId[nid] : null;
+        if (nq) urls.push(...clipUrls(qParts(nq, optionOrder(`${L.exam.no}:${nq.id}`, nq.options.length))));
+        vc.engine.preload(urls);
+      }
+    } else flow.feedback();
   }, [hfKey]);
+  useEffect(() => () => flow.cancel(), []);
   const resultKey = hf && showResult && store.last && !store.current ? `r:${store.last.finishedAt}` : "";
   useEffect(() => {
     if (!resultKey || !store.last) return;
     const r = store.last, ok = r.ids.filter((id) => r.answers[id]?.ok).length;
-    hfSay([`Exam finished. You got ${ok} of ${r.ids.length} correct${r.timedOut ? ", and time ran out" : ""}.`]);
+    setHfStatus("speaking");
+    vc.engine.speak([`Exam finished. You got ${ok} of ${r.ids.length} correct${r.timedOut ? ", and time ran out" : ""}.`], () => setHfStatus("idle"));
   }, [resultKey]);
-  const hfToggle = (on: boolean) => { if (on) vc.engine.unlock(); else vc.engine.cancel(); setHfPaused(false); vc.setSettings((st) => ({ ...st, on })); };
+  const hfToggle = (on: boolean) => { if (on) vc.engine.unlock(); else flow.cancel(); setHfPaused(false); vc.setSettings((st) => ({ ...st, on })); };
   const micTap = () => {
-    if (hfStatus === "paused" || hfPaused) { vc.engine.unlock(); setHfPaused(false); return; }
+    vc.engine.unlock();
+    if (hfStatus === "paused" || hfPaused) { setHfPaused(false); return; }
     if (hfStatus === "listening") { vc.engine.stopListening(); setHfStatus("waiting"); return; }
-    if (!live.current.answered) { vc.engine.cancel(); silence.current = 0; hfListen(); }
+    flow.listenNow();
+  };
+  const testVoice = () => {
+    vc.engine.unlock();
+    const sample = byId["a19"];
+    const parts = [...voiced(promptParts(pack, "sample")), ...(sample?.spoken && pack ? voiced(questionParts(sample.spoken, [0, 1, 2, 3], pack)).slice(0, 3) : [{ text: `For example: ${speakable("usermod -aG docker dev3")}.` }])];
+    setHfStatus("speaking");
+    vc.engine.speak(parts, () => setHfStatus("idle"));
   };
 
   if (err) return <div ref={topRef} style={{ ...card, color: C.amber }}>{err}</div>;
@@ -351,7 +352,7 @@ export default function PracticeTests() {
           <button style={{ ...bigBtn, opacity: chosen ? 1 : 0.45 }} disabled={!chosen || !!cur} onClick={() => startNew(chosen)}>{cur ? "Finish or end the current exam first" : `Start ${chosen || ""}-question exam`}</button>
           <div style={{ fontSize: 13, color: C.faint, marginTop: 10, lineHeight: 1.5 }}>The clock keeps running if you leave the page. When it hits 0:00 the exam is submitted automatically.</div>
         </div>
-        <HandsFreeCard vc={vc} onToggle={hfToggle} test={() => { vc.engine.unlock(); hfSay(["This is how questions will sound.", `For example: ${speakable("usermod -aG docker dev3")}.`]); }} />
+        <HandsFreeCard vc={vc} onToggle={hfToggle} test={testVoice} recordedAvailable={!!pack} />
         <div style={card}>
           <div style={{ ...kicker, marginBottom: 8 }}>YOUR PROGRESS</div>
           <div style={{ fontSize: 15, color: C.soft, marginBottom: 8 }}>{seenCount} of {total} questions seen. New exams favor questions you have not seen yet, and ones you missed.</div>
@@ -391,7 +392,7 @@ export default function PracticeTests() {
         <button style={{ ...ghost, padding: "0 12px", fontSize: 14 }} onClick={endEarly}>End</button>
       </div>
       {hf && <MicPanel status={hfStatus} heard={heard} listenable={vc.listenable} count={q.options.length} need={q.answer.length} answered={!!answered}
-        onMic={micTap} onPause={() => { if (hfPaused) { vc.engine.unlock(); setHfPaused(false); } else { vc.engine.cancel(); setHfPaused(true); } }} paused={hfPaused}
+        onMic={micTap} onPause={() => { if (hfPaused) { vc.engine.unlock(); setHfPaused(false); } else { flow.cancel(); setHfPaused(true); } }} paused={hfPaused}
         onRepeat={() => { vc.engine.unlock(); setHfPaused(false); setNonce((n) => n + 1); }} />}
       <div style={{ height: 6, borderRadius: 3, background: "#1b2440", overflow: "hidden" }}><div style={{ width: `${Math.round((exam.idx / exam.ids.length) * 100)}%`, height: "100%", background: `linear-gradient(90deg, ${C.cyan}, ${C.violet})`, transition: "width 300ms" }} /></div>
       <div style={{ ...card, padding: "16px 14px" }}>
@@ -453,9 +454,12 @@ function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
   );
 }
 
-function HandsFreeCard({ vc, onToggle, test }: { vc: VC; onToggle: (on: boolean) => void; test: () => void }) {
+const REC = "__recorded__";
+function HandsFreeCard({ vc, onToggle, test, recordedAvailable }: { vc: VC; onToggle: (on: boolean) => void; test: () => void; recordedAvailable: boolean }) {
   const { settings, setSettings, voices, chosen } = vc;
-  const on = settings.on && vc.synth;
+  const can = vc.synth || (vc.audio && recordedAvailable);
+  const on = settings.on && can;
+  const rec = settings.recorded && recordedAvailable;
   return (
     <div style={card}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -463,25 +467,26 @@ function HandsFreeCard({ vc, onToggle, test }: { vc: VC; onToggle: (on: boolean)
           <div style={kicker}>HANDS-FREE</div>
           <div style={{ fontSize: 17, fontWeight: 800, marginTop: 4 }}>{vc.listenable ? "Read aloud and answer by voice" : "Read questions aloud"}</div>
         </div>
-        {vc.synth && <Switch on={on} onChange={onToggle} label="Hands-free mode" />}
+        {can && <Switch on={!!on} onChange={onToggle} label="Hands-free mode" />}
       </div>
-      {!vc.synth ? (
+      {!can ? (
         <p style={{ fontSize: 15, color: C.soft, margin: "10px 0 0", lineHeight: 1.5 }}>Read-aloud is not available in this browser.</p>
       ) : (
         <>
           <p style={{ fontSize: 15, color: C.soft, margin: "10px 0 0", lineHeight: 1.5 }}>
             {vc.listenable
-              ? <>Each question and its options are read out. Say <b style={{ color: C.ink }}>A, B, C or D</b> (or "A and C" when two answers are needed), or say <b style={{ color: C.ink }}>repeat, next, skip, pause</b> or <b style={{ color: C.ink }}>stop</b>. Taps still work.</>
+              ? <>Each question and its options are read out, then it waits for you. Say <b style={{ color: C.ink }}>A, B, C or D</b> (or "A and C" when two answers are needed), or say <b style={{ color: C.ink }}>repeat, next, skip, pause</b> or <b style={{ color: C.ink }}>stop</b>. After the answer is explained, say <b style={{ color: C.ink }}>repeat</b> to hear it again or <b style={{ color: C.ink }}>next</b> to move on. Taps still work.</>
               : <>Each question and its options are read out. This browser cannot listen for spoken answers, so tap your answer.</>}
           </p>
           {on && (
             <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 14 }}>
               <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14, color: C.soft }}>
                 Voice
-                <select value={settings.voiceURI} onChange={(e) => setSettings((st) => ({ ...st, voiceURI: e.target.value }))}
+                <select value={rec ? REC : settings.voiceURI} onChange={(e) => { const v = e.target.value; setSettings((st) => (v === REC ? { ...st, recorded: true } : { ...st, recorded: false, voiceURI: v })); }}
                   style={{ minHeight: 48, borderRadius: 12, border: `1px solid ${C.edge}`, background: C.bg, color: C.text, fontSize: 16, padding: "0 12px", maxWidth: "100%" }}>
-                  <option value="">{voices[0] ? `Auto: ${voices[0].name}` : "Device default voice"}</option>
-                  {voices.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name} ({v.lang})</option>)}
+                  {recordedAvailable && <option value={REC}>Heart, recorded natural voice (best)</option>}
+                  {vc.synth && <option value="">{voices[0] ? `Device voice, auto: ${voices[0].name}` : "Device default voice"}</option>}
+                  {vc.synth && voices.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name} ({v.lang})</option>)}
                 </select>
               </label>
               <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14, color: C.soft }}>
@@ -489,10 +494,11 @@ function HandsFreeCard({ vc, onToggle, test }: { vc: VC; onToggle: (on: boolean)
                 <input type="range" min={RATE_MIN} max={RATE_MAX} step={0.05} value={settings.rate} aria-label="Speech speed"
                   onChange={(e) => setSettings((st) => ({ ...st, rate: clampRate(Number(e.target.value)) }))} style={{ width: "100%", height: 44, accentColor: C.cyan }} />
               </label>
-              <button style={ghost} onClick={test}>{"\u25b6"} Test voice{chosen ? `: ${chosen.name}` : ""}</button>
+              <button style={ghost} onClick={test}>{"\u25b6"} Test voice{rec ? ": Heart" : chosen ? `: ${chosen.name}` : ""}</button>
             </div>
           )}
-          <p style={{ fontSize: 13, color: C.faint, margin: "12px 0 0", lineHeight: 1.5 }}>Tip: Websites can't use Siri's voice. For a more natural voice on iPhone/Mac download a Premium voice in Settings &gt; Accessibility &gt; Spoken Content &gt; Voices; on Android install Speech Services by Google.</p>
+          {rec && <p style={{ fontSize: 13, color: C.faint, margin: "12px 0 0", lineHeight: 1.5 }}>The recorded voice streams small audio files (about 250 KB per question) and loads the next question ahead of time.</p>}
+          {!rec && <p style={{ fontSize: 13, color: C.faint, margin: "12px 0 0", lineHeight: 1.5 }}>Tip: Websites can't use Siri's voice. For a more natural voice on iPhone/Mac download a Premium voice in Settings &gt; Accessibility &gt; Spoken Content &gt; Voices; on Android install Speech Services by Google.</p>}
           {vc.listenable && <p style={{ fontSize: 13, color: C.faint, margin: "6px 0 0", lineHeight: 1.5 }}>Voice answers use your browser's built-in speech recognition. Some browsers, such as Chrome, send the audio to their own online service to turn it into text.</p>}
         </>
       )}
@@ -518,6 +524,7 @@ function MicPanel(p: { status: string; heard: { text: string; meaning: string } 
     : key === "blocked" ? "Allow the microphone in site settings, or tap an answer."
     : key === "unsupported" ? "Questions are read aloud. Tap your answer."
     : key === "paused" ? "Tap \u25b6 to carry on." : key === "speaking" ? "Tap the mic to stop and answer now." : p.answered ? "Moving to the next question." : "";
+  const hintNow = key === "listening" && p.answered ? 'Say "repeat" to hear it again, or "next"' : hint;
   return (
     <div className="px-hf" style={{ ...card, padding: 12, display: "flex", alignItems: "center", gap: 12, borderColor: `${st.color}66` }}>
       <style>{"@keyframes pxpulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}70%{box-shadow:0 0 0 16px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}"}</style>
@@ -527,7 +534,7 @@ function MicPanel(p: { status: string; heard: { text: string; meaning: string } 
         <div style={{ fontWeight: 800, fontSize: 17, color: st.color }}>{st.label}</div>
         {p.heard ? (
           <div style={{ fontSize: 14, color: C.ink, marginTop: 2, overflowWrap: "anywhere" }}>Heard "{p.heard.text}" {"\u2192"} <b style={{ color: p.heard.meaning === "not understood" ? C.amber : C.green }}>{p.heard.meaning}</b></div>
-        ) : hint ? <div style={{ fontSize: 14, color: C.soft, marginTop: 2 }}>{hint}</div> : null}
+        ) : hintNow ? <div style={{ fontSize: 14, color: C.soft, marginTop: 2 }}>{hintNow}</div> : null}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         <button style={{ ...ghost, padding: 0, width: 48, fontSize: 18 }} onClick={p.onPause} aria-label={p.paused ? "Resume reading" : "Pause reading"}>{p.paused ? "\u25b6" : "\u23f8"}</button>
