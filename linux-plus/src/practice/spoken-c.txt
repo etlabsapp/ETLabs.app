@@ -286,7 +286,7 @@ R: With no search domain, short names are never expanded to the full name, so se
 @ c35
 S: Which tool can check whether a T C P port is open on a remote host?
 O: ping.
-O: N C.
+O: N C, netcat.
 O: I P.
 O: netstat.
 R: N C with dash Z V tries to connect to the port and reports whether it is open.
@@ -297,7 +297,7 @@ S: Which widely used reference gives step-by-step secure configuration guidance 
 O: C I S Benchmarks.
 O: G D P R.
 O: I S O 27001.
-O: C V E.
+O: C V E entries.
 R: The Center for Internet Security publishes detailed hardening guides for Linux and many applications.
 
 @ c37
@@ -345,7 +345,7 @@ C: The command is: docker, image, pull, alpine.
 @ c43
 S: Which Ansible component holds the list of hosts and host groups to manage?
 O: Collection.
-O: Fact.
+O: A fact.
 O: Playbook.
 O: Inventory.
 R: The inventory lists the managed hosts and organizes them into groups.
@@ -668,7 +668,7 @@ C: The command is: shred, dash U, followed by the file name.
 
 @ c81
 S: What keeps a disk encrypted while it is not in use?
-O: LUKS.
+O: L U K S.
 O: G P G.
 O: Open S S L.
 O: P K I certificates.

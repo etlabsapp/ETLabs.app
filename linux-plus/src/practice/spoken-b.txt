@@ -115,7 +115,7 @@ C: The command is: D message.
 
 @ b14
 S: A user starts a long tar job in the background with no hup. Which command brings that job back to the foreground of the current terminal?
-O: exec.
+O: The exec command.
 O: jobs.
 O: F G.
 O: renice.
@@ -409,7 +409,7 @@ S: A technician needs to download a vendor's software package from a web server 
 O: telnet.
 O: netstat.
 O: W get.
-O: N C.
+O: N C, netcat.
 R: W get downloads files over H T T P, H T T P S or F T P and saves them.
 C: The command is: W get, followed by the package U R L.
 
