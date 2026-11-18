@@ -1,5 +1,6 @@
 /**
- * Builds linux-plus/practice-tests.json from the question files in linux-plus/src/practice/set{1,2,3}.txt.
+ * Builds linux-plus/practice-tests.json, the single exam question pool, from the question banks in linux-plus/src/practice/bank-{a,b,c,d}.txt.
+ * Banks a to c are rewritten class practice questions. Bank d is written from the class review sheet. The exam UI treats them as one pool.
  *
  * File format, one block per question:
  *   @ <number>
@@ -16,19 +17,21 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const defaultRoot = join(here, "..", "linux-plus");
-export const SET_INFO = [
-  { set: 1, title: "Set 1", count: 28 },
-  { set: 2, title: "Set 2", count: 100 },
-  { set: 3, title: "Set 3", count: 99 },
+export const BANKS = [
+  { file: "bank-a.txt", prefix: "a", count: 28 },
+  { file: "bank-b.txt", prefix: "b", count: 100 },
+  { file: "bank-c.txt", prefix: "c", count: 99 },
+  { file: "bank-d.txt", prefix: "d", count: 23 },
 ];
+export const POOL_SIZE = BANKS.reduce((t, b) => t + b.count, 0);
 
-export function parseSet(text, set) {
+export function parseBank(text, prefix) {
   const problems = [];
   const out = [];
   const parts = text.split(/^@ (\d+)\s*$/m);
   for (let i = 1; i < parts.length; i += 2) {
     const n = Number(parts[i]);
-    const id = `s${set}q${n}`;
+    const id = `${prefix}${n}`;
     const stem = [];
     const options = [];
     const answer = [];
@@ -55,7 +58,7 @@ export function parseSet(text, set) {
     if (options.length < 4) problems.push(`${id}: only ${options.length} options`);
     if (!stemText) problems.push(`${id}: empty stem`);
     if (options.some((o) => !o.why || !o.text)) problems.push(`${id}: option without text or explanation`);
-    out.push({ id, set, n, stem, options, answer });
+    out.push({ id, stem, options, answer });
   }
   return { questions: out, problems };
 }
@@ -79,17 +82,17 @@ export function publicIps(text) {
 export function buildAll(root = defaultRoot) {
   const all = [];
   const problems = [];
-  for (const info of SET_INFO) {
-    const r = parseSet(readFileSync(join(root, "src", "practice", `set${info.set}.txt`), "utf8"), info.set);
-    if (r.questions.length !== info.count) problems.push(`set ${info.set}: ${r.questions.length} questions, expected ${info.count}`);
-    const ids = new Set();
+  const ids = new Set();
+  for (const bank of BANKS) {
+    const r = parseBank(readFileSync(join(root, "src", "practice", bank.file), "utf8"), bank.prefix);
+    if (r.questions.length !== bank.count) problems.push(`${bank.file}: ${r.questions.length} questions, expected ${bank.count}`);
     for (const q of r.questions) { if (ids.has(q.id)) problems.push(`duplicate ${q.id}`); ids.add(q.id); }
     all.push(...r.questions);
     problems.push(...r.problems);
   }
   const blob = JSON.stringify(all);
   for (const ip of publicIps(blob)) problems.push(`public IP address ${ip} in question text (use 203.0.113.x, 198.51.100.x, 192.0.2.x or a private range)`);
-  return { questions: all, problems, json: JSON.stringify({ version: 1, sets: SET_INFO, questions: all }) };
+  return { questions: all, problems, json: JSON.stringify({ version: 2, total: all.length, questions: all }) };
 }
 
 if (process.argv[1] && /linux-plus-practice-build\.mjs$/.test(process.argv[1])) {
