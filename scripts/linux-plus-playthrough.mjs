@@ -31,7 +31,7 @@ check("10 missions", MISSIONS.length === 10, String(MISSIONS.length));
 check("five servers", SERVERS.length === 5 && SERVERS.every((s) => /^203\.0\.113\.(10|20|30|40|50)$/.test(s.ip)));
 check("server names", SERVERS.map((s) => s.name).join(",") === "NewYork,Chicago,Charlotte,LosAngeles,Miami");
 check("city labels", SERVERS.map((s) => s.city).join(",") === "NY,CHI,CLT,LA,MIA");
-check("valid names", isValidLabUser("student") && isValidLabUser("alice") && isValidLabUser("ann-marie") && !isValidLabUser("root") && !isValidLabUser("Alice") && !isValidLabUser("travis@host") && !isValidLabUser(""));
+check("valid names", isValidLabUser("student") && isValidLabUser("alice") && isValidLabUser("ann-marie") && !isValidLabUser("root") && !isValidLabUser("Alice") && !isValidLabUser("student@host") && !isValidLabUser(""));
 
 const homes = {};
 SERVERS.forEach((s) => { homes[s.name] = makeWorld().servers[s.name]; });
@@ -59,8 +59,8 @@ warm.forEach((cmd, step) => {
 check("warm-up ends on Chicago", world.host === "Chicago");
 check("todo.txt only on NewYork", world.servers.NewYork.fs["/home/student/todo.txt"]?.content === "study ssh\n" && !world.servers.Chicago.fs["/home/student/todo.txt"] && !world.servers.Miami.fs["/home/student/todo.txt"]);
 
-const old = attempt(makeWorld(), 0, 0, "ssh travis@45.77.77.175");
-check("old IP does not log in", !old.ok && old.world.host === null);
+const old = attempt(makeWorld(), 0, 0, "ssh student@203.0.113.99");
+check("unknown IP does not log in", !old.ok && old.world.host === null);
 
 const spots = [
   { mission: 1, home: "203.0.113.30", short: "Kernel", cmd: "uname -r", login: true },

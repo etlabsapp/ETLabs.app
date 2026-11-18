@@ -1,0 +1,978 @@
+@ 1
+Batch jobs on a reporting server keep missing their deadlines. The admin collects:
+```
+# uptime
+ 09:12:03 up 3 days,  4:41,  1 user,  load average: 15.90, 14.80, 13.95
+# nproc
+8
+# vmstat 1 3
+r  b   swpd    free   buff  cache  si  so  bi  bo   in   cs  us sy id wa st
+16 0  10240 7420112  2048 154220   0   0   0   0 8120 2770  99  1  0  0  0
+16 0  10240 7420112  2048 154220   0   0   0   0 8098 2781  99  1  0  0  0
+# free -h
+              total   used   free  shared  buff/cache  available
+Mem:          7.6Gi  512Mi  7.0Gi    24Mi       150Mi      6.9Gi
+Swap:         4.0Gi   10Mi  4.0Gi
+```
+What will help the jobs finish faster?
+- Add more swap space. :: Swap is almost unused, and vmstat shows si and so at 0, so nothing is being swapped in or out.
+- Add more disks. :: vmstat shows bi, bo and wa all at 0. The jobs are not waiting on disk.
+* Give the system more CPU resources. :: A load average near 16 on 8 CPUs means jobs are queued for a CPU. vmstat shows 16 runnable tasks (r), 99% user time and 0% idle, so the CPUs are maxed out. More CPU lets more jobs run at once.
+- Add more free memory. :: free shows 6.9Gi available, so memory is not the bottleneck.
+
+@ 2
+An admin must unpack the cpio backup /srv/backup/site.cpio into /var/www/site/ and end up back in the folder they started in. Which command does this?
+- unzip -c /srv/backup/site.cpio /var/www/site/ :: unzip only reads zip archives, and -c just prints file contents to the screen.
+- tar -c -f /srv/backup/site.cpio /var/www/site/ :: -c creates an archive. This would overwrite the backup with a new archive of the web folder, destroying it.
+* pushd /var/www/site/ && cpio -idv < /srv/backup/site.cpio && popd :: pushd moves into the target folder and remembers where you were. cpio -i extracts the archive from standard input, -d creates folders as needed and -v lists each file. popd returns you to where you started.
+- cd /var/www/site/ && gzip -c /srv/backup/site.cpio | tar xf - :: gzip -c compresses rather than uncompresses, and the file is a cpio archive, not a tar file, so tar cannot read it.
+
+@ 3
+After maintenance, an admin cannot mount a logical volume:
+```
+# mount /dev/vgapp/logs /srv/logs
+mount: /srv/logs: special device /dev/vgapp/logs does not exist.
+# lvs
+  LV   VG    Attr       LSize
+  logs vgapp -wi------- 2.00g
+# vgs
+  VG    #PV #LV #SN Attr   VSize  VFree
+  vgapp   1   1   0 wz--n- 5.00g  3.00g
+```
+Which command is the usual fix?
+- lvscan --all :: lvscan only lists logical volumes and whether they are active. It does not change anything.
+- vgimport vgapp :: vgimport is only used after vgexport, when moving disks to another system. vgs shows the group is present and not exported.
+* vgchange -ay vgapp :: The volume group and LV still exist, but the LV is not active (no "a" in its Attr), so no device file was created. vgchange -ay activates every LV in the group and creates the device files, so the mount works. (lvchange -ay on just that LV would also work, but vgchange -ay is the usual step after maintenance.)
+- mkfs.xfs /dev/vgapp/logs :: The device does not exist yet, and making a new filesystem would wipe the data anyway.
+
+@ 4
+An admin creates /projects/shared for a team. New files made there should belong to the folder's group so that everyone on the team can work with them. Which command does this?
+- chmod g+x /projects/shared :: Execute on a folder only lets the group enter it. It does not change which group new files get.
+- chmod g+r /projects/shared :: This lets the group list the folder's contents. It does not affect new files.
+* chmod g+s /projects/shared :: setgid on a folder makes every new file and subfolder inherit the folder's group instead of the creator's own group, so the whole team shares them.
+- chmod g+w /projects/shared :: The group can create files, but each file still gets its creator's own group.
+
+@ 5
+An admin is building a new logical volume from fresh disks. In what order should the LVM commands run?
+- 1. vgcreate, 2. lvcreate, 3. pvcreate :: pvcreate must come first. The disks have to be physical volumes before a group can use them.
+- 1. lvcreate, 2. pvcreate, 3. vgcreate :: A logical volume is carved out of a volume group, so lvcreate cannot be first.
+- 1. vgcreate, 2. pvcreate, 3. lvcreate :: vgcreate needs physical volumes, so pvcreate has to run before it.
+* 1. pvcreate, 2. vgcreate, 3. lvcreate :: LVM builds in layers: pvcreate marks disks as physical volumes, vgcreate pools them into a volume group, and lvcreate makes a logical volume from that pool.
+
+@ 6
+Users cannot reach an HTTPS site. The admin sees:
+```
+# ufw status
+Status: active
+To                Action   From
+--                ------   ----
+443/tcp           DENY     Anywhere
+443/tcp (v6)      DENY     Anywhere (v6)
+# ss -lnt | grep 443
+LISTEN 0  511  *:443  *:*
+```
+What is the best fix?
+* ufw delete deny 443/tcp :: The web server is listening on 443, but ufw has a DENY rule for 443/tcp. Removing just that rule lets HTTPS in while every other firewall rule stays in place.
+- ufw allow 511/tcp :: 511 in the ss output is the listen backlog, the size of the waiting-connection queue, not a port.
+- ufw disable :: This would let HTTPS through, but it turns off all firewall protection when only one rule is wrong.
+- ufw allow 80/tcp :: Port 80 is plain HTTP. HTTPS on 443 would still be blocked.
+
+@ 7
+Linux workstations join a Windows Active Directory domain through SSSD. Which file holds the domain settings such as the domain name and ID provider?
+- smb.conf :: smb.conf configures Samba file and printer sharing.
+- pam.conf :: PAM decides which login modules run, and most systems use /etc/pam.d instead of pam.conf. It does not hold the domain details.
+- krb5.conf :: krb5.conf sets up Kerberos realms and servers. SSSD uses Kerberos, but its domain section lives in sssd.conf.
+* sssd.conf :: /etc/sssd/sssd.conf configures SSSD, which links Linux logins to AD. Its [domain/...] section holds the domain name, ID provider and access rules.
+
+@ 8
+Which technology does a Linux server typically use to check users' credentials when it is part of a Windows domain?
+- The SSH daemon :: sshd accepts remote logins, but it hands the credential check to other systems.
+* Kerberos :: Active Directory uses Kerberos to prove who users are. The Linux machine gets tickets from the domain controller to confirm identities.
+- Samba :: Samba shares files and printers with Windows. Its winbind tool can help join a domain, but the authentication itself is Kerberos.
+- PAM :: PAM plugs login methods into programs. It can call Kerberos modules, but it is not the domain authentication technology.
+
+@ 9
+A new SAN storage array has been cabled to a server. Which command confirms that the server can see the array's disks?
+- lsusb :: lsusb lists USB devices. SAN storage does not connect over USB.
+- lsipc :: lsipc shows shared memory, message queues and semaphores. It has nothing to do with storage.
+* lsscsi :: lsscsi lists the SCSI devices the system can see. SAN arrays connect through SCSI-based links such as Fibre Channel, iSCSI or SAS, so the new disks show up here.
+- lshw :: lshw lists all hardware and might show the disks somewhere in its long output, but lsscsi is the direct check for storage devices.
+
+@ 10
+An analyst receives a suspicious email attachment called invoice.pdf and saves it. Before opening it, they want to know what kind of file it really is. Which command should they use?
+- df invoice.pdf :: df shows free space on the filesystem that holds the file. It says nothing about the file's type.
+* file invoice.pdf :: file reads the first bytes of the file, its signature, and reports what it really is. It ignores the name and extension, so a script disguised as a PDF is exposed.
+- cat invoice.pdf :: cat dumps the raw contents to the screen, which is close to opening it, and it does not report a type.
+- tree invoice.pdf :: tree draws folder structures. It does not inspect a file's contents.
+
+@ 11
+An admin's script needs to count how many entries are in /srv/uploads. They start with ls -1 /srv/uploads | . Which command completes the pipeline?
+- less :: less lets you scroll through output. It does not count anything.
+* wc -l :: ls -1 prints one entry per line, and wc -l counts lines, so the result is the number of entries. (File names containing line breaks would be counted wrong, but that is rare.)
+- tail -f :: tail -f follows a file as it grows. It does not count lines.
+- tr -c :: tr changes or deletes characters and needs character sets. It does not count.
+
+@ 12
+A desktop server boots to a text console instead of the graphical login screen. Which command makes it start the GUI on every boot?
+- systemctl enable xwindow.service :: There is no standard xwindow.service. Display managers are services like gdm or sddm.
+* systemctl set-default graphical.target :: The default target decides what systemd starts at boot. Setting it to graphical.target brings up the display manager and GUI login each time.
+- systemctl isolate graphical.target :: This switches to the GUI right now only. The next boot still uses the old default.
+- systemctl unmask xwindow.service :: Unmasking only allows a service to be started. There is no xwindow.service anyway.
+
+@ 13
+Which command shows kernel messages from startup, useful for finding hardware or driver errors during boot?
+* dmesg :: dmesg prints the kernel ring buffer, the messages the kernel writes while starting, including hardware detection, driver loading and errors.
+- dracut :: dracut builds the initramfs used early in boot. It does not show messages.
+- lshw :: lshw lists hardware, not messages or errors.
+- modinfo :: modinfo shows details about one kernel module, such as its version and parameters.
+
+@ 14
+A user starts a long job in the background with:
+```
+nohup tar czf /tmp/archive.tgz /srv/data &
+```
+Which command brings that job back to the foreground of the current terminal?
+- exec :: exec replaces the current shell with a new command. It cannot pick up an existing job.
+- jobs :: jobs lists background jobs and their numbers, but it does not bring one to the front.
+* fg :: fg moves a background job of this shell to the foreground. nohup only makes it ignore the hangup signal when the terminal closes, so fg still works from the same shell.
+- renice :: renice changes the scheduling priority of a running process, not whether it is in the foreground.
+
+@ 15
+Commands on a server are slow. The admin sees:
+```
+Output 1:
+ 14:22:10 up 61 days,  2:04,  3 users,  load average: 6.12, 5.90, 5.75
+Output 2:
+Linux 6.8.0-45-generic (app02)  09/14/2024  _x86_64_  (2 CPU)
+02:22:30 PM  CPU   %usr  %nice  %sys %iowait  %irq  %soft %steal  %idle
+02:22:30 PM  all  71.40   0.00 22.10    2.50  0.00   4.00   0.00   0.00
+```
+What is the system experiencing?
+- High uptime :: 61 days of uptime is normal and does not slow a system down.
+- High I/O wait :: %iowait is only 2.5, so the CPUs are not mostly waiting on disk.
+- High network latency :: Nothing here measures network delay. All the numbers are about CPU.
+* High CPU load :: The load average of about 6 on 2 CPUs means three times more work is waiting than the CPUs can run, and %idle is 0. The CPUs are saturated.
+
+@ 16
+Which command lists the current state of every service unit on a systemd server?
+- systemctl is-enabled --services :: is-enabled checks whether named units start at boot, and --services is not a valid option.
+- systemctl list-sockets --type=service :: list-sockets shows socket units that start services on demand, not service status.
+* systemctl list-units --type=service :: list-units shows every loaded unit with its load, active and sub state, and --type=service limits the list to services. Add --all to include inactive ones.
+- systemctl is-active --services :: is-active needs unit names, and --services is not a valid option.
+
+@ 17
+An admin changes a server's netplan network config and wants it to undo itself automatically if the change locks them out. Which command should they use?
+- netplan rebind :: rebind reattaches network devices after a driver change. It has no automatic rollback.
+- netplan ip :: netplan ip shows IP lease information. It does not apply anything.
+- netplan apply :: apply makes the change permanent right away with no safety net.
+* netplan try :: netplan try applies the new config and waits for you to confirm. If you lose your connection and cannot press Enter, it rolls back to the old config by itself after a short timeout.
+
+@ 18
+For a malware investigation, an admin needs an exact block-by-block copy of the whole disk /dev/sdb. Which command does this?
+* dd if=/dev/sdb of=/evidence/sdb.img bs=4M :: dd copies raw blocks from the input (if) to the output (of), including deleted data and unused space. bs only sets how much is copied at a time.
+- tar czvf /evidence/sdb.tgz /dev/sdb :: tar would only save the device node itself, not the data on the disk.
+- cpio -o /dev/sdb > /evidence/sdb.cpio :: cpio works with files and file lists. It does not make a block-level image.
+- cp -p /dev/sdb/* /evidence/ :: /dev/sdb is a device, not a folder, so there is nothing to copy with a wildcard. cp also only copies files.
+
+@ 19
+An admin wants /opt/bin/rotate.sh to run every night at 2:45 a.m. Which line should go in the crontab?
+- 245 * * * /opt/bin/rotate.sh :: This has only four time fields and 245 is not a valid minute.
+* 45 2 * * * /opt/bin/rotate.sh :: Cron fields are minute, hour, day of month, month, day of week. 45 2 * * * means minute 45 of hour 2 on every day, which is 2:45 a.m. nightly.
+- * * * 2 45 /opt/bin/rotate.sh :: This puts 2 in the month field and 45 in the day-of-week field, which only goes up to 7, so cron rejects it.
+- 2:45 * * * /opt/bin/rotate.sh :: Cron does not accept times written as 2:45, and there are only four time fields.
+
+@ 20
+The package history shows:
+```
+ID | Command line     | Action(s) | Altered
+51 | install nginx    | Install   |   6
+52 | update -y        | Upgrade   |  31
+```
+Which command undoes transaction 51, including the packages it pulled in?
+- yum rollback 51 :: history rollback 51 would undo everything after 51, including the 31 upgrades, and plain yum rollback is not a command.
+- yum erase 51 :: erase takes package names, not transaction numbers.
+* yum history undo 51 :: history undo reverses one specific transaction, removing nginx and the dependencies installed with it, and leaves later transactions alone.
+- yum remove nginx :: This removes nginx itself but may leave the extra packages that transaction 51 added.
+
+@ 21
+An admin must delete the folder /srv/old_site and everything inside it. Which command does this?
+- ln -d /srv/old_site :: ln makes links. It never deletes anything.
+- rmdir -p /srv/old_site :: rmdir only removes empty folders. It fails because the folder has contents.
+- cut -d /srv/old_site :: cut pulls columns out of text, and -d sets the separator character. It cannot delete a folder.
+* rm -r /srv/old_site :: rm -r deletes a folder recursively: the folder, its files and all subfolders. It is the standard way to remove a non-empty folder.
+
+@ 22
+Which command gives a full hardware inventory, including system, BIOS, memory slot and serial number details read from the firmware?
+- lscpu :: lscpu only describes the processor.
+- lsmod :: lsmod lists loaded kernel modules, not hardware.
+* dmidecode :: dmidecode reads the DMI/SMBIOS tables from firmware and lists system make and model, BIOS, CPU sockets, memory slots and serial numbers.
+- dmesg :: dmesg shows kernel messages. Some mention hardware, but it is not an inventory.
+
+@ 23
+A PostgreSQL server keeps throwing errors. The admin sees that swap is almost used up:
+```
+              total     used     free
+Mem:        2047600   301220  1746380
+Swap:       2097148  2081004    16144
+SwapTotal:  2097148 kB
+SwapFree:     16144 kB
+```
+Which two changes help keep the database running even if the system runs out of swap? (Choose two.)
+* Run sysctl -w vm.overcommit_memory=2 :: Mode 2 is strict accounting: the kernel refuses memory requests beyond its commit limit up front, instead of promising memory it cannot deliver and later calling the OOM killer on a big process like the database.
+- Use disk quotas on the swap space to limit PostgreSQL. :: Disk quotas limit file storage per user. They do not apply to swap.
+- Run mount -a to reload /etc/fstab. :: mount -a mounts filesystems listed in fstab. It does not add memory or change how memory is handed out.
+- Run dd if=/dev/zero of=/swapfile bs=1M count=64 :: This only creates a blank 64 MB file. Without mkswap and swapon it is never used as swap.
+* Run sysctl -w vm.overcommit_ratio=100 :: In strict mode the commit limit is swap plus this percentage of RAM. Raising it from the default 50 to 100 lets all of RAM count, so the database can still get memory when swap is gone.
+- Run mkswap /dev/sdz2; swapon /dev/sdz2 :: This adds swap, but only if that partition exists and is free. It does not change how the kernel handles running out.
+
+@ 24
+An admin wants to watch /var/log/nginx/error.log live and also save everything shown into nginx-errors.txt. Which command does both?
+- tail -f /var/log/nginx/error.log > nginx-errors.txt :: The output goes only into the file, so nothing appears on screen.
+* tail -f /var/log/nginx/error.log | tee nginx-errors.txt :: tail -f follows the log as it grows, and tee copies its input both to the screen and to the file.
+- tail -f /var/log/nginx/error.log >> nginx-errors.txt :: This appends to the file, but nothing shows on screen.
+- tail -f /var/log/nginx/error.log | nginx-errors.txt :: A pipe must lead to a command. The shell would try to run nginx-errors.txt as a program.
+
+@ 25
+An admin wants /tmp/app.conf to point to /etc/myapp/app.conf. The two paths are on different filesystems. Which command works?
+- cat /etc/myapp/app.conf > /tmp/app.conf :: This makes a separate copy. Later changes to the original are not seen.
+* ln -s /etc/myapp/app.conf /tmp/app.conf :: ln -s makes a symbolic link, a small file that stores the target path. Symbolic links can cross filesystems.
+- touch /etc/myapp/app.conf | file /tmp/app.conf :: touch updates a time stamp and file reports a type. Neither creates a link.
+- link /etc/myapp/app.conf /tmp/app.conf :: link makes a hard link, and hard links cannot cross filesystems.
+
+@ 26
+While setting up a monitoring agent, an admin must make the user and group "monitor" the owners of /opt/monitor and everything inside it. Which command does this?
+* chown -R monitor:monitor /opt/monitor :: chown sets the owner and group together with user:group, and -R applies the change to the folder and everything under it.
+- usermod -aG monitor /opt/monitor :: usermod changes user accounts. It does not change file ownership, and a folder path is not a user name.
+- chmod -c /opt/monitor :: chmod changes permissions, not ownership, and -c only reports changes.
+- groupmod -g monitor -n /opt/monitor :: groupmod renames or renumbers a group. It does not touch files.
+
+@ 27
+A database moved from 172.16.4.20 to 172.16.5.20. Which command quickly updates every mention of the old address in /etc/webapp.ini?
+- awk '{rep(/172.16.4.20/,"172.16.5.20")}' /etc/webapp.ini :: awk has no rep function, and awk prints to the screen instead of changing the file.
+* sed -i 's/172.16.4.20/172.16.5.20/g' /etc/webapp.ini :: sed -i edits the file in place, and s/old/new/g replaces every match on each line. (Strictly, each dot matches any character, but that does no harm here.)
+- perl -i 's/172.16.4.20/172.16.5.20/g' /etc/webapp.ini :: perl needs -p and -e to apply a substitution to each line. Without them it tries to run the text as a script file name.
+- python3 -c "print(open('/etc/webapp.ini').read().replace('172.16.4.20','172.16.5.20'))" :: This only prints the changed text to the screen. The file itself stays the same.
+
+@ 28
+Which top-level directory holds read-only, shareable program files, including /usr/share/doc with documentation for installed packages?
+- /dev :: /dev holds device files for hardware like disks and terminals.
+- /var :: /var holds data that changes, such as logs, caches and spools.
+* /usr :: /usr holds installed programs, libraries and shared read-only data. Package documentation lives in /usr/share/doc.
+- /lib :: /lib holds shared libraries and kernel modules needed by basic programs, not documentation.
+
+@ 29
+A restore job finds a file and runs file on it:
+```
+backup01: 7-zip archive data, version 0.4
+```
+Which command extracts it?
+- unzip -nP 7 backup01 :: unzip handles .zip archives, not 7-Zip, and -P sets a password.
+- tar x --lzip --format=v7 backup01 :: --lzip expects lzip compression, and v7 is an old tar format. Neither matches a 7-Zip file.
+* 7za e backup01 :: 7za is the 7-Zip command-line tool, and e extracts the files. (x would also keep the folder paths.)
+- zcat -S 7 backup01 :: zcat uncompresses gzip data. -S only changes the expected file suffix.
+
+@ 30
+An admin wants to add the output of ls to the end of an existing file, inventory.txt, without losing what is already there. Which command does this?
+- cat ls > inventory.txt :: This tries to read a file named "ls", and a single > overwrites the file instead of adding to it.
+- echo ls | sed -i inventory.txt :: echo prints the word ls, and sed -i with no script and no file to edit fails.
+* ls >> inventory.txt :: >> appends a command's output to the end of the file, keeping its existing lines. If the file does not exist, it is created.
+- tee ls > awk inventory.txt :: This writes into files named ls and awk. Nothing is added to inventory.txt.
+
+@ 31
+A cleanup script /opt/bin/purge.sh must run at 6:00 p.m. every Saturday. Which crontab line does this?
+- * 18 * * 6 /opt/bin/purge.sh :: The minute field is *, so this runs every minute from 6:00 to 6:59 p.m., 60 times.
+- */18 * * * 6 /opt/bin/purge.sh :: */18 in the minute field means every 18 minutes, all day Saturday.
+* 0 18 * * 6 /opt/bin/purge.sh :: Minute 0 of hour 18 (6:00 p.m.), any day of month, any month, and day of week 6, which is Saturday. It runs once a week.
+- 0 * * * 18 /opt/bin/purge.sh :: Day of week only goes from 0 to 7, so 18 is invalid, and the hour * would mean every hour.
+
+@ 32
+An admin worries that a disk's partition table might get corrupted and wants to back up the raw sectors that hold it. Which tool should they use?
+* dd :: The partition table lives in raw sectors at the start of the disk (MBR) or the start and end (GPT). dd copies raw sectors, for example dd if=/dev/sda of=mbr.bak bs=512 count=1. sfdisk -d is another common way.
+- tar :: tar archives files and folders, not raw disk sectors.
+- gzip :: gzip compresses data but cannot read a partition table by itself.
+- cpio :: cpio archives files from a list. It cannot reach raw sectors.
+
+@ 33
+An admin wants the path /srv/manuals to be a shortcut to the folder /usr/share/doc/acme/. Which command does this?
+- lsof /usr/share/doc/acme /srv/manuals :: lsof lists open files. It does not create anything.
+- link /usr/share/doc/acme /srv/manuals :: link makes hard links, and hard links to folders are not allowed.
+- rsync /usr/share/doc/acme /srv/manuals :: rsync copies files. A copy is not a link and does not follow later changes.
+* ln -s /usr/share/doc/acme /srv/manuals :: ln -s makes a symbolic link. /srv/manuals then points to the folder, and anything opened through it reaches the real folder.
+
+@ 34
+A customer says their nightly jobs are slow. The admin checks:
+```
+$ uptime
+ 03:15:44 up 9 days, 11:02,  1 user,  load average: 11.80, 11.20, 10.95
+$ nproc
+4
+```
+What is the most likely cause?
+- Network latency :: uptime and nproc say nothing about the network.
+- A memory leak :: Nothing here shows memory use. The numbers point to CPU demand.
+* High CPU load :: A load average near 12 on 4 CPUs means about three times more work is waiting than the CPUs can run, and it has stayed high across 1, 5 and 15 minutes.
+- Not enough disk space :: Disk space is not shown, and a full disk causes errors rather than a high load average.
+
+@ 35
+An admin tries to unmount a filesystem and gets:
+```
+umount: /mnt/archive: target is busy.
+```
+Which command should they run next to find what is keeping it busy?
+- ps -f /mnt/archive :: ps does not take a folder path. It cannot filter processes by the files they use.
+- top -d /mnt/archive :: top -d sets the refresh delay in seconds. A path is not a number.
+* lsof | grep /mnt/archive :: lsof lists open files and the processes using them. Filtering for the mount point shows which processes hold files there and block the unmount. (fuser -vm /mnt/archive is another way.)
+- du -sh /mnt/archive :: du shows how much space is used, not who is using it.
+
+@ 36
+Which command shows the block devices on a system, such as disks and partitions, with their sizes, types and mount points, in a tree?
+- df :: df shows free space on mounted filesystems only. Unmounted disks and partitions are missing.
+* lsblk :: lsblk lists every block device, including disks, partitions and LVM volumes, as a tree with size, type and mount point.
+- mount :: mount lists mounted filesystems, not the disks and partitions underneath.
+- fdisk :: fdisk edits partition tables. fdisk -l can list partitions, but lsblk is the tool for a quick overview of block devices.
+
+@ 37
+An admin wants to find which items in /srv/media take up the most space. Which command should they start with?
+- df /srv/media :: df shows free space for the whole filesystem, not per file.
+- stat /srv/media :: stat shows details about the folder itself.
+* du /srv/media :: du reports how much disk space each file and folder uses, so the biggest ones stand out. du -ah /srv/media | sort -h lists them smallest to largest.
+- ls /srv/media :: Plain ls only shows names. You would need extra options like ls -lS to sort by size.
+
+@ 38
+A database process keeps getting killed over several days. The admin gathers:
+```
+[Mon Mar 11 01:10:40 2024] Out of memory: Killed process 4310 (postgres) total-vm:4446352kB, anon-rss:4053140kB
+$ grep 'Out of memory' /var/log/messages
+Mar 06 02:40:42 db01 kernel: Out of memory: Killed process 2195 (postgres) score 72
+Mar 08 01:10:42 db01 kernel: Out of memory: Killed process 5533 (postgres) score 79
+Mar 09 02:35:42 db01 kernel: Out of memory: Killed process 4106 (postgres) score 90
+Mar 10 01:20:00 db01 kernel: Out of memory: Killed process 5496 (postgres) score 130
+Mar 11 01:10:40 db01 kernel: Out of memory: Killed process 4310 (postgres) score 260
+$ free -m
+        total   used   free  shared  buff/cache  available
+Mem:    15819  10026   5174      92         619       5134
+Swap:       0      0      0
+$ sar -r 600 3
+04:30:01 PM kbmemfree kbmemused %memused
+04:40:01 PM   5341104  10912068    67.14
+04:50:01 PM   5326768  10926404    67.23
+05:00:01 PM   5299032  10953420    67.39
+```
+What is a possible cause?
+- A backup job is using all the memory. :: Nothing points to a backup. The OOM killer picks postgres every time.
+* The process is showing signs of a memory leak. :: The OOM killer stops the same process again and again, its OOM score rises each day, and sar shows memory use creeping up steadily. Memory that keeps growing and is never given back is the sign of a leak.
+- The system is using all of its swap. :: free shows swap at 0 total. There is no swap at all, so it cannot be "full".
+- Cached memory is reaching the system's limits. :: buff/cache is only 619 MB, and the kernel frees cache on its own when needed.
+
+@ 39
+A heavy reindexing task is hogging the CPU and slowing other apps. The task must still finish. What should the admin do?
+- Run the other apps in the background with bg. :: Background or foreground does not change how much CPU a process gets.
+* Lower the reindexing task's priority with renice. :: renice raises the task's nice value, so the scheduler gives other processes the CPU first. The task still finishes, just more politely.
+- Restart the task under nohup. :: nohup only keeps a process running after logout. It does not change its priority.
+- Use pidstat to add more CPU time. :: pidstat only reports CPU usage per process. It cannot add CPU.
+
+@ 40
+A timer that should run a report every night at midnight is not running nightly. The unit file contains:
+```
+[Unit]
+Description=Nightly report at midnight
+[Timer]
+OnCalendar=*-*-15 00:00:00
+Unit=report.service
+RandomizedDelaySec=7200
+[Install]
+WantedBy=timers.target
+```
+Which two changes fix it? (Choose two.)
+- Add WakeSystem=Midnight. :: WakeSystem only takes true or false, to wake a suspended machine. It does not set a time.
+- Add OnCalendar=*-*-* daily. :: This is not valid syntax. The shortcut would just be OnCalendar=daily.
+* Change OnCalendar to *-*-* 00:00:00. :: *-*-15 means only the 15th of each month. *-*-* 00:00:00 means every day at midnight.
+- Add AccuracySec=1. :: AccuracySec sets how tightly the timer may be batched with others. It does not change the schedule, and the random delay would remain.
+- Remove the OnCalendar line. :: Without OnCalendar there is no calendar schedule at all.
+* Remove RandomizedDelaySec=7200. :: This adds a random wait of up to 2 hours before each run, so the report would not start at midnight.
+
+@ 41
+Package updates fail with errors about one repository. Which command lists every configured repository and shows whether each is enabled?
+* yum repolist all :: repolist shows configured repositories, and all includes disabled ones, with each one's status.
+- yum reposync available :: reposync downloads a full copy of a repository. It is not a status check.
+- yum list installed repos :: This lists installed packages whose names match "repos".
+- yum repo-pkgs :: repo-pkgs runs actions on all packages from one repository. It does not list repositories.
+
+@ 42
+Outside senders cannot email a company. A check of the company's DNS server gives:
+```
+$ dig @ns1.example.net example.net MX
+;; connection timed out; no servers could be reached
+```
+What does this error mean?
+- The name does not exist. :: A missing name returns NXDOMAIN. Here no answer came back at all.
+- The root name servers are set up wrong. :: dig asked ns1.example.net directly, so root servers were never involved.
+- dig failed because of the extra MX at the end. :: MX is a valid record type for dig.
+* The DNS server that was queried is not responding. :: "connection timed out; no servers could be reached" means dig sent the question to ns1.example.net and nothing answered, because the server is down, blocked or unreachable.
+
+@ 43
+Which kind of event would you expect to find in dmesg output?
+- Wrong passwords typed at login :: Failed logins go to the auth or secure logs, or the journal, not the kernel buffer.
+* A USB device being plugged in :: dmesg shows kernel messages. When a USB device is connected, the kernel detects it, loads drivers and logs it there.
+- Window manager warnings :: Desktop programs log to their own files or the journal, not the kernel buffer.
+- "Session closed" messages :: Session open and close messages come from PAM and logind, not the kernel.
+
+@ 44
+An admin suspects that user carlos is running an unapproved program. Which command shows a live view of only carlos's processes?
+- ps -ax carlos :: ps does not take a bare user name like this. You would use ps -u carlos.
+- jobs -n carlos :: jobs only lists background jobs of your own shell.
+* top -u carlos :: top -u shows a live, updating list of only that user's processes with their CPU and memory use, so anything unexpected stands out.
+- lsof -p carlos :: lsof -p expects a process ID. To list a user's open files you would use lsof -u carlos.
+
+@ 45
+An admin needs to capture all traffic to or from 192.168.50.7 on a server. Which command does this?
+- tcpdump addr 192.168.50.7 :: addr is not a tcpdump filter keyword.
+* tcpdump host 192.168.50.7 :: The host filter matches packets where that address is the source or the destination.
+- tcpdump net 192.168.50.7 :: net is for whole networks, like 192.168.50.0/24, not one host.
+- tcpdump ip 192.168.50.7 :: ip only picks the protocol. It is not followed by an address like this.
+
+@ 46
+An admin must stop every process owned by the user guest01. Which loop does this?
+* for p in $(ps -ef | grep guest01 | awk '{print $2}')⏎do⏎kill -9 $p⏎done :: ps -ef lists every process with its owner, grep keeps lines mentioning guest01, and awk '{print $2}' takes the second column, the PID. The loop runs kill -9 on each one. (In real life pkill -u guest01 is simpler.)
+- for p in $(ps | grep guest01)⏎do⏎kill $p⏎done :: Plain ps only shows processes from your own terminal, and the loop would pass whole words of text to kill, not just PIDs.
+- while [ $user -eq 'guest01' ]⏎do⏎kill $user⏎done :: $user is never set, and -eq compares numbers, not text. The test fails.
+- while true; do killall; done :: killall needs a process name, so it just errors, and the loop never ends.
+
+@ 47
+A technician needs to download a vendor's software package from a web server onto a Linux box. Which tool does this?
+- telnet :: telnet opens an unencrypted text session. It is for testing ports or old remote logins, not downloading.
+- netstat :: netstat shows connections and listening ports. It cannot download.
+* wget :: wget downloads files over HTTP, HTTPS or FTP and saves them to the current folder.
+- nc :: netcat opens raw TCP or UDP connections. It does not speak HTTP for you, so it is not a practical download tool.
+
+@ 48
+After changing an Apache config, an admin must make it reload. Their sudo rights only allow the killall command. Which command loads the new config?
+- sudo killall -9 httpd :: -9 (SIGKILL) kills Apache immediately and nothing restarts it, so the site goes down.
+* sudo killall -HUP httpd :: SIGHUP tells the Apache parent process to reread its configuration and restart its workers, without a full stop.
+- sudo killall -TERM httpd :: SIGTERM asks Apache to shut down. It stops instead of reloading.
+- sudo killall --reload httpd :: killall has no --reload option.
+
+@ 49
+About one in three visitors cannot reach a company's site. One of the three web servers is down. The DNS zone has:
+```
+shop  IN  A  198.51.100.11
+      IN  A  198.51.100.12
+      IN  A  198.51.100.13
+```
+What explains the symptom?
+- The zone is missing AAAA and PTR records. :: IPv6 and reverse records are optional. Their absence would not cause this pattern.
+- Some records are not signed with DNSSEC. :: Nothing suggests DNSSEC is in use, and unsigned records do not fail one in three times.
+* DNS returns all three addresses in rotating order, and clients usually try the first one. :: This is round-robin DNS. Each answer lists the three addresses in a different order. When the down server's address comes first, which happens about a third of the time, that visitor fails.
+- The DNS server is set up as an iterative resolver instead of authoritative. :: It is answering correctly with all three records. The problem is the dead web server.
+
+@ 50
+Which directory holds the essential built-in commands that every user needs, such as ls, cp and cat?
+- /sys :: /sys is a virtual filesystem that shows kernel and device information.
+- /etc :: /etc holds configuration files, not programs.
+* /bin :: /bin holds the essential user commands. On many current systems it is a link to /usr/bin.
+- /var :: /var holds changing data like logs and caches.
+
+@ 51
+A network team adds a new DNS server at 10.20.0.53. Which file should be edited so the Linux host sends its name lookups there?
+- /etc/nsswitch.conf :: nsswitch.conf sets the order of lookup sources, like files before dns. It does not hold server addresses.
+* /etc/resolv.conf :: resolv.conf lists the nameservers the resolver uses, for example nameserver 10.20.0.53. (On systems where NetworkManager or systemd-resolved manages it, make the change there so it is not overwritten.)
+- /etc/dnsmasq.conf :: This configures the dnsmasq service, a small DNS and DHCP server, not the client's resolver.
+- /etc/whois.conf :: This configures the whois tool for domain registration lookups.
+
+@ 52
+A security advisory warns about "regreSSHion", a known OpenSSH flaw. Which command applies just the fix for that advisory?
+- dnf check-update openssh :: This only checks whether an update exists. It installs nothing.
+- dnf --enablerepo=security-common update openssh :: This enables a repository that may not exist and is not tied to the advisory.
+* dnf --advisory=regreSSHion upgrade openssh :: --advisory limits the upgrade to the packages named in that security advisory, so OpenSSH gets exactly the patched version.
+- dnf --enable=security-common install openssh :: --enable is not a valid dnf option, and install does nothing if OpenSSH is already installed.
+
+@ 53
+Why does /usr/bin/passwd have the SUID bit set?
+- To mark the file as immutable. :: Immutability is a chattr attribute, not SUID.
+- To keep group permissions on /etc/passwd up to date. :: SUID has nothing to do with group permissions on another file.
+- To show that an attacker changed the system. :: SUID on passwd is normal. It is set on purpose.
+* So normal users can update the /etc/shadow file. :: /etc/shadow is only writable by root. SUID makes passwd run with its owner's rights (root), so ordinary users can change their own password hash.
+
+@ 54
+A legacy service is being retired. The admin wants to make sure nobody, and no other unit, can start it again. Which command does this?
+- systemctl disable legacy.service :: disable only stops it from starting at boot. Anyone can still start it by hand or as a dependency.
+- systemctl kill legacy.service :: kill sends a signal to the running processes. It does not stop future starts.
+* systemctl mask legacy.service :: mask links the unit to /dev/null, so it cannot be started at all, by hand or by another unit, until it is unmasked.
+- systemctl isolate legacy.service :: isolate switches to a target and stops everything else. It is not for services.
+
+@ 55
+An app cannot reach a partner's API. The admin sees:
+```
+# curl https://api.partner.example/status
+curl: (6) Could not resolve host: api.partner.example
+# dig api.partner.example
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 5521
+;; QUESTION SECTION:
+;api.partner.example.        IN   A
+;; SERVER: 10.99.99.99#53(10.99.99.99) (UDP)
+```
+The admin knows the name works from other machines. What should be done?
+- Open a secure port in the server's firewall. :: The request never got as far as connecting. It failed at the name lookup.
+- Enable internet access on the host. :: The DNS server did answer, so the host can reach a network. The problem is which DNS server it asks.
+* Review and fix the DNS client configuration file. :: curl failed at "resolve host", and dig shows the host is asking 10.99.99.99, which says the name does not exist (NXDOMAIN). Since other machines resolve it, the local resolver setup in /etc/resolv.conf points to the wrong server.
+- Ask the partner for a new API address. :: The name works elsewhere, so the partner's side is fine.
+
+@ 56
+A web app needs its database running before the web server starts. The admin sees:
+```
+# cat /usr/lib/systemd/system/nginx.service
+[Unit]
+Description=nginx web server
+After=network.target
+# cat /usr/lib/systemd/system/postgresql.service
+[Unit]
+Description=PostgreSQL database server
+After=network.target
+```
+What should the admin do so the database starts first?
+- Add postgresql.service to Wants= in the nginx unit. :: Wants= only pulls the database in. It does not set which one starts first.
+* Add Before=nginx.service to the PostgreSQL unit. :: Before= sets start order: PostgreSQL starts before nginx. (After=postgresql.service in the nginx unit does the same thing from the other side.) Use a drop-in, for example systemctl edit, so updates do not overwrite it.
+- Start nginx with the nginx command instead of systemd. :: That bypasses systemd and does nothing about the order.
+- Mention postgresql.service somewhere in the nginx config. :: nginx's own config has no say over systemd's start order.
+
+@ 57
+A user cannot create files in /home/devin/build. The admin sees:
+```
+[root@lab01 ~]# ls -l /home/devin/
+drwxr-xr-x. 2 root  devin    6 Oct 19 11:22 build
+drwxrwxr-x. 7 devin devin 4096 Sep 28 2023 src
+```
+devin is in the devin group. Which two commands fix this? (Choose two.)
+* chmod 770 /home/devin/build/ :: The folder is owned by root with group devin, and drwxr-xr-x gives the group no write. 770 gives owner and group full access and others none.
+- chmod u+w /home/devin/build/ :: The owner is root, who already has write. This does not help devin.
+- usermod -G root devin :: Adding devin to the root group is a bad idea, and the folder's group is devin anyway. -G without -a would also remove his other groups.
+* chmod g+w /home/devin/build/ :: The group is devin, so adding group write lets devin create files there.
+- usermod -aG devin devin :: devin is already in the devin group.
+- usermod -G devin root :: This changes root's groups, not the folder's permissions.
+
+@ 58
+An admin wants new files to get -rw-r----- and new folders to get drwxr----x by default. Which umask does this?
+- umask 0027 :: 0027 gives files rw-r----- but folders drwxr-x---. Folders would lose the x for others and keep x for the group.
+* umask 0036 :: Files start at 666 and folders at 777, and umask removes bits. 666 minus group w and x (3) and others r and w (6) gives rw-r-----. 777 minus the same bits gives rwxr----x.
+- umask 0037 :: Folders would get drwxr-----, with no x for others.
+- umask 0038 :: 8 is not an octal digit, so this is invalid.
+
+@ 59
+An admin needs to change the hostname "web-old" to "web-new" inside /etc/myapp/settings.conf. Which command does this?
+- grep web-old /etc/myapp/settings.conf | awk '{print $1 "web-new"}' :: This prints changed text to the screen but never edits the file.
+- cut -d web-old /etc/myapp/settings.conf | vi newhost.name :: cut needs one separator character, and this opens a different file in vi.
+- cat /etc/myapp/settings.conf | grep web-old > newhost.name :: This only copies matching lines into a new file.
+* sed -i 's/web-old/web-new/' /etc/myapp/settings.conf :: sed -i edits the file in place, and s/old/new/ replaces the first match on each line. Add g at the end to replace every match on a line.
+
+@ 60
+An admin edits a systemd timer file to change how often it runs. What must they run so systemd picks up the change?
+- sysctl --load :: sysctl loads kernel settings. It has nothing to do with systemd timers.
+- systemd-analyze time :: This shows how long the last boot took.
+* systemctl daemon-reload :: systemd keeps unit files in memory. daemon-reload rereads them so the new schedule is used. (Restart the .timer unit afterward so the next run is recalculated.)
+- timedatectl --adjust-system-clock :: This option is used with set-local-rtc to sync the clock. It does not reload timers.
+
+@ 61
+How can an admin check whether the chronyd service will start automatically at boot?
+* systemctl is-enabled chronyd.service :: is-enabled prints enabled, disabled, masked or static, showing whether the service starts at boot.
+- systemctl is-active chronyd.service :: is-active says whether it is running right now, not whether it starts at boot.
+- systemctl start chronyd.service :: This starts the service. It does not report anything about boot.
+- systemctl stop chronyd.service :: This stops the service.
+
+@ 62
+A Linux box must route packets between its two network interfaces. Which kernel parameter must be turned on?
+- net.ipv4.ip_local_port_range :: This sets which local port numbers outgoing connections use.
+- net.ipv4.ip_multicast :: This is not a standard kernel parameter.
+* net.ipv4.ip_forward :: Setting ip_forward to 1 (sysctl -w net.ipv4.ip_forward=1) lets the kernel pass packets from one interface to another. Put it in /etc/sysctl.d/ to keep it after reboot.
+- net.ipv4.ip_route :: This is not a real kernel parameter.
+
+@ 63
+An admin needs to unmount /srv/scratch to replace it with a new volume, but gets "target is busy". Which command clears the problem so the unmount can go ahead?
+- ls -ld /srv/scratch :: This only shows the folder's permissions.
+- tree -g /srv/scratch :: tree lists files with their groups. It does not free the mount.
+- stat -f /srv/scratch :: stat -f shows filesystem information, like free blocks.
+* fuser -mk /srv/scratch :: fuser -m finds every process using the filesystem, and -k kills them, so the mount is free. Warn users first, since their programs will be stopped.
+
+@ 64
+A Linux host signs users in against Active Directory. Which file holds the AD domain settings?
+- auditd.conf :: auditd.conf configures the audit daemon's logging.
+- smb.conf :: smb.conf configures Samba shares and can hold a workgroup name, but the login domain settings for SSSD are elsewhere.
+- pam.conf :: PAM picks the login modules to run. It does not store domain details.
+* sssd.conf :: sssd.conf configures SSSD, the service that links Linux logins to AD. Its domain section holds the AD domain and how to reach it.
+
+@ 65
+When building software from source, which step checks the system for needed tools and libraries and prepares the build files?
+- install :: install copies files and sets their permissions. It does not check or prepare a build.
+* ./configure :: The configure script checks for compilers, libraries and options, then writes a Makefile for this system. The usual order is ./configure, make, then make install.
+- ./bash.sh :: This is not a standard build step.
+- make :: make compiles the code, but it needs the Makefile that ./configure creates.
+
+@ 66
+Which command shows the version of the e1000e kernel module?
+- lsmod e1000e :: lsmod lists loaded modules and takes no module name. It shows no version.
+- modprobe e1000e :: modprobe loads the module. It does not show its version.
+* modinfo e1000e :: modinfo shows a module's details, including its version, author, license, file path and parameters.
+- depmod e1000e :: depmod rebuilds the list of module dependencies.
+
+@ 67
+How can an admin confirm that the nvme kernel module is currently loaded?
+- modprobe | grep nvme :: modprobe loads modules and prints nothing useful to grep without arguments.
+* lsmod | grep nvme :: lsmod lists every loaded module, and grep shows whether nvme is among them.
+- insmod | grep nvme :: insmod inserts a module file and needs a file path.
+- modinfo | grep nvme :: modinfo needs a module name, and it shows details even for modules that are not loaded.
+
+@ 68
+An admin compares two files and gets this output:
+```
+3,4d2
+< blue
+< green
+6a5
+> purple
+```
+Which command produced it?
+- file :: file reports what type a file is.
+- awk :: awk processes text by fields and prints whatever you tell it. It does not have this format built in.
+- compgen :: compgen lists possible shell completions.
+* diff :: This is diff's normal format: 3,4d2 means lines 3 to 4 of the first file were deleted, 6a5 means a line was added, < marks lines from the first file and > from the second.
+
+@ 69
+An admin wants a list of everything under /srv, including files in subfolders, with each item's size. Which command does this?
+- lsblk /srv :: lsblk lists block devices, not files.
+* du -ah /srv/ :: du shows disk usage, -a includes every file as well as folders, and -h prints sizes like 4.0K or 2.1G.
+- df -h /srv :: df shows free space for the whole filesystem.
+- ls -ltr /srv | sort -n :: This only lists the top level of /srv, not subfolders, and sort -n does not sort by size here.
+
+@ 70
+Which of these is a virtual filesystem whose content is not stored on disk and disappears at reboot?
+- /var :: /var is on disk. Logs and caches there survive a reboot.
+- /usr :: /usr holds installed programs on disk.
+* /proc :: /proc is created in memory by the kernel. It shows live information about processes and the system and is rebuilt at every boot.
+- /boot :: /boot holds the kernel and boot loader files on disk.
+
+@ 71
+An alert reports processes that have finished running but still have an entry in the process table. Which state code should the admin look for in ps output?
+- D :: D is uninterruptible sleep, usually waiting on disk I/O.
+* Z :: Z means zombie: the process has exited, but its parent has not collected its exit status yet, so the entry stays in the process table.
+- T :: T means stopped, for example after Ctrl+Z.
+- S :: S is interruptible sleep, a normal waiting state.
+
+@ 72
+An admin edits a service's unit file under /etc/systemd/system. What should they run first so systemd uses the new version?
+- systemctl start :: Starting it would still use the old unit definition that systemd has in memory.
+- systemctl enable :: enable only sets up boot links. It does not reload the definition.
+* systemctl daemon-reload :: daemon-reload makes systemd reread all unit files. Then restart the service to apply the change.
+- systemctl restart :: Restart alone uses the cached old definition and systemd warns that the unit file changed.
+
+@ 73
+Users cannot connect to a server, which keeps crashing. The console shows:
+```
+Kernel panic - not syncing: Fatal machine check
+mce: [Hardware Error]: CPU 6: Machine Check Exception: 5 Bank 4: be00000000800400
+mce: [Hardware Error]: Machine check events logged
+mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+Kernel panic - not syncing: Fatal machine check
+```
+What is the cause and the right response?
+* It points to a hardware fault that the server hardware team should fix. :: Machine Check Exceptions are raised by the CPU itself when it finds a hardware error, often in the CPU, memory or bus. The panic protects data, but rebooting will not fix the faulty part.
+- The kernel is corrupted and must be reinstalled. :: A corrupt kernel fails to boot or load. MCE messages come from the hardware.
+- All CPUs are exhausted, so add another CPU. :: A busy CPU slows things down but never causes a machine check panic.
+- The system crashed and a reboot will fix it. :: A reboot brings it back for a while, but the hardware fault remains and the crashes return.
+
+@ 74
+An admin must restore /tmp/site-backup.tar.gz into /var/www/site. Which command does this?
+- tar -xvzf /var/www/site /tmp/site-backup.tar.gz :: The archive must follow -f. Here tar would try to open the folder as the archive.
+- tar -xvzf /tmp/site-backup.tar.gz > /var/www/site :: > redirects tar's text output to a file. It does not choose where files are extracted.
+* tar -xvzf /tmp/site-backup.tar.gz -C /var/www/site :: -x extracts, -z uncompresses gzip, -f names the archive and -C changes into the target folder first, so the files land there.
+- tar -xvf /tmp/site-backup.tar.gz /var/www/site :: Without -C, the path is read as a member name to extract from the archive, not a target folder.
+
+@ 75
+A server is sluggish. The admin sees:
+```
+top - load average: 3.10, 2.85, 2.90
+Tasks: ... 0 zombie
+%Cpu(s):  5.0 us,  4.2 sy,  0.0 ni, 22.0 id, 68.1 wa, ...
+$ iostat -x 2
+Device   r/s    w/s   r_await  w_await  %util
+sda     310.0  420.0   185.40   240.10   99.8
+```
+What explains the slowness?
+- The CPUs are overused. :: User and system CPU time are low. The CPUs are mostly waiting.
+- It is out of swap space. :: Nothing here shows swap. The wait is on storage.
+* Storage I/O latency is high. :: 68% iowait means the CPUs are idle while waiting for disk. iostat shows waits of about 200 ms per request and the disk at nearly 100% busy.
+- It needs to be patched. :: Nothing here points to missing patches.
+
+@ 76
+An app breaks with newer versions of the libssl3 package on Ubuntu, so that package must stay at its current version during upgrades. Which command does this?
+* apt-mark hold libssl3 :: apt-mark hold marks the package as held, so apt upgrade skips it and it stays at its current version. apt-mark unhold undoes it.
+- dpkg --hold libssl3 :: dpkg has no --hold option. With dpkg you pipe "libssl3 hold" into dpkg --set-selections.
+- apt set-selections libssl3 :: apt has no set-selections command.
+- echo "libssl3 > hold" | apt set-selections :: Wrong command and wrong text format. The working form is echo "libssl3 hold" | dpkg --set-selections.
+
+@ 77
+A process has frozen and ignores normal requests to stop. Which command forces it to end right away?
+- kill -15 PID :: 15 is SIGTERM, the same polite request as plain kill.
+- kill PID :: Plain kill sends SIGTERM, which a frozen process may ignore.
+- kill -1 PID :: 1 is SIGHUP, which usually asks a program to reload or hang up.
+* kill -9 PID :: 9 is SIGKILL. The kernel ends the process at once, and the process cannot catch or ignore it. Use it only after SIGTERM fails, since the program gets no chance to clean up.
+
+@ 78
+User ana gets "Permission denied" running the program report. The admin sees:
+```
+[ops@app01 bin]$ id ana
+uid=1021(ana) gid=1021(ana) groups=1021(ana)
+$ ls -l report
+-rwxrwx---+ 1 ops ops 5423 Jan  3 2024 report
+$ getfacl report
+# file: report
+# owner: ops
+# group: ops
+user::rwx
+user:ana:rw-
+group::rwx
+mask::rwx
+other::---
+```
+What fixes it?
+- Add ana to the wheel group. :: wheel gives sudo rights. It has nothing to do with this file's ACL.
+* Give ana execute permission in her ACL entry. :: The ACL entry user:ana:rw- applies to ana before the group or other bits, and it has no x. setfacl -m u:ana:rwx report lets her run it.
+- Give others read, write and execute. :: That opens the program to every user, and ana's own ACL entry would still win for her.
+- Move report to a different folder. :: The permissions stay with the file, wherever it is.
+
+@ 79
+After monthly patching, a key app stops working. Which command shows what packages the patching installed or changed?
+- dnf search :: search finds packages by keyword.
+- dnf info :: info shows details about one package.
+* dnf history :: dnf history lists every transaction with its date and action. dnf history info ID shows exactly which packages it installed, upgraded or removed, and dnf history undo ID can roll one back.
+- dnf list :: list shows installed and available packages, not what changed.
+
+@ 80
+Key-based SSH login keeps asking for a password. The logs show:
+```
+-rw-------. 1 root root 588 Apr 3 2024 authorized_keys
+type=AVC msg=audit: avc: denied { read } for comm="sshd" name="authorized_keys" scontext=system_u:system_r:sshd_t:s0 tcontext=unconfined_u:object_r:admin_home_t:s0 tclass=file
+SELinux status:   enabled
+Current mode:     enforcing
+```
+What is the most likely cause?
+- sshd was not restarted after the file was created. :: sshd reads authorized_keys on each login, so no restart is needed.
+* authorized_keys does not have the correct SELinux label. :: The AVC denial shows SELinux blocking sshd from reading the file because its label is admin_home_t instead of ssh_home_t. This often happens when the file was copied or moved. restorecon -Rv ~/.ssh fixes the label.
+- The file's permissions are wrong. :: 600 owned by the user is the correct mode for authorized_keys.
+- The SELinux policy is wrongly targeting unconfined_u. :: unconfined_u is just the SELinux user in the label. The problem is the file's type.
+
+@ 81
+A server is set to Asia/Tokyo and must be changed to Europe/Berlin. Which command does this?
+- set-timezone -config Europe/Berlin :: There is no standalone set-timezone command.
+* timedatectl set-timezone Europe/Berlin :: timedatectl set-timezone changes the system time zone by updating /etc/localtime. timedatectl list-timezones shows the valid names.
+- time date set Europe/Berlin :: time measures how long a command runs, so this is not valid.
+- date configure -set-timezone Europe/Berlin :: date shows or sets the clock. It cannot set the time zone like this.
+
+@ 82
+An app has to be restarted every few days. The kernel log shows:
+```
+[86400.120339] reportsvc invoked oom-killer: gfp_mask=0x140dca(GFP_HIGHUSER_MOVABLE|__GFP_COMP|__GFP_ZERO), order=0, oom_score_adj=0
+[86400.120348] CPU: 1 PID: 2210 Comm: reportsvc Not tainted 6.8.9-300.fc40.x86_64 #1
+[86400.120355] Call Trace:
+[86400.120362]  out_of_memory+0x254/0x540
+[86400.120370]  __alloc_pages_slowpath.constprop.0+0xb27/0xde0
+```
+The app owners say they added more RAM, and now the problem just takes longer to appear. What is the most likely reason the OOM killer stops the app?
+- The swap space is the wrong size. :: More swap would only delay it too. The app's memory keeps growing.
+- The kernel has panicked. :: The kernel is running and handling the situation. No panic is shown.
+* The app probably has a memory leak. :: The OOM killer fires when memory runs out. Adding RAM only delaying the failure means the app keeps taking more memory over time and never gives it back, which is a memory leak.
+- The CPU type does not suit the app. :: A CPU mismatch would fail at start, not after days, and would not trigger the OOM killer.
+
+@ 83
+An admin needs to bundle /srv/projects into one archive and compress it in the same step. Which command does this?
+- dd of=/backups/projects.tar.xz if=/srv/projects :: dd copies raw data from a file or device. It cannot archive a folder.
+- rsync -z /backups/projects.tar.xz /srv/projects :: rsync syncs files. -z only compresses during transfer, and the arguments are backwards.
+* tar -cJf /backups/projects.tar.xz /srv/projects :: -c creates an archive, -J compresses it with xz and -f names the output file, all in one step.
+- cpio -o /backups/projects.tar.xz /srv/projects :: cpio -o reads a file list from standard input and writes to standard output. It does not take these arguments or compress.
+
+@ 84
+Which command makes the nginx service start automatically every time a systemd server boots?
+* systemctl enable nginx :: enable creates the links that start the service at boot. Add --now to start it right away as well.
+- systemctl reload nginx :: reload makes nginx reread its configuration.
+- systemctl start nginx :: start runs it now, but it will not come back after a reboot.
+- systemctl status nginx :: status only shows its state.
+
+@ 85
+An admin made an RSA key pair, copied the public key to a server, and still gets asked for a password. Connecting with ssh -v shows:
+```
+debug1: Offering public key: /home/dev/.ssh/id_rsa RSA SHA256:QWx4...
+debug1: send_pubkey_test: no mutual signature algorithm
+debug1: Next authentication method: password
+```
+What fixes this?
+- Set PermitRootLogin yes in sshd_config. :: That only controls whether root may log in. The admin is logging in as dev.
+- Run systemctl restart sshd on the local machine. :: Restarting the service does not change which signing methods each side supports.
+* Make a new key pair with ssh-keygen -t ecdsa and copy it over. :: "no mutual signature algorithm" means the client and server could not agree on how to sign with this RSA key, usually because one side only offers the old SHA-1 RSA method that the other has turned off. An ECDSA (or Ed25519) key uses a method both support.
+- Set the remote ~/.ssh folder to mode 700. :: Bad folder permissions would make the server ignore the key, but the debug line shows the key was never even tested.
+
+@ 86
+An admin needs to find every line in notes.txt containing a five-character string whose second and fifth characters are "o" and whose third character is anything except "x". Which command does this?
+- grep '.o[x].o' notes.txt :: [x] matches only x, which is the opposite of what is wanted.
+- grep '.o*[^x]*o' notes.txt :: * means "zero or more of the previous character", so positions are no longer fixed.
+* grep '.o[^x].o' notes.txt :: A dot matches any one character, and [^x] matches any one character except x. So the pattern is: any character, o, not x, any character, o, five fixed positions.
+- grep '.o.^x.o' notes.txt :: Outside brackets, ^ only means "start of line" at the start of a pattern. Here it does not mean "not x".
+
+@ 87
+Users say a MariaDB server was down. The admin finds:
+```
+# uptime -p
+up 3 minutes
+# journalctl -k
+kernel: mariadbd invoked oom-killer: gfp_mask=0x201da, order=0, oom_score_adj=0
+kernel: Out of memory: Killed process 1288 (mariadbd)
+```
+What explains the outage?
+- A privileged user deliberately killed the process. :: The kill came from the kernel's OOM killer, not a user command.
+- A network outage made the service unavailable. :: The logs show the process itself was killed.
+- The process crashed because of a filesystem error. :: There is no filesystem error, only an out-of-memory event.
+* The process used up the server's memory. :: The kernel's OOM killer only acts when memory runs out. It killed mariadbd, and the short uptime shows the machine had just come back up.
+
+@ 88
+An admin must open the DNS TCP port only for hosts on 10.50.0.0/24, using ufw. Which command does this?
+- ufw enable 53/tcp from 10.50.0.0/24 :: ufw enable turns the firewall on. It does not take a rule.
+- ufw allow dns/tcp to 10.50.0.0/24 :: "to" is the destination, so this allows traffic going to that network instead of coming from it.
+- ufw disable from 10.50.0.0/24 :: disable turns the whole firewall off.
+* ufw allow from 10.50.0.0/24 to any port 53 proto tcp :: This allows incoming TCP traffic on port 53, DNS, only when it comes from 10.50.0.0/24. (The short form ufw allow 53/tcp from ... is not valid ufw syntax.)
+
+@ 89
+An admin wants to know how long the sshd service took to start during the last boot. Which command shows this?
+- resolvectl :: resolvectl shows and controls DNS lookup settings.
+- systemctl daemon-reload :: This rereads unit files. It shows nothing about startup times.
+- journalctl :: journalctl shows logs with time stamps. You could work it out by hand, but it does not report start times.
+* systemd-analyze blame :: blame lists every unit that ran during boot with the time it took to start, slowest first, so you can read off sshd.service.
+
+@ 90
+After a reboot, users cannot connect to a server over SSH. At the console the admin sees:
+```
+$ ss -lnt
+State   Recv-Q  Send-Q  Local Address:Port  Peer Address:Port
+LISTEN  0       128     0.0.0.0:22          0.0.0.0:*
+LISTEN  0       511     0.0.0.0:443         0.0.0.0:*
+$ sudo firewall-cmd --list-all
+public (active)
+  interfaces: ens3
+  services: dhcpv6-client https
+$ ping -c 3 app03
+3 packets transmitted, 3 received, 0% packet loss
+```
+What is the cause?
+* The firewall does not allow the SSH service. :: sshd is listening on port 22, and the network works (ping succeeds), but the firewall's allowed services list only dhcpv6-client and https. firewall-cmd --add-service=ssh --permanent followed by --reload fixes it.
+- The server's load is too high. :: Nothing here shows load, and a busy server would still answer.
+- The DNS entry has a bad address. :: ping reaches the host by name, so DNS works.
+- Users are using the wrong protocol. :: SSH clients connect to port 22, which is listening. The firewall blocks it.
+
+@ 91
+Which command shows live, updating CPU usage on a Linux system?
+- df :: df shows filesystem space.
+- lsblk :: lsblk lists block devices.
+* top :: top refreshes every few seconds and shows total CPU use plus a per-process breakdown.
+- uptime :: uptime gives load averages at one moment. It does not update live.
+
+@ 92
+A server crashes with this on the console:
+```
+Kernel panic - not syncing: Fatal machine check
+Call Trace:
+ mce_panic
+ do_machine_check
+```
+What is the most likely cause?
+- A misconfigured bootloader :: The system is already running. Boot loader problems show up before the kernel starts.
+- Filesystem corruption :: Filesystem errors produce I/O or fsck messages, not machine check exceptions.
+* Hardware failure, CPU or memory :: mce_panic and do_machine_check are the kernel's handlers for Machine Check Exceptions, which the CPU raises when it detects a hardware error.
+- Wrong file permissions :: Permissions cause "permission denied" errors, never a kernel panic.
+
+@ 93
+An admin wants to turn all lowercase letters in names.txt into uppercase and save the result in NAMES.txt. Which command works?
+- cat names.txt | tr [a-z] : [A-Z] > NAMES.txt :: tr takes exactly two sets, and the extra : makes three arguments, so tr reports an error.
+* cat names.txt | tr a-z A-Z > NAMES.txt :: tr translates characters from the first set to the matching ones in the second, so each a-z letter becomes its A-Z version.
+- cat names.txt | tr {lower} {upper} > NAMES.txt :: Braces are not tr syntax. Classes are written [:lower:] and [:upper:].
+- cat names.txt | tr '[:lower:]' '[:UPPER:]' > NAMES.txt :: Class names must be lowercase. [:UPPER:] is not valid, so tr fails.
+
+@ 94
+A new disk is added to grow existing LVM storage. Which command should run first on the new disk?
+- vgextend :: vgextend adds a physical volume to a group, but the disk must be a physical volume first.
+- lvextend :: lvextend grows a logical volume, which needs free space in the group first.
+- pvresize :: pvresize grows a physical volume after its disk got bigger. It does not prepare a new disk.
+* pvcreate :: pvcreate marks the disk as an LVM physical volume. Then vgextend adds it to the group and lvextend grows the volume.
+
+@ 95
+A server's clock is 20 minutes slow. Which command sets it right in one step from an NTP time server?
+- hwclock :: hwclock reads or sets the hardware clock. It does not fetch the correct time from the network.
+* ntpdate pool.ntp.org :: ntpdate asks the NTP server for the time and sets the system clock at once. (Newer systems use chronyc makestep or let chronyd or systemd-timesyncd keep time.)
+- timedatectl set-timezone UTC :: Changing the time zone only changes how the time is shown, not the clock itself.
+- timedatectl :: With no options it only shows the current time settings.
+
+@ 96
+A new user cannot change their own password:
+```
+[kim@lab02 ~]$ passwd
+Changing password for user kim.
+Current password:
+passwd: Authentication token manipulation error
+[kim@lab02 ~]$ ls -l /usr/bin/passwd
+-rwxr-xr-x. 1 root root 32648 Feb 7 2024 /usr/bin/passwd
+[kim@lab02 ~]$ chage -l kim
+Minimum number of days between password change : 0
+Maximum number of days between password change : 99999
+[root@lab02 ~]# passwd kim
+passwd: all authentication tokens updated successfully.
+```
+What is the most likely cause?
+- kim's new password does not meet the complexity rules. :: That gives a "BAD PASSWORD" message, not a token manipulation error.
+- kim already changed the password today. :: The minimum days is 0, so changes are allowed at any time.
+- kim's password has been disabled. :: root can still set it, and nothing shows a locked or disabled password.
+* The SUID bit is missing on /usr/bin/passwd. :: passwd must run as root to write /etc/shadow. The mode should be -rwsr-xr-x, with an s, but here it is -rwxr-xr-x. It works for root and fails for normal users. chmod u+s /usr/bin/passwd fixes it.
+
+@ 97
+An app hangs after about a week, and the server must be rebooted. The admin finds:
+```
+$ free -h
+       total   used   free   shared  buff/cache  available
+Mem:    31Gi   31Gi  412Ki    6.1Mi       298Mi       190Mi
+Swap:  4.0Gi  4.0Gi   64Ki
+$ dmesg
+[604812.310224] Out of memory: Killed process 8812 (ledgerd) total-vm:41228292kB, anon-rss:31880952kB, file-rss:1308kB, shmem-rss:0kB, UID:1000
+```
+What best describes the reason the app hangs?
+- It is not allowed to allocate memory, which slows the system. :: The opposite happened: it got far too much memory, about 30 GB, before being killed.
+* The app has a memory leak that consumes all the memory on the system. :: RAM and swap are both full, and the OOM killer stopped ledgerd, which held about 30 GB. Slow growth over a week until everything is used is the classic memory-leak pattern.
+- It has the wrong disk quota and fills the filesystem. :: Nothing here is about disk space or quotas.
+- It is configured wrongly and uses up memory and swap. :: A bad setting usually causes trouble soon after start. Steady growth over a week points to a leak.
+
+@ 98
+Which tool can an admin use to read the motherboard's temperature sensors?
+- lspci :: lspci lists devices on the PCI bus. It does not read temperatures.
+* lm_sensors :: lm_sensors, run with the sensors command after sensors-detect, reads hardware monitoring chips and shows motherboard and CPU temperatures, fan speeds and voltages.
+- lsusb :: lsusb lists USB devices.
+- dmidecode :: dmidecode reads static firmware tables like model and serial numbers, not live temperatures.
+
+@ 99
+Which command shows the running processes in real time, refreshing every few seconds?
+* top :: top shows a live, refreshing list of processes sorted by CPU use, with memory use and load.
+- ps :: ps shows a single snapshot and then exits.
+- free :: free shows memory usage.
+- df :: df shows filesystem space.
+
+@ 100
+A web app on a server has become slow. The admin sees:
+```
+Tasks: 214 total,   3 running, 211 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 41.0 us, 18.2 sy,  0.0 ni, 38.0 id,  2.1 wa
+MiB Mem :  15890.4 total,    140.2 free,  15660.8 used,     89.4 buff/cache
+MiB Swap:   4096.0 total,   2210.5 free,   1885.5 used.     22.6 avail Mem
+    PID USER   PR  NI    VIRT    RES   SHR S  %CPU  %MEM COMMAND
+  41207 web    20   0    8.1g   7.9g   812 R  88.1  50.9 shopapp
+  41206 web    20   0    7.4g   7.2g   990 R  80.3  46.4 shopapp
+     61 root   20   0       0      0     0 R  30.6   0.0 kswapd0
+$ uptime
+ 11:05:12 up 12 days,  2:40,  2 users,  load average: 1.20, 1.85, 1.40
+```
+What describes what is happening?
+- The app runs at priority 20, which starves the kernel. :: PR 20 with NI 0 is the normal default priority.
+- The app is using every core, so the system has run out of CPU. :: 38% of CPU time is idle, so the CPUs are not maxed out.
+- The app is pushing the load average up, causing the slowness. :: A load average of about 1.2 to 1.9 is modest. The real pressure is on memory.
+* The app is using nearly all the memory, which forces the system into swap. :: The two shopapp processes hold about 97% of RAM, only 22 MiB is available, swap is in use and kswapd0 is busy moving pages to swap. Constant swapping slows everything down.

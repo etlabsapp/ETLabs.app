@@ -1,0 +1,941 @@
+@ 1
+On a Kubernetes cluster, which resource do you create to make an app's port reachable from the internet?
+- Pod :: A pod runs the containers but only has an internal address that changes when it is recreated.
+- Deployment :: A Deployment keeps the right number of pod copies running. It does not expose any port.
+* Service :: A Service gives a set of pods one stable address and port. With type LoadBalancer (or NodePort) it is reachable from outside the cluster, and on a cloud cluster LoadBalancer gets a public IP.
+- Network :: Network is not a standard Kubernetes resource. NetworkPolicy only filters traffic and publishes nothing.
+
+@ 2
+This script should ping a list of hosts, but Bash reports "unexpected end of file":
+```
+for h in $(cat /srv/lists/hosts.txt)
+do
+  echo "Checking $h"
+  ping -c1 "$h"
+```
+What is missing?
+* done :: A for loop has the shape for ... do ... done. The loop is never closed with done, so the script cannot run.
+- fi :: fi closes an if block. There is no if here.
+- while :: while starts a different loop. This loop only needs to be closed.
+- else :: else belongs inside an if block.
+
+@ 3
+An admin is writing a Dockerfile to build a custom nginx image with changed default settings. What should the first instruction be?
+- BASE nginx :: BASE is not a Dockerfile instruction.
+- INHERIT nginx :: INHERIT is not a Dockerfile instruction.
+* FROM nginx :: FROM picks the base image to build on. A Dockerfile must start with FROM, apart from comments and ARG lines, and later lines change the image.
+- USE nginx :: USE is not a Dockerfile instruction.
+
+@ 4
+What is a main benefit of a Python virtual environment?
+- It saves disk space. :: Each venv keeps its own copy of packages, so it usually uses more space.
+* It stops projects that need different versions of the same package from conflicting. :: Each venv has its own Python packages, so project A can use one version of a library and project B another, without clashing.
+- It makes packages installed inside it available to the whole system. :: The point of a venv is the opposite: packages stay inside it.
+- It keeps one identical environment across all projects. :: A venv is per project, so each project gets its own separate environment.
+
+@ 5
+What is required to set up passwordless (key-based) SSH login?
+- Make the public and private keys on the remote server. :: Keys are made on the client. Making them on the server does not help you log in to it.
+* Copy your public key to the remote server. :: Your public key goes into ~/.ssh/authorized_keys on the server, usually with ssh-copy-id. The private key never leaves your machine.
+- Copy your private key to the remote server. :: The private key must stay secret on the client. Copying it out is a security risk and does not set up login.
+- Copy both keys to the remote server. :: Only the public key belongs on the server.
+
+@ 6
+An admin suspects SELinux is behind some app errors. Which command shows whether SELinux is on and which mode it is in?
+- getsebool -a :: getsebool lists SELinux booleans, the on/off switches for policy features. It does not show the mode.
+- ls -Z /etc :: This shows SELinux labels on files. It hints that SELinux is in use but does not report its mode.
+* getenforce :: getenforce prints one word: Enforcing, Permissive or Disabled. (sestatus gives more detail.)
+- semanage port -l :: This lists which ports are labeled for which services. It does not report the mode.
+
+@ 7
+The variable NEW_USERS holds "rita sven tomas". Which command creates an account for each name?
+* for u in $NEW_USERS; do useradd -m "$u"; done :: Without quotes, $NEW_USERS splits into three words, and the for loop runs useradd -m once for each name, creating a home folder for each.
+- echo "$NEW_USERS" | while u; do useradd -m "$u"; done :: while needs a test command. "while u" tries to run a command named u, and nothing reads the names.
+- select u in "$NEW_USERS"; do useradd -m "$u"; done :: select builds an interactive menu and waits for input. The quotes also make the list one item.
+- echo "$NEW_USERS" | until u; do useradd -m "$u"; done :: until has the same problem as while: u is not a valid test.
+
+@ 8
+Which VM network mode puts the virtual machine directly on the physical network, with its own address, as if it were a separate computer?
+- Host-only :: Host-only lets the VM talk only to the host and other VMs on that network.
+- NAT :: With NAT the VM shares the host's address and hides behind it.
+* Bridged :: Bridged mode connects the VM's virtual NIC to the physical network, so it gets its own address from the real network.
+- Internal :: Internal networks only connect VMs to each other.
+
+@ 9
+What are Ansible playbooks used for?
+- Holding security settings for a container :: That is something like a Kubernetes securityContext, not a playbook.
+- Setting up version control on a repository :: That is Git's job.
+- Describing storage volumes for a pod :: That is done with Kubernetes PersistentVolumeClaims.
+* Listing the tasks and settings needed to deploy and configure an app :: A playbook is a YAML file of ordered tasks, such as installing packages, copying configs and starting services, that Ansible runs on target hosts.
+
+@ 10
+What is the term for watching and recording which processes run and which files are read or changed on a Linux system?
+- Tuning :: Tuning means adjusting settings for performance.
+- Logging :: Logging records messages that programs choose to write. Auditing tracks access by rule.
+* Auditing :: Auditing, for example with auditd and auditctl rules, records who ran what and who touched which files, for security review.
+- Journaling :: Journaling is how filesystems protect data during a crash, or journald's log storage.
+
+@ 11
+Which of these is a sensible use of AI in a Linux environment?
+- Uploading internal company chat logs to check users :: That leaks private company data to an outside service.
+- Handing full control of a production server to an AI agent :: Unchecked automated control of a server is risky. A person should review changes.
+* Generating a sample Apache config file to try in a test environment :: Getting a draft config and testing it safely before use is a good, low-risk use. You still review it.
+- Outsourcing development of proprietary code to a public LLM :: Sending proprietary code to a public service can expose company property.
+
+@ 12
+This script should copy a file if it exists and print an error if it does not:
+```
+#!/bin/bash
+if [ -f /srv/data/export.csv ]
+then
+    cp /srv/data/export.csv /srv/archive/
+    echo "Error: export.csv not found"
+fi
+```
+Which keyword is missing?
+- done :: done closes loops, and there is no loop here.
+- for :: for starts a loop.
+- while :: while starts a loop.
+* else :: else marks the code to run when the test is false. It belongs before the echo line, so the error only prints when the file is missing.
+
+@ 13
+What is the main purpose of monitoring thresholds?
+* To send alerts when a value goes past a set limit :: A threshold is a limit, such as disk over 90% full. When a metric crosses it, the monitoring tool raises an alert.
+- To restart services automatically :: A restart might be triggered by an alert, but that is a separate action.
+- To run health checks on devices :: Health checks test whether something works. Thresholds decide when a number is a problem.
+- To work out service availability :: Availability is calculated from uptime data, not from threshold settings.
+
+@ 14
+An admin sees this code used to set up a web server:
+```
+name "web_role"
+description "Nodes that act as web servers"
+run_list "recipe[apache2]"
+default_attributes "apache" => {
+  "listen" => ["*:80"]
+}
+```
+Which tool is this written for?
+- Terraform :: Terraform uses HCL with resource blocks, not roles and recipes.
+- Puppet :: Puppet uses its own manifest language with classes and resources, not run_list.
+- Ansible :: Ansible uses YAML playbooks.
+* Chef :: Roles, run_list and recipe[...] are Chef terms, written in Chef's Ruby-based syntax.
+
+@ 15
+A user needs SSH access to a server that uses firewalld. Which command opens the standard SSH port permanently?
+- iptables -A INPUT -p tcp --dport sshd -j ACCEPT :: The port must be ssh or 22, not sshd, and adding raw iptables rules beside firewalld is not the right approach.
+- firewall-cmd --remove-service=ssh --permanent :: This removes SSH access instead of adding it.
+* firewall-cmd --permanent --add-port=22/tcp :: This opens TCP port 22 in the permanent config. Run firewall-cmd --reload to apply it now. (--add-service=ssh does the same.)
+- iptables-save | grep dport=22/tcp :: This only searches the current rules. It changes nothing.
+
+@ 16
+A developer's uncommitted changes in a local Git repo broke the app, and they want to throw them away and go back to the last commit. Which command is best?
+- git rebase :: rebase replays commits on another base. It does not discard local edits.
+- git pull :: pull fetches and merges remote changes. It keeps the local edits.
+* git reset :: git reset moves back to a commit. git reset --hard HEAD discards uncommitted changes and restores the last committed state.
+- git stash :: stash only sets changes aside to restore later. It does not throw them away.
+
+@ 17
+An HTTPS server won't start. The admin sees:
+```
+# journalctl -u httpd | tail -2
+httpd[2101]: (13)Permission denied: AH00072: make_sock: could not bind to address [::]:8444
+systemd[1]: Failed to start The Apache HTTP Server.
+# getenforce
+Enforcing
+# semanage port -l | grep http_port_t
+http_port_t     tcp    80, 81, 443, 488, 8008, 8009, 8443, 9000
+```
+Which command fixes this the secure way?
+- setenforce 0 :: This turns off SELinux enforcement for the whole system just to fix one port.
+- systemctl unmask httpd :: The service is not masked. It started and failed on the bind.
+* semanage port -a -t http_port_t -p tcp 8444 :: SELinux only lets Apache bind to ports labeled http_port_t, and 8444 is not in the list. Adding the label allows it while SELinux keeps enforcing.
+- setsebool -P http_port_t 8444 :: setsebool switches booleans on or off. http_port_t is a port type, not a boolean.
+
+@ 18
+A security manager reports open vulnerabilities. The admin logs in and sees:
+```
+# date
+Mon Sep 16 10:05:11 UTC 2024
+# getenforce
+Enforcing
+# dnf history
+ID | Command line   | Date and time    | Action(s) | Altered
+63 | update -y      | 2023-09-14 22:10 | Upgrade   |   61
+62 | install nginx  | 2023-05-02 15:06 | Install   |    7
+```
+What is the most likely security concern?
+- The server uses UTC and should use local time. :: UTC is a normal, recommended setting.
+- SELinux is enforcing and should be disabled. :: Enforcing SELinux is good for security.
+* The server has not been updated in a year and needs patching. :: The last update was in September 2023, and today is September 2024. A year of missing patches leaves known flaws open.
+- nginx is installed and must be removed. :: Having nginx installed is not a problem in itself.
+
+@ 19
+In Python, which keyword lets a script use a module's code?
+- def :: def defines a function.
+- __name__ :: __name__ is a variable holding the module's name.
+* import :: import loads a module so the script can use its functions and classes, for example import os.
+- __init__ :: __init__ is the method that sets up a new object, or __init__.py marks a package folder.
+
+@ 20
+A workstation cannot open the site www.example.org. The admin runs:
+```
+$ dig @1.1.1.1 www.example.org +short
+93.184.215.14
+$ nslookup www.example.org
+Name:    www.example.org
+Address: 93.184.215.14
+$ ping -4 -c2 www.example.org
+PING www.example.org (203.0.113.77)
+From 192.168.1.40 icmp_seq=1 Destination Host Unreachable
+$ cat /etc/hosts
+127.0.0.1      localhost
+203.0.113.77   www.example.org
+```
+What is the most likely cause?
+* An old static entry in /etc/hosts needs removing. :: DNS returns 93.184.215.14, but ping goes to 203.0.113.77, the address in /etc/hosts, which is checked before DNS. That stale entry sends traffic to an unreachable address.
+- The firewall must allow outbound HTTP and HTTPS. :: ping uses ICMP, and it failed because it went to the wrong address.
+- The site lacks IPv6 and the workstation needs it. :: ping -4 forced IPv4 and still failed.
+- The nameserver in /etc/resolv.conf should be changed to 8.8.8.8. :: DNS already returns the right address.
+
+@ 21
+A new app cannot reach its API. The admin sees:
+```
+[admin@web01 ~]$ wget https://api.shop.example/v1/health
+Connecting to proxy.corp.example (10.20.30.40):8080... connected.
+ERROR: The certificate of 'api.shop.example' is not trusted.
+ERROR: The certificate of 'api.shop.example' doesn't have a known issuer.
+```
+What is the best fix?
+- Add --no-check-certificate to the wget command. :: That skips verification and removes the protection TLS gives.
+- Replace the remote certificate with a new self-signed one. :: A self-signed certificate would also be untrusted, and the remote server may not be yours to change.
+* Confirm the certificate's issuer is trustworthy and add that CA to the local trusted certificates. :: "No known issuer" means the local system does not trust the CA that signed it, often an internal or proxy CA. Once it is verified, put the CA file in /etc/pki/ca-trust/source/anchors/ and run update-ca-trust (or update-ca-certificates on Debian).
+- Replace the expired CA certificate. :: Nothing says it expired. The issuer is simply unknown.
+
+@ 22
+A test machine needs SELinux turned off, and it must stay off after reboots for the duration of testing. What should the admin do?
+* Set SELINUX=disabled in /etc/selinux/config and reboot. :: That file sets the mode used at boot, so the change lasts. (On newer RHEL versions the kernel option selinux=0 is the preferred way.)
+- Run setenforce 1. :: 1 means enforcing, the opposite.
+- Run setenforce disabled and reboot. :: setenforce only switches between 1 and 0 until the next boot. It cannot disable SELinux.
+- Run systemctl disable selinux. :: SELinux is part of the kernel, not a service.
+
+@ 23
+Which Ansible component lists the managed hosts and groups and can hold variables for each host or group?
+- Modules :: Modules are the units of work tasks call, like dnf or copy.
+- Playbooks :: Playbooks say what to do to which group, but the hosts are defined elsewhere.
+* Inventory :: The inventory, an INI or YAML file or a dynamic script, lists hosts, puts them into groups and can set per-host or per-group variables.
+- Handlers :: Handlers are tasks that run when notified, like restarting a service.
+
+@ 24
+An admin wants to use AI to help write infrastructure-as-code. What is a best practice?
+- Copy and paste the output straight in. :: AI output can look right and still be wrong. It must be reviewed and tested.
+- Ask for one huge monolithic file. :: Big single files are hard to review and maintain.
+- Merge CI/CD pipelines together. :: That is unrelated to checking AI output.
+* Lint and review the generated code. :: Linters catch syntax errors, bad style and risky settings. AI can produce code that looks fine but has mistakes, so checking it before use is key.
+
+@ 25
+A file server should easily beat 12.5 MB/s but never does. The admin checks:
+```
+Settings for ens1f0:
+        Supported link modes:   10baseT/Full 100baseT/Full 1000baseT/Full
+        Advertised FEC modes: Not reported
+        Speed: 100Mb/s
+        Duplex: Full
+        Link detected: yes
+3: ens1f0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+```
+What is causing the limit?
+- ens1f0 has the wrong MTU. :: 1500 is the standard Ethernet MTU.
+* ens1f0 negotiated a link speed that is too low. :: The card supports 1000 Mb/s, but the link is running at 100 Mb/s. 100 megabits divided by 8 is 12.5 megabytes per second, exactly the ceiling seen. Check the cable, the switch port and the negotiation settings.
+- ens1f0 is not using an FEC mode. :: FEC is for fast fiber and similar links, not normal copper gigabit Ethernet.
+- ens1f0 has the wrong queue length. :: qlen 1000 is the normal default.
+
+@ 26
+Which protocol is used to query directory services that hold a hierarchy of users, groups, computers and organizational units?
+- TLS :: TLS encrypts connections. It is not a directory protocol.
+* LDAP :: LDAP is the protocol for reading and searching directory services such as Active Directory and OpenLDAP.
+- SMB :: SMB shares files and printers.
+- KRB-5 :: Kerberos 5 proves identity with tickets. It does not browse a directory.
+
+@ 27
+An SFTP server must only be reachable from 192.168.30.0/24. Which ufw command does this best?
+- sudo ufw allow 0:22/tcp from 192.168.30.0 :: This is not valid ufw syntax, and the network has no mask.
+- sudo ufw allow from 192.168.30.0/24 :: This opens every port to that network, not just SFTP.
+* sudo ufw allow from 192.168.30.0/24 to any port 22 :: SFTP runs over SSH on port 22. This allows only port 22, and only from that network.
+- sudo ufw allow in on eth0 to any port 22 :: This opens port 22 to everyone reaching eth0, not just that network.
+
+@ 28
+An admin edited a file in a local branch named fix-typo and committed it. What is the last Git command needed to get the change onto the remote repository?
+- git pull origin main :: pull brings remote changes down. It does not send yours.
+* git push origin fix-typo :: push uploads the branch's commits to the remote named origin. The usual order is checkout -b, edit, add, commit, then push.
+- git commit -m "Fix typo" :: The commit is already done, and it only saves locally.
+- git checkout -b fix-typo :: This creates the branch, which is the first step, not the last.
+
+@ 29
+Which of these is true about Python 3?
+- It is closed source. :: Python is open source.
+- It is fully backward compatible with Python 2. :: Python 3 deliberately broke compatibility with Python 2, for example print became a function.
+- It is binary compatible with Java. :: Python and Java are separate languages with different runtimes.
+* It can be extended with modules. :: Python's standard library and packages from PyPI (installed with pip) add features through modules you import.
+
+@ 30
+After a restart, nobody can reach a server. On the console the admin sees:
+```
+$ nmcli con show
+NAME        UUID                                  TYPE      DEVICE
+office-lan  5ab3c6d2-1f22-4c8a-9a01-77cdca5910fd  ethernet  ens5
+$ nmcli -g ipv4.method con show office-lan
+auto
+$ ip a show ens5
+2: ens5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 state UP
+    inet 169.254.33.10/16 brd 169.254.255.255 scope link noprefixroute ens5
+```
+What is the most likely reason?
+- The NIC has failed and must be replaced. :: The link is UP and has an address, so the hardware works.
+- The cable is in the wrong port. :: The interface shows LOWER_UP, so a cable is connected and has a link.
+* The server cannot get an IP address from the DHCP server. :: The connection uses DHCP (auto), but the interface only has a 169.254.x.x link-local address. Systems give themselves one of those when no DHCP server answers.
+- Nothing is wrong, and another restart will fix it. :: A 169.254 address means it is not on the real network, so there is a problem to fix.
+
+@ 31
+What is a webhook?
+- An SNMP-based API for monitoring network devices :: SNMP is a separate polling protocol.
+* An HTTP callback that one system sends to another when an event happens :: A webhook is an HTTP request, usually a POST, that a service sends to a URL you give it when something happens, such as a push to a Git repo.
+- A login method for web servers :: Webhooks do not log anyone in.
+- A way to send secret data between systems :: Webhooks just send event data. They are not a secure transfer method by themselves.
+
+@ 32
+An admin wants to see all log entries for the systemd unit billing.service. Which command does this?
+- systemctl status billing.service :: status only shows the last few log lines.
+- systemd-analyze unit-files billing.service :: This lists unit file paths. It shows no logs.
+- cat /var/log/messages :: This shows a general syslog file, possibly missing journal-only entries, with every service mixed in.
+* journalctl -u billing.service :: journalctl -u filters the systemd journal to that one unit and shows all of its entries. Add -f to follow live.
+
+@ 33
+A database container must do different jobs depending on the argument given at start, such as init, start or recover. The admin wrote /usr/local/bin/dbctl.sh for this. Which Dockerfile instruction should run the script and pass it those arguments?
+- EXPOSE /usr/local/bin/dbctl.sh :: EXPOSE documents a port. It does not run anything.
+- RUN /usr/local/bin/dbctl.sh :: RUN executes during the image build, not when a container starts.
+- CMD /usr/local/bin/dbctl.sh :: Arguments given to docker run replace CMD completely, so the script would not run with them.
+* ENTRYPOINT ["/usr/local/bin/dbctl.sh"] :: ENTRYPOINT sets the program that always runs when the container starts. Arguments given to docker run, like docker run db recover, are added after it. Use the exec form shown, because the plain shell form ignores the extra arguments.
+
+@ 34
+Users can reach hosts only by full name, like db1.corp.example, and not by short name, like db1. The admin sees:
+```
+# ping db1
+ping: db1: Temporary failure in name resolution
+# resolvectl status
+Current DNS Server: 10.0.0.2
+       DNS Servers: 10.0.0.2
+        DNS Domain:
+```
+What should be done?
+- Add another DNS server to /etc/resolv.conf. :: The current server answers full names fine. A second server would not add the domain.
+- Add an A record for each host. :: The records exist, since full names work.
+* Add the search domain to the network configuration. :: An empty DNS Domain means no search domain, so "db1" is never expanded to db1.corp.example. Setting corp.example as the search domain fixes short names.
+- Add db1.corp.example to /etc/hosts.allow. :: hosts.allow controls access for TCP wrappers. It is not for name lookups.
+
+@ 35
+Which tool can check whether a TCP port is open on a remote host?
+- ping :: ping uses ICMP and has no idea about ports.
+* nc :: nc -zv host port tries to connect to the port and reports whether it is open.
+- ip :: ip configures local interfaces and routes.
+- netstat :: netstat shows ports on the local machine only.
+
+@ 36
+Which widely used reference gives step-by-step secure configuration guidance for operating systems and applications?
+* CIS Benchmarks :: The Center for Internet Security publishes detailed hardening guides for Linux distributions and many applications.
+- GDPR :: GDPR is a European privacy law, not a configuration guide.
+- ISO 27001 :: ISO 27001 is a management standard for security programs. It does not give per-OS settings.
+- CVE :: CVE is a list of known vulnerabilities, not configuration guidance.
+
+@ 37
+What should usually be the first step when starting a new Python project on Linux?
+- python3 -m pip install -r /srv/apps/inventory :: -r needs a requirements file, not a folder, and installing comes after the venv exists.
+- export PYTHON_PATH:/srv/apps/inventory :: This is wrong syntax and the wrong variable name (it is PYTHONPATH), and it is not a project setup step.
+- python3 -m source /srv/apps/inventory :: source is a shell command, not a Python module.
+* python3 -m venv /srv/apps/inventory/.venv :: Create a virtual environment first, so the project's packages stay isolated. Then activate it and install packages.
+
+@ 38
+Users keep getting disconnected from a server. The admin sees:
+```
+~# ping -c 100 10.1.1.1
+--- 10.1.1.1 ping statistics ---
+100 packets transmitted, 7 received, 93% packet loss
+~# ip -s link show eno1
+2: eno1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP qlen 1000
+    RX:  bytes  packets  errors  dropped  missed  mcast
+      81234567   702331  395120        0       0    920
+    TX:  bytes  packets  errors  dropped carrier collsns
+      90123456   702331  161004        0       0       0
+~# ip route
+default via 10.1.1.1 dev eno1 proto dhcp src 10.1.1.55 metric 100
+```
+What should the admin do?
+- Assign a proper gateway. :: The default route via 10.1.1.1 is fine.
+- Raise the MTU. :: The MTU is standard, and MTU problems do not cause errors on this scale.
+- Increase ping's TTL. :: TTL limits router hops. The target is on the local network.
+* Replace the network card. :: Huge RX and TX error counts on the interface, together with heavy packet loss to a local gateway, point to faulty hardware: the NIC, the cable or the switch port. After ruling out the cable, replace the NIC.
+
+@ 39
+A user always forgets the extra options needed to SSH from a jump host to a remote server. What is the best lasting fix?
+- Put the options in /etc/ssh/ssh_config. :: That changes settings for every user on the machine, not just this one.
+- Write a connection script in their home folder. :: It works, but it is clumsy and easy to get around.
+* Have the user add the options to their ~/.ssh/config file. :: A Host block in ~/.ssh/config sets options like User, Port, IdentityFile or ProxyJump for one host, so a plain ssh hostname just works.
+- Make a shell alias with all the options. :: Aliases only work in interactive shells and are not used by scp, rsync or other tools.
+
+@ 41
+A developer wants to use an AI tool to speed up code in a product the company sells. What should they do first?
+- Install a private LLM on the internal network. :: That is a big project and may still break company rules. Check the policy first.
+* Check whether the company has a policy on using AI in software development. :: Proprietary code and licensing are at stake. A policy says which tools are allowed and how code may be shared, so it comes before anything else.
+- Research which AI chatbots are best at optimizing code. :: Choosing a tool comes after you know whether, and how, AI may be used.
+- Use open-source LLMs that the community reviews. :: Community review does not replace company approval.
+
+@ 42
+A user needs the latest Alpine Linux image from a Docker registry. Which command gets it?
+- docker image save alpine :: save writes an image you already have to a tar file.
+- docker image import alpine :: import makes an image from a tarball of a filesystem.
+- docker image init alpine :: There is no docker image init command.
+* docker image pull alpine :: pull downloads the image from the registry, Docker Hub by default. With no tag you get alpine:latest. (docker pull alpine is the short form.)
+
+@ 43
+Which Ansible component holds the list of hosts and host groups to manage?
+- Collection :: A collection is a bundle of modules, roles and plugins.
+- Fact :: Facts are details Ansible gathers about each host, like its OS and IP addresses.
+- Playbook :: A playbook says what to do, but it points to groups defined somewhere else.
+* Inventory :: The inventory lists managed hosts and organizes them into groups.
+
+@ 44
+An admin gets "Permission denied, please try again" when logging in over SSH as root with the right password. Root login at the console works. The sshd config has:
+```
+PermitRootLogin prohibit-password
+PasswordAuthentication yes
+UsePAM no
+MaxSessions 2
+MaxAuthTries 3
+```
+What will let the admin log in as root over SSH?
+- Turn PAM on and set up the SSH module. :: PAM is not what is blocking root. prohibit-password refuses root passwords no matter how PAM is set.
+- Move SSH to port 2222. :: The server answered with "Permission denied", so it is reachable. The port is not the problem.
+* Log in as root with an SSH key. :: prohibit-password lets root log in over SSH but never with a password. Putting the admin's public key in /root/.ssh/authorized_keys and using the key works.
+- Log out other sessions because only a few are allowed. :: MaxSessions limits sessions per connection. The error is a root password refusal, not a session limit.
+
+@ 45
+An admin manages many Linux servers and needs a reliable, secure way to handle the flood of OS and app log events. What should they do?
+- Rotate logs on each server. :: Rotation keeps disks from filling up, but logs stay scattered on every server.
+* Set up central log aggregation. :: Sending every server's logs to one central system, using rsyslog forwarding, the ELK stack or similar, makes them searchable in one place, keeps copies off each host and makes alerts easier.
+- Back up logs to remote storage each day. :: Backups preserve logs, but they are not easy to search or monitor.
+- Pull logs from each server by hand when needed. :: This is slow and easy to forget, and logs may be gone or changed when you need them.
+
+@ 46
+What is YAML?
+- A container orchestration engine :: That is Kubernetes.
+- An open-source configuration management tool :: That would be Ansible, Puppet or Chef. YAML is the file format some of them use.
+* A data format widely used for configuration files :: YAML is a human-readable data serialization language that uses indentation for structure. Ansible, Kubernetes and many apps use it for config.
+- A package that launches cloud instances :: YAML is just a format. It does not launch anything.
+
+@ 47
+Pick the strongest, most complex password from this list.
+- R0ckyR0ad5 :: Upper, lower and numbers, but no symbols, and it is a simple word swap.
+- rocky$road$ :: Has symbols, but no uppercase letters or numbers.
+* R0cky!R#ad^5 :: It mixes uppercase, lowercase, numbers and several symbols and is the longest, so it has the most possible combinations.
+- RockyRoadFive :: Letters only, no numbers or symbols.
+
+@ 48
+An admin wants a Debian shell inside a new container. Which command does this?
+* docker run -it debian :: run creates and starts a container from the debian image. -i keeps input open and -t gives a terminal, so you land in the image's default shell.
+- podman pull debian /bin/bash :: pull only downloads the image. It does not start a shell.
+- runc exec -i debian :: runc is the low-level runtime, and exec needs an already running container ID.
+- containerd /usr/bin/sh debian :: containerd is a background daemon, not a command for starting a shell.
+
+@ 49
+An admin is testing a web app in a lab and needs to allow DNS, HTTP and HTTPS from the internal zone for now only. Which command does this?
+- iptables --enable-service='dns|http|https' --zone=internal :: iptables has no services or zones. Those are firewalld ideas.
+- firewalld --add-service=dns,http,https --zone=internal :: firewalld is the daemon. Rules are added with firewall-cmd.
+* firewall-cmd --zone=internal --add-service={dns,http,https} :: firewall-cmd adds rules, and the shell expands the braces into one --add-service for each service. Without --permanent the rules are temporary and vanish at reload or reboot, which suits a test.
+- systemctl mask firewalld --for={dns,http,https} :: mask stops firewalld from starting at all, and --for is not a real option.
+
+@ 50
+Which is an example of a best practice when using AI tools?
+* Removing sensitive data before sharing it with the tool :: Taking out passwords, personal data and secrets before sending anything to an AI tool keeps private information from leaking.
+- Pasting AI output straight into a root terminal :: Commands must be reviewed before running. AI can make mistakes or produce harmful commands.
+- Always linting proprietary source code with an outside AI service :: Sending private code to an outside service can expose it.
+- Sampling a group of similar users when building a model :: That causes biased models. Data should represent everyone.
+
+@ 51
+A technician wants to use a Linux VM as a temporary router and NAT gateway for the 172.20.8.0/24 network. Which three commands are needed? (Select three.)
+- echo "1" > /proc/net/tcp :: /proc/net/tcp is a read-only list of TCP connections.
+* iptables -A FORWARD -j ACCEPT :: The FORWARD chain handles packets passing through the machine. This allows them to be forwarded.
+- iptables -t nat -A PREROUTING -j MASQUERADE :: MASQUERADE only works in POSTROUTING.
+* echo "1" > /proc/sys/net/ipv4/ip_forward :: This turns on IP forwarding in the kernel so packets can pass between interfaces. It lasts until reboot.
+- iptables -t nat -s 172.20.8.0/24 -p tcp -A PREROUTING -j MASQUERADE :: Wrong chain again, and -p tcp would leave out UDP and ICMP.
+- echo "0" > /proc/sys/net/ipv4/ip_forward :: 0 turns forwarding off.
+- iptables -A PREROUTING -j ACCEPT :: PREROUTING is in the nat and mangle tables, not the default filter table, so this fails.
+* iptables -t nat -s 172.20.8.0/24 -A POSTROUTING -j MASQUERADE :: This rewrites the source address of the network's outgoing packets to the router's own address, so replies come back to it.
+
+@ 52
+Which of these helps reduce the attack surface when hardening Linux?
+- Creating fewer folders :: The number of folders makes no difference to security.
+- Making the SSH startup timeout longer :: This gives attackers more time, if anything.
+* Enforcing strong, complex passwords :: Strong password rules make guessing and brute-force attacks much harder, closing off a common way in. (Removing unneeded services and ports reduces the surface too.)
+- Customizing the login banner :: A banner gives legal notice but does not close any way in.
+
+@ 53
+What format are Ansible playbooks written in?
+- XML :: Ansible does not use XML.
+- JSON :: Ansible can read JSON for some data, but playbooks are YAML.
+- CSV :: CSV is for tables, not structured tasks.
+* YAML :: Playbooks are YAML files, chosen because they are easy for people to read and write.
+
+@ 54
+Package installs fail on a RHEL server:
+```
+# dnf install htop
+Curl error (77): Problem with the SSL CA cert (path? access rights?)
+# update-ca-trust
+p11-kit: could not create file: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem: Permission denied
+# ls -lZ /etc/pki/ca-trust/extracted/
+drwxr-xr-x. 2 root root system_u:object_r:cert_t:s0  39 Mar  2 17:20 java
+drwxr-xr-x. 2 root root system_u:object_r:cert_t:s0  47 Mar  2 17:20 openssl
+drwxr-xr-x. 2 root root system_u:object_r:etc_t:s0  101 Mar  2 17:20 pem
+# getenforce
+Enforcing
+```
+What is the best fix?
+- setenforce 0 :: That turns off SELinux protection system-wide.
+- dnf reinstall ca-certificates :: This needs downloads that are failing, and the pem folder would keep the wrong label.
+* restorecon -R /etc/pki/ca-trust/extracted/pem :: The pem folder has the label etc_t while its neighbors have cert_t, so SELinux blocks writing the CA bundle. restorecon resets the default labels, then update-ca-trust works.
+- touch /etc/pki/tls/certs/ca-bundle.crt :: That file is a link to the bundle. Touching it fixes nothing.
+
+@ 55
+A new admin must create a passphrase-protected 4096-bit RSA SSH key. Which command does this?
+- ssh-keygen -t dsa -b 4096 :: DSA keys are fixed at 1024 bits and are outdated.
+- ssh-keygen -RPb 4096 :: -R removes a host from known_hosts. This does not make an RSA key.
+* ssh-keygen -t rsa -b 4096 :: -t sets the key type and -b the size. ssh-keygen asks for a passphrase as it makes the key, which protects the private key.
+- ssh-keygen -k rsa -l 4096 -p :: -k is for revocation lists, -l shows a key's fingerprint and -p changes a passphrase. None of them make a new key.
+
+@ 56
+An admin has uncommitted changes in a Git repo but needs to pull the latest remote changes first. Which command saves the local changes aside for later?
+- git merge :: merge joins branches. It does not save uncommitted work.
+- git fetch :: fetch downloads remote changes but does nothing with local edits.
+* git stash :: stash saves the uncommitted changes and cleans the working folder. After pulling, git stash pop brings them back.
+- git pull :: pull may fail or conflict with the uncommitted changes.
+
+@ 57
+In IT infrastructure, what is Ansible mainly used for?
+- Managing databases :: Ansible can configure database servers, but it is not a database tool.
+* Configuration management :: Ansible sets up and keeps servers in the desired state, installing packages, writing configs and starting services, from playbooks, over SSH and without agents.
+- Managing processes :: Process control is done with tools like systemctl and kill.
+- Managing assets :: Tracking hardware and licenses is a separate category of tool.
+
+@ 58
+An admin needs to check whether port 8443 is open on the local server. Which command does this?
+- tracepath localhost 8443 :: tracepath traces the network path. It does not check ports.
+- dig localhost:8443 :: dig does DNS lookups. host:port is not a name.
+- ip link 8443 :: ip link manages interfaces.
+* ss -an | grep 8443 :: ss lists sockets, -a includes listening ones and -n shows numbers, so grep shows any socket using port 8443. (ss -ltn is a tidier choice.)
+
+@ 59
+A script prints file_$num_$name, but the number never shows up. Which change makes $num expand correctly?
+- echo 'file_$num_$name' :: Single quotes stop all expansion, so the text prints exactly as typed.
+- echo "file_$(num)_$name" :: $( ) runs a command named num. It does not expand the variable.
+* echo "file_${num}_$name" :: The shell reads $num_ as one variable called num_, because underscores are allowed in names, and it is empty. Braces mark where the name ends, so ${num} expands correctly.
+- echo "file_"$num'_$name' :: The single quotes stop $name from expanding.
+
+@ 60
+Which protocol is used to monitor network devices like switches and routers?
+- SMTP :: SMTP sends email.
+- DHCP :: DHCP hands out IP addresses.
+* SNMP :: The Simple Network Management Protocol lets monitoring tools read device stats and receive alerts (traps).
+- DNS :: DNS turns names into addresses.
+
+@ 61
+New DNS servers were added to the network. Which file on a Linux client lists the DNS servers to use?
+- /etc/host.conf :: host.conf holds older resolver options, not server addresses.
+- /etc/sysctl.conf :: sysctl.conf holds kernel settings.
+- /etc/nsswitch.conf :: nsswitch.conf only sets the order of lookup sources.
+* /etc/resolv.conf :: resolv.conf holds nameserver lines for the DNS servers to query. Where NetworkManager or systemd-resolved manages it, make the change in those tools.
+
+@ 62
+While testing a new web app, an admin gets this from curl -v -k:
+```
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* Server certificate:
+*  subject: CN=portal.corp.example
+*  start date: Feb  1 00:00:00 2024 GMT
+*  expire date: Feb  1 23:59:59 2027 GMT
+*  issuer: C=US; O=Corp; CN=corp-internal-ca
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+```
+What do the results show?
+- It is a wildcard certificate and is insecure. :: The subject is one host name, not *.something.
+* The certificate was not signed by a trusted CA, and the check was skipped on purpose. :: "unable to get local issuer certificate" means the signing CA is not in the trusted store, and "continuing anyway" is the -k (insecure) flag skipping the check.
+- It uses an outdated algorithm. :: TLS 1.3 with AES-256-GCM is current and strong.
+- It is expired and must be replaced. :: It is valid until 2027.
+
+@ 63
+What is PEP 8?
+- The Python package installer :: That is pip.
+* The style guide for Python code :: PEP 8 sets out conventions like 4-space indents, naming styles and line length, so Python code is consistent and easy to read.
+- A Python variable that holds octal values :: There is no such thing.
+- Python virtual environments :: Those are covered by venv (PEP 405).
+
+@ 64
+An admin updated the DNS zone for corp.example, but app.corp.example still resolves to its old address:
+```
+$ cat /etc/bind/db.corp.example
+ns1  IN A 10.40.0.251
+app  IN A 10.30.0.30
+$ nslookup app.corp.example
+Server:  127.0.0.53
+Non-authoritative answer:
+Name:    app.corp.example
+Address: 10.30.0.99
+```
+Which command gets the updated address?
+- resolvectl status :: This only shows resolver settings and servers.
+- resolvectl query app.corp.example :: This looks the name up through systemd-resolved, which would return the same cached old answer.
+- service nslcd reload :: nslcd handles LDAP user and group lookups, not DNS.
+* resolvectl flush-caches :: The answer is non-authoritative from the local stub resolver (127.0.0.53), so it comes from a cached copy. Flushing the systemd-resolved cache makes the next lookup ask again. (Make sure the zone's serial was raised and BIND reloaded too.)
+
+@ 65
+A DevOps engineer needs to start a brand-new local Git repository. Which command does this?
+* git init :: git init creates the hidden .git folder in the current folder, turning it into a new repository.
+- git config :: config sets options like user.name.
+- git clone :: clone copies an existing remote repository.
+- git add :: add stages files, which needs a repo to exist first.
+
+@ 66
+What is the name for gathering system events from many machines into one central place?
+- Webhooks :: Webhooks send event notices over HTTP to a URL.
+* Log aggregation :: Log aggregation collects logs from many systems into one central place for searching and alerts.
+- Threshold monitoring :: Thresholds trigger alerts on metric limits.
+- Health checks :: Health checks test whether a service responds.
+
+@ 67
+What is the role of initrd (or initramfs)?
+- It is needed to connect over SSH. :: SSH runs much later, after the full system is up.
+- It holds the system's trusted certificates and secret keys. :: Those live in /etc/pki and similar places.
+- It is needed to set up a random device. :: Random devices are provided by the kernel.
+* It holds the basic modules and drivers needed to start the system. :: It is a small temporary root filesystem loaded with the kernel. It has the drivers, for example for storage, RAID, LVM or encryption, needed to find and mount the real root filesystem.
+
+@ 68
+An admin must rename a server to "edge01", and the name must survive reboots. Which command does this?
+- systemctl daemon-reload -H edge01 :: -H runs systemctl on a remote host. This does not rename anything.
+- echo "edge01" >> /etc/resolv.conf :: resolv.conf lists DNS servers. This could break name lookups.
+* hostnamectl set-hostname edge01 :: hostnamectl writes the name to /etc/hostname, so it lasts, and applies it right away.
+- export HOSTNAME=edge01 :: This only changes a shell variable for the current session.
+
+@ 69
+An admin troubleshoots a network error:
+```
+$ ping updates.example.com
+ping: updates.example.com: Name or service not known
+$ cat /etc/resolv.conf
+# Generated by NetworkManager
+$ ip route
+default via 10.8.0.1 dev ens192 proto static metric 100
+10.8.0.0/22 dev ens192 proto kernel scope link src 10.8.1.20
+```
+What causes the error?
+- The network adapter is down. :: The route shows ens192 with an address, so it is up.
+- The default route is missing. :: The default route via 10.8.0.1 is there.
+* No DNS resolver is configured. :: resolv.conf has only a comment and no nameserver lines, so names cannot be looked up.
+- The netmask is wrong. :: /22 is a valid mask, and the gateway is inside it.
+
+@ 70
+How would you sum up what Ansible is?
+- A tool for monitoring cloud infrastructure :: That would be something like Nagios or Prometheus.
+- A configuration tool with its own Ruby-based declarative language :: That describes Puppet. Chef is also Ruby-based.
+- A CI/CD tool that automates with pipelines :: That would be Jenkins or GitLab CI.
+* An automation tool that uses playbooks written in YAML :: Ansible runs YAML playbooks against hosts from its inventory, over SSH, with no agent needed.
+
+@ 71
+Which best describes PEP 8?
+- A list of built-in Python modules :: The standard library is documented separately.
+- A data structure in Python :: Lists, dicts and tuples are data structures. PEP 8 is a document.
+* A set of coding conventions for Python code :: PEP 8 is Python's official style guide, covering layout, naming and other conventions that make code consistent.
+- A name for the standard Python libraries :: That is just "the standard library".
+
+@ 72
+An admin adds a web service on port 80. Which command lets other systems reach it, and keeps working after the server restarts?
+- firewall-cmd --add-port=http --complete-reload :: --add-port needs a number and protocol like 80/tcp, and --complete-reload is a separate action.
+- firewall-cmd --add-service=http :: Without --permanent the rule only lasts until the next reload or reboot.
+- firewall-cmd --add-service=http --reload :: --reload cannot be combined with adding a rule like this, and the rule is still not permanent.
+* firewall-cmd --add-service=http --permanent :: --permanent saves the rule in the config, so it is loaded at every boot. Run firewall-cmd --reload once to apply it right now as well.
+
+@ 73
+Network throughput on a server is poor. The admin collects:
+```
+$ ip link show eth1
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000
+    inet 10.60.2.15/24 brd 10.60.2.255
+$ ping -s 1472 -M do 10.70.4.9
+PING 10.70.4.9 1472(1500) bytes of data.
+From 10.60.2.15 icmp_seq=1 Frag needed and DF set (mtu = 1400)
+```
+What is the cause?
+- A duplex setting problem :: A duplex mismatch shows up as collisions and errors, not "frag needed".
+- A driver problem :: The interface is up and sending, and the error message is about packet size.
+* An MTU mismatch :: The server uses jumbo frames (MTU 9000), but a 1500-byte packet with "don't fragment" set was refused because the path only allows 1400. Packets that are too big get dropped or broken up, which hurts throughput. The MTU must match along the path.
+- Hardware limits :: Nothing points to the hardware itself being too slow.
+
+@ 74
+What is JSON?
+* A text format for exchanging data between systems :: JSON (JavaScript Object Notation) stores data as key-value pairs and lists in plain text. APIs and config files use it widely.
+- A platform for creating isolated environments :: That describes container tools like Docker.
+- A programming language for building dynamic websites :: JSON is a data format, not a language with logic.
+- A technique for simulating whole computers :: That is virtualization.
+
+@ 75
+A port scan during hardening shows:
+```
+# nmap 198.51.100.40
+PORT     STATE SERVICE
+23/tcp   open  telnet
+80/tcp   open  http
+443/tcp  open  https
+8080/tcp open  http-proxy
+```
+What is the best way to deal with the security issue?
+- Close port 80 on the network switch. :: HTTP is not the main risk here, and switches do not close ports like a firewall does.
+- Block port 23 with a firewall. :: This hides it, but the unsafe service is still installed and running.
+* Disable and remove the Telnet service. :: Telnet sends everything, passwords included, as plain text. Removing it takes away the risk entirely, and SSH should be used instead.
+- Change the admin's password. :: A new password would still cross the network unencrypted over Telnet.
+
+@ 76
+An app cannot reach a remote PostgreSQL server. Which command checks that the database port is reachable?
+- ss -plant | grep 5432 :: ss shows local sockets, not whether a remote port can be reached.
+* nc -v pg.corp.example 5432 :: nc -v tries a TCP connection to that host and port and reports whether it worked.
+- dig MX pg.corp.example:5432 :: dig does DNS lookups, MX is for mail, and host:port is not a valid name.
+- arp -an | grep pg.corp.example | grep 5432 :: arp shows MAC addresses on the local network and knows nothing about ports.
+
+@ 77
+Users cannot reach an app that runs in containers. How can the admin check which containers are running?
+- docker images :: This lists stored images, not running containers.
+- docker start :: start launches a stopped container. It does not check anything.
+* docker ps :: docker ps lists running containers with their status, ports and names. docker ps -a also shows stopped ones.
+- docker run :: run creates and starts a new container.
+
+@ 78
+A print server running CUPS on TCP port 631 should accept connections only from the local network 10.12.0.0/24. Which iptables rule does this?
+* iptables -A INPUT -s 10.12.0.0/24 -p tcp --dport 631 -j ACCEPT :: Incoming traffic uses the INPUT chain, -s matches the source network, -p tcp must come before --dport 631, and -j ACCEPT lets it in. A later rule should drop everyone else.
+- iptables -A OUTPUT -d 10.12.0.0/24 -p tcp --sport 631 -j ACCEPT :: This matches traffic leaving the server, not incoming connections.
+- iptables -D INPUT -d 10.12.0.0/24 -p tcp --dport 631 -j ACCEPT :: -D deletes a rule, and -d matches the destination, not the clients.
+- iptables -A OUTPUT -s 10.12.0.0/24 -p tcp --dport 631 -j ACCEPT :: OUTPUT is the wrong chain for incoming connections.
+
+@ 79
+How is a user's public key used during SSH key login?
+- It is used to hash the password. :: Key login does not involve a password at all.
+- It encrypts all traffic between client and server. :: Session encryption uses separate keys agreed at connection time.
+- It is simply used instead of a password. :: More happens: the client must prove it holds the matching private key.
+* The server checks it against its list of authorized keys, and if it matches, the user may log in. :: The server looks for the key in ~/.ssh/authorized_keys. If it is there, the client proves it has the matching private key by signing a challenge, and login is allowed.
+
+@ 80
+Which tool securely deletes a file holding secrets by overwriting its data so it cannot be recovered?
+- unlink :: unlink just removes the name. The data stays on disk until overwritten.
+- dd :: dd can overwrite whole disks, but it is not a file-deletion tool.
+- rm :: rm only removes the directory entry, so the data can often be recovered.
+* shred :: shred overwrites a file's data several times, and shred -u then deletes it. (It works on files, not folders, and is less reliable on SSDs and journaling or copy-on-write filesystems.)
+
+@ 81
+What keeps a disk encrypted while it is not in use?
+* LUKS :: LUKS is the standard Linux disk encryption format. Data on the disk stays encrypted until it is unlocked with a passphrase or key, for example with cryptsetup open.
+- GPG :: GPG encrypts individual files and messages, not whole disks.
+- OpenSSL :: OpenSSL is a crypto toolkit for TLS and certificates.
+- PKI certificates :: Certificates prove identity. They do not encrypt disks.
+
+@ 82
+An admin checks a host on the local network:
+```
+# ping -c 30 10.9.0.44
+--- 10.9.0.44 ping statistics ---
+30 packets transmitted, 0 received, 100% packet loss
+# curl -I http://10.9.0.44/status
+HTTP/1.1 403 Forbidden
+```
+What can the admin conclude?
+- The web server must be restarted. :: It is running and answering.
+- The host is denying TCP on port 80. :: curl got an HTTP reply on port 80, so TCP works.
+- The host only uses IPv6. :: curl reached it over IPv4.
+* The host is blocking ICMP requests. :: The web server answers over TCP (403 is a real reply), so the host is up and reachable. Ping getting nothing back means ICMP echo is being blocked.
+
+@ 83
+A server will not boot because files in /boot are corrupted. After the GRUB menu it shows:
+```
+Decompressing Linux... 
+crc error
+ -- System halted
+```
+Which two steps recover it without wiping the existing install? (Choose two.)
+- Reinstall the OS. :: That destroys the existing install, which is the thing to avoid.
+* Boot the system from rescue media. :: The kernel itself cannot unpack, so the system cannot boot from its own disk. Rescue media boots a working system that can mount the existing disks.
+- Replace the hard drive. :: Only some files are damaged. The disk may be fine.
+- Add more swap. :: Swap has nothing to do with the kernel failing to unpack.
+* Reinstall the kernel packages. :: From rescue mode, chroot into the system and reinstall the kernel, which rewrites the damaged files in /boot.
+- Boot into single-user mode. :: Single-user mode still uses the same damaged kernel.
+
+@ 84
+An engineer wants to record staged changes as a new snapshot in a local Git repository. Which command does this?
+- git clone :: clone copies an existing repository.
+- git add :: add stages changes but does not record them.
+* git commit :: commit saves the staged changes as a new commit with a message.
+- git push :: push sends existing commits to a remote.
+
+@ 85
+Which tool helps automate security compliance checks and vulnerability management against standard profiles?
+- AIDE :: AIDE detects changes to files. It does not check against compliance profiles.
+* OpenSCAP :: OpenSCAP scans systems against SCAP security profiles like CIS or STIG, reports what fails and can generate fixes.
+- SELinux :: SELinux enforces access control. It does not audit compliance.
+- Nmap :: Nmap scans networks for open ports and services.
+
+@ 86
+Users cannot log in through a directory server. The admin scans it:
+```
+$ nmap 10.30.5.12
+Nmap scan report for dir01 (10.30.5.12)
+Not shown: 997 closed ports
+PORT     STATE    SERVICE
+22/tcp   filtered ssh
+111/tcp  open     rpcbind
+636/tcp  closed   ldaps
+```
+What is the cause of the login problem?
+- SSH packets are being dropped. :: SSH being filtered has nothing to do with directory logins.
+- A firewall is blocking the LDAP server. :: Blocked ports show as filtered. 636 shows closed, meaning the host replied that nothing is listening.
+* The LDAP service is not running on the server. :: LDAPS on 636 is closed, and LDAP on 389 is not listed, so it is among the closed ports. Closed means the host is reachable but no program is listening.
+- The LDAPS certificate is not trusted. :: Nothing can connect at all, so the certificate is never offered.
+
+@ 87
+A web server will not start:
+```
+$ pwd
+/etc/pki/nginx
+$ ls -lR
+.:
+drwxr-xr-x. 2 root root   6 Jul 10 10:57 private
+-rw-r--r--. 1 root root 895 Jul 10 10:56 server.crt
+-rw-------. 1 root root 227 Jul 10 10:56 server.key
+./private:
+total 0
+$ sudo journalctl -u nginx | tail -2
+nginx: [emerg] cannot load certificate key "/etc/pki/nginx/private/server.key": No such file or directory
+nginx: configuration file /etc/nginx/nginx.conf test failed
+```
+Why won't the service start?
+- The private key must be renamed from server.crt to server.key. :: server.crt is the certificate, and server.key already exists.
+* The private key is in the wrong place and needs to be moved into private/. :: nginx looks for /etc/pki/nginx/private/server.key, but the key is in /etc/pki/nginx/ and private/ is empty.
+- The private key's permissions should be 0755. :: Private keys should be 0600. 0755 would let anyone read it.
+- The private key does not match the certificate. :: The error is "No such file", not a mismatch.
+
+@ 88
+Users report that an NFS share keeps dropping. The admin sees:
+```
+# df -h /share
+Filesystem             Size  Used Avail Use% Mounted on
+10.0.0.5:/exports/team  4.0T  3.1T  0.9T  78% /share
+$ ip -s link show ens4
+2: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP
+    RX:  bytes  packets  errors  dropped  missed  mcast
+     98487310   140198    8931    38211       0      0
+    TX:  bytes  packets  errors  dropped carrier collsns
+      4015941    35656   11950     7124       0      0
+```
+What best explains the symptoms?
+* The interface shows a high number of errors and dropped packets. :: Thousands of RX and TX errors and drops on ens4 mean the network link is unreliable, so NFS traffic gets lost and the share seems to disconnect. Check the cable, the switch port and the NIC.
+- The NFS server's IP address is wrong. :: The share is mounted and working some of the time, so the address is right.
+- The filesystem is nearly full. :: 78% used is not full, and a full disk causes write errors, not disconnects.
+- The mount point is wrong. :: The share is mounted where expected.
+
+@ 89
+An admin wants to keep a secure, up-to-date mirror of /srv/app on a staging server. Which command does this?
+- scp -s /srv/app deploy@stage01.corp.example:/srv/ :: scp copies everything every time, and without -r it cannot copy a folder.
+* rsync -avz /srv/app deploy@stage01.corp.example:/srv/ :: rsync copies only what changed. -a keeps permissions, owners, times and links and copies folders, -v lists files and -z compresses. user@host:path makes it use SSH, so the copy is encrypted.
+- rsync -an -ssh /srv/app/ deploy@stage01.corp.example:/srv/ :: -n is a dry run that copies nothing, and -ssh is not a valid option (it would be -e ssh).
+- scp -ps /srv/app deploy@stage01.corp.example:/srv/ :: Still missing -r for a folder, and scp has no update-only mode.
+
+@ 90
+Which Dockerfile instruction makes /usr/bin/worker run whenever a new container starts?
+- ONBUILD :: ONBUILD queues instructions for images built on top of this one.
+- EXPOSE :: EXPOSE documents a port. It runs nothing.
+- FROM :: FROM picks the base image.
+* ENTRYPOINT :: ENTRYPOINT sets the main program the container runs every time it starts, for example ENTRYPOINT ["/usr/bin/worker"].
+
+@ 91
+An admin needs to create a container from the image billing-image and get an interactive shell in it. Which command does this?
+- docker exec -dc billing-image :: exec needs a running container, not an image, and these options do not make sense.
+- docker build -ic billing-image :: build makes an image from a Dockerfile.
+* docker run -it billing-image :: run creates and starts a new container from the image. -it gives an interactive terminal, so you are connected right away.
+- docker start -td billing-image :: start only works on existing containers, and it has no -t or -d options.
+
+@ 92
+Which is a responsible use of a public generative AI service by a systems admin?
+- Fixing typos in medical records :: Medical data is highly sensitive and protected by law.
+- Linting proprietary source code from the company's Git repo :: Private code would be sent to an outside service.
+* Building a regular expression from anonymized sample data :: With names, addresses and secrets removed, nothing sensitive is shared, and regex help is a low-risk task.
+- Reviewing the security of production server config files :: Config files can hold host names, internal addresses and secrets.
+
+@ 93
+For a live migration of a VM between two hosts, which two things must match on both hosts? (Choose two.)
+- Network speed :: Speed affects how fast the move goes but does not need to match.
+- Available memory :: The new host needs enough free memory, but not the same amount.
+* CPU architecture :: The running VM is already using the CPU's instructions, so the new host must have the same CPU architecture and compatible features, or the VM would crash.
+- Available swap :: Each host manages its own swap.
+* Disk storage path :: The VM keeps using its disk during the move, so both hosts must reach the same storage at the same path, usually shared storage.
+- USB ports :: USB ports do not need to match. VMs that rely on host USB devices usually cannot be live migrated.
+
+@ 94
+An admin must check whether an app on 10.44.7.21 answers on TCP port 9090 from another machine. Which command does this?
+- ssh 10.44.7.21 -p 9090 :: ssh would try to speak SSH to the port, and the errors would not clearly show whether it is open.
+- traceroute 10.44.7.21:9090 :: traceroute shows the route to a host and does not take host:port.
+- tcpdump 'host 10.44.7.21 and port 9090' :: tcpdump only watches traffic. It sends nothing, so it cannot test the port by itself.
+* nc -v 10.44.7.21 9090 :: nc -v tries a TCP connection to that address and port and reports success or failure, a direct test of one remote port.
+
+@ 95
+Which command converts a KVM disk image from one format to another, such as raw to qcow2?
+* qemu-img :: qemu-img convert -f raw -O qcow2 in.img out.qcow2 changes formats. qemu-img also creates, resizes and inspects images.
+- qemu-io :: qemu-io tests read and write operations on an image.
+- qemu-kvm :: qemu-kvm runs virtual machines.
+- qemu-nbd :: qemu-nbd shares an image as a network block device. It does not convert it.
+
+@ 96
+An admin is setting up two new servers and wants passwordless login from this one to server2 as user maya. Which command does this?
+- ssh-agent -i rsa && ssh-copy-id ~/.ssh/key maya@server2 :: ssh-agent holds keys in memory and does not make them, and ssh-copy-id needs -i before a key file.
+* ssh-keygen -t rsa && ssh-copy-id -i ~/.ssh/id_rsa.pub maya@server2 :: ssh-keygen makes the key pair, and ssh-copy-id appends the public key to maya's ~/.ssh/authorized_keys on server2. After that, key login works with no password.
+- ssh-keyscan -t rsa && ssh-copy-id maya@server2 -i ~/.ssh/key :: ssh-keyscan collects other servers' host keys and needs a host name. It does not make a key pair.
+- ssh-add -t rsa && scp -rp ~/.ssh maya@server2 :: ssh-add loads keys into the agent, and copying the whole .ssh folder would send the private key to the server.
+
+@ 97
+An admin needs to securely wipe everything on the disk /dev/sdc. Which command is best?
+- sudo dd if=/dev/null of=/dev/sdc1 :: /dev/null gives no data, so dd writes nothing, and this targets one partition.
+- sudo rm -rf /dev/sdc1 :: This only deletes the device file in /dev. The data on the disk is untouched.
+- sudo parted /dev/sdc rm 1 :: This deletes a partition entry, but the data stays on the disk.
+* sudo shred /dev/sdc :: shred overwrites the whole device several times with random data, so the old contents cannot be recovered. Add -z for a final pass of zeros.
+
+@ 98
+A script should print "CLEAN" only when the word ERROR appears zero times in a log:
+```
+if [ $(grep -c ERROR /var/log/app.log) __ 0 ]
+then
+    echo CLEAN
+else
+    echo PROBLEMS
+fi
+```
+Which operator belongs in the blank?
+- -gt :: -gt means greater than, so CLEAN would print when errors were found.
+* -eq :: grep -c prints how many lines contain ERROR, and -eq tests whether two numbers are equal. The test is true only when the count is 0.
+- -ne :: -ne means not equal, which would print CLEAN whenever errors were found.
+- -lt :: A count can never be below zero, so the test would never be true.
+
+@ 99
+What is journald?
+- A service that creates crash dumps when the kernel fails :: That is kdump.
+- The service that keeps the filesystem journal :: Filesystem journaling is part of the filesystem itself, like ext4 or XFS.
+- A service that writes audit records to disk :: That is auditd.
+* A system service that collects and stores logs :: systemd-journald gathers messages from the kernel, services and programs and stores them in a structured journal that you read with journalctl.
+
+@ 100
+Which PAM module can be used to spot and block repeated password-guessing (dictionary) attacks?
+- pam_unix :: pam_unix checks passwords against /etc/shadow. It does not count failures.
+* pam_tally2 :: pam_tally2 counts failed logins and locks the account after a set number. (Newer distributions replaced it with pam_faillock, which does the same job.)
+- pam_ldap :: pam_ldap checks logins against an LDAP directory.
+- pam_limits :: pam_limits sets resource limits like open files or processes per user.

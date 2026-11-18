@@ -1766,7 +1766,7 @@ function loadSavedUser(): string | null {
 }
 const USER_HINT = "Use lowercase letters, digits, _ or -, starting with a letter or underscore, up to 32 characters. Names like root are reserved.";
 
-export default function App() {
+export function Lab() {
   const savedUser = loadSavedUser();
   const [world, setWorld] = useState<World>(() => makeWorld(savedUser ?? "student"));
   const [picked, setPicked] = useState<boolean>(() => !!savedUser);
@@ -1788,7 +1788,14 @@ export default function App() {
   useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [lines]);
   useEffect(() => { if (!flash) return; const t = setTimeout(() => setFlash(false), 900); return () => clearTimeout(t); }, [flash]);
   useEffect(() => { const t = setInterval(() => setPulse((p) => !p), 900); return () => clearInterval(t); }, []);
-  useEffect(() => { inputRef.current?.focus({ preventScroll: true }); }, [mission]);
+  useEffect(() => { if (window.matchMedia && window.matchMedia("(min-width: 721px)").matches) inputRef.current?.focus({ preventScroll: true }); }, [mission]);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => { if (document.activeElement === inputRef.current) inputRef.current?.scrollIntoView({ block: "center" }); };
+    vv.addEventListener("resize", onResize);
+    return () => vv.removeEventListener("resize", onResize);
+  }, []);
 
   const M = MISSIONS[mission];
   const step = progress[mission];
@@ -1864,22 +1871,34 @@ export default function App() {
     setPicked(false);
   };
 
+  const insert = (t: string) => { setInput((v) => (t === " | " || t.startsWith(" -") ? v.replace(/\s+$/, "") + t : v && !/\s$/.test(v) && /^[a-z]/i.test(t) ? v + " " + t : v + t)); inputRef.current?.focus({ preventScroll: true }); };
+  const histUp = () => { const i = Math.min(hIdx + 1, history.length - 1); if (i >= 0) { setHIdx(i); setInput(history[i]); } inputRef.current?.focus({ preventScroll: true }); };
+  const chips: { label: string; aria?: string; act: () => void }[] = [
+    { label: "\u23ce Run", aria: "Run command", act: () => run() },
+    { label: "\u2191", aria: "Previous command", act: histUp },
+    { label: "ssh", act: () => insert(`ssh ${world.user}@`) },
+    { label: "sudo", act: () => insert("sudo ") },
+    { label: "ls -l", act: () => insert("ls -l ") },
+    { label: "cd", act: () => insert("cd ") },
+    { label: "cat", act: () => insert("cat ") },
+    { label: "grep", act: () => insert("grep ") },
+    { label: "|", aria: "Pipe", act: () => insert(" | ") },
+    { label: "-", aria: "Dash", act: () => insert(" -") },
+    { label: "/", act: () => insert("/") },
+    { label: "~", act: () => insert("~") },
+    { label: "exit", act: () => insert("exit") },
+    { label: "clear", act: () => { setInput(""); inputRef.current?.focus({ preventScroll: true }); } },
+  ];
+  const keepVisible = () => { setTimeout(() => inputRef.current?.scrollIntoView({ block: "center", behavior: "smooth" }), 320); };
   const panel = { background: U.panel, border: `1px solid ${U.edge}`, borderRadius: 18, padding: 20, boxShadow: "0 10px 30px rgba(0,0,0,0.35)" };
   const label = { fontSize: 11, letterSpacing: "0.14em", color: U.faint, textTransform: "uppercase" as const, fontWeight: 600, marginBottom: 12 };
   const colorFor = (k: Line["kind"]) => (k === "sys" ? TT.dim : k === "ok" ? TT.green : k === "err" ? TT.red : TT.text);
-  const ghostBtn = { border: `1px solid ${U.edge}`, background: "rgba(255,255,255,0.03)", color: U.soft, borderRadius: 10, padding: "8px 14px", fontSize: 13, cursor: "pointer", fontWeight: 500 };
-  const pageBg = { background: `radial-gradient(1200px 500px at 10% -10%, rgba(34,211,238,0.14), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(167,139,250,0.16), transparent 60%), ${U.page}`, color: U.ink, minHeight: "100%", padding: "28px 16px 36px", fontFamily: "Inter, system-ui, -apple-system, sans-serif" } as const;
+  const ghostBtn = { minHeight: 44, border: `1px solid ${U.edge}`, background: "rgba(255,255,255,0.03)", color: U.soft, borderRadius: 10, padding: "8px 14px", fontSize: 13, cursor: "pointer", fontWeight: 500 };
 
   if (!picked) {
     return (
-      <div className="lx-page" style={pageBg}>
+      <div>
         <div style={{ maxWidth: 640, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 14, fontSize: 13 }}>
-            <a href="/" style={{ color: U.cyan, textDecoration: "none" }}>ET Labs</a>
-            <a href="/study/" style={{ color: U.soft, textDecoration: "none" }}>Security+ Study</a>
-            <a href="/products" style={{ color: U.soft, textDecoration: "none" }}>Products</a>
-          </div>
-          <h1 className="lx-title" style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: 0, background: `linear-gradient(90deg, ${U.ink}, ${U.cyan} 60%, ${U.violet})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>Linux+ Study</h1>
           <div style={panel}>
             <div style={label}>Your username</div>
             <p style={{ margin: "0 0 14px", color: U.soft, fontSize: 15, lineHeight: 1.55 }}>Pick a Linux username for this lab. You can SSH as this name, or as any other valid Linux username, on the five fictional servers. Nothing here connects to a real machine.</p>
@@ -1891,7 +1910,7 @@ export default function App() {
                 aria-label="Linux username"
                 placeholder="alice"
                 className="lx-input"
-                style={{ flex: "1 1 180px", minWidth: 0, background: "#0d1117", border: `1px solid ${nameErr ? TT.red : U.edge}`, borderRadius: 10, outline: "none", color: TT.text, fontFamily: mono, fontSize: 16, padding: "10px 12px" }}
+                style={{ flex: "1 1 180px", minWidth: 0, background: "#0d1117", border: `1px solid ${nameErr ? TT.red : U.edge}`, borderRadius: 10, outline: "none", color: TT.text, fontFamily: mono, fontSize: 16, padding: "10px 12px", minHeight: 44 }}
               />
               <button type="submit" style={{ ...ghostBtn, background: `linear-gradient(90deg, ${U.cyan}, ${U.violet})`, color: "#04121a", border: "none", fontWeight: 700 }}>Start the lab</button>
             </form>
@@ -1903,20 +1922,46 @@ export default function App() {
   }
 
   return (
-    <div className="lx-page" style={pageBg}>
-      <style>{"\n        .lx-title{font-size:30px}\n        .lx-task{font-size:22px}\n        .lx-steps{display:flex;flex-wrap:nowrap;align-items:center;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}\n        .lx-step{display:flex;align-items:center;flex:1 0 86px}\n        .lx-step.is-last{flex:0 0 auto}\n        .lx-rack{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px}\n        .lx-input{font-size:14px}\n        @media (max-width:720px){\n          .lx-page{padding:16px 12px 28px !important}\n          .lx-title{font-size:24px !important}\n          .lx-task{font-size:18px !important}\n          .lx-prompt{flex:1 0 100%}\n          .lx-input{font-size:16px !important;flex:1 0 100% !important}\n          .lx-rack{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}\n        }\n      "}</style>
-      <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
+    <div className="lx-lab">
+      <style>{`
+        .lx-title{font-size:26px}
+        .lx-task{font-size:22px}
+        .lx-steps{display:flex;flex-wrap:nowrap;align-items:center;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+        .lx-step{display:flex;align-items:center;flex:1 0 86px}
+        .lx-step.is-last{flex:0 0 auto}
+        .lx-rack{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px}
+        .lx-input{font-size:14px}
+        .lx-missions{display:flex;flex-wrap:wrap;gap:8px}
+        .lx-missions button{min-height:44px}
+        .lx-chips{display:none}
+        .lx-out{max-height:340px}
+        .lx-btn{min-height:44px}
+        @media (max-width:720px){
+          .lx-title{font-size:22px !important}
+          .lx-task{font-size:18px !important}
+          .lx-prompt{flex:1 0 100%}
+          .lx-input{font-size:16px !important;flex:1 0 100% !important;min-height:44px}
+          .lx-rack{grid-template-columns:1fr}
+          .lx-missions{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+          .lx-missions button{flex:0 0 auto}
+          .lx-chips{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 0 2px}
+          .lx-chips button{flex:0 0 auto;min-height:44px;min-width:44px;padding:0 14px;border-radius:10px;border:1px solid #30363d;background:#161b22;color:#e6edf3;font:600 15px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+          .lx-out{max-height:42vh}
+          .lx-panel{padding:14px !important}
+          .lx-lab [style*="font-size: 11px"]{font-size:12.5px !important}
+          .lx-lab [style*="font-size: 12px"]{font-size:13px !important}
+          .lx-stepsbox,.lx-blurb,.lx-mlabel{display:none !important}
+          .lx-mbox{padding:8px !important}
+          .lx-task{margin-bottom:10px !important}
+        }
+      `}</style>
+      <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: 16 }}>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 14, fontSize: 13 }}>
-          <a href="/" style={{ color: U.cyan, textDecoration: "none" }}>ET Labs</a>
-          <a href="/study/" style={{ color: U.soft, textDecoration: "none" }}>Security+ Study</a>
-          <a href="/products" style={{ color: U.soft, textDecoration: "none" }}>Products</a>
-        </div>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <div style={{ minWidth: 0 }}>
             <div style={{ display: "inline-block", fontSize: 11, letterSpacing: "0.16em", fontWeight: 700, color: U.cyan, border: `1px solid rgba(34,211,238,0.35)`, background: "rgba(34,211,238,0.08)", padding: "4px 10px", borderRadius: 999, marginBottom: 10 }}>{M.sec}</div>
-            <h1 className="lx-title" style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: 0, background: `linear-gradient(90deg, ${U.ink}, ${U.cyan} 60%, ${U.violet})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>Linux+ Study</h1>
-            <div style={{ color: U.soft, fontSize: 14, marginTop: 4 }}><span style={{ color: U.ink, fontWeight: 600 }}>{M.title}.</span> {M.blurb}</div>
+            <h2 className="lx-title" style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: 0, color: U.ink }}>Terminal Lab</h2>
+            <div className="lx-blurb" style={{ color: U.soft, fontSize: 14, marginTop: 4 }}><span style={{ color: U.ink, fontWeight: 600 }}>{M.title}.</span> {M.blurb}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <span style={{ fontSize: 11, letterSpacing: "0.14em", fontWeight: 700, color: U.violet, border: "1px solid rgba(167,139,250,0.4)", background: "rgba(167,139,250,0.08)", padding: "4px 10px", borderRadius: 999 }}>SIMULATION</span>
@@ -1924,9 +1969,9 @@ export default function App() {
           </div>
         </div>
 
-        <div style={{ ...panel, padding: "14px 16px" }}>
-          <div style={label}>Missions · one per review-sheet section</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+        <div className="lx-mbox" style={{ ...panel, padding: "14px 16px" }}>
+          <div className="lx-mlabel" style={label}>Missions · one per review-sheet section</div>
+          <div className="lx-missions">
             {MISSIONS.map((m, i) => {
               const active = i === mission;
               const complete = progress[i] >= m.tasks.length;
@@ -1941,7 +1986,7 @@ export default function App() {
           </div>
         </div>
 
-        <div style={{ ...panel, padding: "16px 16px" }}>
+        <div className="lx-stepsbox" style={{ ...panel, padding: "16px 16px" }}>
           <div className="lx-steps">
             {M.tasks.map((t, i) => {
               const state = i < step ? "done" : i === step ? "now" : "next";
@@ -1961,7 +2006,7 @@ export default function App() {
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
-          <div style={{ ...panel, flex: "2 1 300px", minWidth: 0, borderColor: flash ? U.green : U.edge, boxShadow: flash ? `0 0 0 3px rgba(52,211,153,0.25), 0 10px 30px rgba(0,0,0,0.35)` : panel.boxShadow, transition: "all 300ms" }}>
+          <div className="lx-panel" style={{ ...panel, flex: "2 1 300px", minWidth: 0, borderColor: flash ? U.green : U.edge, boxShadow: flash ? `0 0 0 3px rgba(52,211,153,0.25), 0 10px 30px rgba(0,0,0,0.35)` : panel.boxShadow, transition: "all 300ms" }}>
             <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
               <div style={{ width: 44, height: 44, borderRadius: 14, flexShrink: 0, background: `linear-gradient(135deg, ${U.cyan}, ${U.violet})`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#0b1020", fontSize: 15 }}>L+</div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -1990,28 +2035,6 @@ export default function App() {
             </div>
           </div>
 
-          <div style={{ ...panel, flex: "1 1 100%", minWidth: 0 }}>
-            <div style={label}>Server rack</div>
-            <div className="lx-rack">
-            {SERVERS.map((s) => {
-              const on = world.host === s.name;
-              return (
-                <div key={s.name} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 10, minWidth: 0, background: on ? "rgba(52,211,153,0.07)" : "rgba(255,255,255,0.02)", border: `1px solid ${on ? "rgba(52,211,153,0.5)" : U.edge}`, transition: "all 300ms" }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 8, background: "#0b1222", border: `1px solid ${U.edge}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: U.soft, letterSpacing: "0.04em", flexShrink: 0 }}>{s.city}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
-                      <div style={{ fontWeight: 600, fontSize: 13, lineHeight: 1.2 }}>{s.name}</div>
-                      <span style={{ width: 8, height: 8, borderRadius: 4, marginLeft: "auto", flexShrink: 0, background: on ? U.green : "#334155", boxShadow: on ? `0 0 ${pulse ? 10 : 3}px ${U.green}` : "none", transition: "box-shadow 800ms" }} />
-                    </div>
-                    <div style={{ fontFamily: mono, fontSize: 12, color: U.cyan }}>{s.ip}</div>
-                    <div style={{ fontSize: 11, color: on ? U.green : U.faint }}>{on ? "connected" : "idle"}</div>
-                  </div>
-                </div>
-              );
-            })}
-            </div>
-            <div style={{ fontSize: 12, color: U.faint, marginTop: 10 }}>Log in as <span style={{ fontFamily: mono, color: U.soft }}>{world.user}@{SERVERS[0].ip}</span> or any other valid Linux username. <button type="button" onClick={changeUser} style={{ background: "none", border: "none", color: U.cyan, cursor: "pointer", font: "inherit", padding: 0, textDecoration: "underline" }}>Change name</button></div>
-          </div>
         </div>
 
         <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${flash ? TT.green : "#30363d"}`, transition: "border-color 300ms", boxShadow: "0 16px 40px rgba(0,0,0,0.5)" }} onClick={() => inputRef.current?.focus({ preventScroll: true })}>
@@ -2022,7 +2045,7 @@ export default function App() {
             <span style={{ flex: 1, textAlign: "center", fontSize: 12, color: TT.dim, fontFamily: mono, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{world.host ? `${world.user}@${world.host}: ${world.cwd}` : `${world.user}@laptop`}</span>
           </div>
           <div style={{ background: TT.bg, padding: 14, fontFamily: mono, fontSize: 13.5, lineHeight: 1.55 }}>
-            <div ref={scrollRef} style={{ maxHeight: 340, overflowY: "auto", overflowX: "auto" }}>
+            <div ref={scrollRef} className="lx-out" style={{ overflowY: "auto", overflowX: "auto" }}>
               {lines.map((l, i) => <div key={i} style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", color: colorFor(l.kind), minHeight: "1.55em", tabSize: 8 }}>{l.text}</div>)}
             </div>
             <div style={{ display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
@@ -2030,15 +2053,42 @@ export default function App() {
               <input
                 ref={inputRef}
                 value={input}
-                autoFocus
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
                 onKeyDown={onKey}
                 autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="off"
+                onFocus={keepVisible} enterKeyHint="go"
                 className="lx-input" aria-label="Terminal command" style={{ flex: "1 1 160px", minWidth: 0, background: "transparent", border: "none", outline: "none", color: TT.text, fontFamily: mono, fontSize: 14, caretColor: TT.green }}
                 placeholder={done ? "" : cur && cur.ans ? "type your answer, press Enter" : "type a command, press Enter"}
               />
             </div>
+            <div className="lx-chips" role="toolbar" aria-label="Quick commands">
+              {chips.map((c) => (
+                <button key={c.label} type="button" aria-label={c.aria ?? c.label} onClick={(e) => { e.stopPropagation(); c.act(); }}>{c.label}</button>
+              ))}
+            </div>
           </div>
+        </div>
+        <div className="lx-panel" style={{ ...panel, minWidth: 0 }}>
+          <div style={label}>Server rack</div>
+          <div className="lx-rack">
+          {SERVERS.map((s) => {
+            const on = world.host === s.name;
+            return (
+              <div key={s.name} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 10, minWidth: 0, background: on ? "rgba(52,211,153,0.07)" : "rgba(255,255,255,0.02)", border: `1px solid ${on ? "rgba(52,211,153,0.5)" : U.edge}`, transition: "all 300ms" }}>
+                <div style={{ width: 34, height: 34, borderRadius: 8, background: "#0b1222", border: `1px solid ${U.edge}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: U.soft, letterSpacing: "0.04em", flexShrink: 0 }}>{s.city}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, fontSize: 13, lineHeight: 1.2 }}>{s.name}</div>
+                    <span style={{ width: 8, height: 8, borderRadius: 4, marginLeft: "auto", flexShrink: 0, background: on ? U.green : "#334155", boxShadow: on ? `0 0 ${pulse ? 10 : 3}px ${U.green}` : "none", transition: "box-shadow 800ms" }} />
+                  </div>
+                  <div style={{ fontFamily: mono, fontSize: 12, color: U.cyan }}>{s.ip}</div>
+                  <div style={{ fontSize: 11, color: on ? U.green : U.faint }}>{on ? "connected" : "idle"}</div>
+                </div>
+              </div>
+            );
+          })}
+          </div>
+          <div style={{ fontSize: 12, color: U.faint, marginTop: 10 }}>Log in as <span style={{ fontFamily: mono, color: U.soft }}>{world.user}@{SERVERS[0].ip}</span> or any other valid Linux username. <button type="button" onClick={changeUser} style={{ background: "none", border: "none", color: U.cyan, cursor: "pointer", font: "inherit", padding: "0 4px", minHeight: 44, textDecoration: "underline" }}>Change name</button></div>
         </div>
         <div style={{ fontSize: 12, color: U.faint, textAlign: "center", lineHeight: 1.6 }}>{"\u2191 \u2193"} bring back earlier commands {"\u00b7"} type help for every simulated command {"\u00b7"} all output is illustrative; nothing connects to a real server</div>
       </div>
