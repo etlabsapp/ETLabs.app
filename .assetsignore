@@ -25,6 +25,8 @@ migrations/
 workers/
 tools/
 scripts/
+linux-plus/src/
+linux-plus/node_modules/
 apps/dashboard/
 apps/marketing/
 apps/sleeptight-desktop/
