@@ -1,18 +1,23 @@
 import { useState, useRef, useEffect, type KeyboardEvent, type ChangeEvent } from "react";
 
 /* ================= Servers + types ================= */
-type Server = { name: string; ip: string; user: string; city: string };
+type Server = { name: string; ip: string; city: string };
 export const SERVERS: Server[] = [
-  { name: "NewYork", ip: "203.0.113.10", user: "student", city: "NY" },
-  { name: "Chicago", ip: "203.0.113.20", user: "student", city: "CHI" },
-  { name: "Charlotte", ip: "203.0.113.30", user: "student", city: "CLT" },
-  { name: "LosAngeles", ip: "203.0.113.40", user: "student", city: "LA" },
-  { name: "Miami", ip: "203.0.113.50", user: "student", city: "MIA" },
+  { name: "NewYork", ip: "203.0.113.10", city: "NY" },
+  { name: "Chicago", ip: "203.0.113.20", city: "CHI" },
+  { name: "Charlotte", ip: "203.0.113.30", city: "CLT" },
+  { name: "LosAngeles", ip: "203.0.113.40", city: "LA" },
+  { name: "Miami", ip: "203.0.113.50", city: "MIA" },
 ];
-const HOME = "/home/student";
-const ME = "student";
+/** Linux useradd-style name: starts with a letter or underscore, then letters, digits, _ or -, up to 32 chars. */
+export const VALID_USER = /^[a-z_][a-z0-9_-]{0,31}$/;
+const RESERVED_USERS = new Set(["root", "apache", "chrony", "bin", "daemon", "nobody", "sshd", "sync", "halt", "shutdown"]);
+export function isValidLabUser(name: string): boolean {
+  return VALID_USER.test(name) && !RESERVED_USERS.has(name);
+}
+export const homeOf = (user: string) => "/home/" + user;
+const H = (user: string, n: string) => homeOf(user) + "/" + n;
 const KREL = "5.14.0-427.13.1.el9_4.x86_64";
-const H = (n: string) => HOME + "/" + n;
 
 type FNode = { type: "dir" | "file" | "link"; content: string; mode: number; owner: string; group: string; attrs: string; mtime: string; size?: number; acl?: string[] };
 type Proc = { pid: number; ppid: number; user: string; name: string; cmd: string; cpu: number; mem: number; tty: string; stat: string; start: string; time: string; ni: number };
@@ -20,7 +25,7 @@ type UserRec = { uid: number; gid: string; groups: string[]; home: string; shell
 type Svc = { desc: string; active: boolean; enabled: boolean; masked: boolean; pid: number; bin: string; since: string };
 type KV = Record<string, string>;
 type SState = { fs: Record<string, FNode>; procs: Proc[]; users: Record<string, UserRec>; groups: Record<string, number>; services: Record<string, Svc>; nextPid: number; kv: KV };
-type World = { servers: Record<string, SState>; host: string | null; cwd: string; prevDir: string; sudoAsked: boolean; umask: number; env: KV; venv: string };
+type World = { servers: Record<string, SState>; host: string | null; user: string; cwd: string; prevDir: string; sudoAsked: boolean; umask: number; env: KV; venv: string };
 type Meta = Record<string, string>;
 type Line = { text: string; kind: "sys" | "cmd" | "out" | "ok" | "err" };
 
@@ -29,9 +34,12 @@ const p2 = (n: number) => String(n).padStart(2, "0");
 const stamp = (): string => { const d = new Date(); return `${MON[d.getMonth()]} ${String(d.getDate()).padStart(2, " ")} ${p2(d.getHours())}:${p2(d.getMinutes())}`; };
 const clock = (): string => { const d = new Date(); return `${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`; };
 const OLD = "Nov 18 08:14";
-const ENV0 = (): KV => ({ HOME, USER: ME, PATH: "/usr/local/bin:/usr/bin:/bin", SHELL: "/bin/bash" });
+const ENV0 = (user: string): KV => ({ HOME: homeOf(user), USER: user, PATH: "/usr/local/bin:/usr/bin:/bin", SHELL: "/bin/bash" });
 
-function makeServer(name: string, ip: string): SState {
+function makeServer(name: string, ip: string, user: string): SState {
+  const HOME = homeOf(user);
+  const ME = user;
+  const H = (n: string) => HOME + "/" + n;
   const fs: Record<string, FNode> = {};
   const d = (p: string, mode: number, owner: string = "root") => { fs[p] = { type: "dir", content: "", mode, owner, group: owner, attrs: "", mtime: OLD }; };
   const f = (p: string, content: string, mode: number, owner: string = "root", size?: number) => { fs[p] = { type: "file", content, mode, owner, group: owner, attrs: "", mtime: OLD, size }; };
@@ -92,12 +100,12 @@ function makeServer(name: string, ip: string): SState {
       mk(812, 1, "root", "sshd", "/usr/sbin/sshd -D", 0, 0.4, "?", "Ss", "08:02", "0:00"),
       mk(845, 1, "root", "crond", "/usr/sbin/crond -n", 0, 0.2, "?", "Ss", "08:02", "0:00"),
       mk(903, 1, "chrony", "chronyd", "/usr/sbin/chronyd -F 2", 0, 0.2, "?", "S", "08:02", "0:00"),
-      mk(1187, 812, "root", "sshd", "sshd: student [priv]", 0, 0.5, "?", "Ss", "09:55", "0:00"),
-      mk(1190, 1187, "student", "sshd", "sshd: student@pts/0", 0, 0.3, "?", "S", "09:55", "0:00"),
-      mk(1191, 1190, "student", "bash", "-bash", 0, 0.3, "pts/0", "Ss", "09:55", "0:00"),
-      mk(1342, 1, "student", "python3", "python3 runaway.py", 98.7, 1.9, "?", "R", "09:12", "51:07"),
-      mk(1400, 1191, "student", "backup.sh", "/bin/bash ./backup.sh", 0.3, 0.2, "pts/0", "S", "09:57", "0:00"),
-      mk(1455, 1191, "student", "report", "[report] <defunct>", 0, 0, "pts/0", "Z", "09:58", "0:00"),
+      mk(1187, 812, "root", "sshd", `sshd: ${ME} [priv]`, 0, 0.5, "?", "Ss", "09:55", "0:00"),
+      mk(1190, 1187, ME, "sshd", `sshd: ${ME}@pts/0`, 0, 0.3, "?", "S", "09:55", "0:00"),
+      mk(1191, 1190, ME, "bash", "-bash", 0, 0.3, "pts/0", "Ss", "09:55", "0:00"),
+      mk(1342, 1, ME, "python3", "python3 runaway.py", 98.7, 1.9, "?", "R", "09:12", "51:07"),
+      mk(1400, 1191, ME, "backup.sh", "/bin/bash ./backup.sh", 0.3, 0.2, "pts/0", "S", "09:57", "0:00"),
+      mk(1455, 1191, ME, "report", "[report] <defunct>", 0, 0, "pts/0", "Z", "09:58", "0:00"),
       mk(1501, 1, "root", "httpd", "/usr/sbin/httpd -DFOREGROUND", 0, 0.6, "?", "Ss", "08:02", "0:00"),
       mk(1502, 1501, "apache", "httpd", "/usr/sbin/httpd -DFOREGROUND", 0, 0.4, "?", "S", "08:02", "0:00"),
       mk(1603, 1, "root", "cupsd", "/usr/sbin/cupsd -l", 0, 0.3, "?", "Ss", "08:02", "0:00"),
@@ -105,9 +113,9 @@ function makeServer(name: string, ip: string): SState {
     users: {
       root: { uid: 0, gid: "root", groups: [], home: "/root", shell: "/bin/bash", gecos: "root", maxDays: 99999, minDays: 0, locked: false },
       apache: { uid: 48, gid: "apache", groups: [], home: "/usr/share/httpd", shell: "/sbin/nologin", gecos: "Apache", maxDays: 99999, minDays: 0, locked: false },
-      student: { uid: 1000, gid: "student", groups: ["wheel"], home: HOME, shell: "/bin/bash", gecos: "Student", maxDays: 99999, minDays: 0, locked: false },
+      [ME]: { uid: 1000, gid: ME, groups: ["wheel"], home: HOME, shell: "/bin/bash", gecos: ME, maxDays: 99999, minDays: 0, locked: false },
     },
-    groups: { root: 0, wheel: 10, apache: 48, student: 1000 },
+    groups: { root: 0, wheel: 10, apache: 48, [ME]: 1000 },
     services: {
       sshd: svc("OpenSSH server daemon", 812, "/usr/sbin/sshd -D"),
       crond: svc("Command Scheduler", 845, "/usr/sbin/crond -n"),
@@ -122,7 +130,53 @@ function makeServer(name: string, ip: string): SState {
     kv: { ip, target: "multi-user.target", tz: "America/New_York", se: "Enforcing", fw_rt: "cockpit dhcpv6-client ssh", fw_perm: "cockpit dhcpv6-client ssh", job: "1", speed: "100", dexec: "0", images: "httpd", dk: "a1b2c3d4e5f6|httpd|Up 3 hours|web", fwd: "0", ufw443: "1", gc: "0" },
   };
 }
-export const makeWorld = (): World => ({ servers: Object.fromEntries(SERVERS.map((s) => [s.name, makeServer(s.name, s.ip)])), host: null, cwd: HOME, prevDir: HOME, sudoAsked: false, umask: 0o022, env: ENV0(), venv: "" });
+function seedLabUser(st: SState, user: string): void {
+  if (st.users[user]) return;
+  const HOME = homeOf(user);
+  const H = (n: string) => HOME + "/" + n;
+  const d = (p: string, mode: number, owner: string = user) => { st.fs[p] = { type: "dir", content: "", mode, owner, group: owner, attrs: "", mtime: OLD }; };
+  const f = (p: string, content: string, mode: number, owner: string = user, size?: number) => { st.fs[p] = { type: "file", content, mode, owner, group: owner, attrs: "", mtime: OLD, size }; };
+  d(HOME, 0o700); d(H(".ssh"), 0o700);
+  [".local", ".local/bin", "projects", "reports", "old-logs"].forEach((p) => d(H(p), 0o755));
+  f(H(".bashrc"), "# .bashrc\nexport PATH=$PATH:$HOME/bin\n", 0o644);
+  f(H(".bash_profile"), "# .bash_profile\n[ -f ~/.bashrc ] && . ~/.bashrc\n", 0o644);
+  f(H(".ssh/authorized_keys"), "", 0o600);
+  f(H(".local/bin/hello"), "#!/bin/bash\necho \"Hello from ~/.local/bin\"\n", 0o755);
+  f(H("notes.txt"), "Linux+ XK0-006 exam: Dec 7-11\n", 0o644);
+  f(H("script.sh"), "#!/bin/bash\necho \"Backup complete.\"\n", 0o644);
+  f(H("dont look here"), "dont look here\n", 0o644);
+  f(H("backup.bkp"), "070701000A1B2C000081A4\n", 0o644, user, 20480);
+  f(H("secret.txt"), "old passwords list\n", 0o600);
+  f(H("old-logs/a.log"), "old\n", 0o644); f(H("old-logs/b.log"), "old\n", 0o644);
+  f(H("app.log"), "app started\n", 0o644);
+  f(H("app.cfg"), "host=old.example.com\nbackup=old-server\nport=8080\n", 0o644);
+  f(H("words.txt"), "willie\ntibia\nmidair\nlimit\nvisit\ncilia\nfinish\n", 0o644);
+  f(H("locked.conf"), "max_clients=50\n", 0o644); st.fs[H("locked.conf")].attrs = "i";
+  f(H("ca.crt"), "-----BEGIN CERTIFICATE-----\nMIIBszCCAVmgAwIBAgIU (sim)\n-----END CERTIFICATE-----\n", 0o644);
+  f(H("disk.img"), "", 0o644, user, 2147483648);
+  f(H("projects/readme.md"), "# projects\n", 0o644);
+  f(H("projects/app.py"), "import os\n\nprint(os.getcwd())\n", 0o644);
+  const uids = Object.values(st.users).map((u) => u.uid);
+  const uid = Math.max(1000, ...uids) + 1;
+  st.users[user] = { uid, gid: user, groups: ["wheel"], home: HOME, shell: "/bin/bash", gecos: user, maxDays: 99999, minDays: 0, locked: false };
+  if (st.groups[user] == null) st.groups[user] = uid;
+  const mk = (pid: number, ppid: number, uname: string, nm: string, cmd: string, cpu: number, mem: number, tty: string, stat: string, start: string, time: string): Proc => ({ pid, ppid, user: uname, name: nm, cmd, cpu, mem, tty, stat, start, time, ni: 0 });
+  const p0 = st.nextPid;
+  st.procs.push(
+    mk(p0, 812, "root", "sshd", `sshd: ${user} [priv]`, 0, 0.5, "?", "Ss", "09:55", "0:00"),
+    mk(p0 + 1, p0, user, "sshd", `sshd: ${user}@pts/0`, 0, 0.3, "?", "S", "09:55", "0:00"),
+    mk(p0 + 2, p0 + 1, user, "bash", "-bash", 0, 0.3, "pts/0", "Ss", "09:55", "0:00"),
+    mk(p0 + 3, 1, user, "python3", "python3 runaway.py", 98.7, 1.9, "?", "R", "09:12", "51:07"),
+    mk(p0 + 4, p0 + 2, user, "backup.sh", "/bin/bash ./backup.sh", 0.3, 0.2, "pts/0", "S", "09:57", "0:00"),
+    mk(p0 + 5, p0 + 2, user, "report", "[report] <defunct>", 0, 0, "pts/0", "Z", "09:58", "0:00"),
+  );
+  st.nextPid = p0 + 6;
+}
+
+export const makeWorld = (user = "student"): World => {
+  const name = isValidLabUser(user) ? user : "student";
+  return { servers: Object.fromEntries(SERVERS.map((s) => [s.name, makeServer(s.name, s.ip, name)])), host: null, user: name, cwd: homeOf(name), prevDir: homeOf(name), sudoAsked: false, umask: 0o022, env: ENV0(name), venv: "" };
+};
 
 /* ================= Path + permission helpers ================= */
 function norm(cwd: string, p: string): string {
@@ -251,7 +305,7 @@ function tokenize(s: string, env: KV): Tok[] | string {
     if (c === "&") { if (s.charAt(i + 1) !== "&") return "(sim) Starting background jobs with & isn't simulated. Practice jobs and fg instead."; push(); out.push({ v: "&&", op: true }); i += 2; continue; }
     if (c === ";" || c === "|" || c === "<") { push(); out.push({ v: c, op: true }); i++; continue; }
     if (c === ">") { push(); if (s.charAt(i + 1) === ">") { out.push({ v: ">>", op: true }); i += 2; } else { out.push({ v: ">", op: true }); i++; } continue; }
-    if (c === "~" && !has) { const nx = s.charAt(i + 1); if (nx === "" || nx === "/" || nx === " ") { cur += HOME; has = true; i++; continue; } }
+    if (c === "~" && !has) { const nx = s.charAt(i + 1); if (nx === "" || nx === "/" || nx === " ") { cur += env.HOME || homeOf(env.USER || "student"); has = true; i++; continue; } }
     cur += c; has = true; i++;
   }
   push();
@@ -278,7 +332,7 @@ const SS = (ip: string) => `Netid State  Recv-Q Send-Q   Local Address:Port    P
 const IPA = (ip: string) => `1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN\n    inet 127.0.0.1/8 scope host lo\n2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP\n    link/ether 52:54:00:12:34:56 brd ff:ff:ff:ff:ff:ff\n    inet ${ip}/23 scope global eth0\n3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP\n    link/ether 52:54:00:ab:cd:ef brd ff:ff:ff:ff:ff:ff\n    inet 169.254.13.7/16 brd 169.254.255.255 scope link eth1`;
 const IPSL = "2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT\n    link/ether 52:54:00:12:34:56 brd ff:ff:ff:ff:ff:ff\n    RX:  bytes packets errors dropped  missed   mcast\n    918273645  812334   1843      12       0       0\n    TX:  bytes packets errors dropped carrier collsns\n    512340987  603122    977       0      41       0";
 const BLAME = "1min 2.114s NetworkManager-wait-online.service\n     8.201s dnf-makecache.service\n     3.412s firewalld.service\n     1.902s httpd.service\n      911ms sshd.service\n      402ms chronyd.service";
-const LSOF = "COMMAND  PID   USER   FD   TYPE DEVICE SIZE/OFF   NODE NAME\nsystemd    1   root  cwd    DIR  253,0     4096    128 /\nbash    1874 student  cwd    DIR  253,2     4096    131 /data/app\nsshd     812   root  txt    REG  253,0   956144 402113 /usr/sbin/sshd";
+const lsofOut = (user: string) => `COMMAND  PID   USER   FD   TYPE DEVICE SIZE/OFF   NODE NAME\nsystemd    1   root  cwd    DIR  253,0     4096    128 /\nbash    1874 ${user}  cwd    DIR  253,2     4096    131 /data/app\nsshd     812   root  txt    REG  253,0   956144 402113 /usr/sbin/sshd`;
 
 /* ================= Canned commands ================= */
 type CX = { w: World; st: SState; user: string; root: boolean; meta: Meta; kv: KV; P: (a: string) => string; now: string; args: string[]; v: string };
@@ -390,23 +444,25 @@ function pingRun(x: CX, m: RegExpMatchArray): string {
   return L.join("\n");
 }
 function keygen(x: CX, m: RegExpMatchArray): string {
-  const t = m[1]; const bits = m[3] ?? (t === "rsa" ? "3072" : "256"); const p = H(`.ssh/id_${t}`);
-  x.st.fs[p] = { type: "file", content: "-----BEGIN OPENSSH PRIVATE KEY-----\n(sim)\n-----END OPENSSH PRIVATE KEY-----\n", mode: 0o600, owner: ME, group: ME, attrs: "", mtime: x.now };
-  x.st.fs[p + ".pub"] = { type: "file", content: `${t === "ecdsa" ? "ecdsa-sha2-nistp256" : "ssh-" + t} AAAAC3NzaC1sim${t}key student@${x.w.host}\n`, mode: 0o644, owner: ME, group: ME, attrs: "", mtime: x.now };
+  const t = m[1]; const bits = m[3] ?? (t === "rsa" ? "3072" : "256"); const me = x.user; const p = H(me, `.ssh/id_${t}`);
+  x.st.fs[p] = { type: "file", content: "-----BEGIN OPENSSH PRIVATE KEY-----\n(sim)\n-----END OPENSSH PRIVATE KEY-----\n", mode: 0o600, owner: me, group: me, attrs: "", mtime: x.now };
+  x.st.fs[p + ".pub"] = { type: "file", content: `${t === "ecdsa" ? "ecdsa-sha2-nistp256" : "ssh-" + t} AAAAC3NzaC1sim${t}key ${me}@${x.w.host}\n`, mode: 0o644, owner: me, group: me, attrs: "", mtime: x.now };
   x.meta.bits = bits;
-  return `Generating public/private ${t} key pair.\nEnter file in which to save the key (${p}):\nEnter passphrase (empty for no passphrase):\nS:(sim) Pressed Enter at each prompt. Nothing typed is stored.\nYour identification has been saved in ${p}\nYour public key has been saved in ${p}.pub\nThe key fingerprint is:\nSHA256:q3Vb8m1simFingerprint student@${x.w.host}\nThe key's randomart image is:\n+---[${t.toUpperCase()} ${bits}]----+`;
+  return `Generating public/private ${t} key pair.\nEnter file in which to save the key (${p}):\nEnter passphrase (empty for no passphrase):\nS:(sim) Pressed Enter at each prompt. Nothing typed is stored.\nYour identification has been saved in ${p}\nYour public key has been saved in ${p}.pub\nThe key fingerprint is:\nSHA256:q3Vb8m1simFingerprint ${me}@${x.w.host}\nThe key's randomart image is:\n+---[${t.toUpperCase()} ${bits}]----+`;
 }
 function copyId(x: CX, m: RegExpMatchArray): string {
   const s = SERVERS.find((v) => v.ip === m[4]);
   if (!s) return `E:ssh: connect to host ${m[4]} port 22: Connection timed out`;
-  const guess = Object.keys(x.st.fs).find((k) => /\/\.ssh\/id_\w+\.pub$/.test(k) && k.startsWith(HOME)) ?? "";
+  const destUser = m[3];
+  if (!isValidLabUser(destUser)) return `E:${destUser}@${m[4]}: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).`;
+  const guess = Object.keys(x.st.fs).find((k) => /\/\.ssh\/id_\w+\.pub$/.test(k) && k.startsWith(homeOf(x.user))) ?? "";
   const kp0 = m[2] ? x.P(m[2]) : guess;
   const kp = kp0 && !kp0.endsWith(".pub") && x.st.fs[kp0 + ".pub"] ? kp0 + ".pub" : kp0;
   const key = kp ? x.st.fs[kp] : undefined;
   if (!key) return "E:/usr/bin/ssh-copy-id: ERROR: No identities found";
-  if (m[3] !== s.user) return `E:${m[3]}@${m[4]}: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).`;
-  x.w.servers[s.name].fs[H(".ssh/authorized_keys")].content += key.content;
-  return `/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "${kp}"\n${m[3]}@${m[4]}'s password:\nS:(sim) Password accepted. Nothing typed is stored.\n\nNumber of key(s) added: 1\n\nNow try logging into the machine, with:   "ssh '${m[3]}@${m[4]}'"`;
+  seedLabUser(x.w.servers[s.name], destUser);
+  x.w.servers[s.name].fs[H(destUser, ".ssh/authorized_keys")].content += key.content;
+  return `/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "${kp}"\n${destUser}@${m[4]}'s password:\nS:(sim) Password accepted. Nothing typed is stored.\n\nNumber of key(s) added: 1\n\nNow try logging into the machine, with:   "ssh '${destUser}@${m[4]}'"`;
 }
 function sedRun(x: CX, m: RegExpMatchArray): string {
   const p = x.P(m[6]); const n = x.st.fs[p];
@@ -471,7 +527,7 @@ function gitRun(x: CX): string {
     return `[main${first ? " (root-commit)" : ""} ${sha()}] ${a[mi + 1]}\n ${stg.length} file${stg.length > 1 ? "s" : ""} changed, ${stg.length * 3} insertions(+)\n` + stg.map((f) => ` create mode 100644 ${f}`).join("\n");
   }
   if (sub === "log") return kv.gc === "0" ? "E:fatal: your current branch 'main' does not have any commits yet" : `${sha()} (HEAD -> main) latest commit`;
-  if (sub === "push") return kv.gc === "0" ? "E:error: src refspec main does not match any\nE:error: failed to push some refs to 'origin'" : "S:(sim) There's no real remote, so this is what a push prints.\nEnumerating objects: 4, done.\nWriting objects: 100% (4/4), 412 bytes | 412.00 KiB/s, done.\nTo github.com:student/projects.git\n * [new branch]      main -> main";
+  if (sub === "push") return kv.gc === "0" ? "E:error: src refspec main does not match any\nE:error: failed to push some refs to 'origin'" : "S:(sim) There's no real remote, so this is what a push prints.\nEnumerating objects: 4, done.\nWriting objects: 100% (4/4), 412 bytes | 412.00 KiB/s, done.\nTo github.com:${x.user}/projects.git\n * [new branch]      main -> main";
   if (sub === "stash") return a[1] === "pop" ? "S:(sim) Your stashed changes are back.\nDropped refs/stash@{0}" : "Saved working directory and index state WIP on main";
   if (sub === "reset" && a[1] === "--hard") return `HEAD is now at ${sha()} latest commit\nS:(sim) Uncommitted changes would be thrown away.`;
   return `E:git: '${sub}' is not a git command. See 'git --help'.`;
@@ -552,7 +608,7 @@ function jlog(x: CX, unit: string, f: boolean): string {
   const h = x.kv.hn ?? x.w.host ?? ""; const sv = x.st.services[unit];
   if (!sv) return "-- No entries --";
   const L = [`Nov 18 08:02:11 ${h} systemd[1]: Starting ${sv.desc}...`];
-  if (unit === "sshd") L.push(`Nov 18 08:02:11 ${h} sshd[812]: Server listening on 0.0.0.0 port 22.`, `Nov 18 09:55:02 ${h} sshd[1187]: Accepted password for student from 10.0.0.12 port 51544 ssh2`, `Nov 18 09:58:40 ${h} sshd[1240]: Failed password for root from 203.0.113.9 port 40112 ssh2`);
+  if (unit === "sshd") L.push(`Nov 18 08:02:11 ${h} sshd[812]: Server listening on 0.0.0.0 port 22.`, `Nov 18 09:55:02 ${h} sshd[1187]: Accepted password for ${x.user} from 10.0.0.12 port 51544 ssh2`, `Nov 18 09:58:40 ${h} sshd[1240]: Failed password for root from 203.0.113.9 port 40112 ssh2`);
   L.push(`Nov 18 08:02:12 ${h} systemd[1]: Started ${sv.desc}.`);
   if (f) L.push("S:(sim) -f would keep following new lines until Ctrl+C.");
   return L.join("\n");
@@ -576,7 +632,7 @@ const CANNED: Can[] = [
   { v: "timedatectl", re: /^set-timezone (\S+)$/, root: "E:Failed to set time zone: Interactive authentication required.", k: "tz", run: (x, m) => { if (!/^[A-Z][A-Za-z_]+\/[A-Za-z_]+$/.test(m[1])) return `E:Failed to set time zone: Invalid or not installed time zone '${m[1]}'`; x.kv.tz = m[1]; return ""; } },
   { v: "ntpdate", re: /^\S+$/, root: "E:ntpdate: bind() fails: Permission denied", k: "ntp", run: () => `18 Nov ${clock()} ntpdate[2211]: step time server 162.159.200.1 offset +312.4 sec` },
   { v: "dnf|yum", re: /^history( list)?$/, k: "hist", run: () => DNFHIST },
-  { v: "dnf|yum", re: /^history info (\d+)$/, run: (x, m) => `Transaction ID : ${m[1]}\nBegin time     : Mon 17 Nov 2026 10:10:41 PM EST\nUser           : student <student>\nReturn-Code    : Success\nCommand Line   : update -y\nPackages Altered:\n    Upgrade  httpd-2.4.62-1.el9.x86_64      @appstream\n    Upgraded httpd-2.4.57-11.el9_4.x86_64   @@System` },
+  { v: "dnf|yum", re: /^history info (\d+)$/, run: (x, m) => `Transaction ID : ${m[1]}\nBegin time     : Mon 17 Nov 2026 10:10:41 PM EST\nUser           : ${x.user} <${x.user}>\nReturn-Code    : Success\nCommand Line   : update -y\nPackages Altered:\n    Upgrade  httpd-2.4.62-1.el9.x86_64      @appstream\n    Upgraded httpd-2.4.57-11.el9_4.x86_64   @@System` },
   { v: "dnf|yum", re: /^history undo (\d+)( -y)?$/, root: DNFROOT, k: "undo", run: (x, m) => { x.kv.undo = m[1]; return `Undoing transaction ${m[1]}, from Mon 17 Nov 2026 10:10:41 PM EST\nDependencies resolved.\nDowngrading: httpd  x86_64  2.4.57-11.el9_4  baseos\nIs this ok [y/N]: y\nS:(sim) Answered y.\nComplete!`; } },
   { v: "dnf|yum", re: /^repolist (all|--all)$/, k: "repoall", run: () => REPOS(true) },
   { v: "dnf|yum", re: /^repolist$/, run: () => REPOS(false) },
@@ -589,7 +645,7 @@ const CANNED: Can[] = [
   { v: "file", re: /^(.+)$/, k: "file", run: (x, m) => fileOut(x, m[1]) },
   { v: "ln", re: /^(-s )?(\S+) (\S+)$/, k: "ln", run: (x, m) => { const p = x.P(m[3]); if (x.st.fs[p]) return `E:ln: failed to create ${m[1] ? "symbolic" : "hard"} link '${m[3]}': File exists`; const par = x.st.fs[parentOf(p)]; if (!par || !can(x.st, par, x.user, 3)) return `E:ln: failed to create link '${m[3]}': Permission denied`; if (m[1]) { x.st.fs[p] = { ...mkNode(x, "file", m[2], 0o777), type: "link" }; return ""; } const src = x.st.fs[x.P(m[2])]; if (!src) return `E:ln: failed to access '${m[2]}': No such file or directory`; x.st.fs[p] = { ...src }; return ""; } },
   { v: "tar", re: /^-?([a-zA-Z]+) (\S+)( .+)?$/, k: "tar", run: tarRun },
-  { v: "rsync", re: /^-(\w+) (\S+) (\S+)$/, k: "rsync", run: (x, m) => { if (!x.st.fs[x.P(m[2])]) return `E:rsync: [sender] change_dir "${x.P(m[2])}" failed: No such file or directory (2)`; const r = /^(\w+)@([\d.]+):/.exec(m[3]); return `${r ? "S:(sim) Pretend transfer over SSH to " + r[2] + "\n" : ""}sending incremental file list\n./\nreadme.md\napp.py\n\nsent 412 bytes  received 57 bytes  938.00 bytes/sec\ntotal size is 61  speedup is 0.13`; } },
+  { v: "rsync", re: /^-(\w+) (\S+) (\S+)$/, k: "rsync", run: (x, m) => { if (!x.st.fs[x.P(m[2])]) return `E:rsync: [sender] change_dir "${x.P(m[2])}" failed: No such file or directory (2)`; const r = /^([a-z_][a-z0-9_-]{0,31})@([\d.]+):/.exec(m[3]); return `${r ? "S:(sim) Pretend transfer over SSH to " + r[2] + "\n" : ""}sending incremental file list\n./\nreadme.md\napp.py\n\nsent 412 bytes  received 57 bytes  938.00 bytes/sec\ntotal size is 61  speedup is 0.13`; } },
   { v: "dd", re: /^(.+)$/, k: "dd", run: ddRun },
   { v: "shred", re: /^((?:-[uvz]+|-n \d+) )*(\S+)$/, k: "shred", run: (x, m) => { const a = m[2], o = x.args.join(" "); if (a.startsWith("/dev/")) return x.root ? `S:(sim) Wiping ${a} isn't simulated. Nothing was overwritten.` : `E:shred: ${a}: failed to open for writing: Permission denied`; const p = x.P(a); const n = x.st.fs[p]; const bad = !n ? "No such file or directory" : n.type === "dir" ? "Is a directory" : n.attrs ? "Operation not permitted" : !can(x.st, n, x.user, 2) ? "Permission denied" : ""; if (bad) return `E:shred: ${a}: failed to open for writing: ${bad}`; const u = /-\w*u/.test(o); if (u) delete x.st.fs[p]; return /-\w*v/.test(o) ? `shred: ${a}: pass 1/3 (random)...\nshred: ${a}: pass 2/3 (random)...\nshred: ${a}: pass 3/3 (random)...${u ? `\nshred: ${a}: removed` : ""}` : ""; } },
   { v: "du", re: /^(?:-(\w+) ?)?(\S+)?$/, k: "du", run: duRun },
@@ -608,8 +664,8 @@ const CANNED: Can[] = [
   { v: "mount", re: /^$/, run: (x) => `/dev/mapper/rl-root on / type xfs (rw,relatime,seclabel)\n/dev/sda1 on /boot type xfs (rw,relatime,seclabel)\n/dev/mapper/vg_data-lv_data on /data type xfs (rw,${x.kv.dexec === "1" ? "" : "noexec,"}relatime,seclabel)` },
   { v: "mount", re: /^-o (\S+) (\S+)$/, root: "E:mount: /data: must be superuser to use mount.", k: "mount", run: (x, m) => { if (m[2] !== "/data") return `E:mount: ${m[2]}: mount point not mounted or bad option.`; if (/remount/.test(m[1]) && /(^|,)exec/.test(m[1])) x.kv.dexec = "1"; if (/noexec/.test(m[1])) x.kv.dexec = "0"; return ""; } },
   { v: "umount", re: /^(\S+)$/, root: "E:umount: /data: must be superuser to unmount.", run: (x, m) => `E:umount: ${m[1]}: target is busy.` },
-  { v: "fuser", re: /^-(\w+) (\S+)$/, k: "fuser", run: (x, m) => (m[1].includes("k") ? (x.root ? `${m[2]}:  1874c\nS:(sim) Killed the process using ${m[2]}.` : `E:${m[2]}: Operation not permitted`) : `                     USER        PID ACCESS COMMAND\n${m[2]}:               root     kernel mount ${m[2]}\n                     student     1874 ..c.. bash`) },
-  { v: "lsof", re: /^(\S+)?$/, k: "fuser", run: () => LSOF },
+  { v: "fuser", re: /^-(\w+) (\S+)$/, k: "fuser", run: (x, m) => (m[1].includes("k") ? (x.root ? `${m[2]}:  1874c\nS:(sim) Killed the process using ${m[2]}.` : `E:${m[2]}: Operation not permitted`) : `                     USER        PID ACCESS COMMAND\n${m[2]}:               root     kernel mount ${m[2]}\n                     ${x.user}     1874 ..c.. bash`) },
+  { v: "lsof", re: /^(\S+)?$/, k: "fuser", run: (x) => lsofOut(x.user) },
   { v: "cpio|7za|7z|pushd|popd", re: /.*/, run: (x) => `S:(sim) ${x.v} isn't simulated. Use file first to see what an archive really is.` },
   /* Section 3 */
   { v: "renice", re: /^(?:-n )?(-?\d+) -p (\d+)$/, k: "renice", run: (x, m) => { const pr = x.st.procs.find((p) => p.pid === +m[2]); const n = +m[1]; if (!pr) return `E:renice: failed to get priority for ${m[2]} (process ID): No such process`; if (!x.root && (n < pr.ni || pr.user !== x.user)) return `E:renice: failed to set priority for ${m[2]} (process ID): Permission denied`; const old = pr.ni; pr.ni = Math.max(-20, Math.min(19, n)); return `${m[2]} (process ID) old priority ${old}, new priority ${pr.ni}`; } },
@@ -618,9 +674,9 @@ const CANNED: Can[] = [
   { v: "bg", re: /.*/, run: () => "E:bash: bg: job 1 already in background" },
   { v: "nohup", re: /.*/, run: () => "S:(sim) nohup makes a command ignore the hangup signal. Not simulated here." },
   { v: "systemd-analyze", re: /^(blame)?$/, k: "blame", run: (x, m) => (m[1] ? BLAME : "Startup finished in 2.1s (kernel) + 4.0s (initrd) + 1min 14.6s (userspace) = 1min 20.7s") },
-  { v: "w", re: /^(-i)?$/, k: "who", run: (x, m) => ` ${clock()} up  2:20,  2 users,  load average: 1.02, 0.98, 0.71\nUSER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT\nstudent   pts/0    ${m[1] ? "10.0.0.12      " : "laptop    "}  09:55    0.00s  0.04s  0.00s w${m[1] ? " -i" : ""}\nadmin2   pts/1    ${m[1] ? "10.0.0.31      " : "ops-laptop    "}  10:02    4:10   0.01s  0.01s -bash` },
-  { v: "loginctl", re: /^(list-sessions)?$/, k: "who", run: () => "SESSION  UID USER   SEAT TTY\n      3 1000 student      pts/0\n      5 1002 admin2      pts/1\n\n2 sessions listed." },
-  { v: "crontab", re: /^-(l|e)$/, run: (x, m) => (m[1] === "l" ? "no crontab for student" : "S:(sim) crontab -e opens your crontab in an editor. Editors aren't simulated.") },
+  { v: "w", re: /^(-i)?$/, k: "who", run: (x, m) => ` ${clock()} up  2:20,  2 users,  load average: 1.02, 0.98, 0.71\nUSER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT\n${x.user.padEnd(8)} pts/0    ${m[1] ? "10.0.0.12      " : "laptop    "}  09:55    0.00s  0.04s  0.00s w${m[1] ? " -i" : ""}\nadmin2   pts/1    ${m[1] ? "10.0.0.31      " : "ops-laptop    "}  10:02    4:10   0.01s  0.01s -bash` },
+  { v: "loginctl", re: /^(list-sessions)?$/, k: "who", run: (x) => `SESSION  UID USER   SEAT TTY\n      3 ${String(x.st.users[x.user]?.uid ?? 1000).padStart(4)} ${x.user}      pts/0\n      5 1002 admin2      pts/1\n\n2 sessions listed.` },
+  { v: "crontab", re: /^-(l|e)$/, run: (x, m) => (m[1] === "l" ? `no crontab for ${x.user}` : "S:(sim) crontab -e opens your crontab in an editor. Editors aren't simulated.") },
   /* Section 4 */
   { v: "nc|ncat", re: /^-(\w+) (\S+) (\d+)$/, k: "nc", run: (x, m) => ncOut(m[2], m[3]) },
   { v: "ss", re: /^-\w+$/, k: "ss", run: (x) => SS(x.kv.ip) },
@@ -649,13 +705,13 @@ const CANNED: Can[] = [
   { v: "sestatus", re: /^$/, k: "getenforce", run: (x) => `SELinux status:                 enabled\nLoaded policy name:             targeted\nCurrent mode:                   ${x.kv.se.toLowerCase()}\nMode from config file:          enforcing` },
   { v: "setenforce", re: /^(0|1|[Pp]ermissive|[Ee]nforcing)$/, root: "E:setenforce:  security_setenforce() failed:  Permission denied", k: "setenforce", run: (x, m) => { x.kv.se = /^(0|[Pp])/.test(m[1]) ? "Permissive" : "Enforcing"; return ""; } },
   { v: "ssh-keygen", re: /^-t (rsa|ecdsa|ed25519)( -b (\d+))?( -C \S+)?$/, k: "keygen", run: keygen },
-  { v: "ssh-copy-id", re: /^(-i (\S+) )?(\w+)@(\S+)$/, k: "copyid", run: copyId },
+  { v: "ssh-copy-id", re: /^(-i (\S+) )?([a-z_][a-z0-9_-]{0,31})@(\S+)$/, k: "copyid", run: copyId },
   { v: "update-ca-trust", re: /^(extract)?$/, root: "E:p11-kit: couldn't create file: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem: Permission denied", k: "catrust", run: () => "" },
   { v: "restorecon", re: /^-(\w+) (\S+)$/, root: "E:restorecon: Could not set context for /var/www/html/index.html:  Permission denied", k: "restorecon", run: (x, m) => (m[1].includes("v") ? `Relabeled ${m[2].replace(/\/$/, "")}/index.html from unconfined_u:object_r:user_home_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0` : "") },
   { v: "semanage", re: /^port -a -t (\S+) -p (tcp|udp) (\d+)$/, root: "E:ValueError: SELinux policy is not managed or store cannot be accessed.", k: "semanage", run: () => "" },
   { v: "oscap|cryptsetup|ausearch|aureport", re: /.*/, run: (x) => `S:(sim) ${x.v} isn't run in this practice. Know what it's for from the hint.` },
   /* Section 7 */
-  { v: "export", re: /.*/, k: "export", run: (x) => { if (!x.args.length) return Object.entries(x.w.env).map(([k, v]) => `declare -x ${k}="${v}"`).join("\n"); for (const a of x.args) { const i = a.indexOf("="); if (i < 0) continue; if (!/^\w+$/.test(a.slice(0, i))) return `E:bash: export: \`${a}': not a valid identifier`; x.w.env[a.slice(0, i)] = a.slice(i + 1).replace(/(^|:)~(?=\/|$)/g, `$1${HOME}`); } return ""; } },
+  { v: "export", re: /.*/, k: "export", run: (x) => { if (!x.args.length) return Object.entries(x.w.env).map(([k, v]) => `declare -x ${k}="${v}"`).join("\n"); for (const a of x.args) { const i = a.indexOf("="); if (i < 0) continue; if (!/^\w+$/.test(a.slice(0, i))) return `E:bash: export: \`${a}': not a valid identifier`; x.w.env[a.slice(0, i)] = a.slice(i + 1).replace(/(^|:)~(?=\/|$)/g, `$1${x.w.env.HOME || homeOf(x.user)}`); } return ""; } },
   { v: "source|.", re: /^(\S+)$/, k: "source", run: sourceRun },
   { v: "deactivate", re: /^$/, run: (x) => { if (!x.w.venv) return "E:bash: deactivate: command not found"; x.w.venv = ""; return ""; } },
   { v: "sed", re: /^(-i )?s(.)(.*?)\2(.*?)\2(g?) (\S+)$/, k: "sed", run: sedRun },
@@ -820,7 +876,7 @@ function runCmd(w: World, st: SState, argv: string[], user: string, meta: Meta, 
 
   if (v === "cd") {
     if (root) { e("sudo: cd: command not found"); return L; }
-    const t = args.length === 0 ? HOME : args[0] === "-" ? w.prevDir : args[0];
+    const t = args.length === 0 ? homeOf(w.user) : args[0] === "-" ? w.prevDir : args[0];
     const p = follow(st, P(t)); const n = st.fs[p];
     if (!n) e(`bash: cd: ${t}: No such file or directory`);
     else if (n.type !== "dir") e(`bash: cd: ${t}: Not a directory`);
@@ -1207,7 +1263,7 @@ function runCmd(w: World, st: SState, argv: string[], user: string, meta: Meta, 
   if (v === "userdel") {
     const nm = ops[0];
     if (!nm || !st.users[nm]) { e(nm ? `userdel: user '${nm}' does not exist` : "Usage: userdel [options] LOGIN"); return L; }
-    if (nm === "root" || nm === ME) { e(`(sim) Deleting ${nm} would lock you out, so it isn't simulated.`); return L; }
+    if (nm === "root" || nm === user || nm === w.user) { e(`(sim) Deleting ${nm} would lock you out, so it isn't simulated.`); return L; }
     const home = st.users[nm].home;
     delete st.users[nm];
     if (fl.includes("r")) sub(home).forEach((k) => { delete st.fs[k]; });
@@ -1338,27 +1394,33 @@ function execOne(w: World, toks: Tok[], hist: string[], meta: Meta): Line[] {
   if (first === "ssh") {
     if (w.host) { e("You're already logged in. Type exit first."); return lines; }
     const a = toks.slice(1).map((t) => t.v);
-    let user = "student", host = "";
+    let user = w.user, host = "";
     for (let i = 0; i < a.length; i++) { if (a[i] === "-l") user = a[++i] ?? ""; else if (a[i] === "-p") i++; else if (!a[i].startsWith("-")) host = a[i]; }
     if (host.includes("@")) { const at = host.indexOf("@"); user = host.slice(0, at); host = host.slice(at + 1); }
     if (!host) { e("usage: ssh [-46AaCfGgKkMNnqsTtVvXxYy] [-l login_name] [-p port] destination [command]"); return lines; }
     const sv = SERVERS.find((x) => x.ip === host);
     if (!sv) { e(/^[\d.]+$/.test(host) ? `ssh: connect to host ${host} port 22: Connection timed out` : `ssh: Could not resolve hostname ${host.toLowerCase()}: Name or service not known`); return lines; }
-    if (user !== sv.user) { e(`${user}@${host}: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).`); return lines; }
+    if (!isValidLabUser(user)) {
+      e(user && !VALID_USER.test(user)
+        ? `(sim) '${user}' isn't a valid Linux username. Use lowercase letters, digits, _ or -, starting with a letter or underscore, up to 32 characters.`
+        : `${user || "root"}@${host}: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).`);
+      return lines;
+    }
     const st = w.servers[sv.name];
-    if ((st.fs[H(".ssh/authorized_keys")]?.content ?? "") === "") s(`${user}@${host}'s password: (sim: accepted)`);
+    seedLabUser(st, user);
+    if ((st.fs[H(user, ".ssh/authorized_keys")]?.content ?? "") === "") s(`${user}@${host}'s password: (sim: accepted)`);
     else s("(sim) Logged in with your SSH key, so no password was needed.");
-    w.host = sv.name; w.cwd = HOME; w.prevDir = HOME; w.sudoAsked = false; w.venv = ""; w.env = ENV0();
-    for (const line of readContent(st, H(".bashrc")).split("\n")) { const mm = line.match(/^export (\w+)=(.*)$/); if (mm) w.env[mm[1]] = expandVars(mm[2].replace(/^['"]|['"]$/g, ""), w.env); }
+    w.host = sv.name; w.user = user; w.cwd = homeOf(user); w.prevDir = homeOf(user); w.sudoAsked = false; w.venv = ""; w.env = ENV0(user);
+    for (const line of readContent(st, H(user, ".bashrc")).split("\n")) { const mm = line.match(/^export (\w+)=(.*)$/); if (mm) w.env[mm[1]] = expandVars(mm[2].replace(/^['"]|['"]$/g, ""), w.env); }
     o("Last login: Wed Nov 18 09:55:02 2026 from 10.0.0.12");
     lines.push({ text: `Welcome to ${sv.name}.`, kind: "ok" });
     return lines;
   }
 
   if (!w.host) {
-    if (first === "whoami") o("student");
+    if (first === "whoami") o(w.user);
     else if (first === "hostname") o("laptop");
-    else if (first === "pwd") o("/Users/student");
+    else if (first === "pwd") o("/Users/" + w.user);
     else if (first === "exit" || first === "logout") e("You're on your own laptop. Nothing to log out of.");
     else if (first === "help") HELP.split("\n").forEach(o);
     else if (first === "history") [...hist].reverse().forEach((h, i) => o(`${String(i + 1).padStart(5)}  ${h}`));
@@ -1399,7 +1461,7 @@ function execOne(w: World, toks: Tok[], hist: string[], meta: Meta): Line[] {
   if (inR !== null) {
     const p = norm(w.cwd, inR); const n = st.fs[follow(st, p)];
     if (!n || n.type === "dir") { e(`bash: ${inR}: ${n ? "Is a directory" : "No such file or directory"}`); return lines; }
-    if (!can(st, n, ME, 4)) { e(`bash: ${inR}: Permission denied`); return lines; }
+    if (!can(st, n, w.user, 4)) { e(`bash: ${inR}: Permission denied`); return lines; }
     const c = readContent(st, p); stdin = c ? c.replace(/\n$/, "").split("\n") : [];
   }
   if (cleaned.length > 1) meta.piped = "1";
@@ -1407,15 +1469,15 @@ function execOne(w: World, toks: Tok[], hist: string[], meta: Meta): Line[] {
   const segStr: string[] = [];
   for (let si = 0; si < cleaned.length; si++) {
     let argv = cleaned[si];
-    let user = ME;
+    let user = w.user;
     if (!argv.length) { e("bash: syntax error near unexpected token `newline'"); return lines; }
     if (argv[0] === "sudo") {
       meta.sudo = "1";
       argv = argv.slice(1);
       if (!argv.length) { e("usage: sudo -h | -K | -k | -V"); return lines; }
       if (argv[0] === "-i" || argv[0] === "-s" || (argv[0] === "su" && argv.length === 1)) { s("(sim) A root shell isn't simulated. Put sudo in front of each command instead."); return lines; }
-      if (!w.sudoAsked) { s("[sudo] password for student: (sim: accepted)"); w.sudoAsked = true; }
-      if (!st.users[ME].groups.includes("wheel")) { e("student is not in the sudoers file.  This incident will be reported."); return lines; }
+      if (!w.sudoAsked) { s(`[sudo] password for ${w.user}: (sim: accepted)`); w.sudoAsked = true; }
+      if (!st.users[w.user]?.groups.includes("wheel")) { e(`${w.user} is not in the sudoers file.  This incident will be reported.`); return lines; }
       user = "root";
     }
     segStr.push(argv.join(" "));
@@ -1433,7 +1495,7 @@ function execOne(w: World, toks: Tok[], hist: string[], meta: Meta): Line[] {
   const R = outR as { path: string; raw: string; append: boolean } | null;
   if (R) {
     const outs = res.filter((l) => l.kind === "out");
-    const err = writeFile(st, w, R.path, outs.map((l) => l.text).join("\n") + (outs.length ? "\n" : ""), R.append, ME, stamp());
+    const err = writeFile(st, w, R.path, outs.map((l) => l.text).join("\n") + (outs.length ? "\n" : ""), R.append, w.user, stamp());
     res = res.filter((l) => l.kind !== "out");
     if (err) res.push({ text: `bash: ${R.raw}: ${err}`, kind: "err" });
   }
@@ -1483,13 +1545,13 @@ export const MISSIONS: Mission[] = [
       T("Connect", "Log into NewYork.", "ssh = secure shell. Type ssh, then username@IP. The username goes before the @ and the server's IP after it.", (c) => c.prevHost === null && c.host === "NewYork"),
       T("Who", "Check which user you're logged in as.", "whoami literally asks \"who am I?\" and prints your username.", (c) => c.host !== null && c.verb === "whoami" && !c.meta.sudo),
       T("Locate", "Show which folder you're in.", "pwd = print working directory. Three letters.", (c) => c.host !== null && c.verb === "pwd"),
-      T("Hidden", "List everything in your home folder in long format, hidden dot files included.", "ls = list. -l = long format (permissions, owner, size). -a = all, including names that start with a dot. Combine them: -la.", (c) => c.verb === "ls" && !!c.meta.long && !!c.meta.all && listed(c).includes(HOME)),
+      T("Hidden", "List everything in your home folder in long format, hidden dot files included.", "ls = list. -l = long format (permissions, owner, size). -a = all, including names that start with a dot. Combine them: -la.", (c) => c.verb === "ls" && !!c.meta.long && !!c.meta.all && listed(c).includes(homeOf(c.w.user))),
       T("Into /etc", "Move into the /etc folder, where system settings live.", "cd = change directory. /etc starts from the very top of the tree, which is /.", (c) => c.verb === "cd" && c.cwd === "/etc"),
-      T("Home", "Go straight back to your home folder.", "~ (tilde) is short for your home folder, /home/student. cd on its own also takes you home.", (c) => c.verb === "cd" && c.cwd === HOME && c.prevCwd !== HOME),
-      T("Write", "Write the line \"study ssh\" into a new file called todo.txt.", "echo prints text back. A single > sends it into a file instead of the screen, replacing what was there.", (c) => c.verb === "echo" && body(c, H("todo.txt")) === "study ssh\n"),
-      T("Spaces", "Back up the file named dont look here to dont look here.bak, keeping its permissions and timestamp.", "cp = copy, -p = preserve. The name has spaces, so wrap each name in double quotes or the shell sees three separate files.", (c) => c.verb === "cp" && !!c.meta.preserve && body(c, H("dont look here.bak")) === "dont look here\n"),
+      T("Home", "Go straight back to your home folder.", "~ (tilde) is short for your home folder, /home/yourname. cd on its own also takes you home.", (c) => c.verb === "cd" && c.cwd === homeOf(c.w.user) && c.prevCwd !== homeOf(c.w.user)),
+      T("Write", "Write the line \"study ssh\" into a new file called todo.txt.", "echo prints text back. A single > sends it into a file instead of the screen, replacing what was there.", (c) => c.verb === "echo" && body(c, H(c.w.user, "todo.txt")) === "study ssh\n"),
+      T("Spaces", "Back up the file named dont look here to dont look here.bak, keeping its permissions and timestamp.", "cp = copy, -p = preserve. The name has spaces, so wrap each name in double quotes or the shell sees three separate files.", (c) => c.verb === "cp" && !!c.meta.preserve && body(c, H(c.w.user, "dont look here.bak")) === "dont look here\n"),
       T("Disconnect", "Log out of NewYork.", "exit closes the session and drops you back on your laptop. logout does the same.", (c) => c.prevHost === "NewYork" && c.host === null && !!c.meta.exit),
-      T("Hop", "Now log into Chicago.", "Same pattern as before: ssh, then student@ and Chicago's IP from the server rack.", (c) => c.prevHost === null && c.host === "Chicago"),
+      T("Hop", "Now log into Chicago.", "Same pattern as before: ssh, then yourusername@ and Chicago's IP from the server rack.", (c) => c.prevHost === null && c.host === "Chicago"),
     ],
   },
   {
@@ -1517,13 +1579,13 @@ export const MISSIONS: Mission[] = [
       Q("/proc", "Question: which directory holds live kernel and process data in memory, gone after a reboot?", "It's a virtual filesystem, not stored on disk. /bin holds essential commands and /usr holds shared software.", ["/proc", "proc", "/proc/"]),
       T("stat", "Show the access, modify, change and birth times of notes.txt.", "stat = status. It prints a file's size, permissions and all of its timestamps.", (c) => K("stat")(c) && c.cmds.some((x) => /notes\.txt$/.test(x))),
       T("file", "backup.bkp came from another team. Find out what kind of file it really is.", "file reads the file's signature (its first bytes) and ignores the name and extension.", (c) => K("file")(c) && c.cmds.some((x) => /backup\.bkp$/.test(x))),
-      T("ln -s", "Create a symbolic link called notes-link that points to notes.txt.", "ln = link. -s makes a symbolic link, which stores a path and can cross filesystems. The target comes first, then the link name.", (c) => K("ln")(c) && F(c, H("notes-link"))?.type === "link"),
-      T("tar", "Archive and xz-compress the projects folder into projects.tar.xz.", "tar = tape archive. -c create, -J xz compression, -f names the archive file (put f last in the flags, right before the name).", (c) => K("tar")(c) && /c/.test(c.meta.tarc ?? "") && /J/.test(c.meta.tarc ?? "") && !!F(c, H("projects.tar.xz"))),
-      T("rsync", "Mirror projects/ to Miami at /backup/ over SSH, keeping permissions and compressing.", "rsync = remote sync; it sends only what changed. -a archive (keeps permissions, owners, times), -v verbose, -z compress. user@host:/path makes it run over SSH. Miami's IP is on the server rack.", rx(/^rsync -(?=\w*a)(?=\w*z)\w+ \S+ student@203\.0\.113\.50:\S*$/)),
-      T("dd MBR", "Back up the MBR (the first 512-byte sector of /dev/sda) to mbr.bak in your home folder.", "dd = data duplicator; it copies raw blocks. if = input file, of = output file, bs = block size, count = how many blocks. Reading a disk needs sudo.", (c) => K("dd")(c) && c.meta.dd === "/dev/sda|512|1" && !!F(c, H("mbr.bak"))),
-      T("shred", "Securely erase secret.txt so it can't be recovered, and delete it.", "shred overwrites a file with random data several times. -u removes it afterwards. It isn't reliable on SSDs.", (c) => K("shred")(c) && !F(c, H("secret.txt"))),
-      T("rm -r", "Remove the old-logs folder and everything in it.", "rm = remove. -r = recursive, for folders and everything inside. rmdir only removes empty folders.", (c) => c.verb === "rm" && !F(c, H("old-logs"))),
-      T("+a", "Make app.log append-only: new lines can be added but nothing can be overwritten.", "chattr = change attributes. +a = append only (good for logs), +i = immutable. Needs sudo. lsattr shows the flags.", (c) => c.verb === "chattr" && (F(c, H("app.log"))?.attrs ?? "").includes("a")),
+      T("ln -s", "Create a symbolic link called notes-link that points to notes.txt.", "ln = link. -s makes a symbolic link, which stores a path and can cross filesystems. The target comes first, then the link name.", (c) => K("ln")(c) && F(c, H(c.w.user, "notes-link"))?.type === "link"),
+      T("tar", "Archive and xz-compress the projects folder into projects.tar.xz.", "tar = tape archive. -c create, -J xz compression, -f names the archive file (put f last in the flags, right before the name).", (c) => K("tar")(c) && /c/.test(c.meta.tarc ?? "") && /J/.test(c.meta.tarc ?? "") && !!F(c, H(c.w.user, "projects.tar.xz"))),
+      T("rsync", "Mirror projects/ to Miami at /backup/ over SSH, keeping permissions and compressing.", "rsync = remote sync; it sends only what changed. -a archive (keeps permissions, owners, times), -v verbose, -z compress. user@host:/path makes it run over SSH. Miami's IP is on the server rack.", rx(/^rsync -(?=\w*a)(?=\w*z)\w+ \S+ [a-z_][a-z0-9_-]{0,31}@203\.0\.113\.50:\S*$/)),
+      T("dd MBR", "Back up the MBR (the first 512-byte sector of /dev/sda) to mbr.bak in your home folder.", "dd = data duplicator; it copies raw blocks. if = input file, of = output file, bs = block size, count = how many blocks. Reading a disk needs sudo.", (c) => K("dd")(c) && c.meta.dd === "/dev/sda|512|1" && !!F(c, H(c.w.user, "mbr.bak"))),
+      T("shred", "Securely erase secret.txt so it can't be recovered, and delete it.", "shred overwrites a file with random data several times. -u removes it afterwards. It isn't reliable on SSDs.", (c) => K("shred")(c) && !F(c, H(c.w.user, "secret.txt"))),
+      T("rm -r", "Remove the old-logs folder and everything in it.", "rm = remove. -r = recursive, for folders and everything inside. rmdir only removes empty folders.", (c) => c.verb === "rm" && !F(c, H(c.w.user, "old-logs"))),
+      T("+a", "Make app.log append-only: new lines can be added but nothing can be overwritten.", "chattr = change attributes. +a = append only (good for logs), +i = immutable. Needs sudo. lsattr shows the flags.", (c) => c.verb === "chattr" && (F(c, H(c.w.user, "app.log"))?.attrs ?? "").includes("a")),
       T("du", "List everything under /var/log by size, biggest first, and keep only the top line.", "du = disk usage. -a includes files, -h shows K/M/G. Pipe into sort -rh (reverse, human sizes), then head -n 1.", (c) => K("du")(c) && !!c.meta.sort && !!c.meta.head),
       T("lsblk", "Show the disks, partitions and logical volumes as a tree with sizes and mount points.", "lsblk = list block devices. lsscsi lists SCSI devices, so new storage arrays show up there.", K("lsblk")),
       T("pvcreate", "A new disk, /dev/sdc, arrived. Prepare it for LVM (the first step).", "LVM order: pvcreate (physical volume), then vgcreate or vgextend (volume group), then lvcreate (logical volume). A new disk always starts with pvcreate. Needs sudo.", K("pv")),
@@ -1533,7 +1595,7 @@ export const MISSIONS: Mission[] = [
   {
     title: "Processes, services and scheduling", pill: "Processes", sec: "SECTION 3 \u00b7 PAGES 6\u20137", blurb: "On Miami: see what's running, stop or slow it, manage services and logs, schedule jobs.", login: true, home: "Miami",
     tasks: [
-      T("ps -u", "List only the processes that belong to student.", "ps = process status. -u picks a user. top -u student is the live version.", (c) => c.meta.psu === "student"),
+      T("ps -u", "List only the processes that belong to you.", "ps = process status. -u picks a user, so ps -u and then your username. top -u yourname is the live version.", (c) => c.meta.psu === c.w.user),
       T("top", "Watch processes live and find the one eating the CPU.", "top shows the top processes, busiest first. The CPU line splits time into us (user), sy (kernel), id (idle) and wa (waiting on disk). Press q to quit on a real server.", (c) => c.verb === "top"),
       Q("Zombie", "Question: what state letter do ps and top show for a zombie process?", "A zombie finished running, but its parent hasn't collected its exit status yet. Look at the STAT column in ps aux.", ["z"]),
       T("kill -9", "Force-stop the runaway process, runaway.py.", "kill sends a signal to a PID. -9 = SIGKILL, which can't be caught or ignored. Get the PID from ps or top.", (c) => ["kill", "pkill", "killall"].includes(c.verb) && !!c.st && !c.st.procs.some((p) => p.cmd.includes("runaway"))),
@@ -1568,7 +1630,7 @@ export const MISSIONS: Mission[] = [
   {
     title: "Users, permissions and privileged access", pill: "Users & perms", sec: "SECTION 5 \u00b7 PAGES 9\u201311", blurb: "On Chicago: users, groups, sudo, password aging, special bits, ACLs and umask.", login: true, home: "Chicago",
     tasks: [
-      T("id", "Show your user ID (UID) and all of your groups.", "id prints uid (user ID), gid (primary group ID) and every group you're in.", (c) => c.verb === "id" && c.meta.id === "student"),
+      T("id", "Show your user ID (UID) and all of your groups.", "id prints uid (user ID), gid (primary group ID) and every group you're in.", (c) => c.verb === "id" && c.meta.id === c.w.user),
       T("groupadd", "Create a group called devs with GID 2000.", "groupadd adds a group. -g sets the GID (group ID). Needs sudo.", (c) => c.st?.groups["devs"] === 2000),
       T("useradd", "Create user jsmith with UID 2001 and devs as the primary group.", "useradd adds a user. -u sets the UID; lowercase -g sets the primary group; uppercase -G adds extra groups; -m makes the home folder. Needs sudo.", (c) => jsm(c)?.uid === 2001 && jsm(c)?.gid === "devs"),
       T("Admin", "Give jsmith sudo rights without changing their primary group. This is a Red Hat-style server.", "usermod = user modify. -aG = append to Groups; without -a, -G replaces their other groups. The admin group is wheel on Red Hat and sudo on Debian/Ubuntu.", (c) => !!jsm(c)?.groups.includes("wheel") && jsm(c)?.gid === "devs"),
@@ -1577,8 +1639,8 @@ export const MISSIONS: Mission[] = [
       T("chage", "Make jsmith change their password every 90 days.", "chage = change age. -M = maximum days (lowercase -m is the minimum, which stops cycling back to an old password). chage -l lists the settings. Needs sudo.", (c) => jsm(c)?.maxDays === 90),
       T("nologin", "Block jsmith from logging in interactively, but let services still run as that account.", "usermod -s /sbin/nologin sets a shell that just says \"This account is currently not available\". passwd -l locks the password instead. usermod -s /bin/bash restores it.", (c) => jsm(c)?.shell === "/sbin/nologin" || !!jsm(c)?.locked),
       Q("visudo", "Question: which command edits /etc/sudoers safely, checking the syntax before saving?", "It's vi + sudo. A line like %admin ALL=(ALL) ALL gives a whole group full sudo (the % means group).", ["visudo", "sudo visudo"]),
-      T("g+w", "Give the group write access to the reports folder.", "chmod = change mode. g = group, + adds, w = write: g+w. chmod 775 works too. Making files in a folder needs write and execute on it.", (c) => c.verb === "chmod" && ((F(c, H("reports"))?.mode ?? 0) & 0o020) !== 0),
-      T("chown -R", "Make student the owner and devs the group of /srv/team and everything inside it.", "chown = change owner. user:group sets both, and -R = recursive. Needs sudo.", (c) => { const st = c.st; return !!st && Object.keys(st.fs).filter((k) => k === "/srv/team" || k.startsWith("/srv/team/")).every((k) => st.fs[k].owner === "student" && st.fs[k].group === "devs"); }),
+      T("g+w", "Give the group write access to the reports folder.", "chmod = change mode. g = group, + adds, w = write: g+w. chmod 775 works too. Making files in a folder needs write and execute on it.", (c) => c.verb === "chmod" && ((F(c, H(c.w.user, "reports"))?.mode ?? 0) & 0o020) !== 0),
+      T("chown -R", "Make your user the owner and devs the group of /srv/team and everything inside it.", "chown = change owner. user:group sets both, and -R = recursive. Needs sudo. Use your username, then :devs.", (c) => { const st = c.st; return !!st && Object.keys(st.fs).filter((k) => k === "/srv/team" || k.startsWith("/srv/team/")).every((k) => st.fs[k].owner === c.w.user && st.fs[k].group === "devs"); }),
       T("setgid", "Make new files in /srv/team automatically get the devs group.", "g+s sets setgid on a directory, so files created inside inherit its group. ls -l shows an s in the group's x spot.", (c) => ((F(c, "/srv/team")?.mode ?? 0) & 0o2000) !== 0),
       T("ACL", "Give jsmith rwx on /srv/team with an ACL, without changing its owner or group.", "setfacl -m (modify) u:user:perms adds an access control list entry. getfacl shows them, and ls -l adds a + at the end of the permissions.", (c) => !!F(c, "/srv/team")?.acl?.includes("user:jsmith:rwx")),
       T("umask", "Set your umask to 0036.", "umask = user file-creation mask. It removes bits from the defaults: new files 666 become 640 (rw-r-----), new folders 777 become 741 (rwxr----x).", (c) => c.w.umask === 0o036),
@@ -1595,8 +1657,8 @@ export const MISSIONS: Mission[] = [
       Q("LUKS", "Question: what is the standard Linux disk encryption for data at rest?", "You manage it with the cryptsetup command.", ["luks", "cryptsetup", "dm-crypt", "luks2"]),
       T("getenforce", "Check which mode SELinux is in.", "getenforce prints Enforcing, Permissive or Disabled. sestatus shows more detail.", K("getenforce")),
       T("Permissive", "Switch SELinux to permissive until the next reboot.", "setenforce 0 = permissive (logs but doesn't block), 1 = enforcing. To make it permanent, edit /etc/selinux/config and reboot. Needs sudo.", (c) => kvOf(c, "se") === "Permissive"),
-      T("Key", "Create an RSA SSH key pair, 4096 bits, for passwordless login.", "ssh-keygen = SSH key generator. -t = type, -b = bits. A passphrase protects the private key.", (c) => K("keygen")(c) && !!F(c, H(".ssh/id_rsa.pub")) && c.meta.bits === "4096"),
-      T("Copy key", "Install your public key on LosAngeles so you can log in there without a password.", "ssh-copy-id appends your public key to ~/.ssh/authorized_keys on the server. -i picks the key file, then user@host. LosAngeles's IP is on the server rack.", (c) => (c.w.servers["LosAngeles"].fs[H(".ssh/authorized_keys")]?.content ?? "").length > 0),
+      T("Key", "Create an RSA SSH key pair, 4096 bits, for passwordless login.", "ssh-keygen = SSH key generator. -t = type, -b = bits. A passphrase protects the private key.", (c) => K("keygen")(c) && !!F(c, H(c.w.user, ".ssh/id_rsa.pub")) && c.meta.bits === "4096"),
+      T("Copy key", "Install your public key on LosAngeles so you can log in there without a password.", "ssh-copy-id appends your public key to ~/.ssh/authorized_keys on the server. -i picks the key file, then user@host. LosAngeles's IP is on the server rack.", (c) => (c.w.servers["LosAngeles"].fs[H(c.w.user, ".ssh/authorized_keys")]?.content ?? "").length > 0),
       Q("Root login", "Question: which PermitRootLogin value in sshd_config lets root log in with a key but never with a password?", "The setting lives in /etc/ssh/sshd_config. The choices include yes, no and this one.", ["prohibit-password", "permitrootlogin prohibit-password", "without-password"]),
       T("CA trust", "Make the system trust the company CA certificate ca.crt.", "Copy it into /etc/pki/ca-trust/source/anchors/, then run update-ca-trust. Both need sudo. If curl -k works, it was only skipping verification.", (c) => K("catrust")(c) && !!F(c, "/etc/pki/ca-trust/source/anchors/ca.crt")),
       Q("AI data", "Question: before pasting server logs into an AI tool, what should you do to the data?", "Check the company AI policy first, then clean out anything sensitive. Review and lint any code the tool writes.", [/sanitiz|anonymi|redact|scrub|remove (the )?(sensitive|personal|private|secret|confidential)|mask|strip (out )?(sensitive|personal|secret)/]),
@@ -1605,17 +1667,17 @@ export const MISSIONS: Mission[] = [
   {
     title: "Shell scripting, Git and Python", pill: "Scripting & Git", sec: "SECTION 7 \u00b7 PAGES 13\u201314", blurb: "On LosAngeles: variables, PATH, scripts, sed, pipes, regex, Git and Python venvs.", login: true, home: "LosAngeles",
     tasks: [
-      T("bashrc", "Make EDITOR=vim permanent for every new interactive shell by appending an export line to ~/.bashrc.", "export makes a variable visible to child commands. >> appends to ~/.bashrc, which runs for every interactive shell. Single quotes keep the line exactly as typed.", (c) => /export EDITOR=vim/.test(body(c, H(".bashrc")) ?? "")),
-      T("PATH", "hello lives in ~/.local/bin, but typing hello says command not found. Add that folder to your PATH, then run hello.", "PATH is the list of folders the shell searches. export PATH=$PATH:$HOME/.local/bin keeps the old list and adds the new folder at the end.", (c) => (c.w.env.PATH ?? "").split(":").includes(H(".local/bin")) && c.meta.ran === H(".local/bin/hello")),
+      T("bashrc", "Make EDITOR=vim permanent for every new interactive shell by appending an export line to ~/.bashrc.", "export makes a variable visible to child commands. >> appends to ~/.bashrc, which runs for every interactive shell. Single quotes keep the line exactly as typed.", (c) => /export EDITOR=vim/.test(body(c, H(c.w.user, ".bashrc")) ?? "")),
+      T("PATH", "hello lives in ~/.local/bin, but typing hello says command not found. Add that folder to your PATH, then run hello.", "PATH is the list of folders the shell searches. export PATH=$PATH:$homeOf(c.w.user)/.local/bin keeps the old list and adds the new folder at the end.", (c) => (c.w.env.PATH ?? "").split(":").includes(H(c.w.user, ".local/bin")) && c.meta.ran === H(c.w.user, ".local/bin/hello")),
       Q("Shebang", "Question: what goes on the very first line of a bash script?", "It's called the shebang: #! followed by the path to the interpreter.", ["#!/bin/bash", "#! /bin/bash", "#!/usr/bin/env bash", "shebang"]),
-      T("u+x", "Make script.sh executable for you, the owner.", "chmod = change mode. u = user (owner), + adds, x = execute: u+x.", (c) => c.verb === "chmod" && ((F(c, H("script.sh"))?.mode ?? 0) & 0o100) !== 0),
-      T("Run", "Run script.sh from your home folder.", "./ means \"in this folder\". Type ./ and then the script's name.", (c) => c.meta.ran === H("script.sh")),
-      T("sed", "In app.cfg, replace every \"old\" with \"new\", editing the file in place.", "sed = stream editor. -i = in place. s/old/new/g: s = substitute, g = every match on a line, not just the first.", (c) => K("sed")(c) && !(body(c, H("app.cfg")) ?? "old").includes("old")),
+      T("u+x", "Make script.sh executable for you, the owner.", "chmod = change mode. u = user (owner), + adds, x = execute: u+x.", (c) => c.verb === "chmod" && ((F(c, H(c.w.user, "script.sh"))?.mode ?? 0) & 0o100) !== 0),
+      T("Run", "Run script.sh from your home folder.", "./ means \"in this folder\". Type ./ and then the script's name.", (c) => c.meta.ran === H(c.w.user, "script.sh")),
+      T("sed", "In app.cfg, replace every \"old\" with \"new\", editing the file in place.", "sed = stream editor. -i = in place. s/old/new/g: s = substitute, g = every match on a line, not just the first.", (c) => K("sed")(c) && !(body(c, H(c.w.user, "app.cfg")) ?? "old").includes("old")),
       T("wc -l", "Count how many entries are in /etc: list them one per line and pipe that into a line count.", "ls -1 lists one name per line. wc = word count; -l counts lines only.", (c) => !!c.meta.wc && listed(c).includes("/etc")),
       T("regex", "Show the lines in words.txt that match the pattern .i[^b].i", "grep searches with regular expressions. . = any one character, [^b] = any character except b. Quote the pattern.", (c) => c.meta.grep === ".i[^b].i" && c.cmds.some((x) => /words\.txt/.test(x))),
-      T("git init", "Turn the projects folder into a Git repository.", "git init creates the hidden .git folder that tracks history. Run it inside the folder.", (c) => K("ginit")(c) && kvOf(c, "git") === H("projects")),
+      T("git init", "Turn the projects folder into a Git repository.", "git init creates the hidden .git folder that tracks history. Run it inside the folder.", (c) => K("ginit")(c) && kvOf(c, "git") === H(c.w.user, "projects")),
       T("Commit", "Stage readme.md and commit it with a message.", "git add stages a file, then git commit -m \"message\" saves a snapshot. && runs the second command only if the first worked.", K("commit")),
-      T("venv", "Create a Python virtual environment called venv in your home folder.", "python3 -m venv ./venv: -m runs a module, and venv builds an isolated Python with its own packages.", (c) => !!F(c, H("venv/bin/activate"))),
+      T("venv", "Create a Python virtual environment called venv in your home folder.", "python3 -m venv ./venv: -m runs a module, and venv builds an isolated Python with its own packages.", (c) => !!F(c, H(c.w.user, "venv/bin/activate"))),
       T("Activate", "Activate the venv, then install the requests package into it.", "source runs a file in your current shell: source ./venv/bin/activate. The prompt shows (venv). Then pip install requests.", (c) => !!c.w.venv && K("pip")(c)),
       Q("YAML", "Question: which config format is based on indentation instead of braces?", "JSON uses {} and []. Ansible playbooks use this one. A webhook is an HTTP callback, usually a POST.", ["yaml", "yml"]),
     ],
@@ -1629,7 +1691,7 @@ export const MISSIONS: Mission[] = [
       T("logs", "Follow the logs of the running container named web.", "docker container logs shows a container's output; -f keeps following new lines.", K("dlogs:web:f")),
       T("exec", "Open a bash shell inside the running web container.", "docker exec runs a command in a container that's already running. -it for an interactive terminal.", K("dexec:web")),
       Q("FROM", "Question: which instruction must come first in a Dockerfile, naming the base image?", "For example, FROM httpd. ENTRYPOINT sets the program that runs at start.", ["from", "from httpd"]),
-      T("qcow2", "Convert the raw disk image disk.img to qcow2 format as disk.qcow2.", "qemu-img convert: -f = from format, -O = output format, then the source file and the new file.", (c) => K("qemu")(c) && !!F(c, H("disk.qcow2"))),
+      T("qcow2", "Convert the raw disk image disk.img to qcow2 format as disk.qcow2.", "qemu-img convert: -f = from format, -O = output format, then the source file and the new file.", (c) => K("qemu")(c) && !!F(c, H(c.w.user, "disk.qcow2"))),
       Q("Bridged", "Question: which VM networking mode gives the VM its own address on the physical network?", "Live migration also needs a compatible CPU, shared storage at the same path and enough memory.", ["bridged", "bridge", "bridged networking", "bridged mode", "bridge mode", "bridged network"]),
       Q("k8s", "Question: which Kubernetes object gives a group of pods one stable address and port?", "Its types include ClusterIP, NodePort and LoadBalancer.", ["service", "a service", "kubernetes service", "services"]),
       Q("Ansible", "Question: in Ansible, what is the YAML file that lists the tasks to run on hosts called?", "The inventory lists the hosts, groups and variables. Ansible connects over SSH.", ["playbook", "a playbook", "playbooks", "ansible playbook"]),
@@ -1646,7 +1708,7 @@ export const MISSIONS: Mission[] = [
       T("UFW", "On an Ubuntu box, ufw status shows 443/tcp DENY Anywhere and the web app is blocked. Delete that deny rule.", "ufw delete followed by the rule as it was written: deny https/tcp. Then ufw allow https. Needs sudo.", K("ufwdel")),
       T("Firewall", "SSH is refused on a host that's up. List the services firewalld allows.", "firewall-cmd --list-services. If ssh is missing, add it with --permanent --add-service=ssh, then --reload.", (c) => !!c.meta.fwl),
       T("restorecon", "httpd is denied reading /var/www/html (avc: denied). Restore the default SELinux labels there, recursively.", "restorecon = restore context. -R recursive, -v verbose. Compare labels with ls -Z. Needs sudo.", (c) => K("restorecon")(c) && c.cmds.some((x) => /-\w*R\w* \/var\/www\/html/.test(x))),
-      T("chattr -i", "Even root can't edit locked.conf in your home folder. Find out why with lsattr, then remove the flag.", "lsattr shows an i (immutable). chattr -i removes it. Needs sudo.", (c) => c.verb === "chattr" && !(F(c, H("locked.conf"))?.attrs ?? "i").includes("i")),
+      T("chattr -i", "Even root can't edit locked.conf in your home folder. Find out why with lsattr, then remove the flag.", "lsattr shows an i (immutable). chattr -i removes it. Needs sudo.", (c) => c.verb === "chattr" && !(F(c, H(c.w.user, "locked.conf"))?.attrs ?? "i").includes("i")),
       T("noexec", "/data/app/run.sh has execute permission but won't run, because /data is mounted noexec. Remount /data with exec.", "mount with no arguments shows the options. mount -o remount,exec /data fixes it now; update /etc/fstab to keep it. Needs sudo.", (c) => kvOf(c, "dexec") === "1"),
       T("Busy", "umount /data says target is busy. Find what's using /data.", "fuser -vm /data lists the processes using the mount (-v verbose, -m mount). lsof | grep /data works too. fuser -mk kills them.", K("fuser")),
       T("vgchange", "The logical volume exists but its device file is missing. Activate volume group vg_data.", "vgchange = volume group change. -ay = activate yes. Needs sudo.", K("vgchange")),
@@ -1657,7 +1719,7 @@ export const MISSIONS: Mission[] = [
   },
 ];
 
-const promptFor = (w: World): string => (w.host ? `${w.venv ? `(${w.venv}) ` : ""}[student@${w.host} ${w.cwd === HOME ? "~" : baseOf(w.cwd)}]$` : "student@laptop ~ %");
+export const promptFor = (w: World): string => (w.host ? `${w.venv ? `(${w.venv}) ` : ""}[${w.user}@${w.host} ${w.cwd === homeOf(w.user) ? "~" : baseOf(w.cwd)}]$` : `${w.user}@laptop ~ %`);
 const WELCOME: Line = { text: "Simulation only. Nothing here connects to a real server. Type help for the command list.", kind: "sys" };
 export const normAns = (s: string) => s.toLowerCase().replace(/["'`]/g, "").replace(/\s+/g, " ").replace(/[.!?]+$/, "").trim();
 
@@ -1692,8 +1754,24 @@ export function passesAnswer(missionIndex: number, step: number, cmd: string): b
   return cur.ans.some((a) => (typeof a === "string" ? a === n : a.test(n)));
 }
 
+
+const USER_KEY = "etlabs-linux-plus-user";
+function loadSavedUser(): string | null {
+  try {
+    const n = localStorage.getItem(USER_KEY);
+    return n && isValidLabUser(n) ? n : null;
+  } catch (_e) {
+    return null;
+  }
+}
+const USER_HINT = "Use lowercase letters, digits, _ or -, starting with a letter or underscore, up to 32 characters. Names like root are reserved.";
+
 export default function App() {
-  const [world, setWorld] = useState<World>(makeWorld);
+  const savedUser = loadSavedUser();
+  const [world, setWorld] = useState<World>(() => makeWorld(savedUser ?? "student"));
+  const [picked, setPicked] = useState<boolean>(() => !!savedUser);
+  const [nameDraft, setNameDraft] = useState(savedUser ?? "");
+  const [nameErr, setNameErr] = useState("");
   const [mission, setMission] = useState(0);
   const [progress, setProgress] = useState<number[]>(MISSIONS.map(() => 0));
   const [lines, setLines] = useState<Line[]>([WELCOME]);
@@ -1760,17 +1838,72 @@ export default function App() {
   };
   const restart = () => {
     const np = [...progress]; np[mission] = 0; setProgress(np);
-    setWorld(makeWorld()); setLines([WELCOME]); setFeedback(null); setShowHint(false); setInput("");
+    setWorld(makeWorld(world.user)); setLines([WELCOME]); setFeedback(null); setShowHint(false); setInput("");
     inputRef.current?.focus({ preventScroll: true });
+  };
+  const startWithName = () => {
+    const name = nameDraft.trim();
+    if (!isValidLabUser(name)) { setNameErr(USER_HINT); return; }
+    try { localStorage.setItem(USER_KEY, name); } catch (_e) { /* ignore */ }
+    setWorld(makeWorld(name));
+    setProgress(MISSIONS.map(() => 0));
+    setMission(0);
+    setLines([WELCOME]);
+    setFeedback(null);
+    setShowHint(false);
+    setHistory([]);
+    setHIdx(-1);
+    setInput("");
+    setNameErr("");
+    setPicked(true);
+  };
+  const changeUser = () => {
+    try { localStorage.removeItem(USER_KEY); } catch (_e) { /* ignore */ }
+    setNameDraft(world.user);
+    setNameErr("");
+    setPicked(false);
   };
 
   const panel = { background: U.panel, border: `1px solid ${U.edge}`, borderRadius: 18, padding: 20, boxShadow: "0 10px 30px rgba(0,0,0,0.35)" };
   const label = { fontSize: 11, letterSpacing: "0.14em", color: U.faint, textTransform: "uppercase" as const, fontWeight: 600, marginBottom: 12 };
   const colorFor = (k: Line["kind"]) => (k === "sys" ? TT.dim : k === "ok" ? TT.green : k === "err" ? TT.red : TT.text);
   const ghostBtn = { border: `1px solid ${U.edge}`, background: "rgba(255,255,255,0.03)", color: U.soft, borderRadius: 10, padding: "8px 14px", fontSize: 13, cursor: "pointer", fontWeight: 500 };
+  const pageBg = { background: `radial-gradient(1200px 500px at 10% -10%, rgba(34,211,238,0.14), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(167,139,250,0.16), transparent 60%), ${U.page}`, color: U.ink, minHeight: "100%", padding: "28px 16px 36px", fontFamily: "Inter, system-ui, -apple-system, sans-serif" } as const;
+
+  if (!picked) {
+    return (
+      <div className="lx-page" style={pageBg}>
+        <div style={{ maxWidth: 640, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 14, fontSize: 13 }}>
+            <a href="/" style={{ color: U.cyan, textDecoration: "none" }}>ET Labs</a>
+            <a href="/study/" style={{ color: U.soft, textDecoration: "none" }}>Security+ Study</a>
+            <a href="/products" style={{ color: U.soft, textDecoration: "none" }}>Products</a>
+          </div>
+          <h1 className="lx-title" style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: 0, background: `linear-gradient(90deg, ${U.ink}, ${U.cyan} 60%, ${U.violet})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>Linux+ Study</h1>
+          <div style={panel}>
+            <div style={label}>Your username</div>
+            <p style={{ margin: "0 0 14px", color: U.soft, fontSize: 15, lineHeight: 1.55 }}>Pick a Linux username for this lab. You can SSH as this name, or as any other valid Linux username, on the five fictional servers. Nothing here connects to a real machine.</p>
+            <form onSubmit={(e) => { e.preventDefault(); startWithName(); }} style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+              <input
+                value={nameDraft}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => { setNameDraft(e.target.value); setNameErr(""); }}
+                autoFocus autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="username"
+                aria-label="Linux username"
+                placeholder="alice"
+                className="lx-input"
+                style={{ flex: "1 1 180px", minWidth: 0, background: "#0d1117", border: `1px solid ${nameErr ? TT.red : U.edge}`, borderRadius: 10, outline: "none", color: TT.text, fontFamily: mono, fontSize: 16, padding: "10px 12px" }}
+              />
+              <button type="submit" style={{ ...ghostBtn, background: `linear-gradient(90deg, ${U.cyan}, ${U.violet})`, color: "#04121a", border: "none", fontWeight: 700 }}>Start the lab</button>
+            </form>
+            <div style={{ marginTop: 10, fontSize: 13, color: nameErr ? TT.red : U.faint, lineHeight: 1.5 }}>{nameErr || USER_HINT}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="lx-page" style={{ background: `radial-gradient(1200px 500px at 10% -10%, rgba(34,211,238,0.14), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(167,139,250,0.16), transparent 60%), ${U.page}`, color: U.ink, minHeight: "100%", padding: "28px 16px 36px", fontFamily: "Inter, system-ui, -apple-system, sans-serif" }}>
+    <div className="lx-page" style={pageBg}>
       <style>{"\n        .lx-title{font-size:30px}\n        .lx-task{font-size:22px}\n        .lx-steps{display:flex;flex-wrap:nowrap;align-items:center;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}\n        .lx-step{display:flex;align-items:center;flex:1 0 86px}\n        .lx-step.is-last{flex:0 0 auto}\n        .lx-rack{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px}\n        .lx-input{font-size:14px}\n        @media (max-width:720px){\n          .lx-page{padding:16px 12px 28px !important}\n          .lx-title{font-size:24px !important}\n          .lx-task{font-size:18px !important}\n          .lx-prompt{flex:1 0 100%}\n          .lx-input{font-size:16px !important;flex:1 0 100% !important}\n          .lx-rack{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}\n        }\n      "}</style>
       <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
 
@@ -1877,7 +2010,7 @@ export default function App() {
               );
             })}
             </div>
-            <div style={{ fontSize: 12, color: U.faint, marginTop: 10 }}>Username on every server: <span style={{ fontFamily: mono, color: U.soft }}>student</span></div>
+            <div style={{ fontSize: 12, color: U.faint, marginTop: 10 }}>Log in as <span style={{ fontFamily: mono, color: U.soft }}>{world.user}@{SERVERS[0].ip}</span> or any other valid Linux username. <button type="button" onClick={changeUser} style={{ background: "none", border: "none", color: U.cyan, cursor: "pointer", font: "inherit", padding: 0, textDecoration: "underline" }}>Change name</button></div>
           </div>
         </div>
 
@@ -1886,7 +2019,7 @@ export default function App() {
             <span style={{ width: 11, height: 11, borderRadius: 6, background: "#ff5f57" }} />
             <span style={{ width: 11, height: 11, borderRadius: 6, background: "#febc2e" }} />
             <span style={{ width: 11, height: 11, borderRadius: 6, background: "#28c840" }} />
-            <span style={{ flex: 1, textAlign: "center", fontSize: 12, color: TT.dim, fontFamily: mono, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{world.host ? `student@${world.host}: ${world.cwd}` : "Terminal (laptop)"}</span>
+            <span style={{ flex: 1, textAlign: "center", fontSize: 12, color: TT.dim, fontFamily: mono, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{world.host ? `${world.user}@${world.host}: ${world.cwd}` : `${world.user}@laptop`}</span>
           </div>
           <div style={{ background: TT.bg, padding: 14, fontFamily: mono, fontSize: 13.5, lineHeight: 1.55 }}>
             <div ref={scrollRef} style={{ maxHeight: 340, overflowY: "auto", overflowX: "auto" }}>
