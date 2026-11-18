@@ -1803,9 +1803,14 @@ html, body { overflow-x: visible; }
 @media(max-width:720px){ .privacy-card { padding:22px; } }
 
 /* ---- Edge-state fixes 2026-10-31 ---- */
-/* 7: Products menu grows from its trigger: scale .96 -> 1 plus fade, 160ms ease-out, named properties */
+/* 7: Products menu grows from its trigger: scale .96 -> 1 plus fade, 160ms ease-out, named properties.
+   Desktop only (min-width: 981px). These rules used to sit unscoped at the end of the file and
+   overrode the mobile transform:none, which shifted the in-flow Products list off-screen
+   (Travis, 2026-11-18: "Menu is jacked up"). */
+@media (min-width: 981px) {
 .nav-dropdown-menu{transform-origin:50% 0;transform:translateX(-50%) translateY(12px) scale(.96);transition:opacity .16s ease-out,transform .16s ease-out}
 .nav-dropdown.is-open .nav-dropdown-menu{transform:translateX(-50%) translateY(12px) scale(1)}
+}
 /* 6: one global reduced-motion rule; the one-time logo/splash animation shows its last frame */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition-duration:.01ms!important;transition-delay:0s!important;animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
@@ -1814,3 +1819,84 @@ html, body { overflow-x: visible; }
 
 /* perf-1101: screen-reader-only text (no visual change) */
 .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* 2026-11-18 menu fix b: mobile Products submenu — plain and robust for iOS Safari.
+   Desktop animation stays in the min-width: 981px block above. This un-does transforms,
+   transitions, clipping, and visibility/opacity tricks on the in-flow mobile list so a
+   later unscoped rule cannot shift or blank the links again. Also drop the open-state
+   translateY on .site-nav: overflow-y:auto plus a transform on the same element is a
+   known iOS Safari compositing bug. */
+@media (max-width: 980px) {
+  .site-nav.is-open {
+    transform: none;
+    animation: none;
+  }
+  .site-nav .nav-dropdown-menu,
+  .site-nav .nav-dropdown.is-open .nav-dropdown-menu {
+    position: static;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    inset: auto;
+    transform: none;
+    transform-origin: initial;
+    translate: none;
+    scale: none;
+    rotate: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    display: none;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    filter: none;
+    -webkit-filter: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    will-change: auto;
+    contain: none;
+    content-visibility: visible;
+    animation: none;
+    transition: none;
+    min-width: 0;
+    width: 100%;
+    max-height: none;
+    margin: 4px 0 0;
+    padding: 8px 0 8px 16px;
+    background: transparent;
+    background-color: transparent;
+    border: 0;
+    border-left: 2px solid #c5c0d2;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .site-nav .nav-dropdown.is-open .nav-dropdown-menu {
+    display: block;
+  }
+  .site-nav .nav-dropdown-menu a,
+  .site-nav .nav-dropdown-menu .nav-dropdown-item,
+  .site-nav .nav-dropdown.is-open .nav-dropdown-menu a {
+    position: static;
+    display: block;
+    transform: none;
+    translate: none;
+    scale: none;
+    opacity: 1;
+    visibility: visible;
+    color: #393641;
+    background: transparent;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    filter: none;
+    animation: none;
+    transition: none;
+    white-space: normal;
+    width: auto;
+    max-width: 100%;
+    padding: 10px 0;
+    margin: 0;
+  }
+}
