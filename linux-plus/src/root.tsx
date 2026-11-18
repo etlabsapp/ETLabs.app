@@ -47,7 +47,7 @@ export default function Root() {
           <h1 className="rt-h1" style={{ fontWeight: 900, letterSpacing: "-0.02em", margin: 0, lineHeight: 1.1, background: `linear-gradient(90deg, ${P.ink}, ${P.cyan} 60%, ${P.violet})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>Linux+ Study</h1>
         </header>
         <div role="tablist" aria-label="Study mode" style={{ display: "flex", gap: 6, padding: 5, borderRadius: 16, background: "rgba(13,17,30,0.92)", border: `1px solid ${P.edge}`, backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", marginBottom: 16 }}>
-          {tab("practice", "Practice Tests", "227 questions")}
+          {tab("practice", "Practice Exam", "250 questions")}
           {tab("lab", "Terminal Lab", "10 missions")}
         </div>
         <main>{view === "practice" ? <div className="rt-narrow"><PracticeTests /></div> : <Lab />}</main>

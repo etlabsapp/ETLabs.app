@@ -1,0 +1,215 @@
+@ 1
+Last night a patch run installed a new kernel on db-node4, but nobody has rebooted it yet. Before scheduling the maintenance window, the admin wants to confirm which kernel release is running right now. Which command shows this?
+- rpm -q kernel :: This lists every kernel package installed on disk, including the new one. It does not tell you which of them is actually loaded.
+- cat /etc/os-release :: os-release describes the distribution name and version, not the running kernel release.
+* uname -r :: uname -r prints the release of the kernel that is running in memory. Until the server reboots, it keeps showing the old kernel even though the new one is installed.
+- ls /boot :: /boot holds the kernel images that can be booted. The newest file there is not necessarily the one that is running.
+
+@ 2
+A file server needs to share /srv/projects with the 10.20.30.0/24 network as read-write over NFS. The admin adds this line to /etc/exports:
+```
+/srv/projects   10.20.30.0/24(rw,sync)
+```
+Clients still cannot see the new share. What should the admin run next so the NFS server picks up the change without a reboot?
+- mount -a :: mount -a mounts the entries in /etc/fstab on this machine. It has nothing to do with what the NFS server exports.
+* exportfs -ra :: exportfs -ra rereads /etc/exports and re-exports every directory in it, so the new share becomes available to clients right away.
+- showmount -e localhost :: showmount -e only lists what is currently exported. It is a good way to check afterward, but it does not apply the change.
+- systemctl daemon-reload :: daemon-reload makes systemd reread unit files. It does not make the NFS server reread /etc/exports.
+
+@ 3
+The name shop.example.net has three A records, each pointing to a different web server. Users report that the site loads fine most of the time, but roughly one visit in three fails. What is the most likely cause?
+- The DNS cache on every client has expired. :: An expired cache just leads to a fresh lookup. It would not make about a third of visits fail.
+- The domain has too many A records, so DNS lookups time out. :: Three A records is normal and lookups return all of them quickly.
+* The DNS server is rotating through the three addresses round robin, and one of the web servers behind them is down. :: With round robin, each lookup hands out the addresses in a different order. Clients that get the dead server first fail, so a share of visits fail while the rest work.
+- The clients are sending their lookups to the wrong port. :: If the port were wrong, every lookup would fail, not one in three.
+
+@ 4
+The admin ran usermod -aG docker dev3 while dev3 was logged in. dev3 checks right away:
+```
+dev3$ id
+uid=1012(dev3) gid=1012(dev3) groups=1012(dev3)
+dev3$ id dev3
+uid=1012(dev3) gid=1012(dev3) groups=1012(dev3),985(docker)
+```
+Without logging out, which command lets dev3 start using the new docker group in the current terminal?
+- source /etc/group :: /etc/group is a data file, not a shell script, and sourcing it would not change the groups of the running shell.
+* newgrp docker :: newgrp starts a new shell with docker as the active group, so that shell and its child commands get the new membership right away. Logging out and back in also works.
+- usermod -G docker dev3 :: Without -a this replaces all of dev3's extra groups. It also does nothing for the session that is already open.
+- groups docker :: groups only prints group memberships. It does not change anything in the current session.
+
+@ 5
+A desktop app running as a normal user asks a system service to mount a USB drive, and the system decides whether to allow it based on a set of authorization rules. pkexec uses the same framework to run a command as another user. What is this framework?
+- SELinux :: SELinux labels files and processes and enforces what they may access. It is not the rule system that decides whether a user may ask a privileged service for an action.
+- sudoers :: sudoers controls which commands a user may run through sudo. It is not consulted when an unprivileged app asks a system service to act.
+* polkit :: polkit holds authorization rules for unprivileged processes that ask privileged services to do something, such as mounting a drive. pkexec is polkit's command-line tool.
+- PAM :: PAM handles how users authenticate, for example password checks at login. It is not the rule set for app-to-service requests.
+
+@ 6
+An admin wrote a script, gave it execute permission and runs it as ./rotate-logs.sh. The admin wants it to always run in Bash, whatever the user's login shell is. What should the first line of the file be?
+- # bash :: A line starting with # is just a comment. Without the ! the kernel does not treat it as an interpreter line.
+- !#/bin/bash :: The characters are reversed. The line must begin with #! for the kernel to recognize it.
+* #!/bin/bash :: This shebang line tells the kernel to run the file with /bin/bash, no matter which shell the user is in.
+- export SHELL=/bin/bash :: This only sets a variable inside the script after it has already started in some shell. It does not choose the interpreter.
+
+@ 7
+A container named checkout-api keeps returning errors. The admin wants to watch its log output live as new lines arrive. Which command does this?
+- docker ps -a checkout-api :: docker ps lists containers and their status. It does not show a container's logs.
+* docker container logs -f checkout-api :: docker container logs prints what the container wrote to standard output and standard error, and -f keeps following new lines as they arrive.
+- docker exec -it checkout-api tail :: tail with no file name waits for input on the terminal. It does not show the container's output.
+- docker inspect checkout-api :: docker inspect shows the container's configuration and state as JSON, not its log stream.
+
+@ 8
+Reports are taking much longer than usual on an analytics server. The admin collects this sample output:
+```
+$ nproc
+4
+$ uptime
+ 14:02:11 up 9 days,  2:13,  3 users,  load average: 11.42, 10.97, 10.30
+$ mpstat 1 1
+CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %idle
+all   93.10    0.00    6.40    0.00    0.00    0.50    0.00    0.00
+```
+What is the problem?
+- The disks are too slow, so processes are waiting on storage. :: %iowait is 0.00, so the CPUs are not waiting on disk.
+* The CPUs are saturated. The load average is far above the 4 CPUs and there is no idle time left. :: A load of about 11 on 4 CPUs means work is queuing for the processors, and mpstat shows %usr at 93 with %idle at 0. Either add CPU capacity or cut down the work.
+- The server is low on memory and is swapping. :: Nothing here shows memory or swap use. The time is almost all user CPU, not paging.
+- The kernel is using too much CPU time. :: %sys is only 6.4. Most of the time goes to user programs (%usr), not the kernel.
+
+@ 9
+Copies to a file server never go faster than about 12 MB/s, even though the server has a gigabit NIC. The admin checks the interface:
+```
+$ ethtool eno1
+Settings for eno1:
+        Speed: 100Mb/s
+        Duplex: Full
+        Auto-negotiation: off
+        Link detected: yes
+```
+Which command fixes the link speed?
+- ip link set eno1 mtu 9000 :: A bigger MTU changes packet size, not the link speed. The link would still run at 100 Mb/s.
+- ethtool -i eno1 :: ethtool -i only shows the driver and firmware for the NIC. It does not change any setting.
+* ethtool -s eno1 speed 1000 duplex full autoneg on :: The link is stuck at 100 Mb/s, about 12 MB/s. Setting 1000 Mb/s full duplex with auto-negotiation turned on lets it run at gigabit speed.
+- ip link set eno1 up :: The link is already up ("Link detected: yes"). Bringing it up again does not change its speed.
+
+@ 10
+A help desk tech needs the home directory and login shell of the account rmorales. The account may come from the local files or from LDAP. Which command gives both in one line?
+- cat /etc/passwd | grep rmorales :: This only searches the local file, so it misses accounts that come from LDAP or another directory service.
+- id rmorales :: id prints the UID, GID and groups, but not the home directory or the shell.
+* getent passwd rmorales :: getent asks every configured account source, both local files and directory services, and prints name:x:UID:GID:comment:home:shell. The last two fields are the home directory and the shell.
+- finger -s :: finger -s gives a short list of logged-in users. It is often not installed and does not search the directory reliably.
+
+@ 11
+A new server should be known as web-east-07. The change must take effect right away and still be there after a reboot. Which command does this?
+- hostname web-east-07 :: This changes the name only for the running system. It is lost at reboot because /etc/hostname is not updated.
+* hostnamectl set-hostname web-east-07 :: hostnamectl writes the new name to /etc/hostname and applies it right away, so it lasts across reboots.
+- echo web-east-07 > /proc/sys/kernel/hostname :: Writing to /proc changes only the running kernel's value. Nothing on disk changes, so it is gone after a reboot.
+- timedatectl set-hostname web-east-07 :: timedatectl manages the clock, time zone and NTP. It has no set-hostname command.
+
+@ 12
+On an Ubuntu server, an accounting app only works with the exact version of libpq5 that is installed now. The admin wants normal apt upgrades to keep running but skip that one package. Which command does this?
+- apt remove libpq5 :: This removes the library and breaks the app that depends on it.
+- apt-get upgrade --no-libpq5 :: There is no such option. apt does not take a package name as a flag.
+* apt-mark hold libpq5 :: A held package is skipped during upgrades, so libpq5 stays at its current version while everything else updates. apt-mark unhold libpq5 removes the hold later.
+- apt-mark auto libpq5 :: This only marks the package as installed automatically, as a dependency. It is still upgraded, and autoremove could later remove it.
+
+@ 13
+A vendor sent a file called logs.bin with no clear format. The admin checks it:
+```
+$ file logs.bin
+logs.bin: 7-zip archive data, version 0.4
+```
+Which command extracts it?
+- tar -xzf logs.bin :: tar -z expects a gzip-compressed tar archive. This file is a 7-Zip archive, so tar fails.
+- cpio -idv < logs.bin :: cpio reads cpio archives. It does not understand the 7-Zip format.
+- gunzip logs.bin :: gunzip only handles gzip files, and it also expects a .gz name.
+* 7za e logs.bin :: file reads the file's signature instead of trusting its name, and it says 7-Zip. 7za e extracts the files from a 7-Zip archive.
+
+@ 14
+A contractor's account, pkline, is being disabled, and the contractor still has several programs running on the server. Which command stops every process owned by pkline at once?
+- kill -9 pkline :: kill expects process IDs, not a user name, so this fails.
+* pkill -u pkline :: pkill -u matches every process owned by that user and sends it a signal (SIGTERM by default), so all of pkline's processes are stopped together.
+- killall -HUP pkline :: This sends a hangup signal to processes named "pkline". It does not target a user's processes and often just reloads programs.
+- ps -u pkline :: ps -u only lists that user's processes. It does not stop them.
+
+@ 15
+An admin started a long report with ./build-report.sh & and then ran other commands. Now they want the report back in the foreground of the same terminal so they can watch and interact with it. Which commands do this? (Choose two.)
+* jobs :: jobs lists this shell's background jobs with their numbers, so you can see which job is the report.
+- nohup :: nohup only makes a new command ignore the hangup signal when you log out. It does not bring an existing job to the front.
+* fg %1 :: fg brings a background job to the foreground. %1 picks job number 1 from the jobs list, and plain fg picks the most recent job.
+- bg %1 :: bg resumes a stopped job in the background. That is the opposite of what is wanted.
+- disown %1 :: disown removes the job from the shell's job table. Then fg can no longer reach it.
+
+@ 16
+When a server boots, the app service catalog.service sometimes starts before the PostgreSQL database is ready and then crashes. Both services start at boot. Which change in catalog.service makes systemd start it after the database?
+- Add Requires=postgresql.service under [Install]. :: Requires= belongs in [Unit], and on its own it only adds a dependency. It does not set the order, so both could still start at the same time.
+* Add After=postgresql.service under [Unit]. :: After= sets the start order when both units start in the same boot. systemd starts PostgreSQL first and catalog.service after it. (Before=catalog.service in the database's unit gives the same order.)
+- Add Before=postgresql.service under [Unit]. :: This would make catalog.service start before the database, which is the problem the admin wants to fix.
+- Add WantedBy=postgresql.service under [Install]. :: WantedBy= decides which target or unit pulls this service in when it is enabled. It does not set the start order.
+
+@ 17
+Before rebooting a shared jump host, the admin wants to see who is logged in, what each person is running, and which IP address each session came from. Which command shows all of this?
+- whoami :: whoami prints only your own user name.
+- last -x :: last shows past logins and system shutdown events from the wtmp log. It is not a live view of what users are running now.
+* w -i :: w lists the logged-in users with what each one is running, and -i shows where each session came from as an IP address instead of a host name.
+- id -a :: id shows your user and group IDs. It shows nothing about other sessions.
+
+@ 18
+The DNS record for intranet.example.org moved to a new address an hour ago, but one Linux workstation still connects to the old server:
+```
+$ nslookup intranet.example.org
+Server:         127.0.0.53
+Address:        127.0.0.53#53
+
+Non-authoritative answer:
+Name:   intranet.example.org
+Address: 198.51.100.24
+```
+The workstation uses systemd-resolved. Which command makes it fetch the new address?
+- systemctl restart sshd :: SSH has nothing to do with name resolution.
+* resolvectl flush-caches :: "Non-authoritative answer" means the address came from a cache, not the domain's own name server. Flushing systemd-resolved's cache forces a fresh lookup that returns the new address.
+- echo "nameserver 127.0.0.53" >> /etc/hosts :: /etc/hosts holds host name to address entries, not nameserver lines. This would not clear the cached record.
+- ip route flush cache :: This clears the routing cache, not the DNS cache. Name lookups would still return the old address.
+
+@ 19
+A server being built has to match an old one: the group finance must have GID 4100, and the user ana must have UID 4100 with finance as her primary group and a home directory. Which commands do this, in order?
+- useradd -U 4100 -G finance -m ana, then groupadd finance :: useradd has no -U option that takes a UID, -G sets extra groups instead of the primary group, and the group has to exist before the user is made.
+- groupadd finance, then useradd -u 4100 -G 4100 ana :: groupadd without -g picks the next free GID instead of 4100, and -G sets extra groups instead of the primary group.
+* groupadd -g 4100 finance, then useradd -u 4100 -g 4100 -m ana :: groupadd -g sets the group's GID. In useradd, -u sets the UID, lowercase -g sets the primary group and -m creates the home directory. The group has to exist first.
+- useradd -u 4100 -g finance ana, then groupadd -g 4100 finance :: useradd fails because the finance group does not exist yet. The group has to be created first.
+
+@ 20
+After a website moved to a new server, everything under /var/www/shop is still owned by the old account. It should be owned by the user webops and the group nginx, including every file and subfolder. Which command does this?
+- chmod -R webops:nginx /var/www/shop :: chmod changes permission bits. It does not set the owner or group.
+- chgrp -R webops:nginx /var/www/shop :: chgrp only changes the group and does not take a user:group pair.
+- chown webops.nginx /var/www/shop :: Without -R only the top folder changes, and everything inside keeps the old owner.
+* chown -R webops:nginx /var/www/shop :: chown sets the owner and group in user:group form, and -R applies the change to everything inside the directory, including subfolders.
+
+@ 21
+An admin often connects to build.example.com as user ci, on SSH port 2202. They want to type just ssh build and get the same connection. Where and how should this be set up?
+- Add an alias line for build to /etc/hosts. :: /etc/hosts only maps a name to an IP address. It cannot set the user name or the port.
+* Add a Host build block to ~/.ssh/config with HostName build.example.com, User ci and Port 2202. :: The SSH client reads ~/.ssh/config and applies the settings in the matching Host block, so ssh build connects as ci to build.example.com on port 2202.
+- Set Port 2202 and User ci in /etc/ssh/sshd_config on the admin's laptop. :: sshd_config configures the SSH server on that machine. It does not change where the admin's SSH client connects.
+- Add build to ~/.ssh/authorized_keys. :: authorized_keys lists public keys that may log in to this account. It is not a place for connection shortcuts.
+
+@ 22
+An admin compares two versions of a config file:
+```
+$ diff app-old.conf app-new.conf
+2,3d1
+< cache=off
+< debug=true
+4a3
+> workers=8
+```
+What does this output mean?
+- Lines 2 and 3 were added to app-new.conf, and line 4 was deleted. :: It is the other way round. d means delete and a means add.
+- The files are the same except for the order of the lines. :: diff is reporting real lines that are missing or new, not just a change in order.
+* Lines 2 and 3 of app-old.conf (cache=off and debug=true) are gone in app-new.conf, and the line workers=8 was added after line 4 of the old file. :: 2,3d1 means old lines 2–3 were deleted (lines marked <). 4a3 means a line was added after old line 4, and it is line 3 of the new file (marked >).
+- workers=8 replaced debug=true on line 3. :: A replacement would show up as a change (c), such as 3c3. This output has a deletion and an addition.
+
+@ 23
+A web app runs in a Kubernetes Deployment with several pods. Pods are replaced often and get new IP addresses each time. Other apps in the cluster need one address and port that always reaches the web pods. What should the admin create?
+- A ConfigMap that lists the current pod IPs. :: A ConfigMap holds settings. It would go out of date as soon as pods are replaced and does not route any traffic.
+* A Service, such as a ClusterIP Service, that selects the web pods. :: A Service gives the matching pods one stable virtual address and port and sends traffic to whichever pods are running. NodePort or LoadBalancer types can also expose it outside the cluster.
+- A PersistentVolume. :: A PersistentVolume provides storage. It does not give the pods a network address.
+- A new namespace for the web app. :: A namespace groups resources. It does not provide a stable address.
