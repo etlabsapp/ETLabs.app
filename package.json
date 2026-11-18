@@ -4,6 +4,8 @@
   "scripts": {
     "dev": "npx --yes serve@14 . -l 3000",
     "build": "exit 0",
+    "build:linux-plus": "npm install --prefix linux-plus && npm run build --prefix linux-plus",
+    "test:linux-plus": "npm test --prefix linux-plus",
     "lint": "echo \"No linter for static HTML\"",
     "install:marketing": "npm install --prefix apps/marketing",
     "dev:marketing": "npm run dev --prefix apps/marketing",
