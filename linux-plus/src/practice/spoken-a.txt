@@ -1,0 +1,248 @@
+# Spoken scripts for hands-free mode (recorded voice). One block per question, options in bank order.
+# S: stem as heard (terminal output summed up as the clue). O: one per option, no letter. R: one-sentence reason.
+# C: optional, the exact command read once, slowly, after a wrong answer.
+
+@ a1
+S: A server writes its audit trail to the billing log in the var log folder. Nobody, not even root, may overwrite or erase what is already there, but the app must keep adding new lines. Which command does this?
+O: C H mod, setting the sticky bit on the log file.
+O: set F A C L, adding a made-up T permission to the mask.
+O: change attr, setting the append-only attribute on the log file.
+O: set enforce, pointed at the log file.
+R: The append-only attribute stops anyone, even root, from changing what is already written, while new lines can still be added.
+C: The command is: change attr, plus A, slash var, slash log, slash billing dot log.
+
+@ a2
+S: An admin gives the group write access to a shared spreadsheet, and the listing shows the finance group can now read and write it. Then the admin adds the existing user Maria to the finance group. Maria, who is still logged in, still cannot save changes. What fixes this?
+O: Running sue doo source on the group file to reload Maria's groups.
+O: Giving Maria sue doo, because only root can write the file.
+O: Maria logs out and logs back in.
+O: Giving Maria extra permissions on the file.
+R: Linux reads a user's groups at login, so Maria needs a fresh login to pick up her new finance membership.
+
+@ a3
+S: A developer installed a tool into a tools bin folder under their home folder, and wants to run it by name while keeping all the normal commands working. Which line should they run?
+O: export, with a dollar sign wrongly placed on the left side of PATH.
+O: export PATH, set to the old PATH value plus the tools folder.
+O: export PATH, set to the plain word PATH plus the tools folder.
+O: export, with a dash where the equals sign should be.
+R: Setting PATH to its old value plus the new folder keeps every normal command and adds the tool.
+C: The command is: export PATH equals, dollar PATH, colon, dollar HOME, slash tools, slash bin.
+
+@ a4
+S: A few help desk staff who connect remotely need to run some admin commands on a Linux server. What is the best way to handle this request?
+O: Share the root password and allow root to log in over S S H.
+O: Ask which commands they need, and add sue doo rules for just those.
+O: Set the S U I D bit on every program they ask to use.
+O: Put them in a group that may run any command as root.
+R: Sue doo rules for only the needed commands follow least privilege, and every use is logged under their own name.
+
+@ a5
+S: An admin wants to run the cleanup script in the opt scripts folder as the user S V C backup. Which command does this?
+O: sue doo, followed by the user name and the script, with no user option.
+O: S U with a dash, switching to S V C backup and running the script.
+O: sue doo with dash L, which only lists what you may run.
+O: S U with dash C, but with the user name in the command's place.
+R: S U dash starts a login shell as S V C backup, and the script is handed to that shell to run as that user.
+C: The command is: S U, dash, S V C backup, slash opt, slash scripts, slash cleanup dot S H.
+
+@ a6
+S: A user keeps test scripts in a bin folder inside Dana's home folder and wants to run them by typing only the script name. Which command allows this?
+O: export alias, pointing the folder at slash bin.
+O: export SHELL, adding the folder to the shell setting.
+O: export PATH, adding the folder to the end of the search list.
+O: export TERM, adding the folder to the terminal setting.
+R: PATH is the list of folders the shell searches for commands, so adding the scripts folder lets them run by name.
+C: The command is: export PATH equals, dollar PATH, colon, slash home, slash Dana, slash bin.
+
+@ a7
+S: A user says the weekly export sales tool doesn't work for them. Running it gives command not found. The tool is in the user local bin folder and everyone can execute it, but the user's PATH does not include user local bin. What is the problem and how should it be fixed?
+O: The script has no execute permission, so add it.
+O: Root owns the script, so give it to Sam with C H own.
+O: User local bin is missing from PATH, so add it in the bash profile.
+O: The S E Linux context is wrong, so change the policy.
+R: The script exists and anyone can run it, but the shell never looks in user local bin, so adding that folder to PATH fixes it.
+
+@ a8
+S: An audit finds several local accounts have kept the same password for over a year. Which command brings an account in line with a rule that passwords must change at least every 90 days?
+O: password with dash D, which deletes the password.
+O: change age with capital M 90, setting the maximum password age.
+O: login C T L with dash H, which runs on a remote host.
+O: user mod adding the account to a group named 90.
+R: Change age with capital M sets the maximum number of days a password may be used before it must change.
+C: The command is: change age, dash capital M, 90.
+
+@ a9
+S: An admin named Kofi adds himself to the wheel group with user mod, then runs groups with sue doo, and the output shows only root. Why doesn't it show wheel?
+O: The words wheel and Kofi are in the wrong order.
+O: Groups was run with sue doo, so it showed root's groups.
+O: You are not allowed to run user mod with sue doo.
+O: User mod cannot add users to the wheel group.
+R: Sue doo runs the command as root, so it listed root's groups instead of Kofi's.
+
+@ a10
+S: Which command recursively changes every folder in the current user's home folder so that only that user can open, read and write it?
+O: find in slash home, setting folders to 7 5 0.
+O: find in your home folder, setting folders to 7 5 5.
+O: find across the whole system, setting files to 7 7 7.
+O: find in your home folder, setting folders to 7 0 0.
+R: Searching only your home folder for directories and setting 7 0 0 gives the owner full access and nobody else any.
+C: The command is: find, tilde, dash type D, dash exec, C H mod 7 0 0, braces, backslash semicolon.
+
+@ a11
+S: User Lena can open the reports Q 3 folder, but user Omar cannot. Both are in exactly the same groups. The folder listing ends with a plus sign, and its access list has an entry just for Lena, while others get nothing. What most likely explains the difference?
+O: An A C L entry on the folder gives Lena access.
+O: An S E Linux label is blocking Omar.
+O: Lena is in a group nested inside the reports group.
+O: Omar is not in the reports group or its subgroups.
+R: The plus sign means the folder has an A C L, and it has a rule just for Lena, so only she gets in.
+
+@ a12
+S: A staff member will be away for six months. The admin must stop anyone from using the account while keeping all of its files. Which two steps should be taken? Pick two answers.
+O: Delete the user's home folder.
+O: Change the user's login shell to no login.
+O: Make all of the user's files immutable.
+O: Ask the user to log in once a week while away.
+O: Lock the account's password with password dash L.
+O: Set the home folder's date to the day they return.
+R: A no login shell refuses interactive logins and a locked password blocks password logins, while the files stay untouched.
+C: The commands are: user mod, dash S, slash S bin, slash no login, and password, dash L, followed by the user name.
+
+@ a13
+S: A manager wants a list of the I P addresses of everyone currently logged in to a server. Which command shows this?
+O: cat on the hosts file.
+O: who with dash L, which shows login processes.
+O: W with dash I, showing where each user connected from.
+O: who is, looking up local host.
+R: W lists the logged-in users, and dash I shows the I P address each one connected from.
+C: The command is: W, dash I.
+
+@ a14
+S: A junior admin, Priya, needs full admin rights on an Ubuntu server. Which command grants this?
+O: sed, rewriting Priya's name to root in the password file.
+O: visudo, followed by Priya's name.
+O: echo, appending just Priya's name to a sudoers file.
+O: user mod, adding Priya to the sue doo group and keeping her other groups.
+R: On Ubuntu, members of the sue doo group may run any command as root, and appending keeps Priya's other groups.
+C: The command is: user mod, dash A, capital G, sue doo, Priya.
+
+@ a15
+S: A user runs a script and gets permission denied. The listing shows the owner, Ravi, already has read, write and execute, and the mount output shows the data file system is mounted no exec. The user is Ravi, the file's owner. Which command fixes the problem?
+O: C H mod, giving the file's group permission to execute the script.
+O: mount, remounting the data file system with set user I D allowed.
+O: mount, remounting the data file system so programs are allowed to run.
+O: C H mod, giving everyone else permission to execute the script.
+R: No exec blocks every program on that file system, whatever the file permissions say, and remounting with exec lifts the block.
+C: The command is: mount, dash oh, remount comma exec, slash data.
+
+@ a16
+S: User tester cannot log in and sees, this account is currently not available. The password file shows tester's shell is no login. There are no failed login attempts, the password is set and not locked, and nothing has expired. Which command fixes the login problem?
+O: password with dash U, unlocking the password.
+O: fail lock, resetting tester's failed attempts.
+O: user mod, giving tester a real shell, bash.
+O: change age, turning off password expiry.
+R: That message comes from the no login shell, so giving the account a real shell like bash lets tester log in.
+C: The command is: user mod, dash S, slash bin, slash bash, tester.
+
+@ a17
+S: A script needs debug mode set to 1, and every program it starts afterwards must be able to see that value. Which line does this?
+O: Just setting debug mode equal to 1.
+O: Setting debug mode to its own current value.
+O: let, setting debug mode to 1.
+O: export, setting debug mode to 1.
+R: Export sets the variable and passes it to every program started from that shell.
+C: The command is: export, debug underscore mode, equals 1.
+
+@ a18
+S: Users of a shared team folder can't edit each other's new files. The folder belongs to the design group, but each new file gets its creator's own group, like tom or nina, so others are denied. Every user is in the design group. What is the best long-term fix?
+O: Set the set G I D bit on the shared folder.
+O: Change the group of each new file by hand.
+O: Make all the folder's contents readable and writable by everyone.
+O: Set the set U I D bit on the shared folder.
+R: With set G I D on the folder, new files inherit the design group, so the whole team can edit them.
+C: The command is: C H mod, G plus S, slash shared.
+
+@ a19
+S: An admin needs to add the existing user Jordan to the sales group. Which command does this?
+O: user add with lowercase g, creating a new user whose main group is sales.
+O: group add, which creates a new group called sales.
+O: the user mod command, adding Jordan to the sales group while keeping their other groups.
+O: group mod, which changes the sales group's own settings, not its members.
+R: User mod changes an account that already exists, and appending the extra group means Jordan keeps every other group.
+C: The command is: user mod, dash A, capital G, sales, Jordan.
+
+@ a20
+S: Before rebooting a system D server, an admin wants to make sure nobody is logged in and working. Which command shows this?
+O: system D with dash dash user, which starts a user service manager.
+O: login C T L, listing the current sessions.
+O: journal C T L with dash U, which shows logs.
+O: system C T L, checking the status of user sessions.
+R: Login C T L list sessions shows every current login with its user, so an empty list means nobody is on.
+C: The command is: login C T L, list dash sessions.
+
+@ a21
+S: An app needs the variable app env to be set every time a certain user logs in, even after reboots. Which command does this?
+O: export, setting app env to production for this session only.
+O: echo, appending the export line to the user's bash R C file.
+O: Just setting app env to production, without export.
+O: export, redirected into a profile file in the S S H folder.
+R: Adding the export line to the bash R C file runs it every time a new shell starts, so the value persists.
+C: The command is: echo, quote, export app underscore env equals production, quote, append to, tilde, slash dot bash R C.
+
+@ a22
+S: An admin needs to see the U I D, home folder and login shell of the account payroll. Which command shows all three?
+O: grep for payroll in the shadow file.
+O: who, followed by payroll.
+O: get ent password, followed by payroll.
+O: I D, followed by payroll.
+R: Get ent reads the account database, and the password line shows the U I D, home folder and login shell.
+C: The command is: get ent, password, payroll.
+
+@ a23
+S: What is the best way to make a Linux service account that no person can log in to interactively?
+O: Give it no home directory.
+O: Set its shell to no login.
+O: Create it with add user and give it no password.
+O: Give it no elevated privileges.
+R: With no login as the shell, every login attempt is refused, but services can still run as that account.
+
+@ a24
+S: Why do password policies often block users from changing their password more than once in the same day?
+O: So users cannot cycle through the history to get back their old password.
+O: To make brute-force attacks take too long to finish.
+O: To force the use of multifactor authentication.
+O: To make passwords more complex.
+R: Without a minimum age, a user could change it several times in a row to push the old password out of the history and reuse it.
+
+@ a25
+S: A developer must be added to the docker group without changing their primary group. Which command does this?
+O: group mod, followed by docker and the user, which does not add members.
+O: group mod with capital G, an option group mod doesn't have.
+O: user mod with lowercase g only, which changes the primary group.
+O: user mod, adding the docker group while keeping the existing groups.
+R: Capital G adds a supplementary group and the A keeps the existing ones, so the primary group stays the same.
+C: The command is: sue doo, user mod, dash A, capital G, docker, dev user.
+
+@ a26
+S: What is the main reason to make passwords expire after a set time?
+O: To make people pick stronger, more complex passwords.
+O: To stop people reusing the same password.
+O: To limit how long a leaked or stolen password can be used.
+O: To push users toward passwordless login.
+R: If a password leaks without anyone knowing, a forced change eventually makes it useless to the attacker.
+
+@ a27
+S: As root, an admin tries to save changes to the hosts file and gets an error, cannot open file for writing. Root owns the file, and L S attr shows the immutable flag is set. Which command lets the admin edit the file?
+O: C H own, making root the owner.
+O: C H mod 7 5 0 on the hosts file.
+O: change attr, removing the immutable flag.
+O: C H group, making root the group.
+R: An immutable file cannot be changed even by root until the immutable flag is removed.
+C: The command is: change attr, minus I, slash E T C, slash hosts.
+
+@ a28
+S: Members of the ops group need root-level access on a server. Which file should be edited, ideally with visudo, to allow this?
+O: The shadow file.
+O: The login defs file.
+O: The group file.
+O: The sudoers file.
+R: The sudoers file decides who may run what as root, and a line for the ops group gives them full sue doo access.

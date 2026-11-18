@@ -334,7 +334,7 @@ function redirect301(location) {
 
 /* Preview deployments (workers.dev / SEO_NOINDEX=1) must never be indexed. */
 function finalize(response, url, env) {
-  const r = withSecurityHeaders(response);
+  const r = withSecurityHeaders(response, url.pathname);
   if (!wantsNoindex(url.hostname, env)) return r;
   r.headers.set("x-robots-tag", "noindex");
   return r;
@@ -412,6 +412,13 @@ async function route(request, env, url) {
     if (perm) return redirect301(perm.location);
     // Junior teaser MP4s: the asset layer ignores Range; iOS Safari needs 206 to play <video>.
     if (url.pathname.startsWith("/assets/junior/")) return withByteRanges(request, res);
+    // Linux+ recorded voice clips: names are content hashes, so they never change; cache them for a year, allow ranges.
+    if (url.pathname.startsWith("/linux-plus/audio/") && res.status === 200) {
+      const r = await withByteRanges(request, res);
+      const out = new Response(r.body, r);
+      out.headers.set("cache-control", "public, max-age=31536000, immutable");
+      return out;
+    }
     return res;
   }
 }

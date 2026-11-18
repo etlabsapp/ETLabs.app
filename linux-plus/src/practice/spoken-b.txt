@@ -1,0 +1,876 @@
+# Spoken scripts for bank b. Format: see spoken-a.txt.
+
+@ b1
+S: Batch jobs on a reporting server keep missing their deadlines. The load average is near 16 on 8 C P Us, V M stat shows 16 runnable tasks, 99 percent user time and no idle time, while swap, disk wait and free memory all look fine. What will help the jobs finish faster?
+O: Add more swap space.
+O: Add more disks.
+O: Give the system more C P U resources.
+O: Add more free memory.
+R: A load near 16 on 8 C P Us with no idle time means jobs are queued for a C P U, so more C P U lets more run at once.
+
+@ b2
+S: An admin must unpack a C P I O backup of the website into the var www site folder, and end up back in the folder they started in. Which command does this?
+O: unzip with dash C, which only prints zip contents.
+O: tar with dash C, which would overwrite the backup with a new archive.
+O: push D into the site folder, extract with C P I O, then pop D.
+O: C D into the site folder, then gzip piped into tar.
+R: Push D remembers where you were, C P I O dash I extracts the archive, and pop D takes you back.
+C: The command is: push D, slash var, slash www, slash site, and then, C P I O dash I D V, from, slash srv, slash backup, slash site dot C P I O, and then, pop D.
+
+@ b3
+S: After maintenance, an admin cannot mount a logical volume. Mount says the device does not exist. L V S shows the logs volume still exists but is not active, and the volume group is present. Which command is the usual fix?
+O: L V scan, which only lists logical volumes.
+O: V G import, which is only used after an export.
+O: V G change, activating every volume in the group.
+O: make F S, which would wipe the volume.
+R: The volume exists but is not active, so activating the group creates the device files and the mount works.
+C: The command is: V G change, dash A Y, V G app.
+
+@ b4
+S: An admin creates a shared projects folder for a team. New files made there should belong to the folder's group, so everyone on the team can work with them. Which command does this?
+O: C H mod, giving the group execute on the folder.
+O: C H mod, giving the group read on the folder.
+O: C H mod, setting the set G I D bit on the folder.
+O: C H mod, giving the group write on the folder.
+R: Set G I D on a folder makes every new file inside inherit the folder's group, so the whole team shares them.
+C: The command is: C H mod, G plus S, slash projects, slash shared.
+
+@ b5
+S: An admin is building a new logical volume from fresh disks. In what order should the L V M commands run?
+O: Volume group create, then logical volume create, then physical volume create.
+O: Logical volume create, then physical volume create, then volume group create.
+O: Volume group create, then physical volume create, then logical volume create.
+O: Physical volume create, then volume group create, then logical volume create.
+R: L V M builds in layers: mark disks as physical volumes, pool them into a volume group, then carve out a logical volume.
+
+@ b6
+S: Users cannot reach an H T T P S site. The U F W firewall is active with a deny rule for port 443, and the web server is listening on port 443. What is the best fix?
+O: U F W, deleting the deny rule for port 443.
+O: U F W, allowing port 511.
+O: U F W disable, turning off the firewall.
+O: U F W, allowing port 80.
+R: The server is listening, so removing just the deny rule for 443 lets H T T P S in while every other rule stays.
+C: The command is: U F W, delete, deny, 443, slash T C P.
+
+@ b7
+S: Linux workstations join a Windows Active Directory domain through S S S D. Which file holds the domain settings, such as the domain name and I D provider?
+O: The S M B conf file.
+O: The PAM conf file.
+O: The K R B 5 conf file.
+O: The S S S D conf file.
+R: The S S S D conf file configures S S S D, and its domain section holds the domain name, I D provider and access rules.
+
+@ b8
+S: Which technology does a Linux server typically use to check users' credentials when it is part of a Windows domain?
+O: The S S H daemon.
+O: Kerberos.
+O: Samba.
+O: PAM.
+R: Active Directory uses Kerberos to prove who users are, and the Linux machine gets tickets from the domain controller.
+
+@ b9
+S: A new SAN storage array has been cabled to a server. Which command confirms that the server can see the array's disks?
+O: L S U S B, listing U S B devices.
+O: L S I P C, listing shared memory and queues.
+O: L S S C S I, listing S C S I devices.
+O: L S H W, listing general hardware.
+R: SAN disks connect over S C S I based links, so L S S C S I shows the new disks the system can see.
+C: The command is: L S S C S I.
+
+@ b10
+S: An analyst receives a suspicious attachment called invoice dot P D F and saves it. Before opening it, they want to know what kind of file it really is. Which command should they use?
+O: D F on the file, which shows disk space.
+O: file on the file, which reads its signature.
+O: cat on the file, which dumps its contents.
+O: tree on the file, which draws folders.
+R: The file command reads the first bytes of a file and reports what it really is, ignoring the name.
+C: The command is: file, invoice dot P D F.
+
+@ b11
+S: An admin's script needs to count how many entries are in the uploads folder. It starts with L S dash 1 on the folder, piped into another command. Which command completes the pipeline?
+O: less, which pages the output.
+O: W C with dash L, which counts lines.
+O: tail with dash F, which follows a file.
+O: T R with dash C, which translates characters.
+R: L S dash 1 prints one entry per line, and W C dash L counts the lines, giving the number of entries.
+C: The command is: L S, dash 1, slash srv, slash uploads, pipe, W C, dash L.
+
+@ b12
+S: A desktop server boots to a text console instead of the graphical login screen. Which command makes it start the G U I on every boot?
+O: system C T L, enabling an X window service.
+O: system C T L, setting the default target to graphical.
+O: system C T L, isolating the graphical target for now only.
+O: system C T L, unmasking an X window service.
+R: The default target decides what system D starts at boot, so setting it to graphical brings up the G U I every time.
+C: The command is: system C T L, set dash default, graphical dot target.
+
+@ b13
+S: Which command shows kernel messages from startup, useful for finding hardware or driver errors during boot?
+O: D message.
+O: dracut.
+O: L S H W.
+O: mod info.
+R: D message prints the kernel ring buffer, including hardware detection, driver loading and errors from startup.
+C: The command is: D message.
+
+@ b14
+S: A user starts a long tar job in the background with no hup. Which command brings that job back to the foreground of the current terminal?
+O: exec.
+O: jobs.
+O: F G.
+O: renice.
+R: F G moves a background job of this shell to the foreground, and no hup does not stop that.
+C: The command is: F G.
+
+@ b15
+S: Commands on a server are slow. The load average is about 6 on a system with only 2 C P Us, and M P stat shows 0 percent idle with very little I O wait. What is the system experiencing?
+O: High uptime.
+O: High I O wait.
+O: High network latency.
+O: High C P U load.
+R: A load of about 6 on 2 C P Us with no idle time means the C P Us are saturated.
+
+@ b16
+S: Which command lists the current state of every service unit on a system D server?
+O: system C T L, is enabled, for services.
+O: system C T L, list sockets, of type service.
+O: system C T L, list units, of type service.
+O: system C T L, is active, for services.
+R: List units shows every loaded unit with its state, and the service type limits the list to services.
+C: The command is: system C T L, list dash units, dash dash type equals service.
+
+@ b17
+S: An admin changes a server's net plan network config and wants it to undo itself automatically if the change locks them out. Which command should they use?
+O: net plan rebind.
+O: net plan I P.
+O: net plan apply.
+O: net plan try.
+R: Net plan try applies the config and rolls it back by itself if you don't confirm before the timeout.
+C: The command is: net plan, try.
+
+@ b18
+S: For a malware investigation, an admin needs an exact block by block copy of the whole S D B disk. Which command does this?
+O: D D, copying the raw disk into an image file.
+O: tar, making a compressed archive of the device.
+O: C P I O, writing the device into an archive.
+O: C P, copying files from the device as if it were a folder.
+R: D D copies raw blocks from the disk, including deleted data and unused space.
+C: The command is: D D, if equals slash dev slash S D B, of equals slash evidence slash S D B dot I M G, B S equals 4 M.
+
+@ b19
+S: An admin wants the rotate script to run every night at 2 45 A M. Which line should go in the crontab?
+O: 245 in the minute field, then four stars.
+O: Minute 45, hour 2, then three stars.
+O: Two stars, then month 2 and weekday 45.
+O: 2 colon 45 in the first field, then stars.
+R: Cron fields are minute, hour, day, month and weekday, so minute 45 of hour 2 every day is 2 45 A M nightly.
+C: The line is: 45, 2, star, star, star, slash opt, slash bin, slash rotate dot S H.
+
+@ b20
+S: The yum package history shows transaction 51 installed nginx, and transaction 52 was a later update. Which command undoes transaction 51, including the packages it pulled in?
+O: yum rollback 51.
+O: yum erase 51.
+O: yum history undo 51.
+O: yum remove nginx.
+R: History undo reverses one transaction, removing nginx and its dependencies, and leaves later ones alone.
+C: The command is: yum, history, undo, 51.
+
+@ b21
+S: An admin must delete the old site folder and everything inside it. Which command does this?
+O: L N with dash D, which makes links.
+O: R M dir with dash P, which only removes empty folders.
+O: cut with dash D, which cuts text fields.
+O: R M with dash R, deleting the folder recursively.
+R: R M dash R deletes a folder, its files and all its subfolders.
+C: The command is: R M, dash R, slash srv, slash old underscore site.
+
+@ b22
+S: Which command gives a full hardware inventory, including system, BIOS, memory slot and serial number details read from the firmware?
+O: L S C P U.
+O: L S mod.
+O: D M I decode.
+O: D message.
+R: D M I decode reads the firmware tables and lists the model, BIOS, memory slots and serial numbers.
+C: The command is: D M I decode.
+
+@ b23
+S: A Postgres database server keeps throwing errors, and swap is almost used up. Which two changes help keep the database running even if the system runs out of swap? Pick two answers.
+O: sys C T L, setting memory overcommit to mode 2, strict accounting.
+O: Use disk quotas on the swap space.
+O: mount dash A, reloading the F S tab file.
+O: D D, writing a tiny 64 megabyte swap file.
+O: sys C T L, setting the overcommit ratio to 100.
+O: make swap and swap on, using an unknown partition.
+R: Strict overcommit refuses memory it cannot deliver instead of killing the database later, and a ratio of 100 lets all of RAM count.
+C: The commands are: sys C T L, dash W, V M dot overcommit underscore memory equals 2, and, sys C T L, dash W, V M dot overcommit underscore ratio equals 100.
+
+@ b24
+S: An admin wants to watch the nginx error log live, and also save everything shown into a text file. Which command does both?
+O: tail dash F, redirected into the file, so nothing shows on screen.
+O: tail dash F, piped into tee and the file.
+O: tail dash F, appended to the file, so nothing shows on screen.
+O: tail dash F, piped straight into the file name.
+R: Tail dash F follows the log, and tee copies it both to the screen and to the file.
+C: The command is: tail, dash F, slash var, slash log, slash nginx, slash error dot log, pipe, tee, nginx dash errors dot text.
+
+@ b25
+S: An admin wants a file in temp to point to the app config in E T C. The two paths are on different file systems. Which command works?
+O: cat, copying the config into the temp file.
+O: L N with dash S, making a symbolic link.
+O: touch piped into file, which creates no link.
+O: link, making a hard link.
+R: A symbolic link just stores the target path, so it can cross file systems, unlike a hard link.
+C: The command is: L N, dash S, slash E T C, slash my app, slash app dot conf, slash temp, slash app dot conf.
+
+@ b26
+S: While setting up a monitoring agent, an admin must make the user and group monitor the owners of the monitor folder in opt, and everything inside it. Which command does this?
+O: C H own, recursively setting owner and group to monitor.
+O: user mod, adding a folder path to a group.
+O: C H mod with dash C, which only reports changes.
+O: group mod, which renames or renumbers groups.
+R: C H own sets the owner and group together, and dash R applies it to the folder and everything under it.
+C: The command is: C H own, dash R, monitor colon monitor, slash opt, slash monitor.
+
+@ b27
+S: A database moved from 172 dot 16 dot 4 dot 20 to 172 dot 16 dot 5 dot 20. Which command quickly updates every mention of the old address in the web app config file?
+O: awk with a made-up replace function.
+O: sed with dash I, replacing every match in place.
+O: perl with dash I, but missing the dash E it needs.
+O: python, which only prints the changed text.
+R: Sed dash I edits the file in place, and the substitute with G replaces every match on each line.
+C: The command is: sed, dash I, S, slash, the old address, slash, the new address, slash G, on slash E T C, slash web app dot I N I.
+
+@ b28
+S: Which top-level directory holds read-only, shareable program files, including the share doc folder with documentation for installed packages?
+O: Slash dev.
+O: Slash var.
+O: Slash user.
+O: Slash lib.
+R: Slash user holds installed programs, libraries and shared read-only data, including package documentation.
+
+@ b29
+S: A restore job finds a file called backup 01, and the file command says it is a 7 zip archive. Which command extracts it?
+O: unzip with a password option.
+O: tar with lzip compression.
+O: 7 Z A with E, extracting the archive.
+O: Z cat with a suffix option.
+R: 7 Z A is the 7 zip command line tool, and E extracts the files.
+C: The command is: 7 Z A, E, backup 01.
+
+@ b30
+S: An admin wants to add the output of L S to the end of an existing file, inventory dot text, without losing what is already there. Which command does this?
+O: cat L S, overwriting the file.
+O: echo L S, piped into sed.
+O: L S, appended to the file.
+O: tee L S, redirected into awk.
+R: A double greater than sign appends the output to the end of the file and keeps its existing lines.
+C: The command is: L S, append to, inventory dot text.
+
+@ b31
+S: A cleanup script must run at 6 P M every Saturday. Which crontab line does this?
+O: Any minute of hour 18 on Saturdays, so every minute for an hour.
+O: Every 18 minutes, on Saturdays.
+O: Minute 0 of hour 18, on weekday 6, Saturday.
+O: Minute 0 every hour, with an invalid weekday of 18.
+R: Minute 0 of hour 18 on day of week 6 runs once, at 6 P M every Saturday.
+C: The line is: 0, 18, star, star, 6, slash opt, slash bin, slash purge dot S H.
+
+@ b32
+S: An admin worries that a disk's partition table might get corrupted and wants to back up the raw sectors that hold it. Which tool should they use?
+O: D D.
+O: tar.
+O: gzip.
+O: C P I O.
+R: The partition table lives in raw sectors on the disk, and D D copies raw sectors exactly.
+
+@ b33
+S: An admin wants the manuals path in srv to be a shortcut to the acme docs folder in user share doc. Which command does this?
+O: L S O F, which lists open files.
+O: link, which makes a hard link and cannot link folders.
+O: R sync, which copies the files.
+O: L N with dash S, making a symbolic link.
+R: A symbolic link points to the real folder, so anything opened through the shortcut reaches it.
+C: The command is: L N, dash S, slash user, slash share, slash doc, slash acme, slash srv, slash manuals.
+
+@ b34
+S: A customer says their nightly jobs are slow. Uptime shows a load average near 12, and N proc shows the server has 4 C P Us. What is the most likely cause?
+O: Network latency.
+O: A memory leak.
+O: High C P U load.
+O: Not enough disk space.
+R: A load near 12 on 4 C P Us means about three times more work is waiting than the C P Us can run.
+
+@ b35
+S: An admin tries to unmount the archive file system and gets, target is busy. Which command should they run next to find what is keeping it busy?
+O: P S with dash F, which shows processes, not open files.
+O: top with dash D, which only sets the refresh delay.
+O: L S O F, filtered for the archive mount point.
+O: D U, which only sums disk usage.
+R: L S O F lists open files and the processes using them, so filtering for the mount point shows what blocks the unmount.
+C: The command is: L S O F, pipe, grep, slash M N T, slash archive.
+
+@ b36
+S: Which command shows the block devices on a system, such as disks and partitions, with their sizes, types and mount points, in a tree?
+O: D F.
+O: L S block.
+O: mount.
+O: F disk.
+R: L S block lists every disk, partition and volume as a tree with its size, type and mount point.
+C: The command is: L S block.
+
+@ b37
+S: An admin wants to find which items in the media folder take up the most space. Which command should they start with?
+O: D F, which shows free space per file system.
+O: stat, which shows one item's details.
+O: D U, which reports the space each item uses.
+O: L S, which lists names.
+R: D U reports how much disk space each file and folder uses, so the biggest ones stand out.
+C: The command is: D U, slash srv, slash media.
+
+@ b38
+S: A database process keeps getting killed over several days. The logs show the out of memory killer stopping the same postgres process every night, its score rising each day, and sar shows memory use creeping up steadily. There is no swap. What is a possible cause?
+O: A backup job is using all the memory.
+O: The process is showing signs of a memory leak.
+O: The system is using all of its swap.
+O: Cached memory is reaching the system's limits.
+R: The same process keeps getting killed while its memory use grows and is never given back, which is the sign of a leak.
+
+@ b39
+S: A heavy reindexing task is hogging the C P U and slowing other apps. The task must still finish. What should the admin do?
+O: Run the other apps in the background with B G.
+O: Lower the reindexing task's priority with renice.
+O: Restart the task under no hup.
+O: Use P I D stat to add more C P U time.
+R: Renice raises the task's nice value, so other processes get the C P U first while the task still finishes.
+
+@ b40
+S: A system D timer that should run a report every night at midnight is not running nightly. Its calendar setting only matches the 15th of each month, and it has a random delay of up to two hours. Which two changes fix it? Pick two answers.
+O: Add wake system equals midnight.
+O: Add a second calendar line saying daily.
+O: Change the calendar setting to every day at midnight.
+O: Add accuracy sec equals 1.
+O: Remove the calendar line.
+O: Remove the two hour randomized delay.
+R: The calendar line only matched the 15th, and the random delay pushed each run up to two hours past midnight.
+
+@ b41
+S: Package updates fail with errors about one repository. Which command lists every configured repository and shows whether each is enabled?
+O: yum repo list all.
+O: yum repo sync available.
+O: yum list installed repos.
+O: yum repo packages.
+R: Repo list all shows every configured repository, including disabled ones, with its status.
+C: The command is: yum, repo list, all.
+
+@ b42
+S: Outside senders cannot email a company. A dig query for the company's mail records, sent to its own name server, says connection timed out, no servers could be reached. What does this error mean?
+O: The name does not exist.
+O: The root name servers are set up wrong.
+O: Dig failed because of the extra M X at the end.
+O: The D N S server that was queried is not responding.
+R: Timed out with no servers reached means dig asked that name server and nothing answered.
+
+@ b43
+S: Which kind of event would you expect to find in D message output?
+O: Wrong passwords typed at login.
+O: A U S B device being plugged in.
+O: Window manager warnings.
+O: Session closed messages.
+R: D message shows kernel messages, and the kernel logs every U S B device it detects.
+
+@ b44
+S: An admin suspects that user Carlos is running an unapproved program. Which command shows a live view of only Carlos's processes?
+O: P S with dash A X, which isn't live and doesn't filter by user.
+O: jobs, which only shows this shell's jobs.
+O: top with dash U, showing only Carlos's processes.
+O: L S O F with dash P, which needs a process number.
+R: Top dash U shows a live, updating list of only that user's processes.
+C: The command is: top, dash U, Carlos.
+
+@ b45
+S: An admin needs to capture all traffic to or from 192 dot 168 dot 50 dot 7 on a server. Which command does this?
+O: T C P dump with addr, which isn't a real filter.
+O: T C P dump with the host filter.
+O: T C P dump with the net filter, meant for networks.
+O: T C P dump with I P, which isn't followed by an address.
+R: The host filter matches packets where that address is either the source or the destination.
+C: The command is: T C P dump, host, 192 dot 168 dot 50 dot 7.
+
+@ b46
+S: An admin must stop every process owned by the user guest 01. Which loop does this?
+O: A for loop killing each process number that P S lists for guest 01.
+O: A for loop over plain P S output, killing each word.
+O: A while loop comparing a user variable with a number test.
+O: A while loop running kill all forever with no target.
+R: P S dash E F lists every process with its owner, grep keeps guest 01's lines, awk takes the process number, and the loop kills each one.
+
+@ b47
+S: A technician needs to download a vendor's software package from a web server onto a Linux box. Which tool does this?
+O: telnet.
+O: netstat.
+O: W get.
+O: N C.
+R: W get downloads files over H T T P, H T T P S or F T P and saves them.
+C: The command is: W get, followed by the package U R L.
+
+@ b48
+S: After changing an Apache config, an admin must make it reload. Their sue doo rights only allow the kill all command. Which command loads the new config?
+O: kill all with dash 9, which kills Apache outright.
+O: kill all with dash H U P, the hang up signal.
+O: kill all with dash TERM, which stops Apache.
+O: kill all with dash dash reload, which isn't an option.
+R: The hang up signal tells Apache to reread its configuration and restart its workers without a full stop.
+C: The command is: sue doo, kill all, dash H U P, H T T P D.
+
+@ b49
+S: About one in three visitors cannot reach a company's site, and one of its three web servers is down. The D N S zone has three A records for the shop name, one per server. What explains the symptom?
+O: The zone is missing quad A and P T R records.
+O: Some records are not signed with D N S sec.
+O: D N S rotates the three addresses, and clients usually try the first.
+O: The D N S server is an iterative resolver instead of authoritative.
+R: This is round robin D N S, so about a third of the time the down server's address comes first and that visitor fails.
+
+@ b50
+S: Which directory holds the essential built-in commands that every user needs, such as L S, C P and cat?
+O: Slash sys.
+O: Slash E T C.
+O: Slash bin.
+O: Slash var.
+R: Slash bin holds the essential user commands, and on many systems it links to user bin.
+
+@ b51
+S: A network team adds a new D N S server at 10 dot 20 dot 0 dot 53. Which file should be edited so the Linux host sends its name lookups there?
+O: The N S switch conf file.
+O: The resolv conf file.
+O: The D N S mask conf file.
+O: The who is conf file.
+R: The resolv conf file lists the name servers the resolver uses.
+
+@ b52
+S: A security advisory warns about regression, a known Open S S H flaw. Which command applies just the fix for that advisory?
+O: D N F check update, which only lists updates.
+O: D N F update, enabling a security repo.
+O: D N F upgrade, limited to the regression advisory.
+O: D N F install, enabling a security repo.
+R: The advisory option limits the upgrade to the packages named in that security advisory.
+C: The command is: D N F, dash dash advisory equals regression, upgrade, Open S S H.
+
+@ b53
+S: Why does the password program in user bin have the S U I D bit set?
+O: To mark the file as immutable.
+O: To keep group permissions on the password file up to date.
+O: To show that an attacker changed the system.
+O: So normal users can update the shadow file.
+R: Only root can write the shadow file, so S U I D lets the password program run as root when users change their password.
+
+@ b54
+S: A legacy service is being retired. The admin wants to make sure nobody, and no other unit, can start it again. Which command does this?
+O: system C T L disable, which only stops it starting at boot.
+O: system C T L kill, which only stops it now.
+O: system C T L mask, which blocks it from starting at all.
+O: system C T L isolate, which switches to it as a target.
+R: Masking links the unit to dev null, so it cannot be started at all, by hand or by another unit.
+C: The command is: system C T L, mask, legacy dot service.
+
+@ b55
+S: An app cannot reach a partner's A P I. Curl says it could not resolve the host, and dig shows the server's configured name server says the name does not exist. The name works from other machines. What should be done?
+O: Open a secure port in the server's firewall.
+O: Enable internet access on the host.
+O: Review and fix the D N S client configuration file.
+O: Ask the partner for a new A P I address.
+R: Other machines resolve the name, so this host's resolver config points to the wrong name server.
+
+@ b56
+S: A web app needs its database running before the web server starts. Both the nginx and Postgres units only say to start after the network. What should the admin do so the database starts first?
+O: Add Postgres to the wants list in the nginx unit.
+O: Add before nginx to the Postgres unit.
+O: Start nginx by hand instead of with system D.
+O: Mention Postgres somewhere in the nginx config.
+R: A before setting fixes the start order, so Postgres starts before nginx.
+
+@ b57
+S: A user, Devin, cannot create files in the build folder in his home folder. The folder is owned by root with group devin, and the group has no write permission. Devin is in the devin group. Which two commands fix this? Pick two answers.
+O: C H mod 7 7 0 on the build folder.
+O: C H mod, giving the owner, root, write.
+O: user mod, making root Devin's only extra group.
+O: C H mod, giving the group write on the build folder.
+O: user mod, adding Devin to the devin group he's already in.
+O: user mod, changing root's groups.
+R: The folder's group is devin, so giving the group write, either way, lets Devin create files there.
+C: The commands are: C H mod, 7 7 0, slash home, slash Devin, slash build, or, C H mod, G plus W, on the same folder.
+
+@ b58
+S: An admin wants new files to get read and write for the owner and read for the group, and new folders to get full access for the owner, read for the group, and execute for others. Which you mask does this?
+O: you mask 0 0 2 7.
+O: you mask 0 0 3 6.
+O: you mask 0 0 3 7.
+O: you mask 0 0 3 8.
+R: Removing write and execute from the group and read and write from others gives exactly those file and folder permissions.
+C: The command is: you mask, 0 0 3 6.
+
+@ b59
+S: An admin needs to change the host name web old to web new inside the my app settings file. Which command does this?
+O: grep piped into awk, which only prints text.
+O: cut with a host name as the delimiter, piped into vi.
+O: cat piped into grep, saving matches to a new file.
+O: sed with dash I, replacing web old with web new in place.
+R: Sed dash I edits the file in place, and the substitute replaces web old with web new.
+C: The command is: sed, dash I, S, slash, web dash old, slash, web dash new, slash, on the settings dot conf file.
+
+@ b60
+S: An admin edits a system D timer file to change how often it runs. What must they run so system D picks up the change?
+O: sys C T L with dash dash load.
+O: system D analyze time.
+O: system C T L daemon reload.
+O: time date C T L, adjusting the clock.
+R: System D keeps unit files in memory, and daemon reload rereads them so the new schedule is used.
+C: The command is: system C T L, daemon dash reload.
+
+@ b61
+S: How can an admin check whether the chrony D service will start automatically at boot?
+O: system C T L is enabled, for chrony D.
+O: system C T L is active, for chrony D.
+O: system C T L start, for chrony D.
+O: system C T L stop, for chrony D.
+R: Is enabled prints whether the service is set to start at boot.
+C: The command is: system C T L, is dash enabled, chrony D dot service.
+
+@ b62
+S: A Linux box must route packets between its two network interfaces. Which kernel parameter must be turned on?
+O: The I P local port range setting.
+O: The I P multicast setting.
+O: The I P forward setting.
+O: The I P route setting.
+R: Turning on I P forward lets the kernel pass packets from one interface to another.
+C: The command is: sys C T L, dash W, net dot I P V 4 dot I P underscore forward equals 1.
+
+@ b63
+S: An admin needs to unmount the scratch file system to replace it with a new volume, but gets target is busy. Which command clears the problem so the unmount can go ahead?
+O: L S with dash L D, which only shows the folder.
+O: tree with dash G, which only lists files.
+O: stat with dash F, which only shows file system details.
+O: F user with dash M K, killing every process using it.
+R: F user dash M finds every process using the file system, and dash K kills them, so the mount is free.
+C: The command is: F user, dash M K, slash srv, slash scratch.
+
+@ b64
+S: A Linux host signs users in against Active Directory. Which file holds the A D domain settings?
+O: The audit D conf file.
+O: The S M B conf file.
+O: The PAM conf file.
+O: The S S S D conf file.
+R: The S S S D conf file configures the service that links Linux logins to A D, including the domain settings.
+
+@ b65
+S: When building software from source, which step checks the system for needed tools and libraries and prepares the build files?
+O: install.
+O: dot slash configure.
+O: dot slash bash dot S H.
+O: make.
+R: The configure script checks for compilers and libraries, then writes a make file for this system.
+C: The command is: dot slash configure.
+
+@ b66
+S: Which command shows the version of the E 1000 E kernel module?
+O: L S mod, followed by the module name.
+O: mod probe, which loads the module.
+O: mod info, followed by the module name.
+O: dep mod, which builds the module list.
+R: Mod info shows a module's details, including its version, author and parameters.
+C: The command is: mod info, E 1000 E.
+
+@ b67
+S: How can an admin confirm that the N V M E kernel module is currently loaded?
+O: mod probe, piped into grep.
+O: L S mod, piped into grep for N V M E.
+O: ins mod, piped into grep.
+O: mod info, piped into grep.
+R: L S mod lists every loaded module, and grep shows whether N V M E is among them.
+C: The command is: L S mod, pipe, grep, N V M E.
+
+@ b68
+S: An admin compares two files and gets output that says lines 3 to 4 were deleted, with blue and green marked from the first file, then a line added, purple, marked from the second file. Which command produced it?
+O: file.
+O: awk.
+O: comp gen.
+O: diff.
+R: This is diff's normal format, with deleted and added lines marked from the first and second file.
+
+@ b69
+S: An admin wants a list of everything under the srv folder, including files in subfolders, with each item's size. Which command does this?
+O: L S block, which lists block devices.
+O: D U with dash A H, listing every item with its size.
+O: D F with dash H, which shows free space.
+O: L S, sorted by number, which skips subfolders.
+R: D U shows disk usage, dash A includes every file, and dash H prints readable sizes.
+C: The command is: D U, dash A H, slash srv.
+
+@ b70
+S: Which of these is a virtual file system whose content is not stored on disk and disappears at reboot?
+O: Slash var.
+O: Slash user.
+O: Slash proc.
+O: Slash boot.
+R: Slash proc is created in memory by the kernel and rebuilt at every boot.
+
+@ b71
+S: An alert reports processes that have finished running but still have an entry in the process table. Which state code should the admin look for in P S output?
+O: D.
+O: Z.
+O: T.
+O: S.
+R: Z means zombie, a process that has exited but whose parent hasn't collected its exit status yet.
+
+@ b72
+S: An admin edits a service's unit file in the system D folder under E T C. What should they run first so system D uses the new version?
+O: system C T L start.
+O: system C T L enable.
+O: system C T L daemon reload.
+O: system C T L restart.
+R: Daemon reload makes system D reread its unit files, and then you restart the service.
+C: The command is: system C T L, daemon dash reload.
+
+@ b73
+S: Users cannot connect to a server, which keeps crashing. The console shows a kernel panic from a fatal machine check, with hardware errors reported by C P U 6. What is the cause and the right response?
+O: A hardware fault that the hardware team should fix.
+O: The kernel is corrupted and must be reinstalled.
+O: All C P Us are exhausted, so add another C P U.
+O: The system crashed, and a reboot will fix it.
+R: Machine check exceptions are raised by the C P U when it finds a hardware error, and rebooting won't fix the faulty part.
+
+@ b74
+S: An admin must restore the site backup tar G Z file from temp into the var www site folder. Which command does this?
+O: tar extract, with the folder and archive in the wrong order.
+O: tar extract, redirecting output into the folder.
+O: tar extract, with dash capital C changing into the site folder.
+O: tar extract with no target, treating the folder as a file name.
+R: Dash capital C changes into the target folder first, so the extracted files land there.
+C: The command is: tar, dash X V Z F, slash temp, slash site dash backup dot tar dot G Z, dash capital C, slash var, slash www, slash site.
+
+@ b75
+S: A server is sluggish. Top shows 68 percent I O wait, and I O stat shows waits of about 200 milliseconds per request with the disk nearly 100 percent busy. What explains the slowness?
+O: The C P Us are overused.
+O: It is out of swap space.
+O: Storage I O latency is high.
+O: It needs to be patched.
+R: High I O wait and a nearly full busy disk mean the C P Us are idle, waiting on storage.
+
+@ b76
+S: An app breaks with newer versions of the lib S S L 3 package on Ubuntu, so that package must stay at its current version during upgrades. Which command does this?
+O: apt mark hold, for lib S S L 3.
+O: D package with dash dash hold, which isn't an option.
+O: apt set selections, which isn't an apt command.
+O: echo piped into apt set selections, with the wrong format.
+R: Apt mark hold marks the package as held, so upgrades skip it.
+C: The command is: apt dash mark, hold, lib S S L 3.
+
+@ b77
+S: A process has frozen and ignores normal requests to stop. Which command forces it to end right away?
+O: kill with dash 15, the normal terminate request.
+O: kill with no signal, which also sends terminate.
+O: kill with dash 1, the hang up signal.
+O: kill with dash 9, the kill signal.
+R: Signal 9 makes the kernel end the process at once, and the process cannot catch or ignore it.
+C: The command is: kill, dash 9, followed by the process I D.
+
+@ b78
+S: User Ana gets permission denied running the report program. Ana is only in her own group. The access list on the file has an entry just for Ana with read and write, but no execute. What fixes it?
+O: Add Ana to the wheel group.
+O: Give Ana execute permission in her A C L entry.
+O: Give others read, write and execute.
+O: Move the report program to a different folder.
+R: Ana's own A C L entry applies to her before the group or other bits, and it has no execute.
+C: The command is: set F A C L, dash M, U colon Ana colon R W X, report.
+
+@ b79
+S: After monthly patching, a key app stops working. Which command shows what packages the patching installed or changed?
+O: D N F search.
+O: D N F info.
+O: D N F history.
+O: D N F list.
+R: D N F history lists every transaction, and its details show exactly which packages changed.
+C: The command is: D N F, history.
+
+@ b80
+S: Key-based S S H login keeps asking for a password. The file permissions look right, but the audit log shows S E Linux denying S S H D from reading the authorized keys file, because its label is admin home instead of S S H home. S E Linux is enforcing. What is the most likely cause?
+O: S S H D was not restarted after the file was created.
+O: The authorized keys file does not have the correct S E Linux label.
+O: The file's permissions are wrong.
+O: The S E Linux policy is wrongly targeting unconfined users.
+R: S E Linux blocks S S H D because the file has the wrong label, often after it was copied or moved.
+C: The command is: restore con, dash R V, tilde, slash dot S S H.
+
+@ b81
+S: A server is set to Asia Tokyo time and must be changed to Europe Berlin. Which command does this?
+O: set time zone, a command that doesn't exist.
+O: time date C T L, set time zone, Europe Berlin.
+O: time date set, which isn't a real command.
+O: date configure, which isn't a real option.
+R: Time date C T L set time zone changes the system time zone.
+C: The command is: time date C T L, set dash time zone, Europe slash Berlin.
+
+@ b82
+S: An app has to be restarted every few days, and the kernel log shows it triggered the out of memory killer. The owners added more RAM, and now the problem just takes longer to appear. What is the most likely reason the app gets killed?
+O: The swap space is the wrong size.
+O: The kernel has panicked.
+O: The app probably has a memory leak.
+O: The C P U type does not suit the app.
+R: More RAM only delaying the failure means the app keeps taking memory and never gives it back, which is a leak.
+
+@ b83
+S: An admin needs to bundle the projects folder into one archive and compress it in the same step. Which command does this?
+O: D D, copying a folder as if it were a disk.
+O: R sync with compression, which copies but doesn't archive.
+O: tar, creating an X Z compressed archive.
+O: C P I O, with arguments it doesn't take.
+R: Tar dash C creates the archive, capital J compresses it with X Z, and F names the file, all in one step.
+C: The command is: tar, dash C, capital J, F, slash backups, slash projects dot tar dot X Z, slash srv, slash projects.
+
+@ b84
+S: Which command makes the nginx service start automatically every time a system D server boots?
+O: system C T L enable nginx.
+O: system C T L reload nginx.
+O: system C T L start nginx.
+O: system C T L status nginx.
+R: Enable creates the links that start the service at every boot.
+C: The command is: system C T L, enable, nginx.
+
+@ b85
+S: An admin made an R S A key pair, copied the public key to a server, and still gets asked for a password. Verbose S S H shows, no mutual signature algorithm, then it falls back to password. What fixes this?
+O: Allow root login in the S S H D config.
+O: Restart S S H D on the local machine.
+O: Make a new E C D S A key pair and copy it over.
+O: Set the remote S S H folder to 7 0 0.
+R: The client and server couldn't agree on how to sign with this R S A key, and an E C D S A key uses a method both support.
+C: The command is: S S H dash keygen, dash T, E C D S A.
+
+@ b86
+S: An admin needs every line in a notes file containing a five-character string whose second and fifth characters are O, and whose third character is anything except X. Which grep pattern does this?
+O: Any character, O, X, any character, O.
+O: A pattern with stars, which matches any length.
+O: Any character, O, not X, any character, O.
+O: A pattern with a misplaced caret, not inside brackets.
+R: A dot matches any one character and a bracket with a caret and X matches anything except X, giving five fixed positions.
+C: The command is: grep, quote, dot, O, open bracket, caret, X, close bracket, dot, O, quote, notes dot text.
+
+@ b87
+S: Users say a Maria D B server was down. Uptime shows only 3 minutes, and the kernel log shows the out of memory killer killed the Maria D B process. What explains the outage?
+O: A privileged user deliberately killed the process.
+O: A network outage made the service unavailable.
+O: The process crashed because of a file system error.
+O: The process used up the server's memory.
+R: The kernel's out of memory killer only acts when memory runs out, and it killed the database.
+
+@ b88
+S: An admin must open the D N S T C P port only for hosts on the 10 dot 50 dot 0 dot 0 slash 24 network, using U F W. Which command does this?
+O: U F W enable, which turns the firewall on.
+O: U F W allow, pointed to the network instead of from it.
+O: U F W disable, which turns the firewall off.
+O: U F W allow from that network to port 53, T C P.
+R: This allows incoming T C P on port 53 only when it comes from that network.
+C: The command is: U F W, allow, from, 10 dot 50 dot 0 dot 0 slash 24, to any, port 53, proto T C P.
+
+@ b89
+S: An admin wants to know how long the S S H D service took to start during the last boot. Which command shows this?
+O: resolve C T L.
+O: system C T L daemon reload.
+O: journal C T L.
+O: system D analyze blame.
+R: Blame lists every unit from the last boot with how long it took to start, slowest first.
+C: The command is: system D dash analyze, blame.
+
+@ b90
+S: After a reboot, users cannot connect to a server over S S H. S S H D is listening on port 22 and ping works, but the firewall's allowed services list only D H C P V 6 client and H T T P S. What is the cause?
+O: The firewall does not allow the S S H service.
+O: The server's load is too high.
+O: The D N S entry has a bad address.
+O: Users are using the wrong protocol.
+R: S S H D is listening and the network works, but the firewall doesn't list S S H as an allowed service.
+C: The command is: firewall dash C M D, dash dash add dash service equals S S H, dash dash permanent, then reload.
+
+@ b91
+S: Which command shows live, updating C P U usage on a Linux system?
+O: D F.
+O: L S block.
+O: top.
+O: uptime.
+R: Top refreshes every few seconds and shows total C P U use with a per-process breakdown.
+C: The command is: top.
+
+@ b92
+S: A server crashes with a kernel panic from a fatal machine check, and the call trace shows the machine check handlers. What is the most likely cause?
+O: A misconfigured boot loader.
+O: File system corruption.
+O: Hardware failure, C P U or memory.
+O: Wrong file permissions.
+R: Machine check exceptions are raised by the C P U when it detects a hardware error.
+
+@ b93
+S: An admin wants to turn all lowercase letters in names dot text into uppercase, and save the result in a capitalized names file. Which command works?
+O: T R with brackets and a stray colon between the sets.
+O: T R from lowercase A to Z, into uppercase A to Z.
+O: T R with made-up lower and upper words in braces.
+O: T R with a character class named upper in capitals, which doesn't exist.
+R: T R translates each character in the first set into the matching one in the second, so every lowercase letter becomes uppercase.
+C: The command is: cat, names dot text, pipe, T R, A dash Z lowercase, A dash Z uppercase, into, capital names dot text.
+
+@ b94
+S: A new disk is added to grow existing L V M storage. Which command should run first on the new disk?
+O: V G extend.
+O: L V extend.
+O: P V resize.
+O: P V create.
+R: P V create marks the disk as a physical volume, then V G extend adds it and L V extend grows the volume.
+C: The command is: P V create, followed by the new disk.
+
+@ b95
+S: A server's clock is 20 minutes slow. Which command sets it right in one step from an N T P time server?
+O: H W clock.
+O: N T P date, using the N T P pool.
+O: time date C T L, setting the time zone to U T C.
+O: time date C T L on its own.
+R: N T P date asks the time server for the time and sets the clock at once.
+C: The command is: N T P date, pool dot N T P dot org.
+
+@ b96
+S: A new user, Kim, cannot change her own password and gets an authentication token manipulation error. Root can change it fine. The password program's mode shows execute with no S U I D bit, and the password ageing settings are normal. What is the most likely cause?
+O: Kim's new password does not meet the complexity rules.
+O: Kim already changed the password today.
+O: Kim's password has been disabled.
+O: The S U I D bit is missing on the password program.
+R: The password program must run as root to write the shadow file, and without the S U I D bit it fails for normal users.
+C: The command is: C H mod, U plus S, slash user, slash bin, slash password.
+
+@ b97
+S: An app hangs after about a week, and the server must be rebooted. Free shows R A M and swap both full, and D message shows the out of memory killer stopped the ledger D app, which held about 30 gigabytes. What best describes the reason the app hangs?
+O: It is not allowed to allocate memory, which slows the system.
+O: The app has a memory leak that consumes all the system's memory.
+O: It has the wrong disk quota and fills the file system.
+O: It is configured wrongly and uses up memory and swap.
+R: Memory growing slowly over a week until R A M and swap are full is the classic memory leak pattern.
+
+@ b98
+S: Which tool can an admin use to read the motherboard's temperature sensors?
+O: L S P C I.
+O: L M sensors.
+O: L S U S B.
+O: D M I decode.
+R: L M sensors reads the hardware monitoring chips and shows temperatures, fan speeds and voltages.
+C: The command is: sensors.
+
+@ b99
+S: Which command shows the running processes in real time, refreshing every few seconds?
+O: top.
+O: P S.
+O: free.
+O: D F.
+R: Top shows a live, refreshing list of processes sorted by C P U use.
+C: The command is: top.
+
+@ b100
+S: A web app on a server has become slow. Top shows two shop app processes holding about 97 percent of R A M, only 22 megabytes available, swap in use, and the K swap D kernel thread busy. The load average is low. What describes what is happening?
+O: The app runs at priority 20, which starves the kernel.
+O: The app is using every core, so the C P U has run out.
+O: The app is pushing the load average up.
+O: The app is using nearly all the memory, forcing the system into swap.
+R: The app holds almost all the R A M, so the system keeps swapping, and that slows everything down.

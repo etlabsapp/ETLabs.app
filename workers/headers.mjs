@@ -10,7 +10,7 @@ export const CSP_REPORT_ONLY = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
-  "media-src 'self'",
+  "media-src 'self' blob:", // blob: = Linux+ hands-free voice clips preloaded with fetch
   "connect-src 'self' https://cloudflareinsights.com https://*.supabase.co wss://*.supabase.co",
   "frame-src https://challenges.cloudflare.com",
   "worker-src 'self' blob:",
@@ -30,11 +30,16 @@ export const SECURITY_HEADERS = {
   "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=()",
 };
 
+/* Linux+ hands-free mode answers by voice, so /linux-plus/ may ask for this site's own microphone (nothing else changes). */
+export const MIC_SELF_PREFIXES = ["/linux-plus/"];
+export const micAllowed = (pathname) => MIC_SELF_PREFIXES.some((p) => String(pathname || "").startsWith(p));
+const PERMISSIONS_MIC_SELF = SECURITY_HEADERS["permissions-policy"].replace("microphone=()", "microphone=(self)");
+
 /* Adds any missing security header; never overrides one a route set on purpose. */
-export function withSecurityHeaders(response) {
+export function withSecurityHeaders(response, pathname = "") {
   const r = new Response(response.body, response);
   for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
-    if (!r.headers.has(k)) r.headers.set(k, v);
+    if (!r.headers.has(k)) r.headers.set(k, k === "permissions-policy" && micAllowed(pathname) ? PERMISSIONS_MIC_SELF : v);
   }
   return r;
 }
