@@ -1,0 +1,286 @@
+@ 1
+A server writes its audit trail to /var/log/billing.log. The team wants nobody, not even root, to overwrite or erase what is already in the file, while the app can keep adding new lines to the end. Which command does this?
+- chmod +t /var/log/billing.log :: The sticky bit only matters on folders, where it limits who can delete files. Linux ignores it on a regular file.
+- setfacl -m m::t /var/log/billing.log :: ACLs only grant read, write and execute. "t" is not an ACL permission, and ACLs cannot make a file append-only.
+* chattr +a /var/log/billing.log :: chattr +a sets the append-only attribute. Existing content cannot be changed or deleted, even by root, but new data can still be added to the end. That is why it suits log files.
+- setenforce /var/log/billing.log :: setenforce switches SELinux between enforcing (1) and permissive (0). It does not take a file name.
+
+@ 2
+An admin gives the group write access to a shared spreadsheet and then adds the existing user maria to that group:
+```
+$ sudo chmod g+w budget.xlsx
+$ ls -l budget.xlsx
+-rw-rw-r-- 1 admin finance 0 2024-03-02 09:15 budget.xlsx
+$ sudo usermod -aG finance maria
+```
+maria, who is still logged in, still cannot save changes to the file. What fixes this?
+- Run sudo source /etc/group to reload maria's groups. :: /etc/group is a data file, not a script, and source is a shell built-in that sudo cannot run. It would not refresh another user's session anyway.
+- The file can only be written by root, so maria needs sudo. :: The ls output shows rw- for the finance group, so group members can write. Root is not needed.
+* maria needs to log out and log back in. :: Linux reads a user's group list at login. The file already gives the finance group write access, so maria only needs a new login session to pick up her new finance membership.
+- maria needs extra permissions on the file that she does not have yet. :: The group already has read and write. No more permissions are needed, only the new group membership taking effect.
+
+@ 3
+A developer installed a tool into $HOME/tools/bin and wants to run it by name, without typing the full path, while keeping all the normal commands working. Which line should they run?
+- export $PATH=PATH:$HOME/tools/bin :: The $ on the left expands to the current folder list, so export receives an invalid variable name and fails.
+* export PATH=$PATH:$HOME/tools/bin :: $PATH expands to the current search list, and :$HOME/tools/bin adds the new folder to the end. The tool runs by name and every old folder still works.
+- export PATH=PATH:$HOME/tools/bin :: Without the $, the word PATH is used as plain text. PATH becomes "PATH:/home/.../tools/bin", which drops /usr/bin and breaks most commands.
+- export $PATH-$PATH:$HOME/tools/bin :: There is no = sign, so this is not an assignment. export rejects the strange word as an invalid name.
+
+@ 4
+A few help desk staff who connect remotely need to run some admin commands on a Linux server. What is the best way to handle this request?
+- Share the root password with them and set PermitRootLogin yes in sshd_config. :: Sharing root's password and allowing direct root SSH logins is a serious security risk, and nobody can tell who did what.
+* Ask which commands they need to run with elevated rights and add sudo rules for just those. :: This follows least privilege: each person gets only the commands they need, through sudo, and every use is logged under their own name.
+- Set the SUID bit on every program they ask to use. :: SUID would let every user on the system run those programs as their owner, usually root. That is far too broad and very risky.
+- Put them in a group that sudoers allows to run any command, so they can switch to root. :: This hands out full root access when they only need a few commands. It breaks least privilege.
+
+@ 5
+An admin wants to run /opt/scripts/cleanup.sh as the user svcbackup. Which command does this?
+- sudo svcbackup /opt/scripts/cleanup.sh :: sudo needs -u to pick a user. Here sudo tries to run a program called svcbackup.
+* su - svcbackup /opt/scripts/cleanup.sh :: su - svcbackup starts a login shell as svcbackup, and the extra argument is handed to that shell, which runs the script as svcbackup. (su - svcbackup -c /opt/scripts/cleanup.sh also works.)
+- sudo -l svcbackup /opt/scripts/cleanup.sh :: sudo -l only lists what you are allowed to run with sudo. It does not run the script.
+- su -c svcbackup /opt/scripts/cleanup.sh :: -c takes the command to run, so this tries to run a command named svcbackup as root. The user name is in the wrong place.
+
+@ 6
+A user keeps test scripts in /home/dana/bin and wants to run them by typing only the script name. Which command allows this?
+- export alias /home/dana/bin='/bin' :: This is not valid alias syntax, and aliases do not add folders to the command search list.
+- export SHELL=$SHELL=/home/dana/bin :: SHELL names the user's login shell program. Changing it does not affect where commands are searched for.
+* export PATH=$PATH:/home/dana/bin :: PATH is the list of folders the shell searches for commands. Adding the scripts folder to the end lets them run by name.
+- export TERM=$TERM=/home/dana/bin :: TERM describes the terminal type for screen programs. It has nothing to do with finding commands.
+
+@ 7
+A user says the weekly "exportsales" tool doesn't work for them. The admin logs in as the user and sees:
+```
+sam@app01:~$ exportsales
+exportsales: command not found
+sam@app01:~$ ls -l /usr/local/bin
+total 4
+-rwxr-xr-x 1 root root 41 Mar 04 08:12 exportsales
+sam@app01:~$ echo $PATH
+/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/snap/bin
+sam@app01:~$ file /usr/local/bin/exportsales
+/usr/local/bin/exportsales: POSIX shell script, ASCII text executable
+sam@app01:~$ stat -c '%A %U %G' /usr/local/bin/exportsales
+-rwxr-xr-x root root
+```
+What is the problem and how should it be fixed?
+- The script has no execute permission for the user. Add execute permission. :: The mode is rwxr-xr-x, so everyone, including sam, already has execute permission.
+- The script is owned by root, so sam cannot run it. Use chown to give it to sam. :: Anyone can run a file that has execute for others, whatever its owner. Ownership is not the problem.
+* /usr/local/bin is not in the user's PATH. Add it in the user's .bash_profile. :: The script exists and is executable by everyone, but echo $PATH has no /usr/local/bin, so the shell never looks there and says command not found. Adding that folder to PATH in .bash_profile fixes it for every login.
+- The user has the wrong SELinux context for the script. Change the SELinux policy. :: Nothing here shows an SELinux denial. "command not found" means the shell could not find the file at all.
+
+@ 8
+An audit finds that several local accounts have kept the same password for over a year. Which command brings an account in line with a rule that passwords must change at least every 90 days?
+- passwd -d 90 :: passwd -d deletes a user's password, leaving the account with no password. It does not set an age limit.
+* chage -M 90 :: chage changes password aging, and -M sets the maximum number of days a password may be used. After 90 days the user must pick a new one. (You add the user name at the end, for example chage -M 90 sam.)
+- loginctl -H 90 :: loginctl manages login sessions, and -H means run on a remote host. It has nothing to do with password age.
+- usermod -aG 90 :: usermod -aG adds a user to groups. 90 is not a group name, and nothing about password age changes.
+
+@ 9
+An admin tries to join the wheel group and checks the result:
+```
+$ whoami
+kofi
+$ sudo usermod -aG wheel kofi
+$ sudo groups
+root
+```
+The output does not show wheel. Why?
+- The words wheel and kofi are in the wrong order. :: usermod -aG wheel kofi is the correct order: group list first, then the user name.
+* groups was run with sudo, so it showed root's groups. :: sudo runs the command as root, so "sudo groups" lists root's groups, not kofi's. Running "groups kofi" or "id kofi" shows the change. kofi needs to log in again for it to apply to his own sessions.
+- You are not allowed to run usermod with sudo. :: usermod normally needs root, and sudo is the usual way to run it.
+- usermod cannot add users to the wheel group. :: usermod -aG can add a user to any existing group, including wheel.
+
+@ 10
+Which command recursively changes every folder in the current user's home directory so that only that user can open, read and write it?
+- find /home -type d -exec chmod 750 {} \; :: This hits every user's home folder, not just yours, and 750 still lets the group read and enter.
+- find $HOME -type d -exec chmod 755 {} \; :: 755 lets everyone read and enter the folders. That is not owner-only access.
+- find / -type f -exec chmod 777 {} \; :: This targets files, not folders, across the whole system, and 777 gives everyone full access. It would be a disaster.
+* find ~ -type d -exec chmod 700 {} \; :: ~ is your home folder, -type d picks only directories, and chmod 700 gives the owner full access and nobody else any. -exec runs chmod on each folder found.
+
+@ 11
+User lena can open /srv/reports/q3, but user omar cannot. The admin collects this:
+```
+# id lena
+uid=1101(lena) gid=1200(staff) groups=1200(staff),1201(audit)
+# id omar
+uid=1102(omar) gid=1200(staff) groups=1200(staff),1201(audit)
+# ls -ld /srv/reports/q3
+drwxrwx---+ 2 root reports 4096 Jun  2 10:20 /srv/reports/q3
+# getfacl /srv/reports/q3
+# file: srv/reports/q3
+# owner: root
+# group: reports
+user::rwx
+user:lena:r-x
+group::rwx
+mask::rwx
+other::---
+```
+What most likely explains the difference?
+* An ACL entry on the folder gives lena access. :: The + at the end of the ls permissions means the folder has an ACL. getfacl shows user:lena:r-x, a rule just for lena. omar is in the same groups as lena but has no entry of his own, and other is ---, so he is refused.
+- An SELinux label is blocking omar. :: Nothing here mentions SELinux. The ACL output already explains why lena gets in and omar does not.
+- lena is in a group nested inside the reports group. :: Linux does not support groups inside groups. The id output shows lena and omar in exactly the same groups.
+- omar is not a member of the reports group or its subgroups. :: True, omar is not in reports, but neither is lena. That cannot explain why only lena gets in.
+
+@ 12
+A staff member will be away for six months. The admin must stop anyone from using the account while keeping all of its files. Which two steps should be taken? (Choose two.)
+- Delete the user's home folder. :: This destroys the user's files, which they will need back, and does not stop logins.
+* Change the user's login shell to /sbin/nologin. :: /sbin/nologin refuses interactive logins and prints a short message. It blocks shell access even if someone has an SSH key for the account, and it is easy to undo later.
+- Make all of the user's files immutable. :: Immutable files cannot be changed, but anyone can still log in to the account.
+- Ask the user to log in once a week while they are away. :: Regular logins keep the account active and usable, which is the opposite of securing it.
+* Run passwd -l on the account. :: passwd -l locks the password so nobody can log in with it until passwd -u unlocks it. The files stay untouched.
+- Set the home folder's date to the day the user comes back. :: A folder's date has no effect on who can log in.
+
+@ 13
+A manager wants a list of the IP addresses of everyone currently logged in to a server. Which command shows this?
+- $ cat /etc/hosts :: /etc/hosts maps names to addresses for lookups. It knows nothing about who is logged in.
+- $ who -l :: who -l shows login processes, not the remote IP addresses of users.
+* $ w -i :: w lists logged-in users and what they are doing. -i (--ip-addr) shows the IP address each user connected from instead of a host name.
+- $ whois @localhost :: whois looks up domain registration details on the internet. It does not list local sessions.
+
+@ 14
+A junior admin, priya, needs full admin rights on an Ubuntu server. Which command grants this?
+- sed -i 's/priya/root/' /etc/passwd :: This renames entries in the user database and can break the account or the whole system. Never edit /etc/passwd like this.
+- visudo priya :: visudo edits the sudoers file safely, but it does not take a user name like this.
+- echo priya >> /etc/sudoers.d/admins :: A bare user name is not a valid sudoers rule. It would cause a syntax error, and sudo may refuse to run.
+* usermod -aG sudo priya :: On Ubuntu and Debian, members of the sudo group may run any command with sudo. -aG adds priya to that group without removing her other groups. (On Red Hat systems the group is wheel.)
+
+@ 15
+A user runs a script and gets an error. The admin checks:
+```
+$ /data/jobs/nightly.sh
+bash: /data/jobs/nightly.sh: Permission denied
+# ls -l /data/jobs/nightly.sh
+-rwxr--r--. 1 ravi ops 640 Feb 11 2024 /data/jobs/nightly.sh
+# mount | grep /data
+/dev/mapper/vg0-data on /data type xfs (rw,nosuid,nodev,noexec,relatime,seclabel)
+```
+The user is ravi, the file's owner. Which command fixes the problem?
+- chmod g+x /data/jobs/nightly.sh :: The owner, ravi, already has rwx. Adding group execute does not help while the filesystem blocks all execution.
+- mount -o remount,suid /data :: suid controls whether set-user-ID bits are honored. It does not allow running programs at all.
+* mount -o remount,exec /data :: The mount line shows noexec, which blocks running any program from that filesystem, whatever the file permissions say. Remounting with exec allows it. (To keep it after reboot, change the options in /etc/fstab.)
+- chmod o+x /data/jobs/nightly.sh :: ravi is the owner, so the "others" bits do not apply to him, and noexec would still block it.
+
+@ 16
+User "tester" cannot log in to a workstation. The admin gathers:
+```
+This account is currently not available.
+# grep tester /etc/passwd
+tester:x:1005:1005:QA Tester:/home/tester:/sbin/nologin
+# faillock --user tester
+tester:
+When                Type  Source                Valid
+# passwd -S tester
+tester PS 2024-01-15 0 99999 7 -1 (Password set, SHA512 crypt.)
+# chage -l tester
+Password expires                    : never
+Account expires                     : never
+```
+Which command fixes the login problem?
+- passwd -u tester :: passwd -S shows PS, meaning the password is set and not locked, so there is nothing to unlock.
+- faillock --user tester --reset :: faillock shows no failed attempts for tester, so no lockout needs clearing.
+* usermod -s /bin/bash tester :: "This account is currently not available" is the message from /sbin/nologin, and /etc/passwd shows that as tester's shell. Giving the account a real shell such as /bin/bash lets the user log in.
+- chage -M -1 tester :: chage -M -1 turns off password expiry, but the password never expires here anyway.
+
+@ 17
+A script needs DEBUG_MODE set to 1, and every program it starts afterwards must be able to see that value. Which line does this?
+- DEBUG_MODE=1 :: This creates a shell variable only. Programs started later do not see it.
+- DEBUG_MODE=$(echo $DEBUG_MODE) :: This just copies the variable's current value, which is probably empty, back into itself. It neither sets 1 nor exports anything.
+- let DEBUG_MODE=1 :: let does arithmetic and sets a normal shell variable. It does not pass the value on to child programs.
+* export DEBUG_MODE=1 :: export sets the variable and marks it to be passed to every command run from this shell, so child programs see DEBUG_MODE=1.
+
+@ 18
+Users of a shared team folder can't edit each other's new files:
+```
+[nina@srv shared]$ ls -ld /shared
+drwxrwxr-x. 5 root design 56 Apr  9 10:31 /shared
+[nina@srv shared]$ ls -l
+-rw-rw-r--. 1 tom  tom  0 Apr  9 10:31 draft2.txt
+drwxrwxr-x. 2 tom  tom  6 Apr  9 10:31 tomsdir
+-rw-rw-r--. 1 nina nina 0 Apr  9 10:33 notes.txt
+[nina@srv shared]$ echo "edit" >> draft2.txt
+bash: draft2.txt: Permission denied
+```
+Every user is in the design group. What is the best long-term fix?
+* Set the setgid bit on the shared folder. :: New files get their creator's own group (tom, nina) instead of design. With setgid on the folder (chmod g+s /shared), new files and folders inherit the design group, so everyone in design can work on them.
+- Change the group of each new file by hand. :: This works once but has to be repeated for every new file. It does not fix the cause.
+- Make all the folder's contents readable and writable by everyone. :: That opens the files to every user on the system, not just the team, and new files would still have the wrong group.
+- Set the setuid bit on the shared folder. :: Linux ignores setuid on folders. It does not control which group new files get.
+
+@ 19
+An admin needs to add the existing user jordan to the sales group. Which command does this?
+- useradd -g sales jordan :: useradd creates new accounts. jordan already exists, so this fails.
+- groupadd sales jordan :: groupadd creates a new group and does not take a user name.
+* usermod -aG sales jordan :: usermod changes an existing account. -G names the extra group and -a appends it, so jordan keeps all his other groups.
+- groupmod sales jordan :: groupmod changes a group's own settings, like its name or GID. It does not add members.
+
+@ 20
+Before rebooting a systemd server, an admin wants to make sure nobody is logged in and working. Which command shows this?
+- systemd --user :: This starts a per-user service manager. It does not list who is logged in.
+* loginctl list-sessions :: loginctl talks to systemd-logind, which tracks every login. list-sessions shows each current session with its user and seat or terminal, so an empty list means nobody is on.
+- journalctl -u :: -u needs a unit name, and even then it shows logs, not current sessions.
+- systemctl status user-sessions :: systemd-user-sessions.service only controls whether logins are allowed. Its status does not list who is logged in.
+
+@ 21
+An app needs the variable APP_ENV to be set every time a certain user logs in, even after reboots. Which command does this?
+- export APP_ENV=production :: This lasts only for the current shell session and is gone after logout.
+* echo "export APP_ENV=production" >> ~/.bashrc :: Adding the export line to the user's ~/.bashrc means it runs every time a new Bash shell starts, so the value persists.
+- APP_ENV=production :: This sets a temporary shell variable that is not exported and disappears when the shell closes.
+- export "APP_ENV=$APP_ENV:production" >> ~/.ssh/profile :: export prints nothing, so nothing is written, and ~/.ssh/profile is not a file the shell reads at login.
+
+@ 22
+An admin needs to see the UID, home folder and login shell of the account "payroll". Which command shows all three?
+- grep payroll /etc/shadow :: /etc/shadow holds password hashes and password aging data, not the UID, home folder or shell.
+- who payroll :: who lists logged-in users. It does not take a user name like this or show account details.
+* getent passwd payroll :: getent reads from the system's account databases, local or LDAP. The passwd line shows name, UID, GID, comment, home folder and login shell.
+- id payroll :: id shows the UID and groups, but not the home folder or shell.
+
+@ 23
+What is the best way to make a Linux service account that no person can log in to interactively?
+- Give it no home directory. :: An account with no home folder can still log in, starting in /.
+* Set its shell to /sbin/nologin. :: With /sbin/nologin as the shell, any login attempt is refused, but services can still run as that account.
+- Create it with adduser and give it no password. :: Without a password, other login methods such as SSH keys may still work, and some setups allow empty passwords.
+- Give it no elevated privileges. :: Not having sudo rights limits what it can do, but it can still log in.
+
+@ 24
+Why do password policies often block users from changing their password more than once in the same day?
+* So users cannot cycle through the password history to get back to their old password. :: Systems remember recent passwords. Without a minimum age (chage -m), a user could change it several times in a row to push the old one out of the history and reuse it.
+- To make brute-force attacks take too long to finish. :: Brute-force protection comes from strong passwords and lockouts, not from limiting changes per day.
+- To force the use of multifactor authentication. :: A minimum password age has nothing to do with MFA.
+- To make passwords more complex. :: Complexity rules control which characters must be used. How often a password changes does not affect that.
+
+@ 25
+A developer must be added to the docker group without changing their primary group. Which command does this?
+- sudo groupmod docker devuser :: groupmod changes a group's name or GID. It does not add members.
+- sudo groupmod -G docker devuser :: groupmod has no -G option for adding users.
+- sudo usermod -g docker devuser :: Lowercase -g changes the primary group, which is exactly what must not happen.
+* sudo usermod -aG docker devuser :: -G adds a supplementary group and -a keeps the existing ones. The primary group stays the same.
+
+@ 26
+What is the main reason to make passwords expire after a set time?
+- To make people pick stronger, more complex passwords. :: Complexity rules handle strength. An expiry date does not make a password stronger.
+- To stop people reusing the same password. :: Password history handles reuse. Expiry alone does not stop it.
+* To limit how long a leaked or stolen password can be used. :: If a password is exposed without anyone knowing, a forced change eventually makes it useless to the attacker.
+- To push users toward passwordless login. :: Expiry still assumes passwords are in use. It does not move anyone to keys or tokens.
+
+@ 27
+As root, an admin tries to save changes to a config file and gets an error:
+```
+E212: Cannot open file for writing
+# ls -l /etc/hosts
+-rw-r--r--. 1 root root 158 Jan 12 09:00 /etc/hosts
+# lsattr /etc/hosts
+----i----------- /etc/hosts
+```
+Which command lets the admin edit the file?
+- chown root /etc/hosts :: root already owns the file. Ownership is not the problem.
+- chmod 750 /etc/hosts :: Permissions do not stop root. The immutable attribute does.
+* chattr -i /etc/hosts :: lsattr shows the i (immutable) attribute. An immutable file cannot be changed, even by root, until chattr -i removes the attribute.
+- chgrp root /etc/hosts :: The group is already root, and the group has nothing to do with the immutable flag.
+
+@ 28
+Members of the "ops" group need root-level access on a server. Which file should be edited, ideally with visudo, to allow this?
+- /etc/shadow :: /etc/shadow stores password hashes and aging. It does not grant privileges.
+- /etc/login.defs :: login.defs sets defaults for new accounts, like password aging and UID ranges. It does not grant root access.
+- /etc/group :: /etc/group lists group members, but being in a group gives no root rights unless sudoers says so.
+* /etc/sudoers :: sudoers decides who may run what as root. A line such as %ops ALL=(ALL) ALL gives the ops group full sudo access. Editing it with visudo checks the syntax before saving.
