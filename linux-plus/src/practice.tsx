@@ -232,7 +232,10 @@ export default function PracticeTests() {
     setHfStatus("speaking");
     vc.engine.speak([`Exam finished. You got ${ok} of ${r.ids.length} correct${r.timedOut ? ", and time ran out" : ""}.`], () => setHfStatus("idle"));
   }, [resultKey]);
-  const hfToggle = (on: boolean) => { if (on) vc.engine.unlock(); else flow.cancel(); setHfPaused(false); vc.setSettings((st) => ({ ...st, on })); };
+  // Turning on happens inside a tap: that tap unlocks audio and asks for the microphone (iOS Safari needs both from a gesture).
+  const hfToggle = (on: boolean) => { if (on) { vc.engine.unlock(); vc.engine.askMic(); } else flow.cancel(); setHfPaused(false); vc.setSettings((st) => ({ ...st, on })); };
+  const hfCan = vc.synth || (vc.audio && !!pack);
+  const bubble = (docked: boolean) => hfCan ? <HfBubble on={!!hf} status={hfStatus} docked={docked} onToggle={() => hfToggle(!hf)} /> : null;
   const micTap = () => {
     vc.engine.unlock();
     if (hfStatus === "paused" || hfPaused) { setHfPaused(false); return; }
@@ -353,6 +356,7 @@ export default function PracticeTests() {
           <div style={{ fontSize: 13, color: C.faint, marginTop: 10, lineHeight: 1.5 }}>The clock keeps running if you leave the page. When it hits 0:00 the exam is submitted automatically.</div>
         </div>
         <HandsFreeCard vc={vc} onToggle={hfToggle} test={testVoice} recordedAvailable={!!pack} />
+        {bubble(false)}
         <div style={card}>
           <div style={{ ...kicker, marginBottom: 8 }}>YOUR PROGRESS</div>
           <div style={{ fontSize: 15, color: C.soft, marginBottom: 8 }}>{seenCount} of {total} questions seen. New exams favor questions you have not seen yet, and ones you missed.</div>
@@ -371,6 +375,7 @@ export default function PracticeTests() {
             </div>
           )}
         </div>
+        {hfCan && <div aria-hidden="true" style={{ height: 64 }} />}
       </div>
     );
   }
@@ -388,7 +393,6 @@ export default function PracticeTests() {
       <div className="px-timerbar" style={{ position: "sticky", top: 0, zIndex: 6, display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", borderRadius: 14, background: "rgba(13,17,30,0.96)", border: `1px solid ${low ? "rgba(248,113,113,0.6)" : C.edge}` }}>
         <div role="timer" aria-live="off" aria-label={`Time left ${formatClock(remaining)}`} style={{ fontFamily: mono, fontWeight: 800, fontSize: 24, color: low ? C.red : C.cyan, minWidth: 0 }}>{"\u23f1"} {formatClock(remaining)}</div>
         <div style={{ flex: 1, minWidth: 0, textAlign: "right", fontFamily: mono, fontSize: 14, color: C.soft, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{exam.idx + 1}/{exam.ids.length} · {right}{"\u2713"} {done - right}{"\u2717"}</div>
-        {vc.synth && <button style={{ ...ghost, padding: "0 10px", fontSize: 18, minWidth: 44, color: hf ? C.cyan : C.soft, borderColor: hf ? "rgba(34,211,238,0.5)" : C.edge }} aria-pressed={hf} aria-label={hf ? "Turn hands-free off" : "Turn hands-free on"} onClick={() => hfToggle(!hf)}>{hf ? "\ud83d\udd0a" : "\ud83d\udd07"}</button>}
         <button style={{ ...ghost, padding: "0 12px", fontSize: 14 }} onClick={endEarly}>End</button>
       </div>
       {hf && <MicPanel status={hfStatus} heard={heard} listenable={vc.listenable} count={q.options.length} need={q.answer.length} answered={!!answered}
@@ -431,13 +435,18 @@ export default function PracticeTests() {
         </div>
       )}
       <Sticky>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
         {answered ? (
           <button style={bigBtn} onClick={next}>{last ? "Finish exam" : "Next question \u2192"}</button>
         ) : multi ? (
           <button style={{ ...bigBtn, opacity: draft.length === q.answer.length ? 1 : 0.45 }} disabled={draft.length !== q.answer.length} onClick={() => submit(draft)}>{draft.length === q.answer.length ? "Check answer" : `Pick ${q.answer.length - draft.length} more`}</button>
         ) : (
-          <div style={{ textAlign: "center", fontSize: 14, color: C.faint, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>Tap an answer{" \u00b7 "}or press A–{LETTERS[q.options.length - 1]}</div>
+          <div style={{ textAlign: "center", fontSize: 14, color: C.faint, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>{hf ? "Say or tap an answer" : <>Tap an answer<span className="px-keyhint">{" \u00b7 "}or press A–{LETTERS[q.options.length - 1]}</span></>}</div>
         )}
+        </div>
+        {bubble(true)}
+        </div>
       </Sticky>
     </div>
   );
@@ -451,6 +460,49 @@ function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
       style={{ flexShrink: 0, width: 64, height: 44, borderRadius: 22, border: `2px solid ${on ? C.cyan : C.edge}`, background: on ? "rgba(34,211,238,0.25)" : "rgba(255,255,255,0.04)", position: "relative", cursor: "pointer", padding: 0 }}>
       <span style={{ position: "absolute", top: 5, left: on ? 25 : 5, width: 30, height: 30, borderRadius: 15, background: on ? C.cyan : C.soft, transition: "left 150ms" }} />
     </button>
+  );
+}
+
+const BUBBLE_CSS = `
+@keyframes pxHfGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,211,238,0.55), 0 8px 24px rgba(34,211,238,0.35); } 50% { box-shadow: 0 0 0 8px rgba(34,211,238,0), 0 8px 30px rgba(167,139,250,0.5); } }
+@keyframes pxHfDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.px-hf-bubble { -webkit-tap-highlight-color: transparent; transition: transform 120ms ease, background 200ms ease; }
+.px-hf-bubble:active { transform: scale(0.94); }
+.px-hf-bubble.on { animation: pxHfGlow 2.2s ease-in-out infinite; }
+.px-hf-bubble.on .px-hf-dot { animation: pxHfDot 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .px-hf-bubble.on, .px-hf-bubble.on .px-hf-dot { animation: none; } }
+@media (pointer: coarse) { .px-keyhint { display: none; } }
+`;
+const MicIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor" stroke="none" />
+    <path d="M5.5 11a6.5 6.5 0 0 0 13 0" /><path d="M12 17.5V21" /><path d="M8.5 21h7" />
+  </svg>
+);
+/** The hands-free switch everyone can find: a pill with a mic. Floating bottom-right on the setup screen; docked in the
+ * sticky bar during a test so it never covers the answers or the Next button. On = filled gradient with a soft glow. */
+function HfBubble({ on, status, docked, onToggle }: { on: boolean; status: string; docked: boolean; onToggle: () => void }) {
+  const live = on && (status === "listening" || status === "speaking");
+  const style: CSSProperties = {
+    display: "inline-flex", alignItems: "center", gap: 8, minHeight: 50, padding: "0 10px 0 7px", borderRadius: 999, cursor: "pointer",
+    fontSize: 15, fontWeight: 800, letterSpacing: "0.01em", whiteSpace: "nowrap", flexShrink: 0,
+    border: on ? `2px solid ${C.cyan}` : "2px solid #3a4870",
+    background: on ? "linear-gradient(135deg, rgba(34,211,238,0.28), rgba(167,139,250,0.24)), #0a1222" : "rgba(10,16,32,0.94)",
+    color: on ? "#ffffff" : C.soft,
+    boxShadow: on ? undefined : "0 6px 20px rgba(0,0,0,0.5)",
+    backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+    ...(docked ? {} : { position: "fixed", right: "calc(14px + env(safe-area-inset-right))", bottom: "calc(16px + env(safe-area-inset-bottom))", zIndex: 30 }),
+  };
+  return (
+    <>
+      <style>{BUBBLE_CSS}</style>
+      <button type="button" className={`px-hf-bubble${on ? " on" : ""}`} style={style} onClick={onToggle} role="switch" aria-checked={on}
+        aria-label={on ? "Hands-free is on. Tap to turn it off." : "Hands-free is off. Tap to turn it on."}>
+        <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 999, background: on ? C.cyan : "rgba(34,211,238,0.12)", color: on ? "#04121a" : C.cyan, boxShadow: on ? "0 0 14px rgba(34,211,238,0.8)" : undefined }}><MicIcon size={19} /></span>
+        <span>Hands-free</span>
+        <span className="px-hf-dot" style={{ fontSize: 11, fontWeight: 900, letterSpacing: "0.06em", padding: "3px 7px", borderRadius: 999, background: on ? (live ? C.green : C.cyan) : "rgba(255,255,255,0.07)", color: on ? "#04121a" : C.faint }}>{on ? "ON" : "OFF"}</span>
+      </button>
+    </>
   );
 }
 
