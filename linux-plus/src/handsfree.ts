@@ -54,6 +54,19 @@ export class VoiceEngine {
     }
   }
 
+  private micAsked = false;
+  /** Ask for microphone access inside the tap that turns hands-free on (iOS Safari only prompts from a user gesture).
+   * The stream is closed at once; speech recognition opens its own. Asked once per page load. */
+  askMic() {
+    if (this.micAsked || !recognitionCtor()) return;
+    const md = typeof navigator !== "undefined" ? navigator.mediaDevices : undefined;
+    if (!md || typeof md.getUserMedia !== "function") return;
+    this.micAsked = true;
+    try {
+      md.getUserMedia({ audio: true }).then((st) => st.getTracks().forEach((t) => t.stop())).catch(() => { /* denied: recognition reports blocked */ });
+    } catch (_e) { /* ignore */ }
+  }
+
   private clearTimers() { this.timers.forEach((t) => clearTimeout(t)); this.timers = []; }
 
   /** Fetch clips ahead of time (the next question while this one is read), kept as blob URLs for instant playback. */
